@@ -1,0 +1,8 @@
+# Allow native build scripts (Vite/esbuild + Tailwind oxide need these).
+onlyBuiltDependencies:
+  - esbuild
+  - '@tailwindcss/oxide'
+
+# pnpm 11 runs an install check before `pnpm dev/build`; with ignored build
+# scripts that check exits non-zero and blocks the script. Skip it.
+verifyDepsBeforeRun: false

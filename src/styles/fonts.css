@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500&display=swap');
+
+@font-face {
+  font-family: 'Geist:Regular';
+  src: local('Geist');
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'Geist:Medium';
+  src: local('Geist');
+  font-weight: 500;
+}
+@font-face {
+  font-family: 'Geist:Light';
+  src: local('Geist');
+  font-weight: 300;
+}
+@font-face {
+  font-family: 'Inter_Display:Medium';
+  src: local('Inter Tight');
+  font-weight: 500;
+}
