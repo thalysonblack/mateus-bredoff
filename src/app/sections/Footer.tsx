@@ -1,97 +1,78 @@
 import { motion } from "motion/react";
+import { Mono, Rule, Bracket, SectionHead, reveal, revealDelay, idx } from "../system";
 
 /**
- * Footer — Figma node 84:29 ("Lets Talk"). Dark #19272d section: a "Contact"
- * label, the big "Lets Talk" heading + contact links, a top-right page nav, and
- * a bottom © 2026 / Back to top row between hairlines. Geist, fluid up to 64px.
- * Links are placeholders until the real handles are provided.
+ * Contact — fecho escuro.
+ *
+ * A chamada em caixa alta gigante e os canais remontados como registros: índice,
+ * canal, endereço. O rodapé fecha com a linha de metadados que abriu a página,
+ * agora resumida — abre e fecha com o mesmo gesto.
+ *
+ * As cores quietas saem do token --dim (5,9:1 sobre preto). A versão anterior
+ * precisava de um comentário explicando por que #5e686c tinha sido levantado
+ * para branco@45%; agora o piso é do sistema e não se decide por seção.
+ *
+ * Endereços ainda são placeholder — ver pendências no CLAUDE.md.
  */
 
-const reveal = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.4 },
-  transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
-};
-
-// The Figma spec dims these to #5e686c / white@30% — which on #19272d measures
-// 2.69:1, under the 3:1 floor even at this size. These are the only way anyone
-// hires Mateus, so they're lifted to white@45% (~4.3:1) and still read as the
-// quiet state the design wants, with hover going to full white.
-const LINK_COLOR = "rgba(255,255,255,0.45)";
-
-const LINKS = [
-  { label: "E-mail", href: "mailto:hello@mateusbredoff.com", color: LINK_COLOR },
-  { label: "Behance", href: "https://www.behance.net/", color: LINK_COLOR },
-  { label: "Instagram", href: "https://instagram.com/", color: LINK_COLOR },
-  { label: "x.com", href: "https://x.com/", color: LINK_COLOR },
+const CHANNELS = [
+  { label: "E-mail", value: "hello@mateusbredoff.com", href: "mailto:hello@mateusbredoff.com" },
+  { label: "Behance", value: "behance.net/mateusbredoff", href: "https://www.behance.net/" },
+  { label: "Instagram", value: "@mateusbredoff", href: "https://instagram.com/" },
+  { label: "X", value: "@mateusbredoff", href: "https://x.com/" },
 ];
-
-const NAV = [
-  { label: "Home", active: true },
-  { label: "Works" },
-  { label: "About" },
-  { label: "Archive" },
-];
-
-const bigText = {
-  fontFamily: "'Geist:Regular', Geist, sans-serif",
-  fontSize: "clamp(2.25rem, 3.34vw, 64px)",
-  lineHeight: 1.09,
-  letterSpacing: "-0.03em",
-} as const;
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-[#19272d] text-white">
-      <div className="mx-auto w-full max-w-[1872px] px-6 pb-7 pt-[clamp(3rem,6vw,5rem)]">
-        <div className="h-px w-full bg-white/[0.13]" />
+    <footer id="contact" className="on-ink w-full">
+      <div className="bleed pb-4 pt-[clamp(3rem,7vw,7rem)]">
+        <SectionHead left="Contact" right="Available for work" />
 
-        {/* Main */}
-        <div className="grid grid-cols-1 gap-y-12 py-[clamp(3rem,7vw,7rem)] md:grid-cols-[auto_1fr_auto] md:gap-x-12">
-          {/* Contact label */}
-          <motion.p {...reveal} className="font-['Geist:Regular',sans-serif] text-[14px] tracking-[-0.03em] text-white/50">
-            Contact
-          </motion.p>
+        <motion.h2
+          {...reveal}
+          className="t-display pb-[clamp(2.5rem,6vw,5rem)]"
+          style={{ fontSize: "clamp(2.75rem, 11.6vw, 208px)", lineHeight: 0.88 }}
+        >
+          Let&rsquo;s Talk
+        </motion.h2>
 
-          {/* Lets Talk + links */}
-          <div className="flex flex-col">
-            <motion.p {...reveal} style={bigText} className="mb-[clamp(1.5rem,3vw,3rem)] text-[#f6f6f6]">
-              Lets Talk
-            </motion.p>
-            <div className="flex flex-col gap-[clamp(0.25rem,0.6vw,0.5rem)]">
-              {LINKS.map((l, i) => (
-                <motion.a
-                  key={l.label}
-                  href={l.href}
-                  {...(l.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                  {...reveal}
-                  transition={{ ...reveal.transition, delay: i * 0.05 }}
-                  style={{ ...bigText, color: l.color, transition: "color 0.3s ease" }}
-                  className="w-fit hover:!text-white"
-                >
-                  {l.label}
-                </motion.a>
-              ))}
-            </div>
-          </div>
-
-          {/* Page nav */}
-          <motion.nav {...reveal} className="flex flex-col gap-[12px] text-right font-['Geist:Regular',sans-serif] text-[20px] tracking-[-0.03em] leading-[1.09] md:justify-self-end">
-            {NAV.map((n) => (
-              <a key={n.label} href="#" style={{ color: n.active ? "#ffffff" : "rgba(255,255,255,0.5)", transition: "color 0.3s ease" }} className="hover:!text-white">
-                {n.label}
+        {/* Canais como registros */}
+        <div>
+          {CHANNELS.map((c, i) => (
+            <motion.div key={c.label} {...revealDelay(i, 0.05)}>
+              <Rule />
+              <a
+                href={c.href}
+                {...(c.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                className="group flex items-baseline gap-[clamp(1rem,4vw,5rem)] py-[clamp(0.875rem,1.8vw,1.5rem)]"
+              >
+                <Mono dim className="shrink-0">
+                  {idx(i)}
+                </Mono>
+                <Mono size={12} className="flex-1">
+                  {c.label}
+                </Mono>
+                <Mono size={12} dim className="text-right transition-colors duration-300 group-hover:text-[var(--fg)]">
+                  {c.value}
+                </Mono>
               </a>
-            ))}
-          </motion.nav>
+            </motion.div>
+          ))}
+          <Rule />
         </div>
 
-        {/* Bottom row */}
-        <div className="h-px w-full bg-white/[0.13]" />
-        <div className="flex items-center justify-between pt-4 font-['Geist:Medium',sans-serif] text-[16px] tracking-[-0.04em] text-white/45">
-          <span>© 2026</span>
-          <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="transition-colors hover:text-white/80">
-            Back to top
+        {/* Linha final — o mesmo gesto de metadados que abriu a página */}
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 pt-4">
+          <Mono dim>© 2026 Mateus Bredoff</Mono>
+          <Mono dim className="hidden sm:block">
+            Brazil / Worldwide
+          </Mono>
+          <button
+            type="button"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="link-quiet"
+          >
+            <Bracket>Back to top</Bracket>
           </button>
         </div>
       </div>

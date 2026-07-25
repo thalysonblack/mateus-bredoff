@@ -1,74 +1,59 @@
 import { motion } from "motion/react";
+import { Mono, Rule, SectionHead, reveal, revealDelay, idx } from "../system";
 
 /**
- * About — intro statement + "About me" copy. Faithful rebuild of the Figma
- * (node 84:28) section that sat between the hero and the projects:
- *   - big intro line: Geist Regular, #26100a, tracking -0.03em, first-line indent
- *   - "About me" label + two Geist-Medium 18px paragraphs (black/50)
- *   - hairline dividers (black/8%)
- * Responsive: 1920 design uses 24px gutters and a 4-col band; collapses to a
- * single column on small screens. Text reveals on scroll (motion whileInView).
+ * About — a frase-manifesto em caixa alta gigante, seguida dos parágrafos
+ * remontados como registros de tabela.
+ *
+ * É a virada de linguagem da seção: antes eram três colunas soltas com um
+ * rótulo cinza; agora cada parágrafo é uma linha com índice, título e fio,
+ * que é como as referências apresentam qualquer conjunto de itens.
  */
 
-const reveal = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.6 },
-  transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
-};
-
-const Divider = () => <div className="h-px w-full bg-black/[0.08]" />;
+const RECORDS = [
+  {
+    title: "Approach",
+    body: "My approach begins with a deep understanding of the universe in which your company operates. I analyze your business goals, your audience, your competitors, and conduct careful conceptual research to transform strategy into visual expression.",
+  },
+  {
+    title: "Result",
+    body: "The result is exclusive work that combines strategic thinking with refined graphic aesthetics, designed to position brands in a clear, relevant, and memorable way.",
+  },
+];
 
 export default function About() {
   return (
-    <section className="w-full bg-[#f6f6f6] text-[#141414]">
-      <div className="mx-auto w-full max-w-[1872px] px-6">
-        <Divider />
+    <section id="about" className="on-paper w-full">
+      <div className="bleed pt-[clamp(3rem,7vw,7rem)]">
+        <SectionHead left="About" right="Statement" />
 
-        {/* Intro statement */}
+        {/* Manifesto — o tipo enche a largura, alinhado à esquerda, bandeira à direita */}
         <motion.p
           {...reveal}
-          className="font-['Geist:Regular',sans-serif] font-normal text-[#26100a] tracking-[-0.03em] leading-[1.09]"
-          style={{
-            fontSize: "clamp(2rem, 3.34vw, 64px)",
-            maxWidth: "min(100%, 1014px)",
-            textIndent: "1.5em",
-            paddingTop: "clamp(3.5rem, 7vw, 6.25rem)",
-            paddingBottom: "clamp(3.5rem, 7vw, 6.25rem)",
-          }}
+          className="t-display pb-[clamp(3rem,7vw,7rem)]"
+          style={{ fontSize: "clamp(1.75rem, 5.15vw, 92px)", lineHeight: 0.98 }}
         >
-          I&rsquo;m a multidisciplinary designer focused on visual identities, based in Brazil and working worldwide.
+          I&rsquo;m a multidisciplinary designer focused on visual identities, based in Brazil and
+          working worldwide.
         </motion.p>
 
-        <Divider />
-
-        {/* About me */}
-        <div className="grid grid-cols-1 gap-x-6 gap-y-10 py-[clamp(3rem,6vw,5.5rem)] md:grid-cols-4">
-          <motion.p
-            {...reveal}
-            className="font-['Geist:Regular',sans-serif] text-[14px] tracking-[-0.03em] text-black/40 md:col-start-1"
-          >
-            About me
-          </motion.p>
-
-          <motion.p
-            {...reveal}
-            transition={{ ...reveal.transition, delay: 0.08 }}
-            className="max-w-[355px] font-['Geist:Medium',sans-serif] font-medium text-[18px] leading-[1.45] tracking-[-0.03em] text-black/50 md:col-start-2"
-          >
-            My approach begins with a deep understanding of the universe in which your company operates. I analyze your business goals, your audience, your competitors, and conduct careful conceptual research to transform strategy into visual expression.
-          </motion.p>
-
-          <motion.p
-            {...reveal}
-            transition={{ ...reveal.transition, delay: 0.16 }}
-            className="max-w-[320px] font-['Geist:Medium',sans-serif] font-medium text-[18px] leading-[1.45] tracking-[-0.03em] text-black/50 md:col-start-3 md:col-span-2"
-          >
-            The result is exclusive work that combines strategic thinking with refined graphic aesthetics, designed to position brands in a clear, relevant, and memorable way.
-          </motion.p>
+        {/* Registros — índice, título e corpo, separados por fio */}
+        <div>
+          {RECORDS.map((r, i) => (
+            <motion.div key={r.title} {...revealDelay(i)}>
+              <Rule />
+              {/* Índice, título, corpo — e o ar sobrando à direita, que é onde as
+                  referências deixam a respiração da tabela. O corpo colado na
+                  borda direita ficava desligado do título. */}
+              <div className="grid grid-cols-1 gap-x-6 gap-y-4 py-[clamp(1.5rem,3vw,2.5rem)] md:grid-cols-[5rem_11rem_minmax(0,54ch)_1fr]">
+                <Mono dim>{idx(i)}</Mono>
+                <Mono>{r.title}</Mono>
+                <p className="t-body">{r.body}</p>
+              </div>
+            </motion.div>
+          ))}
+          <Rule />
         </div>
-
-        <Divider />
       </div>
     </section>
   );

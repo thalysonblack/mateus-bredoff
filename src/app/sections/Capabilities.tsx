@@ -1,65 +1,84 @@
 import { motion } from "motion/react";
+import { Mono, Rule, SectionHead, reveal, revealDelay, idx } from "../system";
 import imgEditorial from "../../assets/optimized/capabilities-editorial-800.webp";
 
 /**
- * Capabilities — Figma node 84:56/63/135. A "Capabilities" label (left), the
- * big services list (Branding highlighted #26100a, the rest muted
- * rgba(20,33,39,0.5)), and a 306×306 image card on the right.
- * Geist Regular, fluid up to 64px, tracking -0.03em. Reveals on scroll.
+ * Capabilities — a lista de serviços virou tabela de registros.
+ *
+ * É o movimento mais característico das referências: cada item é uma linha
+ * separada por fio, com o índice mono ancorado à esquerda, o nome em caixa alta
+ * e a imagem agrupada à direita do bloco. O hover empurra a linha alguns pixels
+ * e acende o colchete — o único estado da lista.
+ *
+ * O bloco é preto porque o ritmo da página é papel/tinta alternando de sangria
+ * a sangria; esta é a virada para o fecho escuro.
+ *
+ * Sem descrição por serviço de propósito: o texto teria que ser inventado, e
+ * conteúdo de cliente não se inventa. Está anotado como pendência no CLAUDE.md.
  */
 
-const reveal = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.5 },
-  transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
-};
-
-const ITEMS = [
-  { label: "Branding", active: true },
-  { label: "Art Direction" },
-  { label: "Creative Direction" },
-  { label: "Digital Design" },
-  { label: "Brand Strategy" },
-] as const;
+const ITEMS = ["Branding", "Art Direction", "Creative Direction", "Digital Design", "Brand Strategy"];
 
 export default function Capabilities() {
   return (
-    <section className="w-full bg-[#f6f6f6] text-[#141414]">
-      <div className="mx-auto w-full max-w-[1872px] px-6 py-[clamp(4rem,9vw,8rem)]">
-        <div className="grid grid-cols-1 gap-y-12 md:grid-cols-[25%_1fr_306px] md:items-start md:gap-x-10">
-          {/* Label */}
-          <motion.p {...reveal} className="font-['Geist:Regular',sans-serif] text-[14px] tracking-[-0.03em] text-black/40">
-            Capabilities
-          </motion.p>
+    <section className="on-ink w-full">
+      <div className="bleed pb-[clamp(3rem,7vw,7rem)] pt-[clamp(3rem,7vw,7rem)]">
+        <SectionHead left="Capabilities" right={`[${ITEMS.length}] Disciplines`} />
 
-          {/* Services list */}
-          <div
-            className="flex flex-col font-['Geist:Regular',sans-serif] tracking-[-0.03em] leading-[1.09]"
-            style={{ fontSize: "clamp(2rem, 3.34vw, 64px)", gap: "clamp(0.5rem, 1.5vw, 1.5rem)" }}
-          >
-            {ITEMS.map((it, i) => (
-              <motion.span
-                key={it.label}
-                {...reveal}
-                transition={{ ...reveal.transition, delay: i * 0.06 }}
-                style={{ color: it.active ? "#26100a" : "rgba(20,33,39,0.5)" }}
+        {/* Tabela de registros */}
+        <div>
+          {ITEMS.map((label, i) => (
+            <motion.div key={label} {...revealDelay(i, 0.05)}>
+              <Rule />
+              <a
+                href="#contact"
+                className="group flex items-start gap-[clamp(1rem,4vw,5rem)] py-[clamp(1rem,2.2vw,2rem)]"
               >
-                {it.label}
-              </motion.span>
-            ))}
-          </div>
-
-          {/* Image card */}
-          <motion.div
-            {...reveal}
-            transition={{ ...reveal.transition, delay: 0.1 }}
-            className="hidden overflow-hidden rounded-[4px] bg-[rgba(20,33,39,0.09)] md:block"
-            style={{ width: 306, height: 306, justifySelf: "end" }}
-          >
-            <img src={imgEditorial} alt="" width={800} height={534} loading="lazy" decoding="async" className="h-full w-full object-cover" draggable={false} />
-          </motion.div>
+                {/* Índice ancorado no topo da linha, não na base do nome — é
+                    onde as referências fixam a numeração do registro. */}
+                <Mono dim className="shrink-0">
+                  {idx(i)}
+                </Mono>
+                <span
+                  className="t-display flex-1 transition-transform duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[0.15em] motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
+                  style={{ fontSize: "clamp(1.5rem, 3.4vw, 60px)" }}
+                >
+                  {label}
+                </span>
+                <Mono
+                  dim
+                  className="shrink-0 opacity-0 transition-opacity duration-500 group-focus-visible:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
+                >
+                  [ Enquire ]
+                </Mono>
+              </a>
+            </motion.div>
+          ))}
+          <Rule />
         </div>
+
+        {/* Chapa de imagem agrupada à direita, com legenda técnica */}
+        <motion.figure
+          {...reveal}
+          className="ml-auto mt-[clamp(2.5rem,5vw,4.5rem)] w-full md:w-[38%]"
+        >
+          <div className="w-full overflow-hidden bg-white/[0.06]" style={{ aspectRatio: "3 / 2" }}>
+            <img
+              src={imgEditorial}
+              alt="Editorial de identidade visual"
+              width={800}
+              height={534}
+              loading="lazy"
+              decoding="async"
+              draggable={false}
+              className="h-full w-full object-cover"
+            />
+          </div>
+          <figcaption className="flex items-baseline justify-between gap-4 pt-2">
+            <Mono dim>Plate 001</Mono>
+            <Mono dim>Editorial / Identity</Mono>
+          </figcaption>
+        </motion.figure>
       </div>
     </section>
   );

@@ -15,12 +15,42 @@ componente React responsivo de verdade.
 ## Estrutura
 
 ```
-src/app/App.tsx            → Hero · About · Cases · Capabilities · Footer
-src/app/sections/          → uma seção por arquivo (+ Menu, ConnectButton)
+src/app/App.tsx            → Hero · About · Work · Capabilities · Footer
+src/app/system.tsx         → primitivas do sistema (Rule, Mono, Bracket, SectionHead…)
+src/styles/system.css      → tokens, blocos .on-ink / .on-paper, escalas de tipo
+src/app/sections/          → uma seção por arquivo (+ Menu = barra de metadados)
 src/assets/optimized/      → imagens WebP servidas em produção
-src/assets/fonts/          → Geist + Inter Tight self-hosted (woff2)
+src/assets/fonts/          → Geist + Inter Tight + Martian Mono self-hosted (woff2)
 scripts/                   → harness de verificação (puppeteer)
 ```
+
+## Direção de design (branch `estilo-editorial`)
+
+A página se apresenta como **documento técnico**, não como layout — direção
+tirada das referências TITARVL / WIDE ANGLE® / All In®. As regras do sistema:
+
+- **Dueto de fontes.** Inter Tight (display) em CAIXA ALTA, tracking -0.04em,
+  para título e frase-manifesto. **Martian Mono** 11–12px para *todo* o resto:
+  nav, rótulo, legenda, índice, metadado. Parágrafo de corpo é `.t-body`
+  (grotesca 16px, caixa mista) — caixa alta em 40 palavras não se lê.
+- **Monocromático.** Só preto, branco e um cinza. Sem acento, sem matiz. Os
+  blocos alternam `.on-ink` e `.on-paper` de sangria a sangria; o contraste é o
+  ritmo da página.
+- **Raio zero, fio de 1px, sangria.** Sem canto arredondado, sem sombra, sem
+  pílula. Lista é tabela de registros: índice no topo-esquerdo, fio separando.
+- **Vernáculo:** índice de 3 dígitos (`001`), ação entre colchetes com letras
+  abertas (`[ S C R O L L ]`), legenda técnica sob cada mídia (índice à
+  esquerda, nome à direita, na largura da imagem), relógio ao vivo com GMT.
+
+**Seção nova usa as primitivas de `src/app/system.tsx`** — não recria a
+aparência delas na mão, senão o sistema vira dialeto.
+
+O trabalho é um **índice escalonado** (`Work.tsx`), não um carrossel.
+
+**Órfãos nesta branch:** `Cases.tsx` (motor de carrossel) e `ConnectButton.tsx`
+(pílula "Menu" que abria o painel de contato) continuam no disco mas ninguém os
+importa — não entram no bundle. Ficaram para consulta; o contato agora vive na
+barra de metadados e no rodapé. A versão fiel ao Framer está inteira na `main`.
 
 ## Verificação (use antes de dizer que está pronto)
 
@@ -48,6 +78,15 @@ Ao mexer em qualquer coisa com blend, **meça o contraste no pixel renderizado**
 
 **Contraste é medido, não estimado.** Alvo WCAG AA: 4.5:1 texto normal, 3:1 texto grande
 e ícone. As cores dim do Figma (branco@30%, `#5e686c`) ficam abaixo disso no fundo escuro.
+Vale igual para referência: o cinza da família TITARVL é `#a7a7a7`, que mede **2,3:1**
+sobre branco. Copiar referência não copia contraste — o token `--dim` mantém o papel do
+cinza (estado quieto) com valor que passa: 5,0:1 no papel, 5,9:1 na tinta. Não afrouxe.
+
+**Tipo que sangra de borda a borda não se dimensiona com `calc` afinado no glifo.**
+O nome do hero usa `.hero-name` (11.4vw no mobile, 12.35vw no desktop). Um `calc` com a
+razão largura/corpo da fonte embutida preenche perfeito — e estoura a linha no dia em que
+a webfont não carregar e a métrica do fallback for outra. A calha pesa proporcionalmente
+muito mais no mobile; por isso são dois passos e não um valor só.
 
 **Carrossel do Cases dimensiona pelo eixo transversal.** O card é calculado a partir da
 _altura_ da seção; em portrait isso gera um card 2,4× mais largo que a tela e o label
@@ -67,6 +106,9 @@ no código, declare o alias lá também.
 
 - Links de contato são **placeholder**: `hello@mateusbredoff.com`, Behance/Instagram/x
   genéricos, WhatsApp `+55 45 9999-9999` (em `Footer.tsx` e `ConnectButton.tsx`).
-- Cards **Stag** e **Votare** reusam a arte do Ferraci como placeholder (`Cases.tsx`).
-- "View Case" não abre nada ainda — não existem páginas de case.
-- Nav do footer (Home/Works/About/Archive) aponta para `#`.
+- Cards **Stag** e **Votare** reusam a arte do Ferraci como placeholder (`Work.tsx`).
+- As peças do índice não abrem nada ainda — não existem páginas de case.
+- **Capabilities está sem descrição por serviço.** A tabela das referências tem um texto
+  curto por linha; aqui ficou só índice + nome, porque o texto teria que ser inventado e
+  conteúdo de cliente não se inventa. Pedir os cinco textos ao Mateus.
+- O ano `2026` e `Portfolio — Vol. 01` no hero são de composição, não fato apurado.

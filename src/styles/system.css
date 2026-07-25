@@ -1,0 +1,144 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   SISTEMA EDITORIAL
+
+   A página se apresenta como um documento técnico: tudo é um campo rotulado
+   numa grade. Duas famílias (uma grotesca display + uma mono), monocromático
+   sem acento, raio zero, fio de 1px separando cada registro, blocos que
+   alternam papel/tinta de sangria a sangria.
+
+   CONTRASTE — as referências usam #a7a7a7 sobre branco, que mede 2,3:1 e
+   reprova em AA. O papel do cinza (estado quieto, secundário) é mantido; o
+   valor não. --dim mede 5,0:1 no papel e 5,9:1 na tinta. Não afrouxe isso:
+   este repo já escondeu texto invisível duas vezes.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --gutter: 16px;
+  --bar-h: 56px;
+
+  --mono: 'Martian Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --display: 'Inter_Display:Medium', 'Inter Tight', sans-serif;
+}
+
+@media (min-width: 768px) {
+  :root { --gutter: 24px; }
+}
+
+/* Blocos de sangria. Trocam o par tinta/papel — os filhos só leem as vars. */
+.on-paper {
+  --bg: #ffffff;
+  --fg: #000000;
+  --dim: #6e6e6e;          /* 5,0:1 sobre branco */
+  --rule: rgba(0, 0, 0, 0.14);
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.on-ink {
+  --bg: #000000;
+  --fg: #ffffff;
+  --dim: #8f8f8f;          /* 5,9:1 sobre preto */
+  --rule: rgba(255, 255, 255, 0.20);
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* ── Tipografia ──────────────────────────────────────────────────────────── */
+
+/* O mono é o texto-base: nav, rótulo, legenda, índice, metadado. Sempre caixa
+   alta. Tracking negativo porque a Martian Mono é larga de origem. */
+.t-mono {
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 1.45;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  font-feature-settings: 'tnum' 1;
+}
+
+.t-mono-12 { font-size: 12px; }
+
+/* Display: caixa alta, tracking apertado, entrelinha curta. O tamanho vem de
+   quem usa — a escala muda por seção, o desenho não. */
+.t-display {
+  font-family: var(--display);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+/* Corpo de texto. As referências reservam a caixa alta para rótulo e frase de
+   efeito e escrevem parágrafo em caixa mista, 16px, na mesma grotesca. Caixa
+   alta em 40 palavras não se lê — e o sistema não pede isso. */
+.t-body {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+}
+
+/* ── Geometria ───────────────────────────────────────────────────────────── */
+
+.rule { height: 1px; width: 100%; background: var(--rule); }
+
+/* Nome do hero: sangra de borda a borda em qualquer largura.
+   Dois passos em vez de um calc com a métrica da fonte embutida — se a webfont
+   não carregar, um calc afinado na largura do glifo estoura a linha; isto aqui
+   só perde um pouco de preenchimento. A calha pesa proporcionalmente muito mais
+   no mobile, daí o valor menor. */
+.hero-name { font-size: 11.4vw; }
+@media (min-width: 768px) {
+  .hero-name { font-size: 12.35vw; }
+}
+
+/* Coluna do índice escalonado. O recuo só existe quando há colunas de verdade —
+   empilhado no mobile ele viraria um buraco no meio da lista. */
+.stagger-col { padding-top: 0; }
+@media (min-width: 768px) {
+  .stagger-col { padding-top: var(--col-offset, 0); }
+}
+
+.bleed { padding-left: var(--gutter); padding-right: var(--gutter); }
+
+/* ── Estados ─────────────────────────────────────────────────────────────── */
+
+.dim { color: var(--dim); }
+
+.link-quiet {
+  color: var(--dim);
+  transition: color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.link-quiet:hover { color: var(--fg); }
+
+/* Sublinhado que cresce da esquerda — o único "enfeite" de hover do sistema. */
+.link-rule {
+  position: relative;
+  display: inline-block;
+}
+.link-rule::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.link-rule:hover::after { transform: scaleX(1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .link-rule::after { transition: none; }
+}
+
+/* Foco visível. Num sistema sem cor de acento o anel tem que sair do próprio
+   par tinta/papel — e precisa de offset, senão some contra a borda da imagem. */
+:where(a, button):focus-visible {
+  outline: 2px solid var(--fg, #000);
+  outline-offset: 3px;
+}

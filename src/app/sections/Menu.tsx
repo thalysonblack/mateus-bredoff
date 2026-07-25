@@ -1,26 +1,25 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import ConnectButton from "./ConnectButton";
+import { Mono, Rule, ease } from "../system";
 
 /**
- * Menu — top bar of the Framer site (the "Menu" Design-to-AI export, rebuilt).
- * BREDOFF© · live clock (São Paulo / BRT) · Currently/Available · Menu.
- * Off-white text with mix-blend-difference so it reads on any background.
+ * Barra de metadados — a assinatura mais forte das referências.
+ *
+ * Quatro campos rotulados numa grade: quem / o quê / onde falar / que horas são
+ * onde ele está. O relógio ao vivo com o offset GMT é o detalhe que faz a página
+ * parecer um instrumento em vez de um layout.
+ *
+ * Sem mix-blend-difference (a versão anterior usava). A barra vive sobre preto
+ * sólido, então o branco resolve direto — e some junto a classe de bug que já
+ * apagou texto duas vezes neste repo.
  */
 
-const timeFmt = new Intl.DateTimeFormat("pt-BR", {
+const timeFmt = new Intl.DateTimeFormat("en-GB", {
   timeZone: "America/Sao_Paulo",
   hour: "2-digit",
   minute: "2-digit",
   second: "2-digit",
   hour12: false,
-  timeZoneName: "short",
-});
-const dateFmt = new Intl.DateTimeFormat("pt-BR", {
-  timeZone: "America/Sao_Paulo",
-  day: "2-digit",
-  month: "2-digit",
-  year: "numeric",
 });
 
 function useBrazilClock() {
@@ -29,63 +28,84 @@ function useBrazilClock() {
     const id = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
-
-  const parts = timeFmt.formatToParts(now);
-  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
-  const tz = (parts.find((p) => p.type === "timeZoneName")?.value ?? "").trim();
-  const time = `${get("hour")}:${get("minute")}:${get("second")} ${tz}`;
-  return { time, date: dateFmt.format(now) };
+  return timeFmt.format(now);
 }
 
-const reveal = {
-  initial: { opacity: 0, y: -8 },
-  animate: { opacity: 1, y: 0 },
-};
-const ease = [0.16, 1, 0.3, 1] as const;
+const NAV = [
+  { label: "Work", href: "#work" },
+  { label: "About", href: "#about" },
+  { label: "Contact", href: "#contact" },
+];
+
+/** Uma coluna da barra: linha forte em cima, linha quieta embaixo. */
+function Field({ top, bottom }: { top: React.ReactNode; bottom: React.ReactNode }) {
+  return (
+    <div>
+      <Mono as="div">{top}</Mono>
+      <Mono as="div" dim>
+        {bottom}
+      </Mono>
+    </div>
+  );
+}
 
 export default function Menu() {
-  const { time, date } = useBrazilClock();
+  const time = useBrazilClock();
 
   return (
-    <>
-    <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[60px] font-['Geist:Medium',sans-serif] text-[14px] font-medium leading-[1.1] tracking-[-0.03em] text-[#ede6e1] mix-blend-difference">
-      {/* BREDOFF© */}
-      <motion.a
-        href="/"
-        className="pointer-events-auto absolute left-[9px] top-[7px] whitespace-pre"
-        {...reveal}
-        transition={{ duration: 0.7, ease }}
-      >
-        BREDOFF©
-      </motion.a>
+    <motion.header
+      className="relative z-20 w-full bleed pt-3"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8, ease, delay: 0.2 }}
+    >
+      <div className="grid grid-cols-2 gap-x-6 gap-y-3 pb-3 md:grid-cols-4">
+        <Field
+          top={
+            <a href="/" className="link-rule">
+              Mateus Bredoff©
+            </a>
+          }
+          bottom={
+            <span className="whitespace-nowrap">
+              {NAV.map((n, i) => (
+                <span key={n.label}>
+                  {i > 0 ? <span aria-hidden="true"> / </span> : null}
+                  <a href={n.href} className="link-quiet">
+                    {n.label}
+                  </a>
+                </span>
+              ))}
+            </span>
+          }
+        />
 
-      {/* Live clock — the percentage columns are a desktop grid; below md they
-          would collide with the Menu pill, so the bar reduces to wordmark + Menu. */}
-      <motion.div
-        className="absolute left-[25.3%] top-[8px] hidden whitespace-nowrap tabular-nums md:block"
-        {...reveal}
-        transition={{ duration: 0.7, ease, delay: 0.06 }}
-      >
-        <p className="mb-0">{time}</p>
-        <p className="opacity-55">{date}</p>
-      </motion.div>
+        <Field top="Brand Designer" bottom="Visual Identity Practice" />
 
-      {/* Availability */}
-      <motion.div
-        className="absolute left-[68.8%] top-[8px] hidden whitespace-nowrap md:block"
-        {...reveal}
-        transition={{ duration: 0.7, ease, delay: 0.12 }}
-      >
-        <p className="mb-0">Currently</p>
-        <p className="opacity-55">Available for work</p>
-      </motion.div>
+        <Field
+          top={
+            <a href="mailto:hello@mateusbredoff.com" className="link-rule">
+              hello@mateusbredoff.com
+            </a>
+          }
+          bottom={
+            <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" className="link-quiet">
+              Instagram
+            </a>
+          }
+        />
 
-    </div>
-
-      {/* Menu → Connect Button (rebuilt Framer "Connect Button 2"): collapsed
-          "Menu" pill that expands into the contact panel on hover. Lives outside
-          the mix-blend-difference layer so its dark panel renders true. */}
-      <ConnectButton />
-    </>
+        {/* Relógio: a única coisa da página que se move sozinha. */}
+        <div className="text-left md:text-right">
+          <Mono as="div" className="tabular-nums">
+            {time}
+          </Mono>
+          <Mono as="div" dim>
+            Brazil — GMT&minus;3
+          </Mono>
+        </div>
+      </div>
+      <Rule />
+    </motion.header>
   );
 }
