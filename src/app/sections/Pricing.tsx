@@ -2,23 +2,32 @@ import { motion } from "motion/react";
 import { Mono, Rule, SectionHead, Bracket, reveal, revealDelay, idx } from "../system";
 
 /**
- * Pricing — três níveis de engajamento com valor de entrada.
+ * Pricing — três engajamentos como blocos emoldurados.
  *
- * ESTRUTURA: nome e preço na mesma linha de base, em display, ancorados nos
- * cantos opostos; escopo e prazo em mono embaixo. Lê como a linha de um recibo,
- * que é o gesto certo num documento técnico — e não repete nem a pilha do
- * Capabilities nem a tabela com cabeçalho do AI Lab.
+ * Já foi "linha de recibo": nome e preço nos cantos opostos, escopo em mono
+ * embaixo, um fio entre cada. Era correto e não tinha massa nenhuma — três
+ * linhas finas perdidas num campo escuro, e a seção mais importante da página
+ * comercial lia como rodapé de tabela.
+ *
+ * Agora cada nível é um BLOCO com moldura de 1px: o numeral grande no topo, o
+ * preço como segunda voz display, e o escopo virou lista de itens separados por
+ * fio — dá para bater o olho e comparar, que é o que alguém faz numa página de
+ * preço.
+ *
+ * HIERARQUIA SEM SELO. O do meio não leva "mais popular" nem borda colorida:
+ * ele **inverte** para papel dentro do bloco de tinta. É o próprio gesto do
+ * sistema (papel/tinta alternando de sangria a sangria) usado em escala miúda —
+ * destaca por contraste de matéria, não por enfeite de conversão.
+ *
+ * Raio zero, sem sombra, sem pílula: card arredondado com sombra é exatamente o
+ * "AI look" que o sistema recusa.
  *
  * ⚠ VALORES. O US$ 2.500 do Essential NÃO foi inventado: é o preço que ele já
  * publica na aba de serviços do Behance ("Visual Identity, de US$ 2.500"). Os
- * outros dois seguem `null`, o que renderiza "On request" — uma frase legítima,
- * em vez de um "R$ X.XXX" quebrado no ar. Quando o Mateus passar os dois valores
- * que faltam, troque o `null` pelo número:
+ * outros dois seguem `null` → "On request", uma frase legítima, em vez de um
+ * número quebrado no ar. Quando o Mateus passar os valores, troque o `null`:
  *
  *     { ..., priceFrom: 4800 }   →   renderiza "from $4,800"
- *
- * A moeda é USD porque o preço público dele é em dólar e o posicionamento é
- * "working worldwide"; `CURRENCY` troca os dois de uma vez.
  */
 
 const CURRENCY: "BRL" | "USD" = "USD";
@@ -32,83 +41,125 @@ const fmt = (v: number) =>
 
 type Tier = {
   name: string;
-  scope: string;
+  /** Itens, não frase: em lista dá para comparar os três de relance. */
+  scope: string[];
   timeline: string;
   priceFrom: number | null;
+  /** Inverte para papel — o destaque do meio. */
+  featured?: boolean;
 };
 
 const TIERS: Tier[] = [
   {
     name: "Essential",
-    scope: "Logotype, palette, typography, mini-guide",
+    scope: ["Logotype", "Colour palette", "Typography", "Mini-guide"],
     timeline: "3 weeks",
     priceFrom: 2500,
   },
   {
     name: "Complete",
-    scope: "Essential + applications, stationery, social kit",
+    scope: ["Everything in Essential", "Applications", "Stationery", "Social kit"],
     timeline: "5 weeks",
     priceFrom: null,
+    featured: true,
   },
   {
     name: "Brand System",
-    scope: "Complete + naming, verbal identity, full guidelines",
+    scope: ["Everything in Complete", "Naming", "Verbal identity", "Full guidelines"],
     timeline: "8 weeks",
     priceFrom: null,
   },
 ];
 
+function Tier({ tier, index }: { tier: Tier; index: number }) {
+  return (
+    <motion.div
+      {...revealDelay(index, 0.06)}
+      /* `on-paper` no destacado troca --bg/--fg/--dim/--acc de uma vez: os
+         filhos só leem as variáveis e não sabem em que fundo estão. */
+      className={`${tier.featured ? "on-paper" : ""} group flex h-full flex-col`}
+      style={{
+        border: "1px solid var(--rule)",
+        /* o bloco de papel precisa do próprio fundo; o de tinta herda o da seção */
+        background: tier.featured ? "var(--bg)" : "transparent",
+      }}
+    >
+      <div className="flex items-baseline justify-between gap-4 p-[clamp(1.25rem,2vw,1.75rem)]">
+        <Mono dim className="idx-acc">
+          {idx(index)}
+        </Mono>
+        <Mono dim>{tier.timeline}</Mono>
+      </div>
+
+      <div className="px-[clamp(1.25rem,2vw,1.75rem)]">
+        <h3 className="t-display" style={{ fontSize: "clamp(1.5rem, 2.6vw, 40px)" }}>
+          {tier.name}
+        </h3>
+
+        {/* O preço é a segunda voz display do bloco — menor que o nome, para o
+            pacote continuar sendo a manchete e o valor, a consequência. */}
+        <p
+          className="t-display pt-[clamp(0.5rem,1vw,0.875rem)]"
+          style={{ fontSize: "clamp(1.05rem, 1.7vw, 26px)" }}
+        >
+          {tier.priceFrom === null ? (
+            "On request"
+          ) : (
+            <>
+              <span className="dim">from </span>
+              {fmt(tier.priceFrom)}
+            </>
+          )}
+        </p>
+      </div>
+
+      {/* Escopo: cada item é um registro com fio, como o resto do sistema */}
+      <ul className="mt-[clamp(1.25rem,2.5vw,2rem)] flex-1">
+        {tier.scope.map((s) => (
+          <li key={s}>
+            <Rule />
+            <div className="px-[clamp(1.25rem,2vw,1.75rem)] py-[clamp(0.625rem,1.1vw,0.875rem)]">
+              <Mono dim>{s}</Mono>
+            </div>
+          </li>
+        ))}
+        <Rule />
+      </ul>
+
+      <a
+        href="#contact"
+        className="link-quiet block p-[clamp(1.25rem,2vw,1.75rem)]"
+        aria-label={`Solicitar orçamento — ${tier.name}`}
+      >
+        <Bracket>ENQUIRE</Bracket>
+      </a>
+    </motion.div>
+  );
+}
+
 export default function Pricing() {
   return (
     <section id="pricing" className="on-ink w-full">
-      <div className="bleed pb-[clamp(3rem,7vw,7rem)] pt-[clamp(3rem,7vw,7rem)]">
+      {/* `pt` menor que o `pb`: o Capabilities vem logo acima e também é tinta,
+          então os dois paddings somavam e abriam um vão morto no meio do bloco
+          escuro — o fecho tem que ler como uma peça contínua, não como duas
+          seções com um buraco entre elas. */}
+      <div className="bleed pb-[clamp(3rem,7vw,7rem)] pt-[clamp(1.5rem,3vw,3rem)]">
         <SectionHead left="Pricing" right={`[${TIERS.length}] Engagements`} />
 
-        <div>
+        {/* `items-stretch` para os três blocos terminarem na mesma linha mesmo
+            com escopos de tamanhos diferentes — bloco mais curto que o vizinho
+            denuncia grade improvisada. */}
+        <div className="grid grid-cols-1 items-stretch gap-[clamp(0.75rem,1.5vw,1.25rem)] md:grid-cols-3">
           {TIERS.map((t, i) => (
-            <motion.div key={t.name} {...revealDelay(i, 0.05)}>
-              <Rule />
-              <a
-                href="#contact"
-                className="group block py-[clamp(1.25rem,2.6vw,2.25rem)]"
-              >
-                {/* Nome e preço nos cantos opostos, mesma linha de base */}
-                <div className="flex items-baseline justify-between gap-[clamp(1rem,4vw,4rem)]">
-                  <span className="flex items-baseline gap-[clamp(1rem,3vw,3rem)]">
-                    <Mono dim className="idx-acc shrink-0">
-                      {idx(i)}
-                    </Mono>
-                    <span
-                      className="t-display transition-transform duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[0.12em] motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
-                      style={{ fontSize: "clamp(1.35rem, 3vw, 52px)" }}
-                    >
-                      {t.name}
-                    </span>
-                  </span>
-                  {/* O preço é a segunda voz display da linha — menor que o nome,
-                      para não virar a manchete do bloco. */}
-                  <span
-                    className="t-display shrink-0 text-right"
-                    style={{ fontSize: "clamp(0.95rem, 1.6vw, 26px)" }}
-                  >
-                    {t.priceFrom === null ? "On request" : `from ${fmt(t.priceFrom)}`}
-                  </span>
-                </div>
-
-                {/* Escopo e prazo: a letra miúda do registro */}
-                <div className="flex flex-col gap-1 pl-0 pt-[clamp(0.625rem,1.2vw,1rem)] md:flex-row md:items-baseline md:justify-between md:gap-6 md:pl-[calc(clamp(1rem,3vw,3rem)+2.5rem)]">
-                  <Mono dim>{t.scope}</Mono>
-                  <Mono dim className="shrink-0">
-                    {t.timeline}
-                  </Mono>
-                </div>
-              </a>
-            </motion.div>
+            <Tier key={t.name} tier={t} index={i} />
           ))}
-          <Rule />
         </div>
 
-        <motion.div {...reveal} className="flex flex-col gap-4 pt-[clamp(1.5rem,3vw,2.5rem)] md:flex-row md:items-baseline md:justify-between">
+        <motion.div
+          {...reveal}
+          className="flex flex-col gap-4 pt-[clamp(1.5rem,3vw,2.5rem)] md:flex-row md:items-baseline md:justify-between"
+        >
           <Mono dim>Custom scope and retainer on request.</Mono>
           <a href="#contact" className="link-quiet shrink-0">
             <Bracket>START A PROJECT</Bracket>
