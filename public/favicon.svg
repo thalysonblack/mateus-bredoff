@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Mateus Bredoff — monogram MB. Deep teal of the hero backdrop, off-white
+       type matching the site's #f6f6f6. Drawn as paths so it renders identically
+       everywhere (no font dependency in the favicon). -->
+  <rect width="64" height="64" rx="12" fill="#0e2e38"/>
+  <g fill="#f6f6f6">
+    <!-- M -->
+    <path d="M12 44V20h4.9l6.1 13.4L29.1 20H34v24h-4.4V29.2l-5.1 11h-3l-5.1-11V44H12z"/>
+    <!-- B -->
+    <path d="M38 44V20h9.2c2.6 0 4.6.6 6 1.9 1.4 1.2 2.1 2.9 2.1 4.9 0 1.3-.3 2.4-1 3.3-.6.9-1.5 1.6-2.6 2 1.4.4 2.4 1.1 3.2 2.1.8 1 1.1 2.3 1.1 3.8 0 2.2-.7 3.9-2.2 5.2-1.5 1.2-3.6 1.8-6.3 1.8H38zm4.5-14.2h4.4c1.2 0 2.2-.3 2.8-.9.7-.6 1-1.4 1-2.4s-.3-1.8-1-2.4c-.6-.6-1.6-.9-2.8-.9h-4.4v6.6zm0 10.4h4.9c1.3 0 2.4-.3 3.1-1 .7-.6 1.1-1.5 1.1-2.6s-.4-2-1.1-2.6c-.7-.7-1.8-1-3.1-1h-4.9v7.2z"/>
+  </g>
+</svg>

@@ -1,5 +1,7 @@
 import { motion } from "motion/react";
 import Menu from "./Menu";
+import portrait1600 from "../../assets/optimized/hero-portrait-1600.webp";
+import portrait3200 from "../../assets/optimized/hero-portrait-3200.webp";
 
 /**
  * Hero — faithful rebuild of the Framer hero (mateusbredoff.framer.website).
@@ -19,7 +21,10 @@ const maskTransition = { type: "spring", bounce: 0, duration: 2, delay: 0.6 } as
 const logoTransition = { type: "spring", bounce: 0.2, duration: 0.4 } as const;
 const titleTransition = { type: "spring", damping: 30, mass: 0.1, stiffness: 98, delay: 2 } as const;
 
-const PORTRAIT = "https://framerusercontent.com/images/fgOcLkNf1oHq6a3bgOeFGWIg2cs.webp?width=3840&height=2040";
+// Portrait — self-hosted. The original was hotlinked from framerusercontent.com,
+// which would break the site the day the Framer project goes away.
+const PORTRAIT_SRC = portrait1600;
+const PORTRAIT_SRCSET = `${portrait1600} 1600w, ${portrait3200} 3200w`;
 
 const titleStyle = {
   fontSize: "clamp(2.25rem, 8.2vw, 124px)",
@@ -27,6 +32,12 @@ const titleStyle = {
   letterSpacing: "-0.03em",
   color: "#fff",
 } as const;
+
+// Below sm the two corner blocks would nearly touch in the middle. They stack
+// instead — still opposed left/right, so the diagonal tension of the layout
+// survives and the type keeps its scale.
+const CORNERS =
+  "pointer-events-none absolute inset-0 flex flex-col items-stretch justify-end gap-2 p-[26px] sm:flex-row sm:items-end sm:justify-between sm:gap-0";
 
 export default function Hero() {
   return (
@@ -41,8 +52,14 @@ export default function Hero() {
         transition={maskTransition}
       >
         <motion.img
-          src={PORTRAIT}
-          alt=""
+          src={PORTRAIT_SRC}
+          srcSet={PORTRAIT_SRCSET}
+          sizes="100vw"
+          alt="Mateus Bredoff"
+          width={3840}
+          height={2040}
+          fetchPriority="high"
+          decoding="async"
           className="absolute inset-0 h-full w-full object-cover"
           style={{ objectPosition: "center 25%" }}
           initial={{ scale: 1.3 }}
@@ -64,7 +81,7 @@ export default function Hero() {
       </motion.p>
 
       {/* Names — pinned to the bottom corners */}
-      <div className="pointer-events-none absolute inset-0 flex items-end justify-between p-[26px]">
+      <div className={CORNERS}>
         <motion.p
           className="font-['Geist:Regular',sans-serif] uppercase mix-blend-exclusion"
           style={titleStyle}
@@ -77,7 +94,7 @@ export default function Hero() {
         </motion.p>
 
         <motion.p
-          className="text-right font-['Geist:Regular',sans-serif] uppercase mix-blend-exclusion"
+          className="self-end text-right font-['Geist:Regular',sans-serif] uppercase mix-blend-exclusion"
           style={titleStyle}
           initial={{ opacity: 0.001, x: 150 }}
           animate={{ opacity: 1, x: 0 }}

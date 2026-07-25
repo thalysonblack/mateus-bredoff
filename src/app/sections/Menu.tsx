@@ -59,9 +59,10 @@ export default function Menu() {
         BREDOFF©
       </motion.a>
 
-      {/* Live clock */}
+      {/* Live clock — the percentage columns are a desktop grid; below md they
+          would collide with the Menu pill, so the bar reduces to wordmark + Menu. */}
       <motion.div
-        className="absolute left-[25.3%] top-[8px] whitespace-nowrap tabular-nums"
+        className="absolute left-[25.3%] top-[8px] hidden whitespace-nowrap tabular-nums md:block"
         {...reveal}
         transition={{ duration: 0.7, ease, delay: 0.06 }}
       >
@@ -71,7 +72,7 @@ export default function Menu() {
 
       {/* Availability */}
       <motion.div
-        className="absolute left-[68.8%] top-[8px] whitespace-nowrap"
+        className="absolute left-[68.8%] top-[8px] hidden whitespace-nowrap md:block"
         {...reveal}
         transition={{ duration: 0.7, ease, delay: 0.12 }}
       >

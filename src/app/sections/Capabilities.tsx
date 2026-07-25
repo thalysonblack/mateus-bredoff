@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import imgEditorial from "figma:asset/a54c24e68688a4820d0e68f5110d1f98c3be5d55.png";
+import imgEditorial from "../../assets/optimized/capabilities-editorial-800.webp";
 
 /**
  * Capabilities — Figma node 84:56/63/135. A "Capabilities" label (left), the
@@ -57,7 +57,7 @@ export default function Capabilities() {
             className="hidden overflow-hidden rounded-[4px] bg-[rgba(20,33,39,0.09)] md:block"
             style={{ width: 306, height: 306, justifySelf: "end" }}
           >
-            <img src={imgEditorial} alt="" className="h-full w-full object-cover" draggable={false} />
+            <img src={imgEditorial} alt="" width={800} height={534} loading="lazy" decoding="async" className="h-full w-full object-cover" draggable={false} />
           </motion.div>
         </div>
       </div>

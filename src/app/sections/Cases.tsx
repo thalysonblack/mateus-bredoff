@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useRef, useState, startTransition } from "react";
-import imgFerraciGem from "figma:asset/fcaeee05bfca266dd4f14bcbbe960dc8a68097aa.png";
-import imgTrivoCart from "figma:asset/81452b91e81161b2c6134b3da978b23e718c43f1.png";
-import imgFerraciBook from "figma:asset/a54c24e68688a4820d0e68f5110d1f98c3be5d55.png";
+import imgFerraciGem from "../../assets/optimized/case-ferraci-1400.webp";
+import imgFerraciGem2x from "../../assets/optimized/case-ferraci-2200.webp";
+import imgTrivoCart from "../../assets/optimized/case-trivo-1400.webp";
+import imgTrivoCart2x from "../../assets/optimized/case-trivo-2200.webp";
+import imgFerraciBook from "../../assets/optimized/case-stag-1400.webp";
+import imgFerraciBook2x from "../../assets/optimized/case-stag-2200.webp";
 
 /**
  * Cases — Framer "CasesScroll / Cases Showcase" rebuild (projects mode,
@@ -17,6 +20,7 @@ import imgFerraciBook from "figma:asset/a54c24e68688a4820d0e68f5110d1f98c3be5d55
 type Project = {
   name: string;
   image: string;
+  srcSet: string;
   tags: string[];
   bg: string;
   fit: "cover" | "contain";
@@ -24,11 +28,13 @@ type Project = {
 
 const FILTERS = ["All", "Visual Identity", "Packaging", "UI Design", "AI"] as const;
 
+const srcSetOf = (small: string, large: string) => `${small} 1400w, ${large} 2200w`;
+
 const PROJECTS: Project[] = [
-  { name: "Stag", image: imgFerraciBook, tags: ["Visual Identity"], bg: "#0d0d0d", fit: "cover" },
-  { name: "Trivo", image: imgTrivoCart, tags: ["Visual Identity", "3D"], bg: "#000000", fit: "cover" },
-  { name: "Ferraci", image: imgFerraciGem, tags: ["Visual Identity", "3D"], bg: "linear-gradient(150deg,#c79a6a 0%,#e8d4b8 55%,#f5ead8 100%)", fit: "contain" },
-  { name: "Votare", image: imgFerraciBook, tags: ["Packaging"], bg: "#0d0d0d", fit: "cover" },
+  { name: "Stag", image: imgFerraciBook, srcSet: srcSetOf(imgFerraciBook, imgFerraciBook2x), tags: ["Visual Identity"], bg: "#0d0d0d", fit: "cover" },
+  { name: "Trivo", image: imgTrivoCart, srcSet: srcSetOf(imgTrivoCart, imgTrivoCart2x), tags: ["Visual Identity", "3D"], bg: "#000000", fit: "cover" },
+  { name: "Ferraci", image: imgFerraciGem, srcSet: srcSetOf(imgFerraciGem, imgFerraciGem2x), tags: ["Visual Identity", "3D"], bg: "linear-gradient(150deg,#c79a6a 0%,#e8d4b8 55%,#f5ead8 100%)", fit: "contain" },
+  { name: "Votare", image: imgFerraciBook, srcSet: srcSetOf(imgFerraciBook, imgFerraciBook2x), tags: ["Packaging"], bg: "#0d0d0d", fit: "cover" },
 ];
 
 // ── DEFAULTS (projects/horizontal) ───────────────────────────────────────────
@@ -40,12 +46,21 @@ const SCROLL_EASE = 0.1;
 const ACTIVE_SCALE = 1;
 const ADJACENT_SCALE = 0.745;
 const CARD_RADIUS = 4;
-const CARD_WIDTH = 74; // % of root height used by the card row (cross axis)
+const CARD_CROSS_PCT = 74; // % of root height used by the card row (cross axis)
+// Ceiling on the card's scroll-axis length, as a fraction of the viewport width.
+// Keeps the active card (and its label) fully on screen in portrait.
+const MAX_CARD_VIEWPORT_FRACTION = 0.92;
 
 const SECTION_BG = "#f6f6f6";
 
-// Bottom nav — Figma: Geist Regular 20px, gap 19, tracking -0.6px, leading 0.78,
-// mix-blend-exclusion, active #fff / inactive rgba(255,255,255,0.5).
+// Bottom nav — Figma: Geist Regular 20px, gap 19, tracking -0.6px, leading 0.78.
+// The Figma spec paints it #fff with mix-blend-exclusion, which only inverts if the
+// blend can reach the section background. It can't: the nav's wrapper carries
+// translateX(-50%), and a transform creates a stacking context that isolates the
+// blend — so the labels rendered as #f7f7f7 on #f6f6f6 (measured 1.01:1, invisible).
+// The nav sits over the light section, so it is painted dark outright, at AA.
+const NAV_COLOR_ACTIVE = "#141414";              // 14.6:1 on #f6f6f6
+const NAV_COLOR_IDLE = "rgba(20, 20, 20, 0.66)"; // ~5.1:1 — AA for 20px body text
 const NAV_FONT = { fontFamily: "'Geist:Regular', Geist, sans-serif", fontWeight: 400, fontSize: 20, lineHeight: "0.78", letterSpacing: "-0.6px" } as const;
 const NAV_GAP = 19;
 const NAV_OFFSET_Y = 40;
@@ -60,7 +75,10 @@ function makeArrowCursorSvg(direction: "left" | "right", size: number, color = "
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }
 
-const SHIMMER_CSS = `@keyframes cases-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}`;
+const SHIMMER_CSS = `@keyframes cases-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.cases-filters{scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x proximity}
+.cases-filters::-webkit-scrollbar{display:none}
+.cases-filters > button{scroll-snap-align:center}`;
 
 // ── Card visual (image + per-project background) ─────────────────────────────
 function CardVisual({ project, visualRef }: { project: Project; visualRef: (el: HTMLDivElement | null) => void }) {
@@ -85,8 +103,11 @@ function CardVisual({ project, visualRef }: { project: Project; visualRef: (el: 
       )}
       <img
         src={project.image}
+        srcSet={project.srcSet}
+        sizes="(max-width: 900px) 90vw, 74vh"
         alt={project.name}
         draggable={false}
+        decoding="async"
         onLoad={() => startTransition(() => setLoaded(true))}
         style={{
           position: "absolute",
@@ -109,7 +130,13 @@ function CardVisual({ project, visualRef }: { project: Project; visualRef: (el: 
 // ── Per-card label: name (bottom-left) + tags (bottom-right) — Figma 84:73 ────
 function CardLabel({ project }: { project: Project }) {
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex items-center justify-between" style={{ padding: 12 }}>
+    // No z-index here on purpose. A positioned element with z-index opens a
+    // stacking context, which would trap the name's mix-blend-difference and make
+    // it paint flat white — unreadable on the light cards (measured 1.42:1).
+    // Without it the blend reaches the artwork and inverts against it, so the name
+    // reads white on dark cards and near-black on light ones. DOM order already
+    // paints the label above the image.
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between" style={{ padding: 12 }}>
       {/* Project name */}
       <p
         style={{ margin: 0, fontFamily: "'Inter_Display:Medium', 'Inter Tight', sans-serif", fontWeight: 500, fontSize: 24.428, lineHeight: 1.25, color: "#ffffff", mixBlendMode: "difference", whiteSpace: "nowrap" }}
@@ -122,7 +149,9 @@ function CardLabel({ project }: { project: Project }) {
         {project.tags.map((t) => (
           <span
             key={t}
-            style={{ background: "rgba(0,0,0,0.15)", backdropFilter: "blur(11.75px)", WebkitBackdropFilter: "blur(11.75px)", color: "#ffffff", fontFamily: "'Inter_Display:Medium', 'Inter Tight', sans-serif", fontWeight: 500, fontSize: 12, lineHeight: 1.25, padding: "4.653px 8.143px", borderRadius: 3, whiteSpace: "nowrap" }}
+            // The 15% scrim of the Figma spec only holds up over dark artwork; on the
+            // light cards white-on-chip fell to 1.4:1. Denser scrim, same glass look.
+            style={{ background: "rgba(0,0,0,0.54)", backdropFilter: "blur(11.75px)", WebkitBackdropFilter: "blur(11.75px)", color: "#ffffff", fontFamily: "'Inter_Display:Medium', 'Inter Tight', sans-serif", fontWeight: 500, fontSize: 12, lineHeight: 1.25, padding: "4.653px 8.143px", borderRadius: 3, whiteSpace: "nowrap" }}
           >
             {t}
           </span>
@@ -199,7 +228,7 @@ function NavItem({ name, isActive, onClick }: { name: string; isActive: boolean;
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={(e) => { e.stopPropagation(); onClick(); }}
-      style={{ display: "block", ...NAV_FONT, textAlign: "center", color: "#ffffff", mixBlendMode: "exclusion", opacity: isActive || hovered ? 1 : 0.5, transition: "opacity 0.3s ease", whiteSpace: "nowrap", cursor: "pointer", pointerEvents: "auto", willChange: "opacity" }}
+      style={{ display: "block", ...NAV_FONT, textAlign: "center", color: isActive || hovered ? NAV_COLOR_ACTIVE : NAV_COLOR_IDLE, transition: "color 0.3s ease", whiteSpace: "nowrap", cursor: "pointer", pointerEvents: "auto" }}
     >
       {name}
     </span>
@@ -209,7 +238,10 @@ function NavItem({ name, isActive, onClick }: { name: string; isActive: boolean;
 // ── Top filter tabs ──────────────────────────────────────────────────────────
 function FilterTabs({ active, onPick }: { active: string; onPick: (f: string) => void }) {
   return (
-    <div className="pointer-events-auto absolute left-1/2 z-50 flex -translate-x-1/2 items-center gap-[6px]" style={{ top: 24 }}>
+    <div
+      className="cases-filters pointer-events-auto absolute left-1/2 z-50 flex max-w-[calc(100vw-24px)] -translate-x-1/2 flex-nowrap items-center justify-start gap-[6px] overflow-x-auto sm:justify-center sm:overflow-visible"
+      style={{ top: 24 }}
+    >
       {FILTERS.map((f) => {
         const on = f === active;
         return (
@@ -280,9 +312,21 @@ export default function Cases() {
     if (!root || !cards || !itemCount) return;
     const rootRect = root.getBoundingClientRect();
     const winH = Math.max(1, rootRect.width); // horizontal → scroll axis is X
-    const cardW = Math.max(1, cards.getBoundingClientRect().height); // cross axis
     winHRef.current = winH;
-    const cardH = cardW * (arH / arW); // scroll-axis length of a card
+
+    // The card is sized off the cross axis (height). On a landscape viewport that
+    // lands well, but on a portrait phone a 74%-of-height card is ~2.4× wider than
+    // the screen — it bleeds out and takes its name/tags label with it. So the
+    // cross axis is also capped by what the scroll axis can actually show.
+    let cardW = Math.max(1, rootRect.height * (CARD_CROSS_PCT / 100)); // cross axis
+    let cardH = cardW * (arH / arW); // scroll-axis length of a card
+    const maxCardH = winH * MAX_CARD_VIEWPORT_FRACTION;
+    if (cardH > maxCardH) {
+      cardH = maxCardH;
+      cardW = cardH * (arW / arH);
+    }
+    cards.style.height = `${cardW}px`;
+    cards.style.top = `${(rootRect.height - cardW) / 2}px`;
     const rowH = ADJACENT_SCALE * cardH + GAP - (ACTIVE_SCALE - 1) * cardH / 2;
     rowHRef.current = rowH;
     cardHRef.current = cardH;
@@ -462,7 +506,7 @@ export default function Cases() {
   }, []);
 
   return (
-    <section className="relative w-full overflow-hidden" style={{ height: "100dvh", background: SECTION_BG }}>
+    <section className="relative h-[62dvh] w-full overflow-hidden sm:h-[100dvh]" style={{ background: SECTION_BG }}>
       <style>{SHIMMER_CSS}</style>
 
       {/* Top filter tabs */}
@@ -476,7 +520,8 @@ export default function Cases() {
         style={{ position: "absolute", inset: 0, overflow: "hidden", touchAction: "pan-y", userSelect: "none", cursor: "grab" }}
       >
         {/* Card row — full width, vertically centered */}
-        <div ref={cardsRef} style={{ position: "absolute", left: 0, width: "100%", height: `${CARD_WIDTH}%`, top: `${(100 - CARD_WIDTH) / 2}%` }}>
+        {/* height/top are set by build() — it caps the card so it fits portrait too. */}
+        <div ref={cardsRef} style={{ position: "absolute", left: 0, width: "100%", height: `${CARD_CROSS_PCT}%`, top: `${(100 - CARD_CROSS_PCT) / 2}%` }}>
           {tiles.map((tile, i) => {
             const pi = tile.projectIndex;
             const isActiveCard = i === activeTileIndex;

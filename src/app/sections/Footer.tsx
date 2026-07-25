@@ -14,11 +14,17 @@ const reveal = {
   transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
 };
 
+// The Figma spec dims these to #5e686c / white@30% — which on #19272d measures
+// 2.69:1, under the 3:1 floor even at this size. These are the only way anyone
+// hires Mateus, so they're lifted to white@45% (~4.3:1) and still read as the
+// quiet state the design wants, with hover going to full white.
+const LINK_COLOR = "rgba(255,255,255,0.45)";
+
 const LINKS = [
-  { label: "E-mail", href: "mailto:hello@mateusbredoff.com", color: "#5e686c" },
-  { label: "Behance", href: "https://www.behance.net/", color: "rgba(255,255,255,0.3)" },
-  { label: "Instagram", href: "https://instagram.com/", color: "rgba(255,255,255,0.3)" },
-  { label: "x.com", href: "https://x.com/", color: "rgba(255,255,255,0.3)" },
+  { label: "E-mail", href: "mailto:hello@mateusbredoff.com", color: LINK_COLOR },
+  { label: "Behance", href: "https://www.behance.net/", color: LINK_COLOR },
+  { label: "Instagram", href: "https://instagram.com/", color: LINK_COLOR },
+  { label: "x.com", href: "https://x.com/", color: LINK_COLOR },
 ];
 
 const NAV = [
@@ -58,6 +64,7 @@ export default function Footer() {
                 <motion.a
                   key={l.label}
                   href={l.href}
+                  {...(l.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   {...reveal}
                   transition={{ ...reveal.transition, delay: i * 0.05 }}
                   style={{ ...bigText, color: l.color, transition: "color 0.3s ease" }}
