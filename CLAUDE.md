@@ -5,9 +5,58 @@ o site publicado em Framer (`mateusbredoff.framer.website`). O artboard escalado
 do Figma (`src/imports/Home.tsx`) foi **aposentado e removido** — cada seção hoje é um
 componente React responsivo de verdade.
 
+## Arquitetura de motion e scroll
+
+Dois sistemas, responsabilidade única, boot em ordem fixa — **scroll antes de
+motion**. Não existe sistema de navegação (Barba e afins): o site é uma página
+só, e roteador para uma rota é arquitetura sem função.
+
+```
+src/lib/lenis.ts          dono ÚNICO do scroll
+src/lib/gsap.ts           registro de plugins + defaults do projeto
+src/animations/reveal.ts  o gesto, sem saber que React existe
+src/hooks/useReveal.ts    ciclo de vida React → animação
+```
+
+Regras que este projeto já pagou para aprender:
+
+- **Um relógio só.** O Lenis anda no ticker do GSAP, nunca num `rAF` próprio, e
+  quem precisa da posição de scroll ouve o evento do Lenis — não
+  `window.scrollY`. O marquee nasceu com rAF próprio + `window.scrollY` e virou
+  defeito no instante em que o Lenis entrou.
+- **Guarde a referência do ticker.** `gsap.ticker.remove()` só funciona com a
+  mesma função que entrou no `add`; callback inline entra e nunca sai.
+- **Nunca `window.scrollTo`.** Use `scrollToTop()` de `lib/lenis.ts`.
+- **`document.fonts.ready` antes de qualquer SplitText.** As fontes são
+  self-hosted; se a webfont chega depois, as linhas foram medidas com a métrica
+  do fallback e a máscara corta no meio da altura-x.
+- **Texto splitado precisa de `aria-label` no pai + `aria-hidden` nas linhas**, e
+  de `revert()` no cleanup — sem isso o leitor de tela recita fragmentos e cada
+  remount empilha divs, matando a seleção de texto.
+- **O que é revelado começa oculto por `.js [data-reveal]`**, nunca por CSS puro:
+  se o bundle falhar, o texto tem que continuar legível.
+- `data-*` para hook de animação; classe é só estilo.
+
+### ⚠ `window.scrollTo` não dispara ScrollTrigger com Lenis no comando
+
+Vale para QUALQUER verificação deste repo. Com o scroll interpolado,
+`window.scrollTo` não move o Lenis, o ScrollTrigger não recebe update e o reveal
+fica congelado no estado inicial — o teste acusa "animação parada" num site que
+funciona. Role com `page.mouse.wheel`. Foi assim que o primeiro passe de
+verificação se enganou; `scripts/verify-motion.mjs` já tem o jeito certo.
+
+**Motion se prova medindo.** Leia a propriedade animada em vários instantes e
+mostre a série. Prova aceita para o reveal do título (scroll real, desktop):
+`136.2 → 91 → 59.2 → 35.3 → 16.3 → 8.2 → 3.3 → 0.8 → 0.1 → 0` — dez valores
+distintos, a desaceleração do `power3.out`. Dois valores só provariam um salto.
+
 ## Stack e comandos
 
-- Vite 6 + TypeScript + React 18 + Tailwind v4 (`@tailwindcss/vite`) + `motion` (Framer Motion)
+- Vite 6 + TypeScript + React 18 + Tailwind v4 (`@tailwindcss/vite`)
+- **GSAP 3.15** (ScrollTrigger + SplitText, ambos no pacote público desde a
+  3.13) + **Lenis** para scroll. `motion` (Framer Motion) ainda opera reveals
+  antigos em algumas seções — a migração para o reveal por máscara é gradual, e
+  seção nova já nasce no `useReveal`.
 - **pnpm** (`pnpm dev` → :5173, `pnpm build` → `dist/`)
 - Mora em `~/dev/mateus-bredoff` — **fora de `~/Documents`** de propósito: o iCloud
   despeja os arquivos e o dev server passa a dar ETIMEDOUT.
