@@ -18,27 +18,44 @@
 
   --mono: 'Martian Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --display: 'Inter_Display:Medium', 'Inter Tight', sans-serif;
+
+  /* UM acento, com coragem — e um só. O laranja queimado sai das próprias artes
+     dele (os relatórios do Votare, o dourado do Trivo) em vez de ser escolhido
+     de fora. Dois valores porque o mesmo tom não passa em AA nos dois fundos:
+     --accent é para tinta, --accent-ink é para papel. Usar com economia
+     assassina: numeral de registro em hover, colchete de ação, contagem de
+     seção. Nunca em bloco de texto, nunca dois acentos. */
+  --accent: #e4642f;       /* medido 5,45:1 sobre a tinta #131313 */
+  --accent-ink: #b8420f;   /* medido 4,62:1 sobre o papel #efebe3 */
 }
 
 @media (min-width: 768px) {
   :root { --gutter: 24px; }
 }
 
-/* Blocos de sangria. Trocam o par tinta/papel — os filhos só leem as vars. */
+/* Blocos de sangria. Trocam o par tinta/papel — os filhos só leem as vars.
+
+   O par era #ffffff / #000000 puro e o site ficava clínico: branco de tela de
+   login, preto sem matéria. Papel de verdade é off-white QUENTE e tinta de
+   verdade não é o zero absoluto. O deslocamento é pequeno em número e enorme em
+   sensação, e faz a página combinar com as artes — quase todas fotografadas em
+   fundo creme. Não volte para o branco puro. */
 .on-paper {
-  --bg: #ffffff;
-  --fg: #000000;
-  --dim: #6e6e6e;          /* 5,0:1 sobre branco */
-  --rule: rgba(0, 0, 0, 0.14);
+  --bg: #efebe3;           /* off-white quente */
+  --fg: #131313;
+  --dim: #6a665e;          /* medido 4,81:1 sobre o papel */
+  --rule: rgba(19, 19, 19, 0.16);
+  --acc: var(--accent-ink); /* o acento do bloco: cada fundo pede o seu */
   background: var(--bg);
   color: var(--fg);
 }
 
 .on-ink {
-  --bg: #000000;
-  --fg: #ffffff;
-  --dim: #8f8f8f;          /* 5,9:1 sobre preto */
-  --rule: rgba(255, 255, 255, 0.20);
+  --bg: #131313;
+  --fg: #f4f1ea;           /* off-white, não branco: a tinta não estoura */
+  --dim: #8d8880;          /* medido 5,28:1 sobre a tinta */
+  --rule: rgba(244, 241, 234, 0.22);
+  --acc: var(--accent);
   background: var(--bg);
   color: var(--fg);
 }
@@ -60,14 +77,22 @@
 .t-mono-12 { font-size: 12px; }
 
 /* Display: caixa alta, tracking apertado, entrelinha curta. O tamanho vem de
-   quem usa — a escala muda por seção, o desenho não. */
+   quem usa — a escala muda por seção, o desenho não.
+
+   `line-height` era 0.95 e o bloco tipográfico ficava frouxo: em display grande
+   a entrelinha tem que colar até as linhas virarem uma massa só. 0.86 é o ponto
+   em que o texto ainda respira sem os acentos baterem na linha de cima. */
 .t-display {
   font-family: var(--display);
   font-weight: 500;
-  line-height: 0.95;
-  letter-spacing: -0.04em;
+  line-height: 0.86;
+  letter-spacing: -0.045em;
   text-transform: uppercase;
 }
+
+/* Em corpo muito grande o tracking precisa fechar mais — o mesmo -0.045em que
+   funciona em 44px abre demais em 150px. */
+.t-display-xl { letter-spacing: -0.055em; }
 
 /* Corpo de texto. As referências reservam a caixa alta para rótulo e frase de
    efeito e escrevem parágrafo em caixa mista, 16px, na mesma grotesca. Caixa
@@ -103,9 +128,43 @@
 
 .bleed { padding-left: var(--gutter); padding-right: var(--gutter); }
 
+/* ── Grão ────────────────────────────────────────────────────────────────── */
+
+/* Ruído fixo sobre a página inteira. É o que tira o off-white do "chapado de
+   CSS" e o aproxima de papel — a mesma função do grão numa foto.
+
+   Sem `mix-blend-mode` de propósito: neste repo o blend já apagou texto duas
+   vezes ao cair dentro de stacking context. Um PNG/SVG de ruído em opacidade
+   muito baixa entrega o mesmo e não depende de contexto de composição.
+   `pointer-events: none` para não roubar clique, e `contain` para o overlay não
+   participar do layout. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0.055;
+  contain: strict;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain { opacity: 0.035; }
+}
+
 /* ── Estados ─────────────────────────────────────────────────────────────── */
 
 .dim { color: var(--dim); }
+.acc { color: var(--acc); }
+
+/* Registro cujo numeral acende no acento quando a linha está sob o cursor. É o
+   uso mais contido possível do acento: um numeral de 11px, só em hover. */
+.group:hover .idx-acc { color: var(--acc); }
+.idx-acc { transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .idx-acc { transition: none; }
+}
 
 .link-quiet {
   color: var(--dim);

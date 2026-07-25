@@ -1,10 +1,13 @@
 import { motion } from "motion/react";
 import { Mono, Rule, Bracket, reveal, revealDelay, idx, ease } from "../system";
 /*
- * As artes vêm do portfólio oficial dele (`behance.net/mateusbredoff`) e usam o
- * prefixo `art-`. Os arquivos `case-*` são do lote antigo e ficaram com o nome
- * CRUZADO na origem — `case-stag-*` é um livro com "FERRACI" impresso e
- * `case-ferraci-*` é arte do editorial Stag. Não os use sem conferir a imagem.
+ * Artes do portfólio oficial dele (`behance.net/mateusbredoff`), prefixo `art-`.
+ *
+ * O lote antigo usava `case-*` e vinha com o nome CRUZADO da origem: o arquivo
+ * chamado `case-stag` era o livro do Ferraci e o `case-ferraci` era o editorial
+ * Stag. Isso já trocou as duas peças no ar uma vez. Os `case-*` foram apagados e
+ * o livro renomeado para `art-ferraci-*` — a armadilha não existe mais, e não a
+ * recrie: nome de arquivo descreve o que a imagem MOSTRA.
  *
  * ⚠ Cada arte entra na SUA proporção nativa (medida no arquivo, não estimada).
  * Mudar o `ratio` sem trocar a arte corta ou deforma a peça.
@@ -19,7 +22,8 @@ import imgNeox from "../../assets/optimized/art-neox-1400.webp";
 import imgTrivo from "../../assets/optimized/art-trivo-1400.webp";
 import imgVotare from "../../assets/optimized/art-votare-1400.webp";
 import imgVotare2x from "../../assets/optimized/art-votare-2200.webp";
-import imgBentofolio from "../../assets/optimized/art-bentofolio-1400.webp";
+import imgFerraci from "../../assets/optimized/art-ferraci-1400.webp";
+import imgFerraci2x from "../../assets/optimized/art-ferraci-2200.webp";
 
 /**
  * Selected Work — índice escalonado, no lugar do carrossel.
@@ -33,8 +37,6 @@ import imgBentofolio from "../../assets/optimized/art-bentofolio-1400.webp";
  * O escalonamento vem de três colunas com recuos de topo diferentes, não de
  * posicionamento absoluto: colapsa sozinho para uma coluna no mobile e nunca
  * gera o card mais largo que a tela (a armadilha do carrossel antigo).
- *
- * Stag e Votare ainda reusam arte do Ferraci como placeholder.
  */
 
 type Project = {
@@ -128,13 +130,12 @@ const PROJECTS: Project[] = [
     fit: "cover",
   },
   {
-    name: "Bentofolio",
-    category: "Brand Systems",
-    tag: "Blink",
-    href: "https://www.behance.net/gallery/198045839/Bentofolio-2",
-    image: imgBentofolio,
-    srcSet: `${imgBentofolio} 1400w`,
-    ratio: "16 / 9",
+    name: "Ferraci",
+    category: "Editorial / Identity",
+    href: "https://www.behance.net/mateusbredoff",
+    image: imgFerraci,
+    srcSet: srcSetOf(imgFerraci, imgFerraci2x),
+    ratio: "1400 / 933",
     bg: "#0d0d0d",
     fit: "cover",
   },
@@ -203,7 +204,7 @@ function Piece({ project, index }: { project: Project; index: number }) {
             esquerda, colada no índice: é metadado do registro, não manchete. */}
         <div className="flex items-baseline justify-between gap-4 pt-2">
           <span className="flex items-baseline gap-2">
-            <Mono dim>{idx(index)}</Mono>
+            <Mono dim className="idx-acc">{idx(index)}</Mono>
             {project.tag ? (
               <Mono dim className="border border-current px-[0.4em] py-[0.1em] leading-none">
                 {project.tag}

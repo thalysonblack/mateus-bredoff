@@ -9,18 +9,19 @@ import { Mono, Rule, SectionHead, Bracket, reveal, revealDelay, idx } from "../s
  * que é o gesto certo num documento técnico — e não repete nem a pilha do
  * Capabilities nem a tabela com cabeçalho do AI Lab.
  *
- * ⚠ VALORES. `priceFrom` está null nos três porque preço é fato do cliente e
- * não se inventa — o Mateus precisa passar os três números. Enquanto for null a
- * seção mostra "On request", que é uma frase legítima; nunca um "R$ X.XXX"
- * quebrado no ar. Para ligar o valor real, troque null pelo número em reais:
+ * ⚠ VALORES. O US$ 2.500 do Essential NÃO foi inventado: é o preço que ele já
+ * publica na aba de serviços do Behance ("Visual Identity, de US$ 2.500"). Os
+ * outros dois seguem `null`, o que renderiza "On request" — uma frase legítima,
+ * em vez de um "R$ X.XXX" quebrado no ar. Quando o Mateus passar os dois valores
+ * que faltam, troque o `null` pelo número:
  *
- *     { ..., priceFrom: 4800 }   →   renderiza "from R$ 4.800"
+ *     { ..., priceFrom: 4800 }   →   renderiza "from $4,800"
  *
- * Se o posicionamento virar internacional, troque `CURRENCY` para "USD" — o
- * formatador acompanha.
+ * A moeda é USD porque o preço público dele é em dólar e o posicionamento é
+ * "working worldwide"; `CURRENCY` troca os dois de uma vez.
  */
 
-const CURRENCY: "BRL" | "USD" = "BRL";
+const CURRENCY: "BRL" | "USD" = "USD";
 
 const fmt = (v: number) =>
   new Intl.NumberFormat(CURRENCY === "BRL" ? "pt-BR" : "en-US", {
@@ -41,7 +42,7 @@ const TIERS: Tier[] = [
     name: "Essential",
     scope: "Logotype, palette, typography, mini-guide",
     timeline: "3 weeks",
-    priceFrom: null,
+    priceFrom: 2500,
   },
   {
     name: "Complete",
@@ -74,7 +75,7 @@ export default function Pricing() {
                 {/* Nome e preço nos cantos opostos, mesma linha de base */}
                 <div className="flex items-baseline justify-between gap-[clamp(1rem,4vw,4rem)]">
                   <span className="flex items-baseline gap-[clamp(1rem,3vw,3rem)]">
-                    <Mono dim className="shrink-0">
+                    <Mono dim className="idx-acc shrink-0">
                       {idx(i)}
                     </Mono>
                     <span

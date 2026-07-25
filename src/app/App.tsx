@@ -1,6 +1,7 @@
 import Intro from "./sections/Intro";
 import Hero from "./sections/Hero";
 import About from "./sections/About";
+import Marquee from "./sections/Marquee";
 import Work from "./sections/Work";
 import Capabilities from "./sections/Capabilities";
 import Pricing from "./sections/Pricing";
@@ -33,10 +34,14 @@ export default function App() {
       <Intro />
       <Hero />
       <About />
+      {/* passagem entre a apresentação e o índice — ver Marquee.tsx */}
+      <Marquee />
       <Work />
       <Capabilities />
       <Pricing />
       <Footer />
+      {/* grão por cima de tudo — ver .grain em styles/system.css */}
+      <div className="grain" aria-hidden="true" />
     </main>
   );
 }

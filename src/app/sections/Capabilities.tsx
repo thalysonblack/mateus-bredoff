@@ -36,7 +36,7 @@ export default function Capabilities() {
               >
                 {/* Índice ancorado no topo da linha, não na base do nome — é
                     onde as referências fixam a numeração do registro. */}
-                <Mono dim className="shrink-0">
+                <Mono dim className="idx-acc shrink-0">
                   {idx(i)}
                 </Mono>
                 <span
@@ -57,12 +57,17 @@ export default function Capabilities() {
           <Rule />
         </div>
 
-        {/* Chapa de imagem agrupada à direita, com legenda técnica */}
-        <motion.figure
-          {...reveal}
-          className="ml-auto mt-[clamp(2.5rem,5vw,4.5rem)] w-full md:w-[38%]"
-        >
-          <div className="w-full overflow-hidden bg-white/[0.06]" style={{ aspectRatio: "3 / 2" }}>
+        {/* Chapa em faixa larga, ancorada no bloco.
+            Antes era uma chapa 3:2 de 38% flutuando no canto direito, e ela lia
+            como imagem esquecida no meio de um campo preto: sem borda para se
+            apoiar, sem relação de largura com a lista acima. Agora ocupa a
+            largura inteira do bloco em formato de faixa (cinemascope), o que a
+            liga à tabela e faz a seção fechar em imagem em vez de em vazio. */}
+        <motion.figure {...reveal} className="mt-[clamp(2.5rem,5vw,4.5rem)] w-full">
+          <div
+            className="w-full overflow-hidden"
+            style={{ aspectRatio: "21 / 8", background: "rgba(244,241,234,0.06)" }}
+          >
             <img
               src={imgEditorial}
               alt="Editorial de identidade visual"
@@ -72,6 +77,7 @@ export default function Capabilities() {
               decoding="async"
               draggable={false}
               className="h-full w-full object-cover"
+              style={{ objectPosition: "center 42%" }}
             />
           </div>
           <figcaption className="flex items-baseline justify-between gap-4 pt-2">
