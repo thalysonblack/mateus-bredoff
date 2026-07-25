@@ -22,11 +22,17 @@
   /* UM acento, com coragem — e um só. O laranja queimado sai das próprias artes
      dele (os relatórios do Votare, o dourado do Trivo) em vez de ser escolhido
      de fora. Dois valores porque o mesmo tom não passa em AA nos dois fundos:
-     --accent é para tinta, --accent-ink é para papel. Usar com economia
+     --brand-accent é para tinta, --brand-accent-paper é para papel. Economia
      assassina: numeral de registro em hover, colchete de ação, contagem de
      seção. Nunca em bloco de texto, nunca dois acentos. */
-  --accent: #e4642f;       /* medido 5,45:1 sobre a tinta #131313 */
-  --accent-ink: #b8420f;   /* medido 4,62:1 sobre o papel #efebe3 */
+  /* ⚠ O PREFIXO `brand-` NÃO É ENFEITE. Estas variáveis já se chamaram
+     --accent / --accent-ink e o acento simplesmente não existia na tela: o
+     tema do Tailwind/shadcn em `theme.css` declara --accent (#e9ebef, um cinza
+     azulado) e vencia a nossa. O site rodou com "um acento com coragem" que
+     era, na prática, cinza. Ao criar token novo aqui, confira se o nome já é
+     usado por theme.css — a colisão falha em silêncio. */
+  --brand-accent: #e4642f;        /* medido 5,45:1 sobre a tinta #131313 */
+  --brand-accent-paper: #b8420f;  /* medido 4,62:1 sobre o papel #efebe3 */
 }
 
 @media (min-width: 768px) {
@@ -45,7 +51,7 @@
   --fg: #131313;
   --dim: #6a665e;          /* medido 4,81:1 sobre o papel */
   --rule: rgba(19, 19, 19, 0.16);
-  --acc: var(--accent-ink); /* o acento do bloco: cada fundo pede o seu */
+  --acc: var(--brand-accent-paper); /* o acento do bloco: cada fundo pede o seu */
   background: var(--bg);
   color: var(--fg);
 }
@@ -55,7 +61,7 @@
   --fg: #f4f1ea;           /* off-white, não branco: a tinta não estoura */
   --dim: #8d8880;          /* medido 5,28:1 sobre a tinta */
   --rule: rgba(244, 241, 234, 0.22);
-  --acc: var(--accent);
+  --acc: var(--brand-accent);
   background: var(--bg);
   color: var(--fg);
 }

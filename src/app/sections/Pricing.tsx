@@ -26,16 +26,16 @@ import { Mono, SectionHead, Bracket, reveal, revealDelay, idx } from "../system"
  *     { ..., priceFrom: 4800 }   →   renderiza "from $4,800"
  */
 
-const CURRENCY: "BRL" | "USD" = "USD";
+export const CURRENCY: "BRL" | "USD" = "USD";
 
-const fmt = (v: number) =>
+export const fmt = (v: number) =>
   new Intl.NumberFormat(CURRENCY === "BRL" ? "pt-BR" : "en-US", {
     style: "currency",
     currency: CURRENCY,
     maximumFractionDigits: 0,
   }).format(v);
 
-type Tier = {
+export type Tier = {
   name: string;
   /** Campo de tags — o escopo se lê de relance, sem virar parágrafo. */
   scope: string[];
@@ -47,7 +47,7 @@ type Tier = {
   featured?: boolean;
 };
 
-const TIERS: Tier[] = [
+export const TIERS: Tier[] = [
   {
     name: "Essential",
     scope: ["Logotype", "Colour palette", "Typography", "Mini-guide"],
