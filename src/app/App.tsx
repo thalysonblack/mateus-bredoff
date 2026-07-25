@@ -3,7 +3,6 @@ import Hero from "./sections/Hero";
 import About from "./sections/About";
 import Work from "./sections/Work";
 import Capabilities from "./sections/Capabilities";
-import AILab from "./sections/AILab";
 import Pricing from "./sections/Pricing";
 import Footer from "./sections/Footer";
 
@@ -15,15 +14,15 @@ import Footer from "./sections/Footer";
  * viradas — a hero escura foi descartada.
  *   Hero          papel
  *   About         papel
- *   Work          papel   — trabalho de cliente
- *   Capabilities  tinta   — primeira virada
- *   AI Lab        papel   — trabalho autoral, caderno separado
+ *   Work          papel   — todo o trabalho, num índice só
+ *   Capabilities  tinta   — a virada
  *   Pricing       tinta   ┐ o fecho é um bloco escuro contínuo:
  *   Contact       tinta   ┘ quanto custa → fala comigo
  *
- * A NARRATIVA é prova → autoral → serviço → preço → contato. O AI Lab entra
- * depois do Capabilities de propósito: ele é o argumento de que o "AI Creative"
- * da bio tem lastro, e vem melhor logo antes de pedir dinheiro.
+ * **Não existe seção separada para o lab de IA.** Ela existiu e foi removida:
+ * anunciar "fictional brands" enfraquecia o trabalho, e a lista classificava
+ * como ficção três projetos que estão publicados no Behance dele. A procedência
+ * agora é uma `tag` na legenda de cada peça dentro do `Work`.
  *
  * As primitivas do sistema vivem em ./system.tsx e os tokens em
  * ../styles/system.css. Seção nova usa as peças de lá; não recria a aparência.
@@ -36,7 +35,6 @@ export default function App() {
       <About />
       <Work />
       <Capabilities />
-      <AILab />
       <Pricing />
       <Footer />
     </main>

@@ -146,6 +146,37 @@ Figma usa (`font-['Geist:Regular']`, `Inter_Display:Medium`) estão declarados e
 `src/styles/fonts.css` apontando para os woff2 locais. Se aparecer nome de família novo
 no código, declare o alias lá também.
 
+## Portfólio oficial dele (fonte da verdade: `behance.net/mateusbredoff`)
+
+Levantado em 25/07/2026. **São oito projetos publicados**, e o site só mostra
+quatro — três deles com arte emprestada de outro projeto:
+
+| Projeto | id Behance |
+|---|---|
+| Bureau | 250723539 |
+| Alex Archer | 245777185 |
+| Stag Grid — Fashion Editorial | 243272967 |
+| Neox | 247842007 |
+| Trivo — Visual Identity | 230919699 |
+| Votare — Visual Identity | 237665389 |
+| Bentofolio® | 186007543 |
+| Bentofolio 2 | 198045839 |
+
+Fatos do perfil que **contradizem o site** e precisam de decisão:
+- O Behance o lista em **Germany** ("Senior Designer in Germany"), e o cabeçalho
+  dele diz "from Brazil working worldwide". O site afirma "based in Brazil" e
+  estampa `BRAZIL — GMT−3` no relógio da barra de metadados. Um dos dois está
+  errado — perguntar antes de mexer.
+- Ele **já publica preço**: serviço "Visual Identity, de US$ 2.500". O site
+  ainda diz "On request" nos três pacotes.
+- **Não existe projeto "Ferraci" no Behance.** O card `Ferraci` do site mostra a
+  arte do *Stag Grid* (máscara de cervo dourada) e o card `Stag` mostra um livro
+  com "FERRACI" impresso. Os arquivos em `src/assets/optimized/` estão com nome
+  cruzado na origem: `case-stag-*.webp` é o livro, `case-ferraci-*.webp` é o
+  cervo. Corrigir mapeando no código, não renomeando às cegas.
+- `Trivo` tem matéria publicada no **World Brand Design** — prova social que o
+  site não usa.
+
 ## Pendências de conteúdo (dependem do Mateus)
 
 - Links de contato são **placeholder**: `hello@mateusbredoff.com`, Behance/Instagram/x

@@ -1,11 +1,25 @@
 import { motion } from "motion/react";
 import { Mono, Rule, Bracket, reveal, revealDelay, idx, ease } from "../system";
-import imgFerraciGem from "../../assets/optimized/case-ferraci-1400.webp";
-import imgFerraciGem2x from "../../assets/optimized/case-ferraci-2200.webp";
-import imgTrivoCart from "../../assets/optimized/case-trivo-1400.webp";
-import imgTrivoCart2x from "../../assets/optimized/case-trivo-2200.webp";
-import imgFerraciBook from "../../assets/optimized/case-stag-1400.webp";
-import imgFerraciBook2x from "../../assets/optimized/case-stag-2200.webp";
+/*
+ * As artes vêm do portfólio oficial dele (`behance.net/mateusbredoff`) e usam o
+ * prefixo `art-`. Os arquivos `case-*` são do lote antigo e ficaram com o nome
+ * CRUZADO na origem — `case-stag-*` é um livro com "FERRACI" impresso e
+ * `case-ferraci-*` é arte do editorial Stag. Não os use sem conferir a imagem.
+ *
+ * ⚠ Cada arte entra na SUA proporção nativa (medida no arquivo, não estimada).
+ * Mudar o `ratio` sem trocar a arte corta ou deforma a peça.
+ */
+import imgStag from "../../assets/optimized/art-stag-1400.webp";
+import imgStag2x from "../../assets/optimized/art-stag-2200.webp";
+import imgBureau from "../../assets/optimized/art-bureau-1400.webp";
+import imgBureau2x from "../../assets/optimized/art-bureau-2200.webp";
+import imgAlexArcher from "../../assets/optimized/art-alexarcher-1400.webp";
+import imgAlexArcher2x from "../../assets/optimized/art-alexarcher-2200.webp";
+import imgNeox from "../../assets/optimized/art-neox-1400.webp";
+import imgTrivo from "../../assets/optimized/art-trivo-1400.webp";
+import imgVotare from "../../assets/optimized/art-votare-1400.webp";
+import imgVotare2x from "../../assets/optimized/art-votare-2200.webp";
+import imgBentofolio from "../../assets/optimized/art-bentofolio-1400.webp";
 
 /**
  * Selected Work — índice escalonado, no lugar do carrossel.
@@ -26,6 +40,10 @@ import imgFerraciBook2x from "../../assets/optimized/case-stag-2200.webp";
 type Project = {
   name: string;
   category: string;
+  /** Marca a procedência quando não é trabalho autoral dele. Ausente = autoral. */
+  tag?: string;
+  /** Case no Behance — as peças não abriam nada, e um índice que não abre irrita. */
+  href: string;
   image: string;
   srcSet: string;
   ratio: string;
@@ -35,59 +53,135 @@ type Project = {
 
 const srcSetOf = (small: string, large: string) => `${small} 1400w, ${large} 2200w`;
 
+/*
+ * O lab de IA não é uma seção separada.
+ *
+ * Ele já foi: uma seção "AI Lab" anunciando "fictional brands, built to test
+ * ideas". Duas coisas estavam erradas. Primeiro, dizer que o trabalho é fictício
+ * enfraquece o portfólio — o visitante não precisa dessa ressalva, e ela vira a
+ * primeira coisa que ele lê sobre aquelas peças. Segundo, a lista estava errada:
+ * Bureau, Alex Archer e Neox são **projetos publicados no Behance dele**, e eu
+ * os havia classificado como ficção.
+ *
+ * Agora tudo vive no mesmo índice, e a procedência entra como `tag` discreta na
+ * legenda — informação, não desculpa.
+ */
 const PROJECTS: Project[] = [
   {
-    name: "Stag",
-    category: "Visual Identity",
-    image: imgFerraciBook,
-    srcSet: srcSetOf(imgFerraciBook, imgFerraciBook2x),
-    ratio: "3 / 4",
+    name: "Stag Grid",
+    category: "Fashion Editorial",
+    href: "https://www.behance.net/gallery/243272967/Stag-Grid-Fashion-Editorial",
+    image: imgStag,
+    srcSet: srcSetOf(imgStag, imgStag2x),
+    ratio: "2800 / 2253",
+    bg: "#e9e6df",
+    fit: "cover",
+  },
+  {
+    name: "Bureau",
+    category: "Electronic Music",
+    href: "https://www.behance.net/gallery/250723539/Bureau",
+    image: imgBureau,
+    srcSet: srcSetOf(imgBureau, imgBureau2x),
+    ratio: "16 / 9",
     bg: "#0d0d0d",
+    fit: "cover",
+  },
+  {
+    name: "Neox",
+    category: "Technical Apparel",
+    href: "https://www.behance.net/gallery/247842007/Neox",
+    image: imgNeox,
+    srcSet: `${imgNeox} 1400w`,
+    ratio: "1920 / 2280",
+    bg: "#f4f5f7",
     fit: "cover",
   },
   {
     name: "Trivo",
     category: "Visual Identity / 3D",
-    image: imgTrivoCart,
-    srcSet: srcSetOf(imgTrivoCart, imgTrivoCart2x),
-    ratio: "4 / 3",
+    href: "https://www.behance.net/gallery/230919699/Trivo-Visual-Identity",
+    image: imgTrivo,
+    srcSet: `${imgTrivo} 1400w`,
+    ratio: "1920 / 1275",
     bg: "#000000",
     fit: "cover",
   },
   {
-    name: "Ferraci",
-    category: "Visual Identity / 3D",
-    image: imgFerraciGem,
-    srcSet: srcSetOf(imgFerraciGem, imgFerraciGem2x),
-    ratio: "1 / 1",
-    bg: "linear-gradient(150deg,#c79a6a 0%,#e8d4b8 55%,#f5ead8 100%)",
-    fit: "contain",
+    name: "Alex Archer",
+    category: "Brand Identity",
+    href: "https://www.behance.net/gallery/245777185/Alex-Archer",
+    image: imgAlexArcher,
+    srcSet: srcSetOf(imgAlexArcher, imgAlexArcher2x),
+    ratio: "2800 / 2255",
+    bg: "#0d0d0d",
+    fit: "cover",
   },
   {
     name: "Votare",
-    category: "Packaging",
-    image: imgFerraciBook,
-    srcSet: srcSetOf(imgFerraciBook, imgFerraciBook2x),
-    ratio: "16 / 11",
+    category: "Civic Identity",
+    href: "https://www.behance.net/gallery/237665389/Votare-Visual-Identity",
+    image: imgVotare,
+    srcSet: srcSetOf(imgVotare, imgVotare2x),
+    ratio: "4 / 3",
+    bg: "#f1f0ec",
+    fit: "cover",
+  },
+  {
+    name: "Bentofolio",
+    category: "Brand Systems",
+    tag: "Blink",
+    href: "https://www.behance.net/gallery/198045839/Bentofolio-2",
+    image: imgBentofolio,
+    srcSet: `${imgBentofolio} 1400w`,
+    ratio: "16 / 9",
     bg: "#0d0d0d",
     fit: "cover",
   },
 ];
 
 /* Cada coluna desce um tanto diferente — é daí que vem o desencontro. Os
-   valores são em vw para o escalonamento acompanhar a escala da página.
-   A segunda peça vai na coluna do meio, que carrega o item mais baixo (4:3):
-   pendurada na primeira, que tem o retrato 3:4, ela abria um vão no miolo. */
-const COLUMNS: { items: number[]; offset: string }[] = [
-  { items: [0], offset: "0vw" },
-  { items: [1, 3], offset: "9vw" },
-  { items: [2], offset: "3vw" },
-];
+   valores são em vw para o escalonamento acompanhar a escala da página. */
+const COLUMN_OFFSETS = ["0vw", "9vw", "3vw"];
+
+/*
+ * Distribuição por coluna mais curta, não por índice.
+ *
+ * Duas tentativas anteriores falharam. Índices escritos à mão (`[0]`, `[1,3]`,
+ * `[2]`) apontaram para item inexistente no dia em que a lista mudou de tamanho.
+ * Round-robin não quebra, mas ignora que as peças têm proporções diferentes: com
+ * 7 itens ele empilhou 3 na primeira coluna e 2 nas outras, e como as artes
+ * variam de 16:9 a 5:6 sobrou um vão morto de quase uma tela à direita.
+ *
+ * Aqui cada peça vai para a coluna mais curta no momento, e a altura é estimada
+ * pela proporção (altura ∝ largura / ratio) + a folga da legenda. É o mesmo
+ * raciocínio de um masonry, resolvido no build em vez de no cliente.
+ */
+const ratioOf = (r: string) => {
+  const [w, h] = r.split("/").map((v) => parseFloat(v.trim()));
+  return w / h;
+};
+
+const COLUMNS = (() => {
+  const cols = COLUMN_OFFSETS.map((offset) => ({ offset, items: [] as number[], height: 0 }));
+  PROJECTS.forEach((p, i) => {
+    const target = cols.reduce((a, b) => (b.height < a.height ? b : a));
+    target.items.push(i);
+    target.height += 1 / ratioOf(p.ratio) + 0.12; // 0.12 ≈ legenda + respiro
+  });
+  return cols;
+})();
 
 function Piece({ project, index }: { project: Project; index: number }) {
   return (
     <motion.article {...revealDelay(index, 0.08)} className="group mb-[clamp(2.5rem,5vw,5rem)]">
-      <a href="#work" className="block" aria-label={`${project.name} — ${project.category}`}>
+      <a
+        href={project.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block"
+        aria-label={`${project.name} — ${project.category} (abre no Behance)`}
+      >
         <div
           className="w-full overflow-hidden"
           style={{ aspectRatio: project.ratio, background: project.bg }}
@@ -105,9 +199,17 @@ function Piece({ project, index }: { project: Project; index: number }) {
           />
         </div>
 
-        {/* Legenda técnica, na largura da peça */}
+        {/* Legenda técnica, na largura da peça. A tag de procedência entra à
+            esquerda, colada no índice: é metadado do registro, não manchete. */}
         <div className="flex items-baseline justify-between gap-4 pt-2">
-          <Mono dim>{idx(index)}</Mono>
+          <span className="flex items-baseline gap-2">
+            <Mono dim>{idx(index)}</Mono>
+            {project.tag ? (
+              <Mono dim className="border border-current px-[0.4em] py-[0.1em] leading-none">
+                {project.tag}
+              </Mono>
+            ) : null}
+          </span>
           <Mono className="text-right">
             {project.name}
             <span className="dim">{` / ${project.category}`}</span>

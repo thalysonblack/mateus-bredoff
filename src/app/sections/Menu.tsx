@@ -33,7 +33,6 @@ function useBrazilClock() {
 
 const NAV = [
   { label: "Work", href: "#work" },
-  { label: "Lab", href: "#lab" },
   { label: "Pricing", href: "#pricing" },
   { label: "About", href: "#about" },
   { label: "Contact", href: "#contact" },

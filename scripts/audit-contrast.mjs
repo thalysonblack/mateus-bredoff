@@ -95,13 +95,25 @@ for (const vp of VIEWPORTS) {
   const page = await browser.newPage();
   await page.setViewport(vp);
   await page.goto(URL, { waitUntil: 'networkidle0', timeout: 60000 });
-  // desliga entrada animada: mede o estado final, não o meio do fade
+  /*
+   * Força o estado final da revelação em vez de esperar por ela.
+   *
+   * Framer Motion mantém `initial: {opacity: 0}` como STYLE INLINE e só resolve
+   * quando o elemento entra na viewport com `amount: 0.35`. Esperar não é
+   * confiável: se o scroll deixa o nó parcialmente visível, o reveal nunca
+   * dispara e o recorte mede um retângulo vazio — foi o que reprovou 94 de 119
+   * nós como "invisíveis" quando eles estão perfeitamente legíveis na tela.
+   *
+   * `opacity: 1 !important` no CSS vence style inline sem `!important`, então
+   * isto destrava tudo de uma vez. Só a opacidade: mexer em `transform` também
+   * moveria layout que depende dele, e a caixa é re-lida depois de qualquer forma.
+   */
   await page.evaluate(() => {
     const s = document.createElement('style');
-    s.textContent = `*,*::before,*::after{animation:none!important;transition:none!important}`;
+    s.textContent = `*,*::before,*::after{opacity:1!important;animation:none!important;transition:none!important}`;
     document.head.appendChild(s);
   });
-  await new Promise((r) => setTimeout(r, 4000));
+  await new Promise((r) => setTimeout(r, 2500));
 
   const nodes = await page.evaluate(() => {
     const out = [];
