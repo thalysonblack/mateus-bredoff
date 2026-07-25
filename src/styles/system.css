@@ -128,6 +128,62 @@
 
 .bleed { padding-left: var(--gutter); padding-right: var(--gutter); }
 
+/* ── Reveal por máscara ──────────────────────────────────────────────────── */
+
+/* O que vai ser revelado começa invisível — mas SÓ se houver JS para revelar.
+   `visibility` em vez de `opacity` porque o elemento não deve receber clique nem
+   entrar na seleção antes de existir; e `visibility` é o que o `autoAlpha` do
+   GSAP devolve ao animar.
+
+   ⚠ Sem a dependência de `.js` isto viraria texto permanentemente invisível se o
+   bundle falhar — o modo de falha mais caro que existe numa página de conteúdo. */
+.js [data-reveal] {
+  visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Quem pediu para não ter movimento não espera o reveal para poder ler. */
+  .js [data-reveal] {
+    visibility: visible;
+  }
+}
+
+/* As linhas que o SplitText cria. `will-change` só durante a entrada seria o
+   ideal, mas o plugin não expõe o fim por linha — em texto curto o custo de
+   manter a promoção é menor que o do salto de camada no meio da animação. */
+.reveal-line {
+  will-change: transform;
+}
+
+/* ── Texto corrido em colunas ────────────────────────────────────────────── */
+
+/* Corpo que transborda de uma coluna para a outra, como jornal. Serve para o
+   texto ler como UM bloco em vez de dois — ver o comentário em About.tsx.
+
+   `column-fill: balance` mantém as duas colunas com altura parecida; sem isso o
+   Safari enche a primeira até o fim e deixa a segunda com duas linhas.
+   O `orphans/widows` evita a linha solta no pé da coluna, que é o defeito que
+   entrega texto em coluna mal feito. */
+.about-flow {
+  columns: 2;
+  column-gap: clamp(2rem, 5vw, 6rem);
+  column-fill: balance;
+  orphans: 2;
+  widows: 2;
+}
+
+.about-flow > p + p {
+  margin-top: 1.15em;
+}
+
+/* Uma coluna no mobile: 2 colunas em 390px dão ~20 caracteres por linha, que é
+   ilegível — e o texto "junto" viraria uma escada. */
+@media (max-width: 767px) {
+  .about-flow {
+    columns: 1;
+  }
+}
+
 /* ── Grão ────────────────────────────────────────────────────────────────── */
 
 /* Ruído fixo sobre a página inteira. É o que tira o off-white do "chapado de

@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { Mono, Rule, Bracket, reveal, revealDelay, idx, ease } from "../system";
+import { useReveal } from "../../hooks/useReveal";
 /*
  * Artes do portfólio oficial dele (`behance.net/mateusbredoff`), prefixo `art-`.
  *
@@ -222,6 +223,8 @@ function Piece({ project, index }: { project: Project; index: number }) {
 }
 
 export default function Work() {
+  const titleRef = useReveal<HTMLHeadingElement>();
+
   return (
     <section id="work" className="on-paper w-full">
       <div className="bleed pt-[clamp(3rem,7vw,7rem)]">
@@ -229,14 +232,22 @@ export default function Work() {
 
         {/* Cabeça: título gigante com a contagem sobrescrita + ação à direita */}
         <div className="flex items-start justify-between gap-6 pb-[clamp(2.5rem,6vw,5rem)] pt-3">
-          <motion.h2
-            {...reveal}
-            className="t-display"
-            style={{ fontSize: "clamp(2.5rem, 8.4vw, 148px)", lineHeight: 0.9 }}
+          {/* Reveal por máscara de linha — ver animations/reveal.ts.
+              A contagem sai do <h2> e vira irmã: dentro do elemento splitado ela
+              entraria como parte da linha e subiria junto com o texto, quando o
+              certo é ela já estar lá, quieta, como metadado. */}
+          <h2
+            ref={titleRef}
+            data-reveal
+            className="t-display t-display-xl"
+            style={{ fontSize: "clamp(2.5rem, 9vw, 176px)" }}
           >
             Selected Work
-            <Mono className="ml-[0.35em] align-top dim">[{PROJECTS.length}]</Mono>
-          </motion.h2>
+          </h2>
+
+          <Mono dim className="shrink-0 self-start pt-2">
+            [{PROJECTS.length}]
+          </Mono>
 
           <motion.a
             {...reveal}

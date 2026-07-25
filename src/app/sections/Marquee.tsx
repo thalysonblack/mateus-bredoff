@@ -1,4 +1,6 @@
 import { useEffect, useRef } from "react";
+import { gsap, prefersReducedMotion } from "../../lib/gsap";
+import { getLenis } from "../../lib/lenis";
 import { Mono } from "../system";
 import imgStag from "../../assets/optimized/art-stag-1400.webp";
 import imgBureau from "../../assets/optimized/art-bureau-1400.webp";
@@ -47,38 +49,59 @@ export default function Marquee() {
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion()) return;
 
-    let raf = 0;
+    /*
+     * Anda no ticker do GSAP, não num rAF próprio.
+     *
+     * A primeira versão tinha `requestAnimationFrame` interno e lia
+     * `window.scrollY`. Isso passou a ser um defeito no momento em que o Lenis
+     * entrou: dois relógios independentes escrevendo transform em instantes
+     * diferentes, e uma leitura de scroll (`window.scrollY`) que não é a mesma
+     * que o Lenis está interpolando — o resultado é micro-tremor na tira e
+     * deriva entre o que a página mostra e o que este cálculo acha que mostra.
+     *
+     * Agora existe um relógio só (o ticker), e o deslocamento por scroll vem do
+     * evento do Lenis, que é a fonte da verdade do scroll.
+     */
     let offset = 0;
-    let lastT = performance.now();
-    let lastScroll = window.scrollY;
     let half = track.scrollWidth / 2;
+    let scrollDelta = 0;
 
     const remeasure = () => {
       half = track.scrollWidth / 2;
     };
     window.addEventListener("resize", remeasure);
 
-    const tick = (t: number) => {
-      const dt = Math.min(64, t - lastT) / 1000; // clamp: aba oculta devolve dt gigante
-      lastT = t;
+    const lenis = getLenis();
+    let lastScroll = lenis ? lenis.scroll : window.scrollY;
 
-      const scroll = window.scrollY;
-      const dScroll = scroll - lastScroll;
+    const onScroll = ({ scroll }: { scroll: number }) => {
+      scrollDelta += scroll - lastScroll;
       lastScroll = scroll;
+    };
+    /* Sem Lenis (movimento reduzido, ou falha na init) a tira ainda deriva — só
+       não responde ao scroll. Degrada, não quebra. */
+    lenis?.on("scroll", onScroll);
 
-      offset += DRIFT * dt + dScroll * SCROLL_FACTOR;
+    const tick = () => {
+      /* `gsap.ticker.deltaRatio()` já normaliza para 60fps e não estoura quando
+         a aba volta de oculta — era o que o clamp manual de 64ms tentava fazer. */
+      const dt = gsap.ticker.deltaRatio(60) / 60;
+
+      offset += DRIFT * dt + scrollDelta * SCROLL_FACTOR;
+      scrollDelta = 0;
+
       // A tira é duplicada: ao passar de metade, volta ao começo sem salto visível.
       if (half > 0) offset = ((offset % half) + half) % half;
 
       track.style.transform = `translate3d(${-offset}px,0,0)`;
-      raf = requestAnimationFrame(tick);
     };
-    raf = requestAnimationFrame(tick);
+    gsap.ticker.add(tick);
 
     return () => {
-      cancelAnimationFrame(raf);
+      gsap.ticker.remove(tick); // mesma referência que entrou — senão não sai
+      lenis?.off("scroll", onScroll);
       window.removeEventListener("resize", remeasure);
     };
   }, []);

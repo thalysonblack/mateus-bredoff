@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import { initLenis, destroyLenis } from "../lib/lenis";
+import { ScrollTrigger } from "../lib/gsap";
 import Intro from "./sections/Intro";
 import Hero from "./sections/Hero";
 import About from "./sections/About";
@@ -29,6 +32,30 @@ import Footer from "./sections/Footer";
  * ../styles/system.css. Seção nova usa as peças de lá; não recria a aparência.
  */
 export default function App() {
+  /*
+   * Ordem de boot: scroll primeiro, motion depois. O Lenis precisa existir antes
+   * de qualquer ScrollTrigger, senão os triggers se registram medindo o scroll
+   * nativo e ficam dessincronizados do scroll interpolado.
+   *
+   * Não há sistema de navegação (Barba e afins): o site é uma página só. Instalar
+   * roteador para uma rota é arquitetura sem função.
+   */
+  useEffect(() => {
+    initLenis();
+
+    /* As imagens entram com `loading="lazy"`; quando cada uma decodifica, a
+       altura do documento muda e todo trigger abaixo dela passa a apontar para
+       a posição errada. `refresh()` no load recalcula depois que tudo assentou. */
+    const onLoad = () => ScrollTrigger.refresh();
+    window.addEventListener("load", onLoad);
+
+    return () => {
+      window.removeEventListener("load", onLoad);
+      ScrollTrigger.getAll().forEach((t) => t.kill());
+      destroyLenis();
+    };
+  }, []);
+
   return (
     <main className="antialiased">
       <Intro />

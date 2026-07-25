@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
-import { Mono, Rule, SectionHead, reveal, revealDelay, idx } from "../system";
+import { useReveal } from "../../hooks/useReveal";
+import { Mono, Rule, SectionHead, reveal, idx } from "../system";
 
 /**
  * About — a frase-manifesto em caixa alta gigante, seguida do texto de
@@ -29,35 +30,54 @@ const RECORDS = [
 ];
 
 export default function About() {
+  const manifestoRef = useReveal<HTMLParagraphElement>();
+
   return (
     <section id="about" className="on-paper w-full">
       <div className="bleed pt-[clamp(3rem,7vw,7rem)]">
         <SectionHead left="About" right="Statement" />
 
-        {/* Manifesto — o tipo enche a largura, alinhado à esquerda, bandeira à direita */}
-        <motion.p
-          {...reveal}
-          className="t-display pb-[clamp(3rem,7vw,7rem)]"
-          style={{ fontSize: "clamp(1.75rem, 5.15vw, 92px)", lineHeight: 0.98 }}
+        {/* Manifesto — o tipo enche a largura, alinhado à esquerda, bandeira à
+            direita. Reveal por máscara de linha (não fade): as linhas sobem por
+            trás do corte, que é o gesto-base de cópia do sistema.
+            `lineHeight` sai do inline e passa a herdar o 0.86 de .t-display —
+            o 0.98 que estava aqui furava a escala do sistema. */}
+        <p
+          ref={manifestoRef}
+          data-reveal
+          className="t-display t-display-xl pb-[clamp(3rem,7vw,7rem)]"
+          style={{ fontSize: "clamp(1.75rem, 5.15vw, 92px)" }}
         >
           I&rsquo;m a multidisciplinary designer focused on visual identities, based in Brazil and
           working worldwide.
-        </motion.p>
+        </p>
 
-        {/* Bloco único: as duas metades da ideia lado a lado, o fio só emoldura */}
+        {/*
+          Texto CORRIDO, não duas colunas de grade.
+
+          Terceira tentativa nesta seção, e as duas primeiras erraram pelo mesmo
+          motivo: tratar os dois parágrafos como itens. Registros de tabela
+          separados por fio leram como coisas sem relação; grade de duas colunas
+          resolveu o fio mas manteve dois blocos com um vão no meio.
+
+          Aqui é `columns` do CSS: um único bloco de texto que TRANSBORDA de uma
+          coluna para a outra, como corpo de jornal. O olho lê uma coisa só — e o
+          rótulo vira lead-in na primeira linha do parágrafo, em vez de
+          cabeçalho de coluna. É por isso que não há `<div>` por registro.
+        */}
         <Rule />
-        <div className="grid grid-cols-1 gap-x-[clamp(2rem,5vw,6rem)] gap-y-[clamp(2.5rem,5vw,3.5rem)] py-[clamp(2rem,4vw,3.5rem)] md:grid-cols-2">
+        <motion.div
+          {...reveal}
+          className="about-flow py-[clamp(2rem,4vw,3.5rem)]"
+        >
           {RECORDS.map((r, i) => (
-            <motion.div key={r.title} {...revealDelay(i)}>
-              <div className="flex items-baseline gap-[clamp(1rem,2vw,2rem)] pb-[clamp(0.875rem,1.5vw,1.25rem)]">
-                <Mono dim>{idx(i)}</Mono>
-                <Mono>{r.title}</Mono>
-              </div>
-              {/* sem max-width em ch: a coluna da grade já é a medida */}
-              <p className="t-body">{r.body}</p>
-            </motion.div>
+            <p key={r.title} className="t-body">
+              <Mono dim className="mr-[0.6em]">{idx(i)}</Mono>
+              <Mono className="mr-[0.6em]">{r.title}</Mono>
+              {r.body}
+            </p>
           ))}
-        </div>
+        </motion.div>
         <Rule />
       </div>
     </section>
