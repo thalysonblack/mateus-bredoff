@@ -1,51 +1,89 @@
 import { useEffect } from "react";
-import { initLenis, destroyLenis } from "../lib/lenis";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router";
+import { initLenis, destroyLenis, scrollToTop } from "../lib/lenis";
 import { ScrollTrigger } from "../lib/gsap";
-import Intro from "./sections/Intro";
-import Hero from "./sections/Hero";
-import About from "./sections/About";
-import Marquee from "./sections/Marquee";
-import Work from "./sections/Work";
-import Capabilities from "./sections/Capabilities";
-import Pricing from "./sections/Pricing";
-import Footer from "./sections/Footer";
+import Menu from "./sections/Menu";
+import Home from "./pages/Home";
+import WorkIndex from "./pages/WorkIndex";
+import CaseStudy from "./pages/CaseStudy";
 
 /**
- * Mateus Bredoff — direção editorial.
+ * Mateus Bredoff — direção editorial, agora multi-página.
  *
- * O ritmo da página é o das referências (TITARVL / WIDE ANGLE® / All In®):
- * blocos de sangria a sangria, sem meio-tom. O papel domina e a tinta marca as
- * viradas — a hero escura foi descartada.
- *   Hero          papel
- *   About         papel
- *   Work          papel   — todo o trabalho, num índice só
- *   Capabilities  tinta   — a virada
- *   Pricing       tinta   ┐ o fecho é um bloco escuro contínuo:
- *   Contact       tinta   ┘ quanto custa → fala comigo
+ * O site espelha a estrutura do CMS dele: `/`, `/work` e `/work/:slug`. O
+ * roteador entrou quando o levantamento do sitemap mostrou nove rotas — antes
+ * disso o projeto era uma página só, e um roteador para uma rota seria
+ * arquitetura sem função.
  *
- * **Não existe seção separada para o lab de IA.** Ela existiu e foi removida:
- * anunciar "fictional brands" enfraquecia o trabalho, e a lista classificava
- * como ficção três projetos que estão publicados no Behance dele. A procedência
- * agora é uma `tag` na legenda de cada peça dentro do `Work`.
+ * Os cases NÃO têm um componente por projeto: `CaseStudy` resolve o slug contra
+ * a coleção em `content/work.ts`, que é a fonte única lida também pela home e
+ * pelo índice.
  *
- * As primitivas do sistema vivem em ./system.tsx e os tokens em
- * ../styles/system.css. Seção nova usa as peças de lá; não recria a aparência.
+ * As primitivas vivem em ./system.tsx e os tokens em ../styles/system.css.
  */
+
+/**
+ * Ciclo de vida de rota — a parte que sempre esquece e depois dá bug fantasma.
+ *
+ * Três coisas obrigatórias a cada navegação:
+ *  1. **Matar os ScrollTriggers da página que saiu.** Trigger órfão continua
+ *     medindo posições de um DOM que não existe mais e a nova página herda
+ *     animações que nunca disparam (ou disparam na hora errada).
+ *  2. **Ir ao topo pelo Lenis**, nunca por `window.scrollTo` — com o scroll
+ *     interpolado, `scrollTo` não move nada.
+ *  3. **`refresh()` depois que a nova montou**, senão todo trigger da página
+ *     nova nasce medindo a altura do documento antigo.
+ */
+function RouteLifecycle() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    ScrollTrigger.getAll().forEach((t) => t.kill());
+    scrollToTop(true);
+
+    /* Dois frames: um para o React pintar a rota nova, outro para o layout
+       assentar antes de medir. */
+    const raf = requestAnimationFrame(() =>
+      requestAnimationFrame(() => ScrollTrigger.refresh()),
+    );
+    return () => cancelAnimationFrame(raf);
+  }, [pathname]);
+
+  return null;
+}
+
+function Layout({ children }: { children: React.ReactNode }) {
+  const { pathname } = useLocation();
+  /* Na home a barra de metadados vive DENTRO do Hero, participando do flex
+     daquela composição — que está aprovada. Repeti-la aqui duplicaria a barra;
+     movê-la para cá mudaria a home. Então o Layout só a monta nas rotas
+     internas. */
+  const isHome = pathname === "/";
+
+  return (
+    <main className="antialiased">
+      <RouteLifecycle />
+      {!isHome ? (
+        <div className="on-paper w-full">
+          <Menu />
+        </div>
+      ) : null}
+      {children}
+      {/* grão por cima de tudo — ver .grain em styles/system.css */}
+      <div className="grain" aria-hidden="true" />
+    </main>
+  );
+}
+
 export default function App() {
-  /*
-   * Ordem de boot: scroll primeiro, motion depois. O Lenis precisa existir antes
-   * de qualquer ScrollTrigger, senão os triggers se registram medindo o scroll
-   * nativo e ficam dessincronizados do scroll interpolado.
-   *
-   * Não há sistema de navegação (Barba e afins): o site é uma página só. Instalar
-   * roteador para uma rota é arquitetura sem função.
-   */
+  /* Boot: scroll primeiro, motion depois. O Lenis precisa existir antes de
+     qualquer ScrollTrigger, senão os triggers se registram medindo o scroll
+     nativo e ficam dessincronizados do interpolado. */
   useEffect(() => {
     initLenis();
 
-    /* As imagens entram com `loading="lazy"`; quando cada uma decodifica, a
-       altura do documento muda e todo trigger abaixo dela passa a apontar para
-       a posição errada. `refresh()` no load recalcula depois que tudo assentou. */
+    /* Imagem `lazy` muda a altura do documento ao decodificar e desloca todo
+       trigger abaixo dela. */
     const onLoad = () => ScrollTrigger.refresh();
     window.addEventListener("load", onLoad);
 
@@ -57,18 +95,17 @@ export default function App() {
   }, []);
 
   return (
-    <main className="antialiased">
-      <Intro />
-      <Hero />
-      <About />
-      {/* passagem entre a apresentação e o índice — ver Marquee.tsx */}
-      <Marquee />
-      <Work />
-      <Capabilities />
-      <Pricing />
-      <Footer />
-      {/* grão por cima de tudo — ver .grain em styles/system.css */}
-      <div className="grain" aria-hidden="true" />
-    </main>
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/work" element={<WorkIndex />} />
+          <Route path="/work/:slug" element={<CaseStudy />} />
+          {/* Slug inexistente cai no próprio CaseStudy, que trata o 404 com a
+              linguagem do site em vez de tela branca. */}
+          <Route path="*" element={<CaseStudy />} />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
   );
 }

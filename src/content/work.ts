@@ -1,0 +1,192 @@
+/**
+ * Coleção de trabalho — a fonte ÚNICA dos cases.
+ *
+ * No Framer, `/work` é uma coleção de CMS e cada case é um item; aqui é este
+ * arquivo. Home, índice `/work` e página `/work/:slug` leem todos daqui, então
+ * não existe a possibilidade de o índice e a página discordarem.
+ *
+ * **Adicionar um case custa uma entrada neste array** — nenhum arquivo novo,
+ * nenhuma rota nova. Foi por isso que não se fez um componente de página por
+ * case: seis páginas quase iguais divergem no primeiro ajuste.
+ *
+ * O schema abaixo não foi inventado: são os rótulos que o CMS dele expõe em
+ * toda página de item — About, Type, Year, Credits. Se um dia virar Sanity ou
+ * Payload, estes campos viram o schema da coleção e a migração é mecânica.
+ *
+ * ⚠ CADA IMAGEM CARREGA SUA DIMENSÃO MEDIDA (`w`/`h`, lidas do arquivo com
+ * `sips`, não estimadas). É o que permite reservar a caixa na proporção nativa
+ * antes de a imagem carregar — sem layout shift e sem nada esticado. Se entrar
+ * arte nova, MEÇA; não chute o par.
+ */
+
+export type WorkImage = {
+  /** srcset por largura: 1400/2200 quando a origem permite, nativa quando é menor. */
+  src: string;
+  src2x?: string;
+  w: number;
+  h: number;
+  alt: string;
+};
+
+export type WorkItem = {
+  slug: string;
+  title: string;
+  year: number;
+  /** "Type" no CMS dele. */
+  disciplines: string[];
+  credits: { name: string; role: string }[];
+  /** "About": parágrafos do corpo. Vazio = texto ainda não escrito (ver `contentPending`). */
+  about: string[];
+  cover: WorkImage;
+  images: WorkImage[];
+  behanceUrl?: string;
+  /**
+   * O texto deste case não existe ainda no material do cliente.
+   *
+   * No Framer publicado, quatro dos seis cases estão com LOREM IPSUM visível e
+   * um está totalmente vazio — só o Alex Archer tem texto escrito. Portar aquilo
+   * seria trocar de tecnologia mantendo o defeito, e escrever por conta própria
+   * seria inventar a narrativa dos projetos dele. Enquanto isto for `true`, a
+   * página mostra o trabalho (imagem + metadados) e omite o corpo de texto, em
+   * vez de exibir enchimento.
+   */
+  contentPending?: boolean;
+};
+
+const img = (
+  src: string,
+  w: number,
+  h: number,
+  alt: string,
+  src2x?: string,
+): WorkImage => ({ src, src2x, w, h, alt });
+
+/* Alex Archer — o único case com texto real no material do cliente. */
+import aa01 from "../assets/optimized/case-alexarcher-01-1400.webp";
+import aa01x from "../assets/optimized/case-alexarcher-01-2200.webp";
+import aa03 from "../assets/optimized/case-alexarcher-03-1400.webp";
+import aa03x from "../assets/optimized/case-alexarcher-03-2200.webp";
+import aa04 from "../assets/optimized/case-alexarcher-04-1400.webp";
+import aa04x from "../assets/optimized/case-alexarcher-04-2200.webp";
+import aa05 from "../assets/optimized/case-alexarcher-05-1400.webp";
+import aa05x from "../assets/optimized/case-alexarcher-05-2200.webp";
+import aa06 from "../assets/optimized/case-alexarcher-06-1400.webp";
+import aa06x from "../assets/optimized/case-alexarcher-06-2200.webp";
+import aa07 from "../assets/optimized/case-alexarcher-07-1400.webp";
+import aa07x from "../assets/optimized/case-alexarcher-07-2200.webp";
+import aa08 from "../assets/optimized/case-alexarcher-08-1400.webp";
+import aa08x from "../assets/optimized/case-alexarcher-08-2200.webp";
+import aa09 from "../assets/optimized/case-alexarcher-09-1400.webp";
+import aa09x from "../assets/optimized/case-alexarcher-09-2200.webp";
+import aa11 from "../assets/optimized/case-alexarcher-11-1400.webp";
+import aa11x from "../assets/optimized/case-alexarcher-11-2200.webp";
+import aa12 from "../assets/optimized/case-alexarcher-12-1400.webp";
+import aa12x from "../assets/optimized/case-alexarcher-12-2200.webp";
+import aa13 from "../assets/optimized/case-alexarcher-13-1400.webp";
+import aa13x from "../assets/optimized/case-alexarcher-13-2200.webp";
+
+/* Artes que a home já usa — os cases sem texto reaproveitam a sua como capa,
+   para o índice nunca ter buraco enquanto o corpo não chega. */
+import artStag from "../assets/optimized/art-stag-1400.webp";
+import artStagX from "../assets/optimized/art-stag-2200.webp";
+import artVotare from "../assets/optimized/art-votare-1400.webp";
+import artVotareX from "../assets/optimized/art-votare-2200.webp";
+import artFerraci from "../assets/optimized/art-ferraci-1400.webp";
+import artFerraciX from "../assets/optimized/art-ferraci-2200.webp";
+import artTrivo from "../assets/optimized/art-trivo-1400.webp";
+
+export const WORK: WorkItem[] = [
+  {
+    slug: "alex-archer",
+    title: "Alex Archer ®",
+    year: 2026,
+    disciplines: ["Branding", "Visual Identity"],
+    credits: [{ name: "Mateus Bredoff", role: "Visual Identity & Art direction" }],
+    behanceUrl: "https://www.behance.net/gallery/245777185/Alex-Archer",
+    about: [
+      "Alex Archer is conceived as a study of constructed presence, structured around architectural principles of repetition, precision and spatial control. The symbol emerges from the layering of horizontal modules, forming a stratified composition that references construction sections and structural support systems, establishing the logical foundation that guides the grid, typographic rhythm and visual system.",
+      "The typography was developed through subtle adjustments in proportion and spacing, ensuring technical clarity and editorial coherence throughout the system. Direct contrasts, generous areas of negative space and rigorous alignments define a restrained visual language in which every element responds to a clear and predictable structure.",
+      "Photography operates as an extension of this constructive logic, exploring architectural framing, dramatic light incidence and the repetition of human scale as a narrative device. Printed materials, posters and digital applications follow the same modular principles, consolidating an integrated, technical visual identity built on precise relationships between image, space and art direction.",
+    ],
+    cover: img(aa01, 3840, 2804, "Alex Archer — identidade visual", aa01x),
+    images: [
+      img(aa03, 3840, 4040, "Alex Archer — composição estratificada", aa03x),
+      img(aa04, 4608, 3712, "Alex Archer — aplicação impressa", aa04x),
+      img(aa05, 2880, 2160, "Alex Archer — sistema tipográfico", aa05x),
+      img(aa06, 4608, 3712, "Alex Archer — cartaz", aa06x),
+      img(aa07, 3840, 3240, "Alex Archer — enquadramento arquitetônico", aa07x),
+      img(aa08, 4608, 3712, "Alex Archer — material impresso", aa08x),
+      img(aa09, 3712, 4608, "Alex Archer — escala humana", aa09x),
+      img(aa11, 3841, 3972, "Alex Archer — aplicação digital", aa11x),
+      img(aa12, 3841, 3290, "Alex Archer — detalhe do símbolo", aa12x),
+      img(aa13, 3841, 3094, "Alex Archer — grade e ritmo", aa13x),
+    ],
+  },
+
+  /*
+   * Abaixo: cases cujo TEXTO ainda não existe no material do cliente.
+   * Metadados e créditos são reais (extraídos do CMS dele); o corpo fica vazio
+   * de propósito. Preencher `about` e tirar `contentPending` quando o texto
+   * chegar — nada mais precisa mudar.
+   */
+  {
+    slug: "stag",
+    title: "Stag",
+    year: 2025,
+    disciplines: ["Branding", "Visual Identity"],
+    credits: [{ name: "Yara Hoffman", role: "Creative Direction, Strategy" }],
+    behanceUrl: "https://www.behance.net/gallery/243272967/Stag-Grid-Fashion-Editorial",
+    about: [],
+    contentPending: true,
+    cover: img(artStag, 2800, 2253, "Stag — editorial de moda", artStagX),
+    images: [],
+  },
+  {
+    slug: "ferraci",
+    title: "Ferraci",
+    year: 2025,
+    disciplines: ["Branding", "Visual Identity"],
+    credits: [{ name: "Alex Renner", role: "Project Coordination" }],
+    about: [],
+    contentPending: true,
+    cover: img(artFerraci, 1400, 933, "Ferraci — editorial impresso", artFerraciX),
+    images: [],
+  },
+  {
+    slug: "proxima",
+    title: "Proxima",
+    year: 2025,
+    disciplines: ["Branding", "Visual Identity"],
+    credits: [{ name: "Alex Renner", role: "Project Coordination" }],
+    /* Proxima não existe no Behance — só no material do Framer. */
+    about: [],
+    contentPending: true,
+    cover: img(artTrivo, 1920, 1275, "Proxima — identidade visual"),
+    images: [],
+  },
+  {
+    slug: "votare",
+    title: "Votare",
+    year: 2025,
+    disciplines: ["Branding", "Visual Identity"],
+    credits: [],
+    behanceUrl: "https://www.behance.net/gallery/237665389/Votare-Visual-Identity",
+    about: [],
+    contentPending: true,
+    cover: img(artVotare, 2800, 2100, "Votare — identidade cívica", artVotareX),
+    images: [],
+  },
+];
+
+export const findWork = (slug?: string) => WORK.find((w) => w.slug === slug);
+
+/**
+ * `trivo` NÃO entra na coleção.
+ *
+ * A página existe no sitemap do Framer mas está publicada vazia — 28KB contra
+ * ~230KB das outras, zero imagem, sem título próprio. Não é um case sem texto:
+ * é uma página que nunca foi montada. Entrar aqui significaria criar uma rota
+ * que abre no nada. O trabalho Trivo continua visível no índice da home, que
+ * aponta para o case no Behance.
+ */
+export const MISSING_FROM_CMS = ["trivo"] as const;
