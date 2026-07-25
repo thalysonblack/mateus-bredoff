@@ -2,12 +2,19 @@ import { motion } from "motion/react";
 import { Mono, Rule, SectionHead, reveal, revealDelay, idx } from "../system";
 
 /**
- * About — a frase-manifesto em caixa alta gigante, seguida dos parágrafos
- * remontados como registros de tabela.
+ * About — a frase-manifesto em caixa alta gigante, seguida do texto de
+ * apresentação como UM bloco pareado.
  *
- * É a virada de linguagem da seção: antes eram três colunas soltas com um
- * rótulo cinza; agora cada parágrafo é uma linha com índice, título e fio,
- * que é como as referências apresentam qualquer conjunto de itens.
+ * Os parágrafos já foram registros de tabela (índice + título + corpo + fio
+ * entre eles) e não funcionou: com o corpo travado em 54ch, sobrava um `1fr`
+ * vazio ocupando ~40% da largura, e o fio no meio lia os dois parágrafos como
+ * dois itens sem relação — quando eles são as duas metades de uma mesma ideia
+ * (como eu trabalho / no que dá).
+ *
+ * Agora é um bloco só: as duas colunas dividem a largura útil e são lidas em
+ * paralelo, com os rótulos como marginália mono acima de cada uma. O fio
+ * sobrevive apenas abrindo e fechando o bloco — ele emoldura o conjunto em vez
+ * de fatiar o miolo.
  */
 
 const RECORDS = [
@@ -37,23 +44,21 @@ export default function About() {
           working worldwide.
         </motion.p>
 
-        {/* Registros — índice, título e corpo, separados por fio */}
-        <div>
+        {/* Bloco único: as duas metades da ideia lado a lado, o fio só emoldura */}
+        <Rule />
+        <div className="grid grid-cols-1 gap-x-[clamp(2rem,5vw,6rem)] gap-y-[clamp(2.5rem,5vw,3.5rem)] py-[clamp(2rem,4vw,3.5rem)] md:grid-cols-2">
           {RECORDS.map((r, i) => (
             <motion.div key={r.title} {...revealDelay(i)}>
-              <Rule />
-              {/* Índice, título, corpo — e o ar sobrando à direita, que é onde as
-                  referências deixam a respiração da tabela. O corpo colado na
-                  borda direita ficava desligado do título. */}
-              <div className="grid grid-cols-1 gap-x-6 gap-y-4 py-[clamp(1.5rem,3vw,2.5rem)] md:grid-cols-[5rem_11rem_minmax(0,54ch)_1fr]">
+              <div className="flex items-baseline gap-[clamp(1rem,2vw,2rem)] pb-[clamp(0.875rem,1.5vw,1.25rem)]">
                 <Mono dim>{idx(i)}</Mono>
                 <Mono>{r.title}</Mono>
-                <p className="t-body">{r.body}</p>
               </div>
+              {/* sem max-width em ch: a coluna da grade já é a medida */}
+              <p className="t-body">{r.body}</p>
             </motion.div>
           ))}
-          <Rule />
         </div>
+        <Rule />
       </div>
     </section>
   );

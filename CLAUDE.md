@@ -15,7 +15,7 @@ componente React responsivo de verdade.
 ## Estrutura
 
 ```
-src/app/App.tsx            → Hero · About · Work · Capabilities · Footer
+src/app/App.tsx            → Hero · About · Work · Capabilities · AI Lab · Pricing · Footer
 src/app/system.tsx         → primitivas do sistema (Rule, Mono, Bracket, SectionHead…)
 src/styles/system.css      → tokens, blocos .on-ink / .on-paper, escalas de tipo
 src/app/sections/          → uma seção por arquivo (+ Menu = barra de metadados)
@@ -47,6 +47,22 @@ aparência delas na mão, senão o sistema vira dialeto.
 
 O trabalho é um **índice escalonado** (`Work.tsx`), não um carrossel.
 
+**Cada seção usa uma estrutura diferente, de propósito.** Quatro seções são
+listas, e se todas fossem a mesma pilha de linhas a página leria como o mesmo
+bloco repetido quatro vezes. A regra: ao criar seção nova, escolha uma estrutura
+que ainda não está em uso.
+- `About` → bloco pareado em duas colunas (as duas metades de uma ideia)
+- `Work` → índice escalonado com legenda de contact sheet
+- `Capabilities` → pilha de linhas, nome em display, índice à esquerda
+- `AILab` → tabela com **cabeçalho de coluna** (nº / brand / discipline / medium)
+- `Pricing` → linha de recibo: nome e preço nos cantos opostos, letra miúda embaixo
+
+**A About já foi tabela de registros e foi reprovada.** Cada parágrafo era uma
+linha (índice + título + corpo em 54ch + `1fr` vazio) separada por fio. Dois
+problemas: sobrava ~40% de largura morta à direita, e o fio no meio lia os dois
+parágrafos como itens sem relação, quando são as duas metades da mesma ideia.
+Não volte para aquele formato.
+
 **Órfãos nesta branch:** `Cases.tsx` (motor de carrossel) e `ConnectButton.tsx`
 (pílula "Menu" que abria o painel de contato) continuam no disco mas ninguém os
 importa — não entram no bundle. Ficaram para consulta; o contato agora vive na
@@ -63,9 +79,37 @@ cd dist && python3 -m http.server 4599 &
 node scripts/shoot-desktop.mjs   # 5 seções + fontes carregadas + erros de console
 node scripts/shoot-mobile.mjs    # 390×844 + varredura de overflow horizontal
 node scripts/probe-cases.mjs     # navega até o card claro (pior caso de contraste)
+node scripts/audit-contrast.mjs  # contraste de TODO texto, medido no pixel
 ```
 
 Os scripts precisam de `puppeteer-core` (devDep) e do Chrome em `/Applications`.
+Rodam da raiz do repo — `puppeteer-core` não resolve de `/tmp`.
+
+### `audit-contrast.mjs` — leia antes de confiar no número
+
+Mede o contraste de cada nó de texto recortando a caixa da linha renderizada e
+lendo os pixels (PNG → RGB cru via `ffmpeg`). Passa `--` uma URL como argumento
+para auditar outra origem. Três erros de método que ele já cometeu e agora
+evita — se você mexer nele, não os reintroduza:
+
+1. **Não infle o recorte.** Um padding de 1px vaza o fundo de fora do elemento
+   e o medidor devolve 21:1 para tudo.
+2. **Recorte a caixa do texto (`Range.getClientRects`), não a bbox do
+   elemento.** A bbox inclui padding e encosta na borda do bloco.
+3. **Não faça trim simétrico de percentil.** Glifo de mono fino ocupa bem menos
+   de 1% da área do recorte; um trim de 1,5% descarta o texto e mede o
+   antialiasing — foi assim que branco-sobre-preto "mediu" 2:1. O método atual é
+   moda = fundo, extremo oposto = texto, trim de 0,2%.
+4. **Espere o reveal do Motion.** `animation:none` não segura Framer Motion (ele
+   anima por WAAPI/rAF). Medir logo após o scroll pega o texto em opacity 0 —
+   na primeira rodada 46 de 67 nós saíram como falso "invisível". Hoje espera
+   900ms e **re-lê a caixa** depois (o reveal desloca em Y).
+
+O campo `inkPixels` é a válvula de segurança: `0` significa que nada de texto
+pintou no recorte, então a medida vai para `unmeasured` — nunca conta como
+aprovação. **Calibre depois de qualquer mudança:** há uma página de aferição com
+pares de contraste conhecidos (21,00 / 6,44 / 4,54 / 2,30) descrita no histórico
+do repo; o medidor tem de reproduzir esses valores antes de você acreditar nele.
 
 ## Armadilhas deste repo (todas custaram caro)
 
@@ -107,6 +151,15 @@ no código, declare o alias lá também.
 - Links de contato são **placeholder**: `hello@mateusbredoff.com`, Behance/Instagram/x
   genéricos, WhatsApp `+55 45 9999-9999` (em `Footer.tsx` e `ConnectButton.tsx`).
 - Cards **Stag** e **Votare** reusam a arte do Ferraci como placeholder (`Work.tsx`).
+- **Os três preços do `Pricing.tsx` estão como `priceFrom: null`**, o que rende
+  "On request" na tela. Preço é fato do cliente: pedir os três números ao Mateus
+  e trocar o `null` pelo valor em reais (o formatador cuida do resto). Se o
+  posicionamento virar internacional, `CURRENCY` vira `"USD"`.
+- **A lista do `AILab.tsx` foi lida das artes do `@sir.bredoff`, não de uma lista
+  que o Mateus mandou.** Confirmar com ele: grafia (`Hōki` com mácron), a
+  disciplina e o meio de cada experimento, e se falta algum. `FLORA` ficou fora
+  porque `@florafaunaai` é parceria real, não ficção. A bio dele hoje diz
+  "Brand Designer, Art Director & AI Creative" e "Designer at @designwithblink".
 - As peças do índice não abrem nada ainda — não existem páginas de case.
 - **Capabilities está sem descrição por serviço.** A tabela das referências tem um texto
   curto por linha; aqui ficou só índice + nome, porque o texto teria que ser inventado e
