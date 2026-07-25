@@ -1,31 +1,27 @@
 import { motion } from "motion/react";
-import { Mono, Rule, SectionHead, Bracket, reveal, revealDelay, idx } from "../system";
+import { Mono, SectionHead, Bracket, reveal, revealDelay, idx } from "../system";
 
 /**
- * Pricing — três engajamentos como blocos emoldurados.
+ * Pricing — cada engajamento ocupa a LARGURA INTEIRA.
  *
- * Já foi "linha de recibo": nome e preço nos cantos opostos, escopo em mono
- * embaixo, um fio entre cada. Era correto e não tinha massa nenhuma — três
- * linhas finas perdidas num campo escuro, e a seção mais importante da página
- * comercial lia como rodapé de tabela.
+ * Terceira forma desta seção, e as duas anteriores erraram por falta de massa:
+ *  1. linha de recibo (nome + preço nos cantos) → três linhas finas perdidas
+ *     num campo escuro; a seção mais comercial da página lia como rodapé;
+ *  2. três blocos emoldurados lado a lado → melhor, mas colunas estreitas
+ *     espremiam nome, preço e escopo num espaço de card.
  *
- * Agora cada nível é um BLOCO com moldura de 1px: o numeral grande no topo, o
- * preço como segunda voz display, e o escopo virou lista de itens separados por
- * fio — dá para bater o olho e comparar, que é o que alguém faz numa página de
- * preço.
+ * A direção veio de referência (REBOOT / Setters): o serviço é uma FAIXA que
+ * atravessa a página — nome em display à esquerda, escopo como campo de tags,
+ * uma linha de descrição, e preço + ação ancorados à direita. Densidade
+ * editorial em vez de card de conversão.
  *
- * HIERARQUIA SEM SELO. O do meio não leva "mais popular" nem borda colorida:
- * ele **inverte** para papel dentro do bloco de tinta. É o próprio gesto do
- * sistema (papel/tinta alternando de sangria a sangria) usado em escala miúda —
- * destaca por contraste de matéria, não por enfeite de conversão.
+ * O que NÃO se copia da referência: as pílulas arredondadas. Aqui a tag é
+ * retângulo com fio de 1px, porque raio zero é lei do sistema — o mesmo desenho
+ * da tag de procedência do índice de trabalho.
  *
- * Raio zero, sem sombra, sem pílula: card arredondado com sombra é exatamente o
- * "AI look" que o sistema recusa.
- *
- * ⚠ VALORES. O US$ 2.500 do Essential NÃO foi inventado: é o preço que ele já
- * publica na aba de serviços do Behance ("Visual Identity, de US$ 2.500"). Os
- * outros dois seguem `null` → "On request", uma frase legítima, em vez de um
- * número quebrado no ar. Quando o Mateus passar os valores, troque o `null`:
+ * ⚠ VALORES. O US$ 2.500 do Essential é o preço que ele já publica na aba de
+ * serviços do Behance. Os outros dois seguem `null` → "On request", em vez de um
+ * número inventado. Quando o Mateus passar os valores, troque o `null`:
  *
  *     { ..., priceFrom: 4800 }   →   renderiza "from $4,800"
  */
@@ -41,11 +37,13 @@ const fmt = (v: number) =>
 
 type Tier = {
   name: string;
-  /** Itens, não frase: em lista dá para comparar os três de relance. */
+  /** Campo de tags — o escopo se lê de relance, sem virar parágrafo. */
   scope: string[];
+  /** Uma frase: o que este nível resolve. Não repete a lista de tags. */
+  description: string;
   timeline: string;
   priceFrom: number | null;
-  /** Inverte para papel — o destaque do meio. */
+  /** Inverte para papel — o destaque do meio, sem selo de conversão. */
   featured?: boolean;
 };
 
@@ -53,12 +51,16 @@ const TIERS: Tier[] = [
   {
     name: "Essential",
     scope: ["Logotype", "Colour palette", "Typography", "Mini-guide"],
+    description:
+      "The core of an identity, built to stand on its own — for who is starting and needs the brand to look right from day one.",
     timeline: "3 weeks",
     priceFrom: 2500,
   },
   {
     name: "Complete",
     scope: ["Everything in Essential", "Applications", "Stationery", "Social kit"],
+    description:
+      "The identity applied to the places it actually lives, so the brand holds together across every surface.",
     timeline: "5 weeks",
     priceFrom: null,
     featured: true,
@@ -66,73 +68,86 @@ const TIERS: Tier[] = [
   {
     name: "Brand System",
     scope: ["Everything in Complete", "Naming", "Verbal identity", "Full guidelines"],
+    description:
+      "Strategy, name and language included — for brands that need to be reproduced by other people without losing themselves.",
     timeline: "8 weeks",
     priceFrom: null,
   },
 ];
 
-function Tier({ tier, index }: { tier: Tier; index: number }) {
+/** Retângulo de fio, não pílula: raio zero em todo o sistema. */
+function Tag({ children }: { children: string }) {
+  return (
+    <span
+      className="inline-flex items-center px-[0.7em] py-[0.45em] leading-none"
+      style={{ border: "1px solid var(--rule)" }}
+    >
+      <Mono dim>{children}</Mono>
+    </span>
+  );
+}
+
+function TierRow({ tier, index }: { tier: Tier; index: number }) {
   return (
     <motion.div
       {...revealDelay(index, 0.06)}
-      /* `on-paper` no destacado troca --bg/--fg/--dim/--acc de uma vez: os
-         filhos só leem as variáveis e não sabem em que fundo estão. */
-      className={`${tier.featured ? "on-paper" : ""} group flex h-full flex-col`}
+      /* CARD DE LARGURA TOTAL — a síntese das duas formas que funcionaram.
+         Do card vem a moldura, a matéria e o alvo de hover inteiro; da faixa
+         vem a densidade e o uso da largura, que colunas estreitas não davam.
+         O do meio inverte para papel: hierarquia pelo próprio gesto do sistema
+         (papel/tinta), sem selo de "mais popular". */
+      className={`${tier.featured ? "on-paper" : ""} group`}
       style={{
         border: "1px solid var(--rule)",
-        /* o bloco de papel precisa do próprio fundo; o de tinta herda o da seção */
         background: tier.featured ? "var(--bg)" : "transparent",
       }}
     >
-      <div className="flex items-baseline justify-between gap-4 p-[clamp(1.25rem,2vw,1.75rem)]">
-        <Mono dim className="idx-acc">
-          {idx(index)}
-        </Mono>
-        <Mono dim>{tier.timeline}</Mono>
+      <div className="grid grid-cols-1 gap-x-[clamp(1.5rem,4vw,4rem)] gap-y-[clamp(1.25rem,2.5vw,2rem)] p-[clamp(1.5rem,3vw,2.75rem)] md:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)_auto]">
+        {/* Coluna 1 — o nome, com o índice como metadado */}
+        <div className="flex items-baseline gap-[clamp(1rem,2vw,2rem)]">
+          <Mono dim className="idx-acc shrink-0">
+            {idx(index)}
+          </Mono>
+          <h3 className="t-display" style={{ fontSize: "clamp(1.75rem, 3.6vw, 62px)" }}>
+            {tier.name}
+          </h3>
+        </div>
+
+        {/* Coluna 2 — tags e a frase que explica o nível */}
+        <div>
+          <div className="flex flex-wrap gap-[0.4rem]">
+            {tier.scope.map((s) => (
+              <Tag key={s}>{s}</Tag>
+            ))}
+          </div>
+          <p className="t-body max-w-[46ch] pt-[clamp(1rem,2vw,1.5rem)]">{tier.description}</p>
+        </div>
+
+        {/* Coluna 3 — preço, prazo e ação, ancorados à direita */}
+        <div className="flex flex-col items-start gap-[clamp(0.75rem,1.5vw,1.25rem)] md:items-end md:text-right">
+          <div>
+            <Mono dim>{tier.timeline}</Mono>
+            <p className="t-display pt-1" style={{ fontSize: "clamp(1.15rem, 2vw, 30px)" }}>
+              {tier.priceFrom === null ? (
+                "On request"
+              ) : (
+                <>
+                  <span className="dim">from </span>
+                  {fmt(tier.priceFrom)}
+                </>
+              )}
+            </p>
+          </div>
+
+          <a
+            href="#contact"
+            className="link-quiet shrink-0"
+            aria-label={`Solicitar orçamento — ${tier.name}`}
+          >
+            <Bracket>START THE PROJECT</Bracket>
+          </a>
+        </div>
       </div>
-
-      <div className="px-[clamp(1.25rem,2vw,1.75rem)]">
-        <h3 className="t-display" style={{ fontSize: "clamp(1.5rem, 2.6vw, 40px)" }}>
-          {tier.name}
-        </h3>
-
-        {/* O preço é a segunda voz display do bloco — menor que o nome, para o
-            pacote continuar sendo a manchete e o valor, a consequência. */}
-        <p
-          className="t-display pt-[clamp(0.5rem,1vw,0.875rem)]"
-          style={{ fontSize: "clamp(1.05rem, 1.7vw, 26px)" }}
-        >
-          {tier.priceFrom === null ? (
-            "On request"
-          ) : (
-            <>
-              <span className="dim">from </span>
-              {fmt(tier.priceFrom)}
-            </>
-          )}
-        </p>
-      </div>
-
-      {/* Escopo: cada item é um registro com fio, como o resto do sistema */}
-      <ul className="mt-[clamp(1.25rem,2.5vw,2rem)] flex-1">
-        {tier.scope.map((s) => (
-          <li key={s}>
-            <Rule />
-            <div className="px-[clamp(1.25rem,2vw,1.75rem)] py-[clamp(0.625rem,1.1vw,0.875rem)]">
-              <Mono dim>{s}</Mono>
-            </div>
-          </li>
-        ))}
-        <Rule />
-      </ul>
-
-      <a
-        href="#contact"
-        className="link-quiet block p-[clamp(1.25rem,2vw,1.75rem)]"
-        aria-label={`Solicitar orçamento — ${tier.name}`}
-      >
-        <Bracket>ENQUIRE</Bracket>
-      </a>
     </motion.div>
   );
 }
@@ -142,17 +157,15 @@ export default function Pricing() {
     <section id="pricing" className="on-ink w-full">
       {/* `pt` menor que o `pb`: o Capabilities vem logo acima e também é tinta,
           então os dois paddings somavam e abriam um vão morto no meio do bloco
-          escuro — o fecho tem que ler como uma peça contínua, não como duas
-          seções com um buraco entre elas. */}
+          escuro — o fecho tem que ler como peça contínua. */}
       <div className="bleed pb-[clamp(3rem,7vw,7rem)] pt-[clamp(1.5rem,3vw,3rem)]">
         <SectionHead left="Pricing" right={`[${TIERS.length}] Engagements`} />
 
-        {/* `items-stretch` para os três blocos terminarem na mesma linha mesmo
-            com escopos de tamanhos diferentes — bloco mais curto que o vizinho
-            denuncia grade improvisada. */}
-        <div className="grid grid-cols-1 items-stretch gap-[clamp(0.75rem,1.5vw,1.25rem)] md:grid-cols-3">
+        {/* Cards empilhados com gap: a moldura já separa, e um fio somado à
+            borda vira linha dupla. */}
+        <div className="flex flex-col gap-[clamp(0.5rem,1vw,0.875rem)]">
           {TIERS.map((t, i) => (
-            <Tier key={t.name} tier={t} index={i} />
+            <TierRow key={t.name} tier={t} index={i} />
           ))}
         </div>
 
@@ -161,9 +174,7 @@ export default function Pricing() {
           className="flex flex-col gap-4 pt-[clamp(1.5rem,3vw,2.5rem)] md:flex-row md:items-baseline md:justify-between"
         >
           <Mono dim>Custom scope and retainer on request.</Mono>
-          <a href="#contact" className="link-quiet shrink-0">
-            <Bracket>START A PROJECT</Bracket>
-          </a>
+          <Mono dim>Remote — worldwide</Mono>
         </motion.div>
       </div>
     </section>
