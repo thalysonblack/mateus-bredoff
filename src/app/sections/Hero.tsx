@@ -1,100 +1,98 @@
-import { motion } from "motion/react";
+import { Mono } from "../system";
 import Menu from "./Menu";
-import { Mono, Rule, Bracket, ease } from "../system";
 import portrait1600 from "../../assets/optimized/hero-portrait-1600.webp";
 import portrait3200 from "../../assets/optimized/hero-portrait-3200.webp";
 
 /**
- * Hero — papel.
+ * Hero — o retrato COMO ambiente da página.
  *
- * A versão preta com o retrato em faixa full-bleed foi descartada: espremia a
- * foto entre a barra e o nome, e brigava com o modo claro que carrega o resto
- * da página. Aqui o bloco é branco como os demais, e a composição muda de
- * lógica em vez de só trocar de cor.
+ * Vem do site publicado dele: o retrato preenche a tela e o nome fica ancorado
+ * nos dois cantos de baixo. Substituiu a versão em que o retrato era uma chapa
+ * 3:4 ao lado do nome — aprovada em 26/07 comparando com a variação do lab.
  *
- * O partido é assimétrico: o nome empilhado ocupa a esquerda em caixa alta
- * gigante, o retrato vira uma CHAPA de proporção própria (3:4, sem corte
- * apertado) ancorada à direita, e o ar entre os dois é o que faz a página
- * parecer galeria e não template. Nome e chapa alinham pela base — é a linha
- * que amarra a composição.
+ * ⚠ A DESCOBERTA QUE FAZ ESTA SEÇÃO FUNCIONAR: o arquivo do retrato **já é** um
+ * gradiente petróleo. Amostrado no próprio pixel, o fundo dele vai de #18373f no
+ * topo a #eceded na base — quase exatamente o degradê que eu havia recriado por
+ * baixo. A primeira tentativa empilhou um gradiente inventado atrás de uma foto
+ * COM fundo opaco, e o resultado foi um retângulo visível contra o fundo da
+ * seção, além do nome desaparecendo atrás da imagem.
  *
- * A revelação por máscara (clip-path inset 50%→0 + zoom 1.3→1) segue do Framer
- * original: é a assinatura de motion da casa.
+ * Agora: o `background` da seção usa as cores REAIS medidas na foto, para
+ * qualquer área que sobre casar sem emenda; a foto entra em `cover` (ela é
+ * 1600×850, então o recorte come só as laterais, que são fundo puro); e o nome
+ * vai POR CIMA da imagem, não atrás.
+ *
+ * ⚠ Sem `mix-blend` em nenhuma camada. Neste repo o blend já apagou texto duas
+ * vezes ao cair dentro de stacking context, e aqui há gradiente e transform por
+ * perto — terreno exato da armadilha.
+ *
+ * ⚠ CONTRASTE. O nome fica na base, onde o fundo da foto já chegou ao claro
+ * (#eceded): texto em #19272d mede 11,9:1 ali. É a única parte do sistema em que
+ * o fundo do texto não é constante — se mexer no enquadramento ou nas paradas,
+ * remeça.
  */
-
-const maskTransition = { type: "spring", bounce: 0, duration: 1.6, delay: 0.5 } as const;
-
-const PORTRAIT_SRCSET = `${portrait1600} 1600w, ${portrait3200} 3200w`;
-
 export default function Hero() {
   return (
-    <section className="on-paper relative flex h-[100dvh] min-h-[36rem] w-full flex-col overflow-clip">
-      <Menu />
-
-      {/* Miolo: nome à esquerda, chapa à direita, alinhados pela base */}
-      <div className="bleed flex min-h-0 flex-1 flex-col justify-end gap-6 pb-[clamp(1rem,2vw,2rem)] pt-[clamp(1.5rem,3vw,3rem)] md:flex-row md:items-end md:gap-[clamp(1.5rem,4vw,5rem)]">
-        <motion.h1
-          className="t-display shrink-0"
-          style={{ fontSize: "clamp(2.75rem, 11vw, 200px)", lineHeight: 0.86 }}
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease, delay: 0.85 }}
-        >
-          <span className="block">Mateus</span>
-          <span className="block">Bredoff</span>
-        </motion.h1>
-
-        {/* Chapa do retrato — proporção própria, sem corte apertado */}
-        {/* No mobile a largura manda e a altura sai da proporção; no desktop é o
-            contrário. Deixar os dois em `auto` colapsa a chapa para zero — foi
-            o que aconteceu na primeira tentativa. */}
-        <motion.figure
-          className="relative ml-auto w-[min(62vw,17rem)] shrink-0 overflow-hidden md:h-[min(56vh,30rem)] md:w-auto"
-          style={{ aspectRatio: "3 / 4", willChange: "clip-path" }}
-          initial={{ clipPath: "inset(50% 50% 50% 50%)", WebkitClipPath: "inset(50% 50% 50% 50%)" }}
-          animate={{ clipPath: "inset(0% 0% 0% 0%)", WebkitClipPath: "inset(0% 0% 0% 0%)" }}
-          transition={maskTransition}
-        >
-          <motion.img
-            src={portrait1600}
-            srcSet={PORTRAIT_SRCSET}
-            sizes="(min-width: 768px) 30vw, 90vw"
-            alt="Mateus Bredoff"
-            width={3840}
-            height={2040}
-            fetchPriority="high"
-            decoding="async"
-            className="absolute inset-0 h-full w-full object-cover"
-            style={{ objectPosition: "center 30%" }}
-            initial={{ scale: 1.3 }}
-            animate={{ scale: 1 }}
-            transition={maskTransition}
-            draggable={false}
-          />
-        </motion.figure>
+    <section
+      className="relative flex h-[100dvh] min-h-[36rem] w-full flex-col overflow-clip"
+      style={{
+        /* cores amostradas no arquivo do retrato, não escolhidas a olho */
+        background: "linear-gradient(180deg, #18373f 0%, #486067 25%, #8d9ca1 50%, #d4d8da 85%, #eceded 100%)",
+      }}
+    >
+      {/* A barra vive sobre o topo escuro do gradiente, então usa o par da tinta */}
+      <div className="on-ink relative z-30" style={{ background: "transparent" }}>
+        <Menu />
       </div>
 
-      {/* Legenda técnica — os campos que a página inteira usa para se anunciar */}
-      <motion.div
-        className="bleed pb-[clamp(0.75rem,1.5vw,1.25rem)]"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, ease, delay: 1.15 }}
-      >
-        <Rule />
-        <div className="flex items-baseline justify-between gap-4 pt-2">
-          <Mono dim>Portfolio — Vol. 01</Mono>
-          <Mono dim className="hidden sm:block">
-            Brand Designer
-          </Mono>
-          <Mono dim className="hidden md:block">
-            Brazil / Worldwide
-          </Mono>
-          <a href="#about" className="link-quiet">
-            <Bracket>Scroll</Bracket>
-          </a>
-        </div>
-      </motion.div>
+      {/* Retrato preenchendo a tela — o fundo dele É o ambiente */}
+      <img
+        src={portrait1600}
+        srcSet={`${portrait1600} 1600w, ${portrait3200} 3200w`}
+        sizes="100vw"
+        alt="Mateus Bredoff"
+        width={1600}
+        height={850}
+        draggable={false}
+        className="absolute inset-0 z-10 h-full w-full object-cover"
+        style={{ objectPosition: "center 22%" }}
+      />
+
+      {/* Marcas de registro — gabarito de impressão, não decoração (ref REBOOT) */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-20">
+        <span className="absolute left-[var(--gutter)] top-[34%] flex flex-col gap-[6px] opacity-70">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <span key={i} className="block h-px w-4" style={{ background: "#eceded" }} />
+          ))}
+        </span>
+        <span className="absolute right-[var(--gutter)] top-[16%]" style={{ color: "#eceded" }}>
+          <Mono>+</Mono>
+        </span>
+        <span className="absolute bottom-[6%] left-[var(--gutter)]" style={{ color: "#19272d" }}>
+          <Mono>+</Mono>
+        </span>
+      </div>
+
+      {/* O nome POR CIMA da foto, nos dois cantos de baixo: quem ele é à
+          esquerda, o que faz à direita. Ancorado onde o fundo já é claro. */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex items-end justify-between gap-[clamp(1rem,4vw,4rem)] px-[var(--gutter)] pb-[clamp(1rem,3vh,2.5rem)]">
+        <h1
+          className="t-display t-display-xl"
+          style={{ fontSize: "clamp(2.25rem,6.6vw,108px)", color: "#19272d" }}
+        >
+          Mateus
+          <br />
+          Bredoff
+        </h1>
+        <p
+          className="t-display t-display-xl text-right"
+          style={{ fontSize: "clamp(2.25rem,6.6vw,108px)", color: "#19272d" }}
+        >
+          Brand
+          <br />
+          Designer
+        </p>
+      </div>
     </section>
   );
 }

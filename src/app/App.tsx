@@ -6,7 +6,7 @@ import Menu from "./sections/Menu";
 import Home from "./pages/Home";
 import WorkIndex from "./pages/WorkIndex";
 import CaseStudy from "./pages/CaseStudy";
-import HomeV2 from "./lab/v2/HomeV2";
+import WorkVariants from "./lab/WorkVariants";
 
 /**
  * Mateus Bredoff — direção editorial, agora multi-página.
@@ -102,8 +102,8 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/work" element={<WorkIndex />} />
           <Route path="/work/:slug" element={<CaseStudy />} />
-          {/* laboratório: variação da home para aprovação — sai depois da escolha */}
-          <Route path="/lab/home-v2" element={<HomeV2 />} />
+          {/* laboratório: opções do índice de trabalho — sai depois da escolha */}
+          <Route path="/lab/work" element={<WorkVariants />} />
           {/* Slug inexistente cai no próprio CaseStudy, que trata o 404 com a
               linguagem do site em vez de tela branca. */}
           <Route path="*" element={<CaseStudy />} />
