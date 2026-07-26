@@ -66,17 +66,21 @@ export default function About() {
           cabeçalho de coluna. É por isso que não há `<div>` por registro.
         */}
         <Rule />
-        <motion.div
-          {...reveal}
-          className="about-flow py-[clamp(2rem,4vw,3.5rem)]"
-        >
-          {RECORDS.map((r, i) => (
-            <p key={r.title} className="t-body">
-              <Mono dim className="mr-[0.6em]">{idx(i)}</Mono>
-              <Mono className="mr-[0.6em]">{r.title}</Mono>
+        <motion.div {...reveal} className="about-grid py-[clamp(2rem,4vw,3.5rem)]">
+          {/* Coluna 1 — só o rótulo, como marginália */}
+          <Mono dim>About me</Mono>
+
+          {/* Colunas 2 e 3 — o texto, em medida curta. O corpo é `dim`: neste
+              bloco ele é leitura de apoio, não a voz principal da seção (a
+              manchete acima é que carrega o peso). */}
+          {RECORDS.map((r) => (
+            <p key={r.title} className="t-body dim">
               {r.body}
             </p>
           ))}
+
+          {/* Coluna 4 fica vazia de propósito: o ar à direita é o que faz o
+              bloco ler como marginália em vez de coluna de jornal. */}
         </motion.div>
         <Rule />
       </div>

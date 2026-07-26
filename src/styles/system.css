@@ -180,31 +180,42 @@
 
 /* ── Texto corrido em colunas ────────────────────────────────────────────── */
 
-/* Corpo que transborda de uma coluna para a outra, como jornal. Serve para o
-   texto ler como UM bloco em vez de dois — ver o comentário em About.tsx.
+/* MARGINÁLIA + COLUNAS ESTREITAS — a forma aprovada (ref que ele mandou).
 
-   `column-fill: balance` mantém as duas colunas com altura parecida; sem isso o
-   Safari enche a primeira até o fim e deixa a segunda com duas linhas.
-   O `orphans/widows` evita a linha solta no pé da coluna, que é o defeito que
-   entrega texto em coluna mal feito. */
-.about-flow {
-  columns: 2;
-  column-gap: clamp(2rem, 5vw, 6rem);
-  column-fill: balance;
-  orphans: 2;
-  widows: 2;
+   O rótulo vai na extrema esquerda, sozinho numa coluna estreita, e o texto
+   ocupa duas colunas de MEDIDA CURTA no miolo, deixando ar à direita. O olho lê
+   duas manchas curtas em paralelo, não dois blocos largos disputando atenção.
+
+   Histórico deste bloco, porque cada tentativa parecia resolver e reintroduzia
+   um defeito de leitura:
+     1. registros de tabela com fio entre eles → dois itens sem relação;
+     2. grade de duas colunas largas → tirou o fio, manteve dois blocos com um
+        vale no meio;
+     3. `columns: 2` transbordando → é um texto só, mas obriga o olho a subir de
+        volta ao topo no meio da leitura;
+     4. rótulo lateral + colunas estreitas → esta.
+
+   A medida curta (~34ch) é o ponto: é ela que faz o bloco ler como marginália de
+   documento em vez de coluna de jornal. O ar à direita é margem deliberada. */
+.about-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.5rem, 3vw, 2rem);
 }
 
-.about-flow > p + p {
-  margin-top: 1.15em;
-}
-
-/* Uma coluna no mobile: 2 colunas em 390px dão ~20 caracteres por linha, que é
-   ilegível — e o texto "junto" viraria uma escada. */
-@media (max-width: 767px) {
-  .about-flow {
-    columns: 1;
+@media (min-width: 768px) {
+  .about-grid {
+    grid-template-columns:
+      minmax(0, 0.85fr)
+      minmax(0, 1.1fr)
+      minmax(0, 1.1fr)
+      minmax(0, 0.75fr);
+    gap: clamp(1.5rem, 3vw, 3rem);
   }
+}
+
+.about-grid p {
+  max-width: 34ch;
 }
 
 /* ── Grão ────────────────────────────────────────────────────────────────── */

@@ -31,13 +31,13 @@ import imgFerraci from "../../assets/optimized/art-ferraci-1400.webp";
  */
 
 const STRIP = [
-  { src: imgStag, label: "Stag Grid", ratio: "2800 / 2253" },
-  { src: imgBureau, label: "Bureau", ratio: "16 / 9" },
-  { src: imgNeox, label: "Neox", ratio: "1920 / 2280" },
-  { src: imgAlexArcher, label: "Alex Archer", ratio: "2800 / 2255" },
-  { src: imgTrivo, label: "Trivo", ratio: "1920 / 1275" },
-  { src: imgVotare, label: "Votare", ratio: "4 / 3" },
-  { src: imgFerraci, label: "Ferraci", ratio: "1400 / 933" },
+  { src: imgStag, label: "Stag Grid", discipline: "Fashion Editorial", ratio: "2800 / 2253" },
+  { src: imgBureau, label: "Bureau", discipline: "Electronic Music", ratio: "16 / 9" },
+  { src: imgNeox, label: "Neox", discipline: "Technical Apparel", ratio: "1920 / 2280" },
+  { src: imgAlexArcher, label: "Alex Archer", discipline: "Brand Identity", ratio: "2800 / 2255" },
+  { src: imgTrivo, label: "Trivo", discipline: "Visual Identity / 3D", ratio: "1920 / 1275" },
+  { src: imgVotare, label: "Votare", discipline: "Civic Identity", ratio: "4 / 3" },
+  { src: imgFerraci, label: "Ferraci", discipline: "Editorial / Identity", ratio: "1400 / 933" },
 ];
 
 const DRIFT = 14; // px/s com a página parada
@@ -113,11 +113,15 @@ export default function Marquee() {
       aria-label="Trabalho em destaque"
       className="on-paper w-full overflow-hidden pt-[clamp(1.5rem,3vw,3rem)]"
     >
-      <div className="flex w-max gap-[clamp(0.5rem,1.2vw,1.25rem)] will-change-transform" ref={trackRef}>
+      {/* ESCALA. A tira nasceu com altura de ~15rem e lia como faixa decorativa
+          de rodapé — a peça era pequena demais para o trabalho aparecer. Agora a
+          altura vai a ~40rem: cada arte tem presença de peça exposta, e o
+          movimento passa a mostrar o portfólio em vez de enfeitar a passagem. */}
+      <div className="flex w-max gap-[clamp(0.75rem,1.5vw,1.5rem)] will-change-transform" ref={trackRef}>
         {[...STRIP, ...STRIP].map((item, i) => (
           <figure
             key={`${item.label}-${i}`}
-            className="h-[clamp(9rem,17vw,15rem)] shrink-0"
+            className="relative h-[clamp(15rem,42vw,40rem)] shrink-0"
             /* a altura manda; a largura sai da proporção nativa, então nada estica */
             style={{ aspectRatio: item.ratio }}
             aria-hidden={i >= STRIP.length}
@@ -125,20 +129,30 @@ export default function Marquee() {
             <img
               src={item.src}
               alt={i < STRIP.length ? item.label : ""}
-              loading="lazy"
+              loading={i < 3 ? "eager" : "lazy"}
               decoding="async"
               draggable={false}
               className="h-full w-full object-cover"
             />
+
+            {/* A legenda passa para DENTRO da peça, nos cantos de baixo. Fora
+                dela, uma legenda só para a tira inteira não dizia qual arte era
+                qual — e com a peça grande sobra lugar para o dado morar nela.
+                O texto é sempre claro sobre um véu escurecido no pé: as artes
+                variam de fundo creme a preto, e cor fixa falharia na metade. */}
+            <div
+              aria-hidden={i >= STRIP.length}
+              className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-[clamp(0.75rem,1.5vw,1.25rem)]"
+              style={{
+                background: "linear-gradient(to top, rgba(10,10,10,0.55), rgba(10,10,10,0) 70%)",
+                color: "#f4f1ea",
+              }}
+            >
+              <Mono>{item.label}</Mono>
+              <Mono>{item.discipline}</Mono>
+            </div>
           </figure>
         ))}
-      </div>
-
-      {/* Um rótulo só, ancorado: a faixa é imagem em movimento, e sem uma
-          legenda fixa ela lê como banner de site de estoque. */}
-      <div className="bleed flex items-baseline justify-between gap-4 pt-[clamp(0.75rem,1.5vw,1.25rem)]">
-        <Mono dim>Selected pieces</Mono>
-        <Mono dim>{`[${STRIP.length}] Plates`}</Mono>
       </div>
     </section>
   );
