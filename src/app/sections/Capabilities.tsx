@@ -42,8 +42,14 @@ type Capability = {
   name: string;
   tags: string[];
   note: string;
-  /** Peça do portfólio que EXEMPLIFICA a disciplina, com proporção medida. */
-  art: { src: string; w: number; h: number; from: string };
+  /**
+   * Peça do portfólio que EXEMPLIFICA a disciplina.
+   *
+   * A proporção nativa NÃO é usada aqui de propósito — ver o comentário do
+   * painel. `focus` posiciona o recorte, porque cada arte tem o assunto em
+   * altura diferente (o Neox é retrato inteiro, o Bureau é paisagem).
+   */
+  art: { src: string; from: string; focus?: string };
 };
 
 const CAPABILITIES: Capability[] = [
@@ -51,31 +57,31 @@ const CAPABILITIES: Capability[] = [
     name: "Branding",
     tags: ["Logotype", "Visual system", "Guidelines", "Brand architecture"],
     note: "The identity itself — mark, palette, type and the rules that keep it standing when other people take over.",
-    art: { src: artBureau, w: 2800, h: 1575, from: "Bureau" },
+    art: { src: artBureau, from: "Bureau", focus: "center" },
   },
   {
     name: "Art Direction",
     tags: ["Photography", "Styling", "Campaign", "Set design"],
     note: "Deciding what the image says before deciding how it looks, and holding that decision across every frame.",
-    art: { src: artStag, w: 2800, h: 2253, from: "Stag Grid" },
+    art: { src: artStag, from: "Stag Grid", focus: "center 30%" },
   },
   {
     name: "Creative Direction",
     tags: ["Concept", "Narrative", "Team", "Rollout"],
     note: "The direction above the artefacts: what the brand is claiming, and in which order it should be shown.",
-    art: { src: artAlexArcher, w: 2800, h: 2255, from: "Alex Archer" },
+    art: { src: artAlexArcher, from: "Alex Archer", focus: "center 40%" },
   },
   {
     name: "Digital Design",
     tags: ["Interface", "Website", "Motion", "Design system"],
     note: "The identity where it moves and responds — screens that behave like the brand, not just look like it.",
-    art: { src: artNeox, w: 1920, h: 2280, from: "Neox" },
+    art: { src: artNeox, from: "Neox", focus: "center 22%" },
   },
   {
     name: "Brand Strategy",
     tags: ["Positioning", "Naming", "Verbal identity", "Research"],
     note: "The argument underneath the design, so the visual choices have something to answer to.",
-    art: { src: artVotare, w: 2800, h: 2100, from: "Votare" },
+    art: { src: artVotare, from: "Votare", focus: "center 45%" },
   },
 ];
 
@@ -89,8 +95,16 @@ const CAPABILITIES: Capability[] = [
 function Detail({ item }: { item: Capability }) {
   return (
     <>
+      {/* ⚠ PROPORÇÃO FIXA (16:10), e é isto que harmoniza a seção.
+          Respeitar a proporção nativa de cada arte fazia a figura variar de 404
+          a 799px de altura entre disciplinas — medido — e o painel inteiro
+          pulava a cada item percorrido, junto com a frase e as tags embaixo.
+          Aqui a arte é MINIATURA DE APOIO, não a apresentação da peça (essa
+          mora na página do case, onde a proporção nativa é respeitada), então
+          recortar é o preço certo a pagar por um bloco que não se mexe.
+          O `focus` compensa o recorte por peça. */}
       <figure className="pb-[clamp(1rem,2vw,1.5rem)]">
-        <div className="w-full overflow-hidden" style={{ aspectRatio: `${item.art.w} / ${item.art.h}` }}>
+        <div className="w-full overflow-hidden" style={{ aspectRatio: "16 / 10" }}>
           <img
             key={item.art.src}
             src={item.art.src}
@@ -100,12 +114,9 @@ function Detail({ item }: { item: Capability }) {
             decoding="async"
             draggable={false}
             className="h-full w-full object-cover"
+            style={{ objectPosition: item.art.focus ?? "center" }}
           />
         </div>
-        <figcaption className="flex items-baseline justify-between gap-4 pt-2">
-          <Mono dim>{item.art.from}</Mono>
-          <Mono dim>{item.name}</Mono>
-        </figcaption>
       </figure>
 
       <div className="flex flex-wrap gap-[0.4rem]">
@@ -182,11 +193,16 @@ export default function Capabilities() {
             <Rule />
           </div>
 
-          {/* Painel com o detalhe da disciplina percorrida */}
+          {/* Painel com o detalhe da disciplina percorrida.
+              O `pt` de 1px + o rótulo replicam a altura do fio + do primeiro
+              registro da lista, para o topo da foto nascer na mesma linha do
+              primeiro nome — antes o painel usava um `top` arbitrário em vh e
+              flutuava desalinhado em qualquer altura de janela. */}
           <div className="hidden md:block">
-            <div className="sticky top-[22vh]">
-              <div className="pb-[clamp(0.75rem,1.5vw,1.25rem)]">
+            <div className="sticky top-[16vh]">
+              <div className="flex items-baseline justify-between gap-4 pb-[clamp(0.75rem,1.5vw,1.25rem)] pt-px">
                 <Mono dim>{`What ${item.name.toLowerCase()} includes`}</Mono>
+                <Mono dim className="acc">{item.art.from}</Mono>
               </div>
               <Detail item={item} />
               <div className="pt-[clamp(1.5rem,3vw,2.5rem)]">
