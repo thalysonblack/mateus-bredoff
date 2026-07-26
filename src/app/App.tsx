@@ -6,8 +6,6 @@ import Menu from "./sections/Menu";
 import Home from "./pages/Home";
 import WorkIndex from "./pages/WorkIndex";
 import CaseStudy from "./pages/CaseStudy";
-import PricingVariants from "./lab/PricingVariants";
-import PricingVariants2 from "./lab/PricingVariants2";
 
 /**
  * Mateus Bredoff — direção editorial, agora multi-página.
@@ -103,9 +101,6 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/work" element={<WorkIndex />} />
           <Route path="/work/:slug" element={<CaseStudy />} />
-          {/* laboratório de aprovação — fora do site, não linkar no menu */}
-          <Route path="/lab/pricing" element={<PricingVariants />} />
-          <Route path="/lab/pricing2" element={<PricingVariants2 />} />
           {/* Slug inexistente cai no próprio CaseStudy, que trata o 404 com a
               linguagem do site em vez de tela branca. */}
           <Route path="*" element={<CaseStudy />} />

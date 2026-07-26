@@ -161,6 +161,23 @@
   will-change: transform;
 }
 
+/* ── Escada do Pricing ───────────────────────────────────────────────────── */
+
+/* Cada coluna começa um degrau abaixo da anterior — é o que faz a acumulação
+   entre níveis ser VISTA e não lida.
+
+   ⚠ Só a partir de 768px. Em coluna única o recuo progressivo não desenha
+   escada nenhuma: vira espaço morto crescente entre blocos empilhados, e o
+   terceiro nível fica jogado longe do segundo. Mesmo raciocínio de
+   `.stagger-col` no índice de trabalho. */
+.tier-step { margin-top: 0; }
+
+@media (min-width: 768px) {
+  .tier-step {
+    margin-top: calc(var(--step, 0) * clamp(1.5rem, 4vw, 4.5rem));
+  }
+}
+
 /* ── Texto corrido em colunas ────────────────────────────────────────────── */
 
 /* Corpo que transborda de uma coluna para a outra, como jornal. Serve para o
