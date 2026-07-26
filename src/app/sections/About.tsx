@@ -3,19 +3,16 @@ import { useReveal } from "../../hooks/useReveal";
 import { Mono, Rule, SectionHead, reveal, idx } from "../system";
 
 /**
- * About — a frase-manifesto em caixa alta gigante, seguida do texto de
- * apresentação como UM bloco pareado.
+ * About — a frase-manifesto em caixa alta gigante sobre TINTA.
  *
- * Os parágrafos já foram registros de tabela (índice + título + corpo + fio
- * entre eles) e não funcionou: com o corpo travado em 54ch, sobrava um `1fr`
- * vazio ocupando ~40% da largura, e o fio no meio lia os dois parágrafos como
- * dois itens sem relação — quando eles são as duas metades de uma mesma ideia
- * (como eu trabalho / no que dá).
+ * A seção é o momento cromático da página: sai do papel e entra no petróleo,
+ * logo depois do hero claro. Foi assim que ela ganhou impacto sem imagem —
+ * antes havia um carrossel de artes aqui, que duplicava o Selected Work logo
+ * abaixo e roubava o efeito dele.
  *
- * Agora é um bloco só: as duas colunas dividem a largura útil e são lidas em
- * paralelo, com os rótulos como marginália mono acima de cada uma. O fio
- * sobrevive apenas abrindo e fechando o bloco — ele emoldura o conjunto em vez
- * de fatiar o miolo.
+ * O texto de apoio é rótulo lateral + duas colunas de medida curta (~34ch) —
+ * ver `.about-grid` em styles/system.css, onde está o histórico das quatro
+ * formas que este bloco já teve e por que as três primeiras falharam.
  */
 
 const RECORDS = [
@@ -33,8 +30,8 @@ export default function About() {
   const manifestoRef = useReveal<HTMLParagraphElement>();
 
   return (
-    <section id="about" className="on-paper w-full">
-      <div className="bleed pt-[clamp(3rem,7vw,7rem)]">
+    <section id="about" className="on-ink w-full">
+      <div className="bleed pb-[clamp(3rem,7vw,7rem)] pt-[clamp(3rem,7vw,7rem)]">
         <SectionHead left="About" right="Statement" />
 
         {/* Manifesto — o tipo enche a largura, alinhado à esquerda, bandeira à

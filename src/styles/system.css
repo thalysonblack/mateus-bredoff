@@ -31,8 +31,8 @@
      azulado) e vencia a nossa. O site rodou com "um acento com coragem" que
      era, na prática, cinza. Ao criar token novo aqui, confira se o nome já é
      usado por theme.css — a colisão falha em silêncio. */
-  --brand-accent: #e4642f;        /* medido 5,45:1 sobre a tinta #131313 */
-  --brand-accent-paper: #b8420f;  /* medido 4,62:1 sobre o papel #efebe3 */
+  --brand-accent: #ec7a47;        /* medido 5,43:1 sobre a tinta petróleo */
+  --brand-accent-paper: #a53a0b;  /* medido 5,30:1 sobre o papel #ede6e1 */
 }
 
 @media (min-width: 768px) {
@@ -46,10 +46,22 @@
    verdade não é o zero absoluto. O deslocamento é pequeno em número e enorme em
    sensação, e faz a página combinar com as artes — quase todas fotografadas em
    fundo creme. Não volte para o branco puro. */
+/* A TINTA É PETRÓLEO, não preto neutro.
+
+   As duas cores saem do site publicado dele (mateus-bredoff.vercel.app): o papel
+   é o `#ede6e1` de lá, e a tinta é o `#19272d` do rodapé — o mesmo azul-petróleo
+   escuro do hero. Preto neutro funcionava, mas era genérico; o petróleo dá
+   temperatura ao bloco escuro e, sendo azul, forma par complementar com o acento
+   laranja em vez de apenas contrastar com ele.
+
+   ⚠ Trocar o fundo obriga a REMEDIR tudo que se apoia nele. Com a tinta em
+   petróleo, o `--dim` antigo (#8d8880) caía para 4,36:1 e reprovava, e o acento
+   raspava em 4,50:1 sem margem. Os valores abaixo foram medidos depois da troca,
+   não herdados. */
 .on-paper {
-  --bg: #efebe3;           /* off-white quente */
-  --fg: #131313;
-  --dim: #6a665e;          /* medido 4,81:1 sobre o papel */
+  --bg: #ede6e1;           /* off-white quente — o mesmo do site publicado */
+  --fg: #131313;           /* medido 15,05:1 */
+  --dim: #6a665e;          /* medido 4,63:1 */
   --rule: rgba(19, 19, 19, 0.16);
   --acc: var(--brand-accent-paper); /* o acento do bloco: cada fundo pede o seu */
   background: var(--bg);
@@ -57,10 +69,10 @@
 }
 
 .on-ink {
-  --bg: #131313;
-  --fg: #f4f1ea;           /* off-white, não branco: a tinta não estoura */
-  --dim: #8d8880;          /* medido 5,28:1 sobre a tinta */
-  --rule: rgba(244, 241, 234, 0.22);
+  --bg: #19272d;           /* petróleo escuro */
+  --fg: #ede6e1;           /* medido 12,42:1 — o papel vira o texto da tinta */
+  --dim: #8fa0a6;          /* medido 5,66:1; cinza-petróleo, não cinza neutro */
+  --rule: rgba(237, 230, 225, 0.22);
   --acc: var(--brand-accent);
   background: var(--bg);
   color: var(--fg);
