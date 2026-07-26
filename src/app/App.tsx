@@ -6,6 +6,7 @@ import Menu from "./sections/Menu";
 import Home from "./pages/Home";
 import WorkIndex from "./pages/WorkIndex";
 import CaseStudy from "./pages/CaseStudy";
+import HomeV2 from "./lab/v2/HomeV2";
 
 /**
  * Mateus Bredoff — direção editorial, agora multi-página.
@@ -54,16 +55,16 @@ function RouteLifecycle() {
 
 function Layout({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
-  /* Na home a barra de metadados vive DENTRO do Hero, participando do flex
-     daquela composição — que está aprovada. Repeti-la aqui duplicaria a barra;
-     movê-la para cá mudaria a home. Então o Layout só a monta nas rotas
-     internas. */
-  const isHome = pathname === "/";
+  /* A barra de metadados vive DENTRO do Hero nas páginas que TÊM hero, e é o
+     Layout que a monta nas rotas internas. Sem listar a variação da home aqui, a
+     barra aparecia duas vezes em `/lab/home-v2` — o Layout montava a sua e o
+     HeroV2 montava a dele. */
+  const temHeroProprio = pathname === "/" || pathname.startsWith("/lab/home");
 
   return (
     <main className="antialiased">
       <RouteLifecycle />
-      {!isHome ? (
+      {!temHeroProprio ? (
         <div className="on-paper w-full">
           <Menu />
         </div>
@@ -101,6 +102,8 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/work" element={<WorkIndex />} />
           <Route path="/work/:slug" element={<CaseStudy />} />
+          {/* laboratório: variação da home para aprovação — sai depois da escolha */}
+          <Route path="/lab/home-v2" element={<HomeV2 />} />
           {/* Slug inexistente cai no próprio CaseStudy, que trata o 404 com a
               linguagem do site em vez de tela branca. */}
           <Route path="*" element={<CaseStudy />} />
