@@ -2,6 +2,11 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { Mono, Rule, SectionHead, Bracket, reveal } from "../system";
 import imgEditorial from "../../assets/optimized/capabilities-editorial-800.webp";
+import artBureau from "../../assets/optimized/art-bureau-1400.webp";
+import artStag from "../../assets/optimized/art-stag-1400.webp";
+import artAlexArcher from "../../assets/optimized/art-alexarcher-1400.webp";
+import artNeox from "../../assets/optimized/art-neox-1400.webp";
+import artVotare from "../../assets/optimized/art-votare-1400.webp";
 
 /**
  * Capabilities — lista com painel.
@@ -17,10 +22,12 @@ import imgEditorial from "../../assets/optimized/capabilities-editorial-800.webp
  *
  * O gesto vem da variante W2 do laboratório do Work, que ele aprovou para cá.
  *
- * ⚠ O PAINEL É DE TEXTO, não de imagem, e isso é decisão — não falta de arte.
- * Colocar peças aqui repetiria as mesmas artes que o Selected Work exibe na
- * mesma página, e foi exatamente por essa duplicação que o carrossel foi
- * cortado.
+ * O painel mostra a PEÇA que exemplifica a disciplina, mais tags e a frase. A
+ * primeira versão trouxe só texto — eu tinha receio de repetir as artes do
+ * Selected Work na mesma página, e faltou a foto. A diferença em relação ao
+ * carrossel que foi cortado: lá a faixa REPETIA o índice inteiro logo acima
+ * dele; aqui é uma peça por disciplina, legendada com o projeto de origem, no
+ * papel de evidência — não de vitrine.
  *
  * ⚠ No mobile não existe hover: a lista se abre empilhada, com o detalhe embaixo
  * do próprio nome. Painel dependente de cursor viraria conteúdo inalcançável no
@@ -35,6 +42,8 @@ type Capability = {
   name: string;
   tags: string[];
   note: string;
+  /** Peça do portfólio que EXEMPLIFICA a disciplina, com proporção medida. */
+  art: { src: string; w: number; h: number; from: string };
 };
 
 const CAPABILITIES: Capability[] = [
@@ -42,33 +51,63 @@ const CAPABILITIES: Capability[] = [
     name: "Branding",
     tags: ["Logotype", "Visual system", "Guidelines", "Brand architecture"],
     note: "The identity itself — mark, palette, type and the rules that keep it standing when other people take over.",
+    art: { src: artBureau, w: 2800, h: 1575, from: "Bureau" },
   },
   {
     name: "Art Direction",
     tags: ["Photography", "Styling", "Campaign", "Set design"],
     note: "Deciding what the image says before deciding how it looks, and holding that decision across every frame.",
+    art: { src: artStag, w: 2800, h: 2253, from: "Stag Grid" },
   },
   {
     name: "Creative Direction",
     tags: ["Concept", "Narrative", "Team", "Rollout"],
     note: "The direction above the artefacts: what the brand is claiming, and in which order it should be shown.",
+    art: { src: artAlexArcher, w: 2800, h: 2255, from: "Alex Archer" },
   },
   {
     name: "Digital Design",
     tags: ["Interface", "Website", "Motion", "Design system"],
     note: "The identity where it moves and responds — screens that behave like the brand, not just look like it.",
+    art: { src: artNeox, w: 1920, h: 2280, from: "Neox" },
   },
   {
     name: "Brand Strategy",
     tags: ["Positioning", "Naming", "Verbal identity", "Research"],
     note: "The argument underneath the design, so the visual choices have something to answer to.",
+    art: { src: artVotare, w: 2800, h: 2100, from: "Votare" },
   },
 ];
 
-/** Tag é retângulo de fio, nunca pílula: raio zero é lei do sistema. */
+/**
+ * Tag é retângulo de fio, nunca pílula: raio zero é lei do sistema.
+ *
+ * A ARTE vem primeiro. O painel já foi só texto e faltava a peça — a disciplina
+ * se prova mostrando o trabalho, não descrevendo o serviço. A legenda nomeia o
+ * projeto de onde a peça saiu, para a imagem não virar ilustração genérica.
+ */
 function Detail({ item }: { item: Capability }) {
   return (
     <>
+      <figure className="pb-[clamp(1rem,2vw,1.5rem)]">
+        <div className="w-full overflow-hidden" style={{ aspectRatio: `${item.art.w} / ${item.art.h}` }}>
+          <img
+            key={item.art.src}
+            src={item.art.src}
+            sizes="(min-width: 768px) 40vw, 100vw"
+            alt={`${item.name} — ${item.art.from}`}
+            loading="lazy"
+            decoding="async"
+            draggable={false}
+            className="h-full w-full object-cover"
+          />
+        </div>
+        <figcaption className="flex items-baseline justify-between gap-4 pt-2">
+          <Mono dim>{item.art.from}</Mono>
+          <Mono dim>{item.name}</Mono>
+        </figcaption>
+      </figure>
+
       <div className="flex flex-wrap gap-[0.4rem]">
         {item.tags.map((t) => (
           <span
