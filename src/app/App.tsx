@@ -9,7 +9,6 @@ import CaseStudy from "./pages/CaseStudy";
 import WorkVariants from "./lab/WorkVariants";
 import HomeV3 from "./lab/v3/HomeV3";
 import HomeV4 from "./lab/v4/HomeV4";
-import HomeV5 from "./lab/v5/HomeV5";
 
 /**
  * Mateus Bredoff — direção editorial, agora multi-página.
@@ -109,7 +108,6 @@ export default function App() {
           <Route path="/lab/work" element={<WorkVariants />} />
           <Route path="/lab/home-v3" element={<HomeV3 />} />
           <Route path="/lab/home-v4" element={<HomeV4 />} />
-          <Route path="/lab/home-v5" element={<HomeV5 />} />
           {/* Slug inexistente cai no próprio CaseStudy, que trata o 404 com a
               linguagem do site em vez de tela branca. */}
           <Route path="*" element={<CaseStudy />} />
