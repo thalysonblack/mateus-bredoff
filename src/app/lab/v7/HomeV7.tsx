@@ -28,6 +28,35 @@ import "../../../styles/v7.css";
  * continuam as do cliente.
  */
 
+/* Só o Essential tem valor publicado (US$ 2.500, o que ele anuncia no Behance).
+   Os outros dois seguem "On request" até o Mateus mandar o número — preço é
+   fato do cliente, não se estima. */
+const PACOTES = [
+  {
+    idx: "01",
+    nome: "Essential",
+    texto: "The core of an identity, built to stand on its own.",
+    prazo: "Three weeks",
+    preco: "From US$ 2,500",
+    destaque: true,
+  },
+  {
+    idx: "02",
+    nome: "Complete",
+    texto: "The identity applied where it lives — stationery, social, applications.",
+    prazo: "Five weeks",
+    preco: "On request",
+  },
+  {
+    idx: "03",
+    nome: "Brand system",
+    texto:
+      "Strategy, naming and verbal identity included, for brands reproduced by other people.",
+    prazo: "Eight weeks",
+    preco: "On request",
+  },
+];
+
 const SERVICOS = [
   ["Brand identity", "Mark, palette, typography and the system that keeps it standing without me."],
   ["Art direction", "What the image says, decided before how it looks — and held across every frame."],
@@ -62,22 +91,25 @@ export default function HomeV7() {
           </nav>
         </header>
 
-        <div className="flex flex-col gap-[clamp(2rem,6vh,4rem)]">
+        {/* Três registros de capa — crédito, texto, título — distribuídos pela
+            altura da tela. Antes o texto e o nome vinham colados num grupo só,
+            e o vão inteiro da tela caía entre a nav e a citação: no mobile isso
+            virava 370px de papel liso antes de qualquer conteúdo. Repartido em
+            três, o mesmo ar vira intervalo entre registros. */}
+        <div className="v7-indent-a max-w-[40ch]">
           {/* A citação em itálico, solta na margem — uma vez por página */}
-          <div className="v7-indent-a max-w-[40ch]">
-            <p className="v7-quote">
-              An identity is not a logo. It is the set of decisions that survives the person who
-              made them.
-            </p>
-            <p className="v7-body v7-quiet pt-[clamp(1rem,2vh,1.5rem)]">
-              Brand designer and art director, from Brazil, working worldwide. Identities, editorial
-              and art direction for brands that need to be taken seriously.
-            </p>
-          </div>
-
-          {/* O nome, sangrando pela base */}
-          <h1 className="v7-display v7-name v7-cut">Mateus Bredoff</h1>
+          <p className="v7-quote">
+            An identity is not a logo. It is the set of decisions that survives the person who made
+            them.
+          </p>
+          <p className="v7-body v7-quiet pt-[clamp(1rem,2vh,1.5rem)]">
+            Brand designer and art director, from Brazil, working worldwide. Identities, editorial
+            and art direction for brands that need to be taken seriously.
+          </p>
         </div>
+
+        {/* O nome, sangrando pela base */}
+        <h1 className="v7-display v7-name v7-cut">Mateus Bredoff</h1>
       </section>
 
       {/* ── RETRATO ────────────────────────────────────────────────────
@@ -111,7 +143,12 @@ export default function HomeV7() {
         <p className="v7-meta v7-quiet pb-[clamp(2rem,5vh,3.5rem)]">Selected work</p>
 
         <div className="grid grid-cols-1 gap-[clamp(2rem,5vw,4rem)] md:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
-          <ul>
+          {/* A lista distribui os nomes pela ALTURA da peça ao lado. Empilhados
+              com espaçamento fixo, os sete itens terminavam ~330px antes do pé
+              da imagem e sobrava um bloco de papel que lê como layout
+              inacabado. Com `justify-between` a coluna de tipo e a coluna de
+              imagem fecham juntas, e o ar vira entrelinha de índice. */}
+          <ul className="flex flex-col md:h-full md:justify-between">
             {WORK.map((w, i) => (
               <li key={w.slug}>
                 <Link
@@ -174,42 +211,49 @@ export default function HomeV7() {
       </section>
 
       {/* ── PREÇO ──────────────────────────────────────────────────────
-          Três frases. O valor entra na sentença, como em página de galeria. */}
+          Ficha técnica em três colunas, cada uma sob seu fio. A versão anterior
+          era texto corrido numa coluna de 46ch recuada 12% — o que deixava mais
+          de metade da largura vazia à direita, e vão morto não lê como respiro,
+          lê como layout inacabado. Aqui a informação ocupa a página inteira e o
+          preço fecha cada coluna, alinhado na base pelo `mt-auto`.
+          Estrutura inédita na página: o Work é índice com peça, os Serviços são
+          pares de linhas, este é uma ficha em colunas. */}
       <section id="pricing" className="v7-margin py-[clamp(4rem,12vh,9rem)]">
         <p className="v7-meta v7-quiet pb-[clamp(2rem,5vh,3.5rem)]">Engagements</p>
 
-        <div className="v7-indent-b flex flex-col gap-[clamp(1.5rem,4vh,2.5rem)]">
-          <p className="v7-lead">
-            <span className="v7-display v7-h3 v7-accent">Essential</span>
-            <br />
-            The core of an identity, built to stand on its own. Three weeks, from US$ 2,500.
-          </p>
-          <p className="v7-lead">
-            <span className="v7-display v7-h3">Complete</span>
-            <br />
-            The identity applied where it lives — stationery, social, applications. Five weeks.
-          </p>
-          <p className="v7-lead">
-            <span className="v7-display v7-h3">Brand system</span>
-            <br />
-            Strategy, naming and verbal identity included, for brands reproduced by other people.
-            Eight weeks.
-          </p>
-          <p className="v7-body v7-quiet max-w-[42ch] pt-2">
-            Custom scope and retainer on request. Remote, worldwide.
-          </p>
+        <div className="grid grid-cols-1 gap-x-[clamp(1.5rem,4vw,3.5rem)] gap-y-[clamp(2.5rem,6vh,4rem)] md:grid-cols-3">
+          {PACOTES.map(({ idx, nome, texto, prazo, preco, destaque }) => (
+            <div key={nome} className="v7-rule flex flex-col pt-[clamp(0.9rem,2vh,1.4rem)]">
+              <div className="flex items-baseline justify-between gap-4">
+                <span className="v7-meta v7-quiet">{idx}</span>
+                <span className="v7-meta v7-quiet">{prazo}</span>
+              </div>
+              <h3 className={`v7-display v7-h3 pt-[clamp(1rem,3vh,2rem)]${destaque ? " v7-accent" : ""}`}>
+                {nome}
+              </h3>
+              <p className="v7-body v7-quiet max-w-[34ch] pt-[clamp(0.75rem,2vh,1.25rem)]">{texto}</p>
+              <p className="v7-lead mt-auto pt-[clamp(1.5rem,4vh,2.5rem)]">{preco}</p>
+            </div>
+          ))}
         </div>
+
+        <p className="v7-body v7-quiet pt-[clamp(2rem,5vh,3.5rem)]">
+          Custom scope and retainer on request. Remote, worldwide.
+        </p>
       </section>
 
       {/* ── CONTATO ────────────────────────────────────────────────────
           Fecho como contracapa: o convite em corpo de capa, os canais como
           linha de crédito. */}
       <section id="contact" className="v7-ink">
-        <div className="v7-margin flex min-h-[72vh] flex-col justify-between overflow-clip py-[clamp(2rem,6vh,4rem)]">
+        <div className="v7-margin flex min-h-[62vh] flex-col justify-between overflow-clip py-[clamp(2rem,6vh,4rem)]">
           <p className="v7-meta v7-quiet">Available for work — Q3</p>
 
           <div>
-            <a href="mailto:hello@mateusbredoff.com" className="v7-display v7-h2 block">
+            {/* Escala de contracapa: o convite responde ao nome da abertura. Em
+                v7-h2 sobrava meia tela vazia acima dele — a altura da seção
+                existia sem nada para sustentá-la. */}
+            <a href="mailto:hello@mateusbredoff.com" className="v7-display v7-close block">
               Let&rsquo;s talk
             </a>
 

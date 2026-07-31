@@ -94,6 +94,9 @@ import artVotareX from "../assets/optimized/art-votare-2200.webp";
 import artFerraci from "../assets/optimized/art-ferraci-1400.webp";
 import artFerraciX from "../assets/optimized/art-ferraci-2200.webp";
 import artTrivo from "../assets/optimized/art-trivo-1400.webp";
+import artBureau from "../assets/optimized/art-bureau-1400.webp";
+import artBureauX from "../assets/optimized/art-bureau-2200.webp";
+import artNeox from "../assets/optimized/art-neox-1400.webp";
 
 export const WORK: WorkItem[] = [
   {
@@ -130,6 +133,42 @@ export const WORK: WorkItem[] = [
    * chegar — nada mais precisa mudar.
    */
   {
+    slug: "bureau",
+    title: "Bureau",
+    year: 2025,
+    disciplines: ["Electronic Music", "Visual Identity"],
+    credits: [],
+    behanceUrl: "https://www.behance.net/gallery/250723539/Bureau",
+    about: [],
+    contentPending: true,
+    cover: img(artBureau, 1400, 788, "Bureau — identidade para música eletrônica", artBureauX),
+    images: [],
+  },
+  {
+    slug: "neox",
+    title: "Neox",
+    year: 2025,
+    disciplines: ["Technical Apparel", "Visual Identity"],
+    credits: [],
+    behanceUrl: "https://www.behance.net/gallery/247842007/Neox",
+    about: [],
+    contentPending: true,
+    cover: img(artNeox, 1400, 1663, "Neox — vestuário técnico"),
+    images: [],
+  },
+  {
+    slug: "trivo",
+    title: "Trivo",
+    year: 2025,
+    disciplines: ["Visual Identity", "3D"],
+    credits: [],
+    behanceUrl: "https://www.behance.net/gallery/230919699/Trivo-Visual-Identity",
+    about: [],
+    contentPending: true,
+    cover: img(artTrivo, 1400, 930, "Trivo — identidade visual"),
+    images: [],
+  },
+  {
     slug: "stag",
     title: "Stag",
     year: 2025,
@@ -153,18 +192,6 @@ export const WORK: WorkItem[] = [
     images: [],
   },
   {
-    slug: "proxima",
-    title: "Proxima",
-    year: 2025,
-    disciplines: ["Branding", "Visual Identity"],
-    credits: [{ name: "Alex Renner", role: "Project Coordination" }],
-    /* Proxima não existe no Behance — só no material do Framer. */
-    about: [],
-    contentPending: true,
-    cover: img(artTrivo, 1920, 1275, "Proxima — identidade visual"),
-    images: [],
-  },
-  {
     slug: "votare",
     title: "Votare",
     year: 2025,
@@ -181,12 +208,18 @@ export const WORK: WorkItem[] = [
 export const findWork = (slug?: string) => WORK.find((w) => w.slug === slug);
 
 /**
- * `trivo` NÃO entra na coleção.
+ * `proxima` NÃO entra na coleção — e o motivo é de CONTEÚDO, não de técnica.
  *
- * A página existe no sitemap do Framer mas está publicada vazia — 28KB contra
- * ~230KB das outras, zero imagem, sem título próprio. Não é um case sem texto:
- * é uma página que nunca foi montada. Entrar aqui significaria criar uma rota
- * que abre no nada. O trabalho Trivo continua visível no índice da home, que
- * aponta para o case no Behance.
+ * O projeto existe no CMS do Framer dele, mas não está publicado no Behance e
+ * **não tem arte própria**: a capa que ele exibia aqui era a arte da Trivo,
+ * emprestada como placeholder. Com a Trivo de volta no índice (ela tem case
+ * publicado), a mesma imagem apareceria duas vezes com dois nomes diferentes —
+ * o visitante leria uma peça de um projeto como se fosse de outro. Índice de
+ * portfólio não empresta arte. Volta a entrar quando o Mateus mandar a peça.
+ *
+ * Histórico: `trivo` já esteve nesta lista porque a página dela no Framer está
+ * publicada vazia. Só que página vazia lá não é ausência de trabalho aqui — o
+ * case existe no Behance e a arte está no repo. Entrou como `contentPending`,
+ * igual aos outros: mostra peça e metadados, omite o corpo de texto.
  */
-export const MISSING_FROM_CMS = ["trivo"] as const;
+export const MISSING_FROM_CMS = ["proxima"] as const;

@@ -240,7 +240,15 @@ Fatos do perfil que **contradizem o site** e precisam de decisão:
   disciplina e o meio de cada experimento, e se falta algum. `FLORA` ficou fora
   porque `@florafaunaai` é parceria real, não ficção. A bio dele hoje diz
   "Brand Designer, Art Director & AI Creative" e "Designer at @designwithblink".
-- As peças do índice não abrem nada ainda — não existem páginas de case.
+- **`Proxima` está fora de `content/work.ts`.** Existe no CMS do Framer, mas não
+  tem case no Behance nem arte própria — a capa dela aqui era a arte da Trivo,
+  emprestada. Com a Trivo de volta no índice, a mesma imagem apareceria com dois
+  nomes. Pedir a peça ao Mateus para reativar. (A Trivo, ao contrário, VOLTOU:
+  página vazia no Framer não é ausência de trabalho, o case existe no Behance.)
+- **A coleção tem 7 itens, como o índice da home.** Se você trocar a fonte de
+  dados de alguma lista, COMPARE a contagem antes e depois: a migração para
+  `content/work.ts` derrubou Bureau, Neox e Trivo em silêncio e passou em build,
+  render e revisão visual com três projetos a menos.
 - **Capabilities está sem descrição por serviço.** A tabela das referências tem um texto
   curto por linha; aqui ficou só índice + nome, porque o texto teria que ser inventado e
   conteúdo de cliente não se inventa. Pedir os cinco textos ao Mateus.

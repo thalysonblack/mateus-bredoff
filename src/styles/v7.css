@@ -28,6 +28,9 @@
   --quiet: #6a665e; /* medido 4,63:1 sobre o papel */
   --quiet-on-ink: #8fa0a6; /* medido 5,66:1 sobre a tinta */
   --accent: #a53a0b; /* medido 5,30:1 sobre o papel */
+  /* Fio de 1px: separador, nunca moldura. Vive como token porque muda de valor
+     ao entrar no bloco de tinta e nenhum componente deveria saber disso. */
+  --rule: color-mix(in srgb, var(--ink) 20%, transparent);
 
   --display: "Bodoni Moda", Georgia, serif;
   --text: "Inter Tight", "Inter_Display:Medium", sans-serif;
@@ -43,6 +46,13 @@
 }
 .v7-ink .v7-quiet {
   color: var(--quiet-on-ink);
+}
+.v7-ink {
+  --rule: color-mix(in srgb, var(--paper) 24%, transparent);
+}
+
+.v7-rule {
+  border-top: 1px solid var(--rule);
 }
 
 /* ── Display ─────────────────────────────────────────────────────────────
@@ -70,6 +80,15 @@
 .v7-h2 {
   font-size: clamp(2.25rem, 7vw, 7rem);
   letter-spacing: -0.025em;
+}
+
+/* O fecho responde ao nome da abertura: mesma família, quase a mesma escala.
+   É o par que fecha a página como capa e contracapa. */
+.v7-close {
+  font-size: clamp(3rem, 14vw, 12rem);
+  line-height: 0.84;
+  letter-spacing: -0.03em;
+  font-optical-sizing: auto;
 }
 
 .v7-h3 {
