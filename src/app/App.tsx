@@ -6,12 +6,6 @@ import Menu from "./sections/Menu";
 import Home from "./pages/Home";
 import WorkIndex from "./pages/WorkIndex";
 import CaseStudy from "./pages/CaseStudy";
-import WorkVariants from "./lab/WorkVariants";
-import HomeV3 from "./lab/v3/HomeV3";
-import HomeV4 from "./lab/v4/HomeV4";
-import HomeV5 from "./lab/v5/HomeV5";
-import HomeV6 from "./lab/v6/HomeV6";
-import HomeV7 from "./lab/v7/HomeV7";
 
 /**
  * Mateus Bredoff — direção editorial, agora multi-página.
@@ -61,10 +55,8 @@ function RouteLifecycle() {
 function Layout({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
   /* A barra de metadados vive DENTRO do Hero nas páginas que TÊM hero, e é o
-     Layout que a monta nas rotas internas. Sem listar a variação da home aqui, a
-     barra aparecia duas vezes em `/lab/home-v2` — o Layout montava a sua e o
-     HeroV2 montava a dele. */
-  const temHeroProprio = pathname === "/" || pathname.startsWith("/lab/home");
+     Layout que a monta nas rotas internas — se as duas montarem, ela duplica. */
+  const temHeroProprio = pathname === "/";
 
   return (
     <main className="antialiased">
@@ -107,13 +99,6 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/work" element={<WorkIndex />} />
           <Route path="/work/:slug" element={<CaseStudy />} />
-          {/* laboratório: opções do índice de trabalho — sai depois da escolha */}
-          <Route path="/lab/work" element={<WorkVariants />} />
-          <Route path="/lab/home-v3" element={<HomeV3 />} />
-          <Route path="/lab/home-v4" element={<HomeV4 />} />
-          <Route path="/lab/home-v5" element={<HomeV5 />} />
-          <Route path="/lab/home-v6" element={<HomeV6 />} />
-          <Route path="/lab/home-v7" element={<HomeV7 />} />
           {/* Slug inexistente cai no próprio CaseStudy, que trata o 404 com a
               linguagem do site em vez de tela branca. */}
           <Route path="*" element={<CaseStudy />} />
