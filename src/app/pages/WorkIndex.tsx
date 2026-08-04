@@ -19,10 +19,13 @@ export default function WorkIndex() {
     };
   }, []);
 
+  /* `.fr` é a família Geist + o papel do original. Sem ela a página herda
+     `ui-sans-serif` do sistema e TODA medida de largura de linha mente — foi
+     assim que o manifesto da /about mediu 4% mais estreito que o original. */
   return (
-    <>
+    <div className="fr">
       <MarqueeTrabalho />
       <RodapeFramer />
-    </>
+    </div>
   );
 }
