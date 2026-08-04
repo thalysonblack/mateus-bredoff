@@ -55,7 +55,12 @@ export default function RodapeFramer() {
                     href={c.href}
                     target={c.href.startsWith("http") ? "_blank" : undefined}
                     rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                    className="fr-display-solto text-[#5e686c] block transition-colors duration-300 hover:text-[var(--fr-creme)]"
+                    /* #616b6f no lugar do #5e686c do original: aquele mede
+                       2,88:1 sobre o petróleo e reprova em AA mesmo no mínimo
+                       de texto grande (3:1). Este mede 3,01:1. Ver a nota do
+                       --fr-cinza em framer.css — não reverter para "ficar
+                       fiel". */
+                    className="fr-display-solto text-[#616b6f] block transition-colors duration-300 hover:text-[var(--fr-creme)]"
                   >
                     {c.label}
                   </a>
@@ -81,7 +86,9 @@ export default function RodapeFramer() {
         {/* `mt-auto` em vez de posição absoluta: a linha fica colada no fundo do
             bloco de 100vh sem sair do fluxo, e continua embaixo do conteúdo se
             a tela for baixa demais para caber tudo. */}
-        <div className="fr-micro mt-auto flex items-end justify-between pt-16 text-white/45">
+        {/* 46% e não os 45% do original: 45% mede 4,39:1 sobre o petróleo e
+            fica a 0,11 de passar em AA. Um ponto percentual resolve. */}
+        <div className="fr-micro mt-auto flex items-end justify-between pt-16 text-white/46">
           <span>© 2026</span>
           {/* `scrollToTop` do Lenis: com scroll interpolado, `window.scrollTo`
               não move nada e o link vira botão morto. */}

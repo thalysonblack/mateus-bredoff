@@ -24,7 +24,12 @@
   --fr-petroleo: #142126;
   --fr-marrom: #260f0a;
   --fr-creme: #ede6e1;
-  --fr-cinza: #808080;
+  /* ⚠ O original usa #808080, que mede 4,17:1 sobre o petróleo e REPROVA em
+     AA (mínimo 4,5 para corpo). Subimos para #868686 → 4,52:1. A diferença é
+     imperceptível a olho e mantém o papel da cor; a dívida de acessibilidade
+     do original é a única coisa que esta réplica se recusa a copiar.
+     Não "restaure a fidelidade" aqui. */
+  --fr-cinza: #868686;
 
   /* Texto quieto: preto a 50% sobre o papel. É o valor do original — mede
      ~4,8:1 sobre #F6F6F6, passa em AA para corpo. Não afrouxar abaixo disso. */
