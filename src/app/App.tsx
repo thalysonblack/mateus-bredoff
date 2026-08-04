@@ -59,12 +59,24 @@ function Layout({ children }: { children: React.ReactNode }) {
      Layout que a monta nas rotas internas — se as duas montarem, ela duplica. */
   const temHeroProprio = pathname === "/";
 
+  /* O `relative` do <main> é a âncora da barra sobreposta. Sem `z-index`
+     junto, não cria stacking context — o `mix-blend` das páginas segue vivo. */
   return (
-    <main className="antialiased">
+    <main className="relative antialiased">
       <RouteLifecycle />
+      {/* A barra é SOBREPOSTA, não faz parte do fluxo.
+          No original ela flutua sobre o hero de cada rota; aqui ela estava no
+          fluxo e empurrava a página inteira 57px para baixo (117px no mobile).
+          Todo marco vertical das rotas internas nascia com esse deslocamento —
+          e o erro não aparece olhando uma página só, porque tudo desce junto.
+          Sem `z-index` no ancestral de propósito: as páginas usam
+          `mix-blend-exclusion` no texto do hero, e um stacking context aqui em
+          cima apagaria o blend. O empilhamento vem da ordem do DOM. */}
       {!temHeroProprio ? (
-        <div className="on-paper w-full">
-          <Menu />
+        <div className="pointer-events-none absolute inset-x-0 top-0">
+          <div className="pointer-events-auto">
+            <Menu />
+          </div>
         </div>
       ) : null}
       {children}
