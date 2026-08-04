@@ -216,6 +216,21 @@
   color: #5e686c;
 }
 
+/* Palavra do reveal por cor.
+
+   `display: inline` é OBRIGATÓRIO e não é preferência: o SplitText entrega as
+   unidades como `inline-block`, e inline-block reserva o espaço do descender no
+   fim de cada caixa de linha. Numa entrelinha MENOR que o corpo (56,96 num
+   corpo de 64) isso empurra o bloco inteiro ~55px para baixo e a última linha
+   sai pela base da tela. Só a cor é animada aqui — nenhuma transform precisa do
+   inline-block. */
+.palavra-revelada {
+  /* `!important` contra o `style="display:inline-block"` que o SplitText grava
+     no atributo — classe não vence style inline. É o caso legítimo do
+     modificador: sobrescrever biblioteca, não vencer o próprio CSS. */
+  display: inline !important;
+}
+
 /* --- blend ---------------------------------------------------------------
    O original pinta o título do case, o "Other Projects" e a manchete do hero
    da About em BRANCO com `mix-blend-mode: exclusion`, contando com a inversão

@@ -1,6 +1,14 @@
 /**
  * Compara UMA rota da réplica com a mesma rota do original, medindo.
  *
+ * ⚠ COMPARE O RITMO, NÃO O Y ABSOLUTO. O cabeçalho do site difere entre os dois
+ * lados (no original ele é sobreposto; na réplica o Layout ainda o monta dentro
+ * do fluxo, ocupando 57px), então TODO marco sai deslocado pelo mesmo valor.
+ * Ler o Y cru dá 57px de erro em cada linha e esconde os erros de espaçamento,
+ * que são os que importam. Normalize pelo primeiro marco em comum e compare a
+ * diferença dali para baixo — foi o que revelou que o ritmo interno da /about
+ * estava dentro de 8px enquanto o Y cru acusava 57.
+ *
  * Fotografa os dois lados na mesma largura E extrai a geometria dos dois com o
  * mesmo código — porque comparar print com print só pega erro grosseiro, e o
  * que denuncia a cópia é a escala e o ritmo, que se leem em número.

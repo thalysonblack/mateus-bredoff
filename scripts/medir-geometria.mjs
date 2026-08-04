@@ -30,7 +30,12 @@ const browser = await puppeteer.launch({
 });
 const page = await browser.newPage();
 await page.setViewport({ width: W, height: 1000 });
-await page.goto(BASE + rota, { waitUntil: 'networkidle2', timeout: 90000 });
+/* Aceita URL inteira para poder medir a réplica local com o MESMO código do
+   original — dois medidores diferentes comparam duas medições, não duas telas. */
+await page.goto(rota.startsWith('http') ? rota : BASE + rota, {
+  waitUntil: 'networkidle2',
+  timeout: 90000,
+});
 await page.evaluate(() => document.fonts.ready);
 
 /* O Framer só monta o que entra em viewport — sem rolar tudo antes, metade das
@@ -60,7 +65,18 @@ const dados = await page.evaluate(() => {
     if (!filhoTexto) return;
     const t = el.textContent.trim();
     if (!t) return;
-    const r = el.getBoundingClientRect();
+
+    /* A caixa da PRIMEIRA LINHA DE TEXTO, não a do elemento.
+       O bounding do elemento inclui padding e borda: um rótulo com
+       `padding-top: 24px` mede 24px acima de onde a letra realmente está, e a
+       comparação com o original — que põe o padding num wrapper — acusa uma
+       diferença que não existe na tela. Foi assim que este script mostrou −8px
+       num espaçamento que estava certo. */
+    let r = el.getBoundingClientRect();
+    const faixa = document.createRange();
+    faixa.selectNodeContents(el);
+    const linhas = faixa.getClientRects();
+    if (linhas.length) r = linhas[0];
     if (r.width < 1 || r.height < 1) return;
     const s = getComputedStyle(el);
     if (s.visibility === 'hidden' || s.opacity === '0') return;
