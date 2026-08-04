@@ -1,208 +1,260 @@
 import { useEffect } from "react";
 import { useParams, Link } from "react-router";
-import { Mono, Rule, Bracket, SectionHead } from "../system";
-import { useReveal } from "../../hooks/useReveal";
-import { findWork, WORK } from "../../content/work";
-import Footer from "../sections/Footer";
+import RodapeFramer from "../sections/framer/RodapeFramer";
+import { findWork, WORK, type WorkItem } from "../../content/work";
+import "../../styles/framer-rotas.css";
 
 /**
- * Página de case — UMA página para todos os cases.
+ * `/work/:slug` — UM componente para os seis cases.
  *
- * Não existe um componente por projeto: esta rota resolve o slug contra a
- * coleção em `content/work.ts` e renderiza o item. Seis páginas quase iguais
- * divergem no primeiro ajuste; esta não tem como divergir.
+ * A medição confirmou que isso não é economia, é fidelidade: as páginas de
+ * `stag`, `trivo`, `ferraci` e `proxima` têm **15568px e 11 imagens cada,
+ * idênticas**. Alex Archer usa o mesmo template com mais blocos (17729px) e
+ * Votare com menos (8503px). São itens de uma coleção de CMS, não seis páginas.
  *
- * O corpo de texto só aparece quando existe. Quatro dos seis cases do material
- * do cliente estão com lorem ipsum no ar — em vez de portar enchimento, a página
- * mostra o trabalho (capa, imagens, metadados reais) e omite a seção de texto.
- * Ver `contentPending` em content/work.ts.
+ * A página tem TRÊS grades diferentes, e isso é medido, não descuido:
+ *   cabeçalho        margem 32, duas colunas de 764 com calha de 8
+ *   pilha de imagens margem 8,  duas colunas com calha de 8, célula de 100vh
+ *   outros projetos  margem 24, duas colunas de 764 com calha de 24
+ * Unificar as três num `bleed` só reproduziria a aparência e erraria as três.
+ *
+ * ⚠ CINCO DOS SEIS CASES ESTÃO COM LOREM IPSUM NO ORIGINAL. Só Alex Archer tem
+ * texto escrito. Portar o enchimento seria trocar de tecnologia mantendo o
+ * defeito; escrever por conta própria seria inventar a narrativa dos projetos
+ * dele. A página mostra o trabalho e diz que o texto está por vir — ver
+ * `contentPending` em `content/work.ts`.
  */
+
+/** Rótulo de campo + valor, no vernáculo da ficha técnica do CMS dele. */
+function Campo({ rotulo, children }: { rotulo: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <p className="fr-secao fr-cinza">{rotulo}</p>
+      <div className="fr-ficha fr-marrom pt-[14px]">{children}</div>
+    </div>
+  );
+}
+
+function Vizinho({ item }: { item: WorkItem }) {
+  return (
+    <Link to={`/work/${item.slug}`} className="relative block overflow-hidden">
+      <div className="w-full" style={{ aspectRatio: "764 / 520" }}>
+        <img
+          src={item.cover.src}
+          srcSet={item.cover.src2x ? `${item.cover.src} 1400w, ${item.cover.src2x} 2200w` : undefined}
+          sizes="(min-width: 1024px) 50vw, 100vw"
+          width={item.cover.w}
+          height={item.cover.h}
+          alt={item.cover.alt}
+          /* Sem `loading=lazy`: com o Lenis no comando o `scrollY` nativo fica em
+             0, e imagem `lazy` abaixo da dobra nunca dispara. */
+          decoding="async"
+          draggable={false}
+          className="h-full w-full object-cover"
+        />
+      </div>
+      <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 p-2">
+        <span className="fr-card-titulo px-1 text-white mix-blend-difference">{item.title}</span>
+        <span className="flex gap-2">
+          {item.disciplines.map((d) => (
+            <span
+              key={d}
+              className="fr-rotulo rounded-[3px] bg-black/15 px-2 py-1 text-white backdrop-blur-[5px]"
+            >
+              {d}
+            </span>
+          ))}
+        </span>
+      </div>
+    </Link>
+  );
+}
+
 export default function CaseStudy() {
   const { slug } = useParams();
   const item = findWork(slug);
-  const titleRef = useReveal<HTMLHeadingElement>({ immediate: true });
 
-  /* Title por rota: sem isso toda página de case herda o título da home e o
-     compartilhamento manda sempre o mesmo card. */
   useEffect(() => {
-    if (!item) return;
-    const previous = document.title;
-    document.title = `${item.title} — Mateus Bredoff`;
+    const anterior = document.title;
+    document.title = "Mateus Bredoff";
     return () => {
-      document.title = previous;
+      document.title = anterior;
     };
-  }, [item]);
+  }, []);
 
   if (!item) {
     return (
-      <section className="on-paper flex min-h-[70vh] w-full items-center">
-        <div className="bleed">
-          <Mono dim>Erro 404</Mono>
-          <h1 className="t-display pt-4" style={{ fontSize: "clamp(2rem,7vw,110px)" }}>
-            Case não encontrado
-          </h1>
-          <Link to="/work" className="link-quiet mt-8 inline-block">
-            <Bracket>VER TODO O TRABALHO</Bracket>
-          </Link>
-        </div>
-      </section>
+      <div className="fr">
+        <section
+          className="flex min-h-svh w-full items-center"
+          style={{ paddingInline: "var(--fr-margem-caso)" }}
+        >
+          <div>
+            <p className="fr-secao fr-cinza">404</p>
+            <h1 className="fr-caso-titulo pt-3">Case não encontrado</h1>
+            <Link to="/work" className="fr-link-quieto fr-cinza mt-8 inline-block">
+              View All
+            </Link>
+          </div>
+        </section>
+        <RodapeFramer />
+      </div>
     );
   }
 
-  const others = WORK.filter((w) => w.slug !== item.slug).slice(0, 3);
+  const outros = WORK.filter((w) => w.slug !== item.slug).slice(0, 2);
 
   return (
-    <>
-      <article className="on-paper w-full">
-        <div className="bleed pt-[clamp(2rem,5vw,4rem)]">
-          <SectionHead left="Work" right={String(item.year)} />
+    <div className="fr">
+      {/* --- hero: a capa em sangria -------------------------------------
+          No original este slot é um `<video>` — e nos seis cases ele está SEM
+          FONTE ("Add a video source" aparece no publicado). A capa do projeto
+          entra no lugar: replicar um slot vazio seria replicar o defeito.
+          100vh no desktop, 464px no mobile — medido, não é o mesmo valor. */}
+      <section className="relative w-full overflow-hidden max-lg:h-[464px] lg:h-svh">
+        <img
+          src={item.cover.src}
+          srcSet={item.cover.src2x ? `${item.cover.src} 1400w, ${item.cover.src2x} 2200w` : undefined}
+          sizes="100vw"
+          alt={item.cover.alt}
+          fetchPriority="high"
+          decoding="async"
+          className="h-full w-full object-cover"
+          draggable={false}
+        />
+      </section>
 
-          <h1
-            ref={titleRef}
-            data-reveal
-            className="t-display t-display-xl pb-[clamp(2rem,5vw,4rem)]"
-            style={{ fontSize: "clamp(2.25rem, 9vw, 176px)" }}
-          >
-            {item.title}
-          </h1>
+      {/* --- cabeçalho: margem 32, duas colunas de 764 com calha de 8 ----- */}
+      <header
+        className="grid grid-cols-1 gap-y-8 pt-[32px] lg:grid-cols-2 lg:gap-x-[8px]"
+        style={{ paddingInline: "var(--fr-margem-caso)" }}
+      >
+        {/* Branco + `exclusion`: o nome do projeto se inverte contra o papel.
+            Nenhum ancestral aqui tem transform/opacity/filter/z-index — é o que
+            mantém o blend vivo em vez de pintar branco chapado sobre branco. */}
+        <h1 className="fr-caso-titulo fr-exclusao self-start">{item.title}</h1>
 
-          {/* Ficha técnica: os mesmos campos que o CMS dele expõe */}
-          <Rule />
-          <dl className="grid grid-cols-1 gap-x-[clamp(1rem,3vw,3rem)] gap-y-[clamp(1.25rem,2.5vw,2rem)] py-[clamp(1.5rem,3vw,2.5rem)] md:grid-cols-3">
-            <div>
-              <dt className="pb-2">
-                <Mono dim>Type</Mono>
-              </dt>
-              <dd>
-                <Mono>{item.disciplines.join(" / ")}</Mono>
-              </dd>
-            </div>
-            <div>
-              <dt className="pb-2">
-                <Mono dim>Year</Mono>
-              </dt>
-              <dd>
-                <Mono>{item.year}</Mono>
-              </dd>
-            </div>
-            {item.credits.length > 0 ? (
-              <div>
-                <dt className="pb-2">
-                  <Mono dim>Credits</Mono>
-                </dt>
-                <dd className="flex flex-col gap-1">
-                  {item.credits.map((c) => (
-                    <Mono key={c.name}>
-                      {c.name}
-                      <span className="dim">{` — ${c.role}`}</span>
-                    </Mono>
-                  ))}
-                </dd>
+        <div className="flex flex-col gap-[47px]">
+          <div>
+            <p className="fr-secao fr-cinza">About</p>
+            {item.about.length > 0 ? (
+              <div className="flex flex-col gap-[25.6px] pt-[14px]">
+                {item.about.map((p, i) => (
+                  <p key={i} className="fr-caso-corpo fr-corpo-quieto">
+                    {p}
+                  </p>
+                ))}
               </div>
-            ) : null}
-          </dl>
-          <Rule />
-        </div>
-
-        {/* Capa em sangria: a proporção vem medida do arquivo, então a caixa já
-            nasce certa e não há salto de layout quando a imagem decodifica. */}
-        <figure className="w-full pt-[clamp(1.5rem,3vw,2.5rem)]">
-          <div className="w-full overflow-hidden" style={{ aspectRatio: `${item.cover.w} / ${item.cover.h}` }}>
-            <img
-              src={item.cover.src}
-              srcSet={item.cover.src2x ? `${item.cover.src} 1400w, ${item.cover.src2x} 2200w` : undefined}
-              sizes="100vw"
-              width={item.cover.w}
-              height={item.cover.h}
-              alt={item.cover.alt}
-              className="h-full w-full object-cover"
-              draggable={false}
-            />
+            ) : (
+              /* O original mostra lorem ipsum aqui. Uma linha honesta é melhor
+                 que enchimento portado — e some sozinha quando o texto chegar. */
+              <p className="fr-caso-corpo fr-corpo-quieto pt-[14px]">
+                Case study in preparation.
+              </p>
+            )}
           </div>
-        </figure>
 
-        {item.about.length > 0 ? (
-          <div className="bleed pt-[clamp(2.5rem,5vw,4.5rem)]">
-            <SectionHead left="About" right="Statement" />
-            <div className="about-flow pb-[clamp(2rem,4vw,3.5rem)]">
-              {item.about.map((p, i) => (
-                <p key={i} className="t-body">
-                  {p}
-                </p>
+          <Campo rotulo="Type">
+            <div className="flex flex-wrap gap-x-[15px] gap-y-1">
+              {item.disciplines.map((d) => (
+                <span key={d}>{d}</span>
               ))}
             </div>
-          </div>
-        ) : (
-          /* Sem texto: dizer isso com uma linha honesta é melhor que encher. */
-          <div className="bleed pt-[clamp(2rem,4vw,3rem)]">
-            <Rule />
-            <div className="py-[clamp(1rem,2vw,1.5rem)]">
-              <Mono dim>Case study in preparation</Mono>
-            </div>
-            <Rule />
-          </div>
-        )}
+          </Campo>
 
-        {item.images.length > 0 ? (
-          <div className="bleed flex flex-col gap-[clamp(1rem,2.5vw,2.5rem)] pt-[clamp(2rem,4vw,3.5rem)]">
-            {item.images.map((im, i) => (
-              <figure key={im.src} className="w-full">
-                <div className="w-full overflow-hidden" style={{ aspectRatio: `${im.w} / ${im.h}` }}>
-                  <img
-                    src={im.src}
-                    srcSet={im.src2x ? `${im.src} 1400w, ${im.src2x} 2200w` : undefined}
-                    sizes="(min-width: 768px) 90vw, 100vw"
-                    width={im.w}
-                    height={im.h}
-                    alt={im.alt}
-                    loading={i < 2 ? "eager" : "lazy"}
-                    decoding="async"
-                    draggable={false}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
+          <Campo rotulo="Year">{item.year}</Campo>
+        </div>
+      </header>
+
+      {/* --- pilha de imagens: margem 8, calha 8, célula de 100vh ---------
+          O ritmo do template alterna: a cada quatro peças, a segunda ocupa meia
+          largura na coluna da direita e as outras sangram. É o que quebra a
+          monotonia de uma pilha de telas cheias — e é o que o original faz
+          (medido: as peças de índice 1 e 5 saem em 788,6px, as outras em 1585). */}
+      {item.images.length > 0 ? (
+        <div
+          className="grid grid-cols-2 pt-[47px]"
+          style={{
+            paddingInline: "var(--fr-margem-midia)",
+            gap: "var(--fr-margem-midia)",
+          }}
+        >
+          {item.images.map((im, i) => {
+            /* `meia` declarado na peça manda; sem ele, a cadência do template
+               mais comum (a segunda de cada quatro). Ver o comentário em
+               `WorkImage.meia`: o layout é escolha editorial por peça e nenhuma
+               regra de índice acerta os dois cases que foram medidos. */
+            const meia = im.meia ?? i % 4 === 1;
+            return (
+              <figure
+                key={im.src}
+                className={`overflow-hidden max-lg:h-[300px] lg:h-svh ${
+                  meia ? "col-start-2" : "col-span-2"
+                }`}
+              >
+                <img
+                  src={im.src}
+                  srcSet={im.src2x ? `${im.src} 1400w, ${im.src2x} 2200w` : undefined}
+                  sizes={meia ? "50vw" : "100vw"}
+                  width={im.w}
+                  height={im.h}
+                  alt={im.alt}
+                  loading={i < 2 ? "eager" : "lazy"}
+                  decoding="async"
+                  draggable={false}
+                  className="h-full w-full object-cover"
+                />
               </figure>
-            ))}
-          </div>
-        ) : null}
+            );
+          })}
+        </div>
+      ) : null}
 
-        {item.behanceUrl ? (
-          <div className="bleed pt-[clamp(2rem,4vw,3rem)]">
-            <a href={item.behanceUrl} target="_blank" rel="noopener noreferrer" className="link-quiet">
-              <Bracket>VER NO BEHANCE</Bracket>
-            </a>
-          </div>
-        ) : null}
-
-        {/* Próximos projetos — o mesmo "Other Projects" do CMS dele */}
-        <div className="bleed pt-[clamp(3rem,6vw,6rem)]">
-          <SectionHead left="Other Projects" right={<Link to="/work" className="link-quiet">View All</Link>} />
-          <div className="grid grid-cols-1 gap-[clamp(1rem,2.5vw,2.5rem)] pb-[clamp(2rem,4vw,4rem)] md:grid-cols-3">
-            {others.map((o) => (
-              <Link key={o.slug} to={`/work/${o.slug}`} className="group block">
-                <div className="w-full overflow-hidden" style={{ aspectRatio: `${o.cover.w} / ${o.cover.h}` }}>
-                  <img
-                    src={o.cover.src}
-                    alt={o.cover.alt}
-                    loading="lazy"
-                    decoding="async"
-                    draggable={false}
-                    className="h-full w-full object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-                  />
-                </div>
-                <div className="flex items-baseline justify-between gap-4 pt-2">
-                  <Mono dim className="idx-acc">
-                    {String(o.year)}
-                  </Mono>
-                  <Mono className="text-right">{o.title}</Mono>
-                </div>
-              </Link>
-            ))}
+      {/* Créditos e link ficam na coluna da DIREITA, alinhados com a ficha
+          técnica do cabeçalho (x=804 medido), não na margem esquerda. */}
+      {item.credits.length > 0 ? (
+        <div className="pt-[120px]" style={{ paddingInline: "var(--fr-margem-caso)" }}>
+          <div className="lg:pl-[772px]">
+            <Campo rotulo="Credits">
+              {item.credits.map((c) => (
+                <p key={c.name}>
+                  {c.name} <span className="fr-secao fr-cinza">{c.role}</span>
+                </p>
+              ))}
+            </Campo>
           </div>
         </div>
-      </article>
+      ) : null}
 
-      <Footer />
-    </>
+      {item.behanceUrl ? (
+        <div className="pt-[24px]" style={{ paddingInline: "var(--fr-margem-caso)" }}>
+          <a
+            href={item.behanceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="fr-link-quieto fr-cinza inline-block lg:ml-[772px]"
+          >
+            View on Behance
+          </a>
+        </div>
+      ) : null}
+
+      {/* --- outros projetos: margem 24, duas colunas de 764 com calha 24 -- */}
+      <section className="pt-[160px] pb-[120px]" style={{ paddingInline: "var(--fr-margem)" }}>
+        <div className="flex items-start justify-between gap-6">
+          <h2 className="fr-manchete fr-exclusao">Other Projects</h2>
+          <Link to="/work" className="fr-link-quieto fr-cinza shrink-0">
+            View All
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 gap-[24px] pt-[56px] lg:grid-cols-2">
+          {outros.map((o) => (
+            <Vizinho key={o.slug} item={o} />
+          ))}
+        </div>
+      </section>
+
+      <RodapeFramer />
+    </div>
   );
 }

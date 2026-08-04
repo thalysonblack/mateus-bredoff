@@ -26,6 +26,17 @@ export type WorkImage = {
   w: number;
   h: number;
   alt: string;
+  /**
+   * Peça em MEIA largura na pilha do case, em vez de sangrar.
+   *
+   * Não é enfeite: o layout varia por item no CMS dele, e a medição provou.
+   * Em `/work/stag` a peça de índice 1 sai sozinha em 788,6px na coluna da
+   * direita; em `/work/alex-archer` as de índice 3 e 4 saem lado a lado, uma em
+   * cada coluna. Nenhuma regra de posição (`i % 4`) reproduz os dois — é escolha
+   * editorial por peça. Enquanto o campo não vier preenchido, `CaseStudy` cai na
+   * cadência do template mais comum e o resultado é aproximado, não medido.
+   */
+  meia?: boolean;
 };
 
 export type WorkItem = {
