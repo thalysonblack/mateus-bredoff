@@ -1,0 +1,142 @@
+/**
+ * Tokens da RÉPLICA — todos medidos em `mateusbredoff.framer.website`,
+ * nenhum estimado. Fonte: `scripts/audit-framer.mjs` (@1600px e @390px).
+ *
+ * Arquivo NOVO de propósito: `system.css` guarda a direção editorial autoral,
+ * que deixou de ser o alvo mas ainda serve de consulta. Misturar os dois faria
+ * um dialeto que não é nem a réplica nem o sistema antigo.
+ *
+ * Duas regras que a medição impôs, e que contrariam o instinto:
+ *
+ * 1. UMA família só. O original é Geist 400 e 500, do hero ao rodapé. Não há
+ *    dueto, não há mono. A hierarquia inteira se faz com corpo, tracking e cor.
+ * 2. O CORPO NÃO ESCALA. 18px/26,1px é idêntico em 1600px e em 390px — só o
+ *    display encolhe. Tornar o corpo fluido "porque é boa prática" já seria
+ *    deixar de ser réplica.
+ */
+
+:root {
+  /* --- paleta medida ------------------------------------------------------
+     O papel é #F6F6F6, cinza neutro — NÃO o creme quente #EDE6E1 da direção
+     autoral. O creme existe no original, mas como cor de TEXTO sobre o
+     petróleo, nunca como fundo. */
+  --fr-papel: #f6f6f6;
+  --fr-petroleo: #142126;
+  --fr-marrom: #260f0a;
+  --fr-creme: #ede6e1;
+  --fr-cinza: #808080;
+
+  /* Texto quieto: preto a 50% sobre o papel. É o valor do original — mede
+     ~4,8:1 sobre #F6F6F6, passa em AA para corpo. Não afrouxar abaixo disso. */
+  --fr-quieto: rgba(0, 0, 0, 0.5);
+  --fr-quieto-inv: rgba(255, 255, 255, 0.5);
+
+  /* --- escala tipográfica medida ------------------------------------------
+     Pares tamanho/entrelinha exatamente como computados. O tracking é sempre
+     negativo (≈ −0,03em); em corpo grande o original abre para −0,02em. */
+
+  /* nome do hero — caixa alta, sangra pela base */
+  --fr-nome: 124px;
+  --fr-nome-lh: 110.36px;
+  --fr-nome-ls: -3.72px;
+
+  /* display — o original usa DUAS entrelinhas no mesmo corpo de 64px:
+     1,10 na manchete e 1,20 na lista de disciplinas. */
+  --fr-display: 64px;
+  --fr-display-lh: 70.4px;
+  --fr-display-ls: -3.2px;
+  --fr-display-solto-lh: 76.8px;
+  --fr-display-solto-ls: -1.28px;
+
+  --fr-corpo: 18px;
+  --fr-corpo-lh: 26.1px;
+  --fr-corpo-ls: -0.54px;
+
+  --fr-meta: 14px;
+  --fr-meta-lh: 16.8px;
+
+  --fr-rotulo: 12px;
+  --fr-rotulo-lh: 19.2px;
+  --fr-rotulo-ls: -0.24px;
+
+  --fr-micro: 10px;
+  --fr-micro-lh: 12.5px;
+  --fr-micro-ls: -0.4px;
+}
+
+@media (max-width: 809px) {
+  :root {
+    /* Medido em 390px. O display cai à metade; a variante solta cai mais
+       ainda (64 → 24), porque é lista e não manchete. O corpo não muda. */
+    --fr-display: 32px;
+    --fr-display-lh: 35.2px;
+    --fr-display-ls: -1.6px;
+    --fr-display-solto-lh: 28.8px;
+    --fr-display-solto-ls: -0.48px;
+  }
+}
+
+/* --- classes do sistema ---------------------------------------------------
+   Prefixo `fr-` para não colidir com o sistema autoral em `system.css`
+   enquanto os dois convivem no disco. */
+
+.fr {
+  font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  background: var(--fr-papel);
+  color: #000;
+}
+
+.fr-nome {
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: var(--fr-nome);
+  line-height: var(--fr-nome-lh);
+  letter-spacing: var(--fr-nome-ls);
+}
+
+.fr-display {
+  font-weight: 400;
+  font-size: var(--fr-display);
+  line-height: var(--fr-display-lh);
+  letter-spacing: var(--fr-display-ls);
+}
+
+.fr-display-solto {
+  font-weight: 400;
+  font-size: var(--fr-display);
+  line-height: var(--fr-display-solto-lh);
+  letter-spacing: var(--fr-display-solto-ls);
+}
+
+.fr-corpo {
+  font-weight: 500;
+  font-size: var(--fr-corpo);
+  line-height: var(--fr-corpo-lh);
+  letter-spacing: var(--fr-corpo-ls);
+}
+
+.fr-meta {
+  font-weight: 500;
+  font-size: var(--fr-meta);
+  line-height: var(--fr-meta-lh);
+}
+
+.fr-rotulo {
+  font-weight: 500;
+  font-size: var(--fr-rotulo);
+  line-height: var(--fr-rotulo-lh);
+  letter-spacing: var(--fr-rotulo-ls);
+}
+
+.fr-micro {
+  font-weight: 500;
+  font-size: var(--fr-micro);
+  line-height: var(--fr-micro-lh);
+  letter-spacing: var(--fr-micro-ls);
+}
+
+/* Bloco escuro. O texto sobre ele é creme, não branco puro — medido. */
+.fr-tinta {
+  background: var(--fr-petroleo);
+  color: var(--fr-creme);
+}
