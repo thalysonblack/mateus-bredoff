@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useParams, Link } from "react-router";
 import RodapeFramer from "../sections/framer/RodapeFramer";
 import { findWork, WORK, type WorkItem } from "../../content/work";
-import "../../styles/framer-rotas.css";
 
 /**
  * `/work/:slug` — UM componente para os seis cases.
@@ -29,8 +28,8 @@ import "../../styles/framer-rotas.css";
 function Campo({ rotulo, children }: { rotulo: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="fr-secao fr-cinza">{rotulo}</p>
-      <div className="fr-ficha fr-marrom pt-[14px]">{children}</div>
+      <p className="fr-secao-rotulo text-[var(--fr-cinza)]">{rotulo}</p>
+      <div className="fr-ficha text-[var(--fr-marrom)] pt-[14px]">{children}</div>
     </div>
   );
 }
@@ -87,12 +86,12 @@ export default function CaseStudy() {
       <div className="fr">
         <section
           className="flex min-h-svh w-full items-center"
-          style={{ paddingInline: "var(--fr-margem-caso)" }}
+          style={{ paddingInline: "var(--fr-margem-cabecalho)" }}
         >
           <div>
-            <p className="fr-secao fr-cinza">404</p>
-            <h1 className="fr-caso-titulo pt-3">Case não encontrado</h1>
-            <Link to="/work" className="fr-link-quieto fr-cinza mt-8 inline-block">
+            <p className="fr-secao-rotulo text-[var(--fr-cinza)]">404</p>
+            <h1 className="fr-case-titulo pt-3">Case não encontrado</h1>
+            <Link to="/work" className="fr-link-quieto text-[var(--fr-cinza)] mt-8 inline-block">
               View All
             </Link>
           </div>
@@ -127,20 +126,20 @@ export default function CaseStudy() {
       {/* --- cabeçalho: margem 32, duas colunas de 764 com calha de 8 ----- */}
       <header
         className="grid grid-cols-1 gap-y-8 pt-[32px] lg:grid-cols-2 lg:gap-x-[8px]"
-        style={{ paddingInline: "var(--fr-margem-caso)" }}
+        style={{ paddingInline: "var(--fr-margem-cabecalho)" }}
       >
         {/* Branco + `exclusion`: o nome do projeto se inverte contra o papel.
             Nenhum ancestral aqui tem transform/opacity/filter/z-index — é o que
             mantém o blend vivo em vez de pintar branco chapado sobre branco. */}
-        <h1 className="fr-caso-titulo fr-exclusao self-start">{item.title}</h1>
+        <h1 className="fr-case-titulo text-white mix-blend-exclusion self-start">{item.title}</h1>
 
         <div className="flex flex-col gap-[47px]">
           <div>
-            <p className="fr-secao fr-cinza">About</p>
+            <p className="fr-secao-rotulo text-[var(--fr-cinza)]">About</p>
             {item.about.length > 0 ? (
               <div className="flex flex-col gap-[25.6px] pt-[14px]">
                 {item.about.map((p, i) => (
-                  <p key={i} className="fr-caso-corpo fr-corpo-quieto">
+                  <p key={i} className="fr-case-corpo text-[#666]">
                     {p}
                   </p>
                 ))}
@@ -148,7 +147,7 @@ export default function CaseStudy() {
             ) : (
               /* O original mostra lorem ipsum aqui. Uma linha honesta é melhor
                  que enchimento portado — e some sozinha quando o texto chegar. */
-              <p className="fr-caso-corpo fr-corpo-quieto pt-[14px]">
+              <p className="fr-case-corpo text-[#666] pt-[14px]">
                 Case study in preparation.
               </p>
             )}
@@ -175,8 +174,8 @@ export default function CaseStudy() {
         <div
           className="grid grid-cols-2 pt-[47px]"
           style={{
-            paddingInline: "var(--fr-margem-midia)",
-            gap: "var(--fr-margem-midia)",
+            paddingInline: "var(--fr-margem-pilha)",
+            gap: "var(--fr-margem-pilha)",
           }}
         >
           {item.images.map((im, i) => {
@@ -213,12 +212,12 @@ export default function CaseStudy() {
       {/* Créditos e link ficam na coluna da DIREITA, alinhados com a ficha
           técnica do cabeçalho (x=804 medido), não na margem esquerda. */}
       {item.credits.length > 0 ? (
-        <div className="pt-[120px]" style={{ paddingInline: "var(--fr-margem-caso)" }}>
+        <div className="pt-[120px]" style={{ paddingInline: "var(--fr-margem-cabecalho)" }}>
           <div className="lg:pl-[772px]">
             <Campo rotulo="Credits">
               {item.credits.map((c) => (
                 <p key={c.name}>
-                  {c.name} <span className="fr-secao fr-cinza">{c.role}</span>
+                  {c.name} <span className="fr-secao-rotulo text-[var(--fr-cinza)]">{c.role}</span>
                 </p>
               ))}
             </Campo>
@@ -227,12 +226,12 @@ export default function CaseStudy() {
       ) : null}
 
       {item.behanceUrl ? (
-        <div className="pt-[24px]" style={{ paddingInline: "var(--fr-margem-caso)" }}>
+        <div className="pt-[24px]" style={{ paddingInline: "var(--fr-margem-cabecalho)" }}>
           <a
             href={item.behanceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="fr-link-quieto fr-cinza inline-block lg:ml-[772px]"
+            className="fr-link-quieto text-[var(--fr-cinza)] inline-block lg:ml-[772px]"
           >
             View on Behance
           </a>
@@ -242,8 +241,8 @@ export default function CaseStudy() {
       {/* --- outros projetos: margem 24, duas colunas de 764 com calha 24 -- */}
       <section className="pt-[160px] pb-[120px]" style={{ paddingInline: "var(--fr-margem)" }}>
         <div className="flex items-start justify-between gap-6">
-          <h2 className="fr-manchete fr-exclusao">Other Projects</h2>
-          <Link to="/work" className="fr-link-quieto fr-cinza shrink-0">
+          <h2 className="fr-manchete text-white mix-blend-exclusion">Other Projects</h2>
+          <Link to="/work" className="fr-link-quieto text-[var(--fr-cinza)] shrink-0">
             View All
           </Link>
         </div>

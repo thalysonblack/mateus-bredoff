@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { Link } from "react-router";
 import { gsap } from "../../../lib/gsap";
 import { WORK } from "../../../content/work";
-import "../../../styles/framer-rotas.css";
 
 /**
  * A faixa de trabalho — o corpo inteiro de `/work` no original.

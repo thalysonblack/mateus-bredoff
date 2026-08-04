@@ -52,8 +52,18 @@ export function useRevelacaoPalavra<T extends HTMLElement = HTMLElement>(
         alvo.setAttribute("aria-label", alvo.textContent ?? "");
       }
 
-      split = new SplitText(alvo, { type: "words", wordsClass: "palavra-revelada" });
+      split = new SplitText(alvo, { type: "words" });
       split.words.forEach((w) => (w as HTMLElement).setAttribute("aria-hidden", "true"));
+
+      /* O SplitText grava `display:inline-block` no ATRIBUTO style, e
+         inline-block reserva o descender no fim de cada caixa de linha. Numa
+         entrelinha menor que o corpo (56,96 num corpo de 64) isso empurra o
+         bloco uma linha inteira para baixo e a última some por trás do
+         `overflow-hidden` — foi o que aconteceu com o manifesto do hero.
+         O `gsap.set` escreve no MESMO style inline, então vence sem precisar de
+         `!important` nem de uma classe num CSS à parte. Só a cor é animada
+         aqui: nenhuma transform precisa do inline-block. */
+      gsap.set(split.words, { display: "inline" });
 
       const tween = gsap.fromTo(
         split.words,

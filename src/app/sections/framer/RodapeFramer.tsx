@@ -1,6 +1,5 @@
 import { Link } from "react-router";
 import { scrollToTop } from "../../../lib/lenis";
-import "../../../styles/framer-rotas.css";
 
 /**
  * Rodapé da réplica — o mesmo bloco em TODAS as rotas do original.
@@ -39,8 +38,8 @@ export default function RodapeFramer() {
       style={{ padding: "42px var(--fr-margem) var(--fr-margem)" }}
     >
       <div className="flex flex-1 flex-col border-t border-white/12 pt-[33px]">
-        <div className="grid grid-cols-1 gap-y-10 lg:grid-cols-[var(--fr-rotulo-col)_minmax(0,1fr)_200px]">
-          <p className="fr-secao text-white/50">Contact</p>
+        <div className="grid grid-cols-1 gap-y-10 lg:grid-cols-[400px_minmax(0,1fr)_200px]">
+          <p className="fr-secao-rotulo text-white/50">Contact</p>
 
           <div className="flex flex-col">
             {/* 64px/76.8 é o `.fr-display-solto` que já vive em framer.css —
@@ -56,7 +55,7 @@ export default function RodapeFramer() {
                     href={c.href}
                     target={c.href.startsWith("http") ? "_blank" : undefined}
                     rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                    className="fr-display-solto fr-contato block transition-colors duration-300 hover:text-[var(--fr-creme)]"
+                    className="fr-display-solto text-[#5e686c] block transition-colors duration-300 hover:text-[var(--fr-creme)]"
                   >
                     {c.label}
                   </a>
@@ -72,8 +71,8 @@ export default function RodapeFramer() {
                 to={n.to}
                 className="flex h-[55px] items-center justify-between border-b border-white/12"
               >
-                <span className="fr-nav-indice text-white/50">{n.i}</span>
-                <span className="fr-nav text-white">{n.label}</span>
+                <span className="text-[16px]/[18px] font-normal text-white/50">{n.i}</span>
+                <span className="fr-nav-rodape text-white">{n.label}</span>
               </Link>
             ))}
           </nav>

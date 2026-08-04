@@ -3,7 +3,6 @@ import RodapeFramer from "../sections/framer/RodapeFramer";
 import { useRevelacaoPalavra } from "../sections/framer/useRevelacaoPalavra";
 import retrato1600 from "../../assets/optimized/hero-portrait-1600.webp";
 import retrato3200 from "../../assets/optimized/hero-portrait-3200.webp";
-import "../../styles/framer-rotas.css";
 
 /**
  * `/about` — 5435px medidos, cinco blocos, e uma ideia de composição só:
@@ -103,10 +102,10 @@ function Bloco({
 }) {
   return (
     <section
-      className="grid grid-cols-1 gap-y-6 lg:grid-cols-[var(--fr-rotulo-col)_minmax(0,1fr)]"
+      className="grid grid-cols-1 gap-y-6 lg:grid-cols-[400px_minmax(0,1fr)]"
       style={{ paddingInline: "var(--fr-margem)" }}
     >
-      <p className={`fr-secao fr-cinza ${fio ? "border-t border-white/12 pt-[33px]" : ""}`}>
+      <p className={`fr-secao-rotulo text-[var(--fr-cinza)] ${fio ? "border-t border-white/12 pt-[33px]" : ""}`}>
         {rotulo}
       </p>
       <div className={fio ? "border-t border-white/12 pt-[33px] max-lg:border-t-0 max-lg:pt-0" : ""}>
@@ -158,9 +157,9 @@ export default function About() {
              inteira) para fora da seção e o `overflow-hidden` comia a última
              linha. `absolute` sem z-index não cria stacking context, então o
              `exclusion` continua vivo. */
-          className="fr-exclusao absolute inset-x-0 bottom-0 text-center uppercase"
+          className="text-white mix-blend-exclusion absolute inset-x-0 bottom-0 text-center uppercase"
           style={{
-            fontSize: "var(--fr-caso)",
+            fontSize: "var(--fr-case-titulo)",
             lineHeight: "0.89em",
             letterSpacing: "-0.03em",
             paddingInline: "var(--fr-margem)",
@@ -204,10 +203,10 @@ export default function About() {
         >
           {NUMEROS.map((n, i) => (
             <div key={n.rotulo}>
-              <p className="fr-secao fr-cinza">{i === 0 ? "About me" : "​"}</p>
+              <p className="fr-secao-rotulo text-[var(--fr-cinza)]">{i === 0 ? "About me" : "​"}</p>
               <div className="mt-[23px] border-t border-white/12 pt-[16px]">
                 <p className="fr-numero">{n.valor}</p>
-                <p className="fr-stat-rotulo fr-cinza pt-[15px]">{n.rotulo}</p>
+                <p className="fr-numero-rotulo text-[var(--fr-cinza)] pt-[15px]">{n.rotulo}</p>
               </div>
             </div>
           ))}
@@ -226,7 +225,7 @@ export default function About() {
                   <span className="fr-indice">{p.i}</span>
                   <div>
                     <h3 className="fr-etapa-titulo">{p.titulo}</h3>
-                    <p className="fr-etapa-corpo fr-cinza pt-[10px]">{p.corpo}</p>
+                    <p className="fr-etapa text-[var(--fr-cinza)] pt-[10px]">{p.corpo}</p>
                   </div>
                 </li>
               ))}
