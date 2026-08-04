@@ -62,6 +62,77 @@
   --fr-micro: 10px;
   --fr-micro-lh: 12.5px;
   --fr-micro-ls: -0.4px;
+
+  /* --- papéis das rotas internas -----------------------------------------
+     Medidos em /about, /work e no template de case. Entram aqui, e não num
+     segundo arquivo, porque escala tipográfica dividida em dois lugares vira
+     dois sistemas: o segundo é sempre o que ninguém lê antes de inventar um
+     valor novo. */
+
+  --fr-manchete: 48px;          /* manchete de seção */
+  --fr-manchete-lh: 52.8px;
+  --fr-manchete-ls: -1.44px;
+
+  /* O único peso 300 do site. Já declarado em fonts.css. */
+  --fr-numero: 128px;
+  --fr-numero-lh: 128px;
+  --fr-numero-ls: -5.12px;
+
+  --fr-lead: 32px;              /* lead da About */
+  --fr-lead-lh: 35.2px;
+
+  --fr-etapa: 20px;             /* corpo de etapa */
+  --fr-etapa-lh: 29px;
+  --fr-etapa-ls: -0.6px;
+
+  --fr-etapa-titulo: 16px;
+  --fr-etapa-titulo-lh: 23.2px;
+  --fr-etapa-titulo-ls: -0.48px;
+
+  --fr-numero-rotulo: 20px;
+  --fr-numero-rotulo-lh: 22px;
+  --fr-numero-rotulo-ls: -0.6px;
+
+  /* ⚠ 12px NÃO é um estilo só. Este é o rótulo de seção ("About me"), peso
+     400. O `.fr-rotulo` lá em cima (12/19.2/−0.24, peso 500) é a TAG dos
+     cards. Mesma medida, papéis diferentes — não unifique. */
+  --fr-secao-rotulo: 12px;
+  --fr-secao-rotulo-lh: 13.2px;
+  --fr-secao-rotulo-ls: -0.36px;
+
+  --fr-indice: 16px;            /* 01…05 */
+  --fr-indice-lh: 17.6px;
+  --fr-indice-ls: -0.48px;
+
+  --fr-case-titulo: 64px;       /* mesmo corpo do display, tracking mais aberto */
+  --fr-case-titulo-lh: 70.4px;
+  --fr-case-titulo-ls: -1.92px;
+
+  --fr-case-corpo: 16px;
+  --fr-case-corpo-lh: 25.6px;
+  --fr-case-corpo-ls: -0.32px;
+
+  --fr-ficha: 12px;             /* ficha técnica do case */
+  --fr-ficha-lh: 16.8px;
+  --fr-ficha-ls: -0.36px;
+
+  --fr-link-quieto: 16px;
+  --fr-link-quieto-lh: 20.8px;
+  --fr-link-quieto-ls: -0.64px;
+
+  --fr-card-titulo: 14px;
+  --fr-card-titulo-lh: 16.8px;
+
+  --fr-nav-rodape: 18px;
+  --fr-nav-rodape-lh: 20px;
+  --fr-nav-rodape-ls: -0.5px;
+
+  /* --- margens ------------------------------------------------------------
+     A margem lateral do original NÃO é única, e tratar como única foi a
+     tentação. São quatro, por contexto. */
+  --fr-margem: 24px;            /* padrão: /about, rodapé */
+  --fr-margem-cabecalho: 32px;  /* cabeçalho do case */
+  --fr-margem-pilha: 8px;       /* pilha de imagens do case */
 }
 
 @media (max-width: 809px) {
@@ -73,6 +144,39 @@
     --fr-display-ls: -1.6px;
     --fr-display-solto-lh: 28.8px;
     --fr-display-solto-ls: -0.48px;
+
+    /* Só o que de fato muda. Rótulo de seção, índice, ficha, link quieto,
+       título de card, corpo de case e título de etapa são IGUAIS no mobile —
+       ausência aqui é medida, não esquecimento. */
+    --fr-manchete: 24px;
+    --fr-manchete-lh: 26.4px;
+    --fr-manchete-ls: -0.72px;
+
+    --fr-numero: 82px;
+    --fr-numero-lh: 82px;
+    --fr-numero-ls: -3.28px;
+
+    --fr-lead: 24px;
+    --fr-lead-lh: 26.4px;
+
+    --fr-etapa: 16px;
+    --fr-etapa-lh: 24px;
+    --fr-etapa-ls: -0.48px;
+
+    --fr-numero-rotulo: 16px;
+    --fr-numero-rotulo-lh: 17.6px;
+    --fr-numero-rotulo-ls: -0.48px;
+
+    /* A entrelinha do título de case fica MENOR que o corpo (32/23.04) — o
+       original aperta a caixa alta em duas linhas de propósito. Não é engano
+       de medição; não "corrija" para 1.1. */
+    --fr-case-titulo: 32px;
+    --fr-case-titulo-lh: 23.04px;
+    --fr-case-titulo-ls: -0.96px;
+
+    --fr-margem: 12px;
+    --fr-margem-cabecalho: 12px;
+    --fr-margem-pilha: 12px;
   }
 }
 
@@ -139,4 +243,106 @@
 .fr-tinta {
   background: var(--fr-petroleo);
   color: var(--fr-creme);
+}
+
+/* --- papéis das rotas internas ------------------------------------------- */
+
+.fr-manchete {
+  font-weight: 400;
+  font-size: var(--fr-manchete);
+  line-height: var(--fr-manchete-lh);
+  letter-spacing: var(--fr-manchete-ls);
+}
+
+.fr-numero {
+  font-weight: 300;
+  font-size: var(--fr-numero);
+  line-height: var(--fr-numero-lh);
+  letter-spacing: var(--fr-numero-ls);
+}
+
+.fr-numero-rotulo {
+  font-weight: 400;
+  font-size: var(--fr-numero-rotulo);
+  line-height: var(--fr-numero-rotulo-lh);
+  letter-spacing: var(--fr-numero-rotulo-ls);
+}
+
+.fr-lead {
+  font-weight: 400;
+  font-size: var(--fr-lead);
+  line-height: var(--fr-lead-lh);
+  letter-spacing: normal;
+}
+
+.fr-etapa {
+  font-weight: 500;
+  font-size: var(--fr-etapa);
+  line-height: var(--fr-etapa-lh);
+  letter-spacing: var(--fr-etapa-ls);
+}
+
+.fr-etapa-titulo {
+  font-weight: 500;
+  font-size: var(--fr-etapa-titulo);
+  line-height: var(--fr-etapa-titulo-lh);
+  letter-spacing: var(--fr-etapa-titulo-ls);
+}
+
+/* 12px peso 400 — o rótulo de seção. Não confundir com `.fr-rotulo`. */
+.fr-secao-rotulo {
+  font-weight: 400;
+  font-size: var(--fr-secao-rotulo);
+  line-height: var(--fr-secao-rotulo-lh);
+  letter-spacing: var(--fr-secao-rotulo-ls);
+}
+
+.fr-indice {
+  font-weight: 400;
+  font-size: var(--fr-indice);
+  line-height: var(--fr-indice-lh);
+  letter-spacing: var(--fr-indice-ls);
+}
+
+.fr-case-titulo {
+  font-weight: 400;
+  font-size: var(--fr-case-titulo);
+  line-height: var(--fr-case-titulo-lh);
+  letter-spacing: var(--fr-case-titulo-ls);
+}
+
+.fr-case-corpo {
+  font-weight: 400;
+  font-size: var(--fr-case-corpo);
+  line-height: var(--fr-case-corpo-lh);
+  letter-spacing: var(--fr-case-corpo-ls);
+}
+
+.fr-ficha {
+  font-weight: 400;
+  font-size: var(--fr-ficha);
+  line-height: var(--fr-ficha-lh);
+  letter-spacing: var(--fr-ficha-ls);
+  color: var(--fr-marrom);
+}
+
+.fr-link-quieto {
+  font-weight: 400;
+  font-size: var(--fr-link-quieto);
+  line-height: var(--fr-link-quieto-lh);
+  letter-spacing: var(--fr-link-quieto-ls);
+}
+
+.fr-card-titulo {
+  font-weight: 500;
+  font-size: var(--fr-card-titulo);
+  line-height: var(--fr-card-titulo-lh);
+  letter-spacing: normal;
+}
+
+.fr-nav-rodape {
+  font-weight: 400;
+  font-size: var(--fr-nav-rodape);
+  line-height: var(--fr-nav-rodape-lh);
+  letter-spacing: var(--fr-nav-rodape-ls);
 }
