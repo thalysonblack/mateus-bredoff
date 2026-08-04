@@ -1,0 +1,240 @@
+/**
+ * Tokens das ROTAS INTERNAS (/about, /work, /work/:slug) — medidos, não estimados.
+ *
+ * Extensão de `framer.css`, não substituição: o que já existe lá é usado daqui.
+ * Mora em arquivo próprio porque `framer.css` e `index.css` estão sendo editados
+ * por outra sessão neste momento — dois donos no mesmo arquivo é conflito, não
+ * colaboração. É um bloco pronto para colar lá dentro quando a home assentar;
+ * por isso a nomenclatura e o breakpoint são os mesmos.
+ *
+ * Fonte: `scripts/medir-geometria.mjs` @1600, @1200 e @390 sobre o publicado.
+ *
+ * O que a medição em TRÊS larguras ensinou, e que uma só não mostraria:
+ *
+ * 1. **A margem lateral não é única.** 24px na /about e no rodapé, 32px no
+ *    cabeçalho do case, 8px na pilha de imagens, 12px em tudo no mobile. Um
+ *    `bleed` global reproduziria a aparência e erraria as quatro.
+ * 2. **A coluna do rótulo é FIXA em 400px**, não uma fração. O conteúdo começa
+ *    em x=424 tanto em 1600 quanto em 1200 — em porcentagem, ele andaria.
+ * 3. **O corpo não escala** (16/25.6 é igual nos dois extremos), coerente com o
+ *    que `framer.css` já registra. Quem escala é display, manchete e número.
+ */
+
+:root {
+  /* Grade. As quatro margens que o original usa de fato. */
+  --fr-margem: 24px;
+  --fr-margem-caso: 32px;
+  --fr-margem-midia: 8px;
+  --fr-rotulo-col: 400px;
+
+  /* manchete de seção — "The project development…", "Other Projects" */
+  --fr-manchete: 48px;
+  --fr-manchete-lh: 52.8px;
+  --fr-manchete-ls: -1.44px;
+
+  /* número de estatística — o ÚNICO lugar do site com peso 300 */
+  --fr-numero: 128px;
+  --fr-numero-lh: 128px;
+  --fr-numero-ls: -5.12px;
+
+  /* lead da About: o parágrafo grande que revela palavra a palavra */
+  --fr-lead: 32px;
+  --fr-lead-lh: 35.2px;
+
+  /* corpo da lista de processo */
+  --fr-etapa: 20px;
+  --fr-etapa-lh: 29px;
+  --fr-etapa-ls: -0.6px;
+
+  /* rótulo de estatística (Clients, Awards…) */
+  --fr-stat-rotulo: 20px;
+  --fr-stat-rotulo-lh: 22px;
+  --fr-stat-rotulo-ls: -0.6px;
+
+  /* título do case — MESMO corpo do display, tracking diferente (-1.92 × -3.2) */
+  --fr-caso: 64px;
+  --fr-caso-lh: 70.4px;
+  --fr-caso-ls: -1.92px;
+}
+
+@media (max-width: 809px) {
+  :root {
+    --fr-margem: 12px;
+    --fr-margem-caso: 12px;
+    --fr-margem-midia: 4px;
+
+    --fr-manchete: 24px;
+    --fr-manchete-lh: 26.4px;
+    --fr-manchete-ls: -0.72px;
+
+    --fr-numero: 82px;
+    --fr-numero-lh: 82px;
+    --fr-numero-ls: -3.28px;
+
+    --fr-lead: 24px;
+    --fr-lead-lh: 26.4px;
+
+    --fr-etapa: 16px;
+    --fr-etapa-lh: 24px;
+    --fr-etapa-ls: -0.48px;
+
+    --fr-stat-rotulo: 16px;
+    --fr-stat-rotulo-lh: 17.6px;
+    --fr-stat-rotulo-ls: -0.48px;
+
+    --fr-caso: 32px;
+    --fr-caso-lh: 23.04px;
+    --fr-caso-ls: -0.96px;
+  }
+}
+
+/* --- tipo ---------------------------------------------------------------- */
+
+.fr-manchete {
+  font-weight: 400;
+  font-size: var(--fr-manchete);
+  line-height: var(--fr-manchete-lh);
+  letter-spacing: var(--fr-manchete-ls);
+}
+
+.fr-numero {
+  font-weight: 300;
+  font-size: var(--fr-numero);
+  line-height: var(--fr-numero-lh);
+  letter-spacing: var(--fr-numero-ls);
+}
+
+/* Tracking `normal` é medido, não esquecimento: é o único texto do site sem
+   tracking negativo. Forçar -0.03em "para ficar coerente" já seria releitura. */
+.fr-lead {
+  font-weight: 400;
+  font-size: var(--fr-lead);
+  line-height: var(--fr-lead-lh);
+  letter-spacing: normal;
+}
+
+.fr-etapa-titulo {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 23.2px;
+  letter-spacing: -0.48px;
+}
+
+.fr-etapa-corpo {
+  font-weight: 500;
+  font-size: var(--fr-etapa);
+  line-height: var(--fr-etapa-lh);
+  letter-spacing: var(--fr-etapa-ls);
+}
+
+.fr-stat-rotulo {
+  font-weight: 400;
+  font-size: var(--fr-stat-rotulo);
+  line-height: var(--fr-stat-rotulo-lh);
+  letter-spacing: var(--fr-stat-rotulo-ls);
+}
+
+/* Rótulo de SEÇÃO ("About me", "Type", "Credits"). Não confundir com
+   `.fr-rotulo` do framer.css, que é a tag dos cards: mesmo corpo de 12px,
+   entrelinha e peso diferentes (13.2/400 aqui, 19.2/500 lá). */
+.fr-secao {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 13.2px;
+  letter-spacing: -0.36px;
+}
+
+/* Valor da ficha técnica. A cor é o marrom da paleta, não preto. */
+.fr-ficha {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16.8px;
+  letter-spacing: -0.36px;
+}
+
+.fr-indice {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 17.6px;
+  letter-spacing: -0.48px;
+}
+
+.fr-caso-titulo {
+  font-weight: 400;
+  font-size: var(--fr-caso);
+  line-height: var(--fr-caso-lh);
+  letter-spacing: var(--fr-caso-ls);
+}
+
+.fr-caso-corpo {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 25.6px;
+  letter-spacing: -0.32px;
+}
+
+.fr-link-quieto {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20.8px;
+  letter-spacing: -0.64px;
+}
+
+.fr-card-titulo {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16.8px;
+}
+
+.fr-nav {
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 20px;
+  letter-spacing: -0.5px;
+}
+
+.fr-nav-indice {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 18px;
+}
+
+/* --- cor ----------------------------------------------------------------- */
+
+.fr-cinza {
+  color: var(--fr-cinza);
+}
+.fr-marrom {
+  color: var(--fr-marrom);
+}
+/* O corpo dos cases é #666 sobre papel — mede 5,7:1, passa em AA. */
+.fr-corpo-quieto {
+  color: #666;
+}
+/* Link de contato do rodapé: cinza-petróleo sobre o bloco escuro. */
+.fr-contato {
+  color: #5e686c;
+}
+
+/* --- blend ---------------------------------------------------------------
+   O original pinta o título do case, o "Other Projects" e a manchete do hero
+   da About em BRANCO com `mix-blend-mode: exclusion`, contando com a inversão
+   contra o que estiver atrás. Este repo já perdeu duas rodadas com isso: o
+   blend morre dentro de stacking context, e aí o texto renderiza branco chapado
+   sobre papel branco. A classe existe para o blend ter UM dono; quem a usar tem
+   de garantir que nenhum ancestral tenha transform/opacity/filter/z-index — e
+   MEDIR o pixel depois (`scripts/audit-contrast.mjs`). */
+.fr-exclusao {
+  color: #fff;
+  mix-blend-mode: exclusion;
+}
+
+/* Sem blend, o texto tem de continuar legível: papel claro pede tinta.
+   `@supports not` cobre o navegador sem suporte; o caso do stacking context
+   quebrado é responsabilidade de quem monta a árvore, e por isso se mede. */
+@supports not (mix-blend-mode: exclusion) {
+  .fr-exclusao {
+    color: #000;
+    mix-blend-mode: normal;
+  }
+}
