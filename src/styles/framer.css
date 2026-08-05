@@ -50,6 +50,11 @@
   --fr-display: 64px;
   --fr-display-lh: 70.4px;
   --fr-display-ls: -3.2px;
+  /* A variante solta tem TAMANHO próprio, não só entrelinha. No desktop
+     coincide com o display (64), mas no mobile o original mede 24 enquanto o
+     display mede 32 — usar `var(--fr-display)` aqui pintava 32px no celular em
+     toda lista de disciplinas, no Capabilities e no rodapé. */
+  --fr-display-solto: 64px;
   --fr-display-solto-lh: 76.8px;
   --fr-display-solto-ls: -1.28px;
 
@@ -165,6 +170,7 @@
     --fr-display: 32px;
     --fr-display-lh: 35.2px;
     --fr-display-ls: -1.6px;
+    --fr-display-solto: 24px;
     --fr-display-solto-lh: 28.8px;
     --fr-display-solto-ls: -0.48px;
 
@@ -233,7 +239,7 @@
 
 .fr-display-solto {
   font-weight: 400;
-  font-size: var(--fr-display);
+  font-size: var(--fr-display-solto);
   line-height: var(--fr-display-solto-lh);
   letter-spacing: var(--fr-display-solto-ls);
 }

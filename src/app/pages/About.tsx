@@ -196,9 +196,13 @@ export default function About() {
 
         {/* Estatísticas: 4 colunas iguais com calha de 14px — medido exato nas
             duas larguras ((1552 − 3×14) / 4 = 377,5 em 1600). O fio é POR
-            COLUNA, não uma régua contínua: ele quebra na calha. */}
+            COLUNA, não uma régua contínua: ele quebra na calha.
+
+            No MOBILE viram uma coluna só, não duas: medido, os quatro números
+            saem todos em x=12 com passo de 181px. Duas colunas encurtavam o
+            bloco e comprimiam a página inteira abaixo dele. */}
         <section
-          className="grid grid-cols-2 gap-x-[14px] gap-y-10 pt-[47px] lg:grid-cols-4"
+          className="grid grid-cols-1 gap-x-[14px] gap-y-[26px] pt-[101px] lg:grid-cols-4 lg:pt-[47px] lg:gap-y-10"
           style={{ paddingInline: "var(--fr-margem)" }}
         >
           {NUMEROS.map((n, i) => (
@@ -212,7 +216,7 @@ export default function About() {
           ))}
         </section>
 
-        <div className="pt-[147px]">
+        <div className="pt-[31px] lg:pt-[147px]">
           <Bloco rotulo="About me">
             <h2 className="fr-manchete">{PROCESSO_MANCHETE}</h2>
 
@@ -220,7 +224,10 @@ export default function About() {
               {PROCESSO.map((p) => (
                 <li
                   key={p.i}
-                  className="grid grid-cols-1 gap-y-3 border-t border-white/12 pt-[30px] pb-[66px] lg:grid-cols-[210px_minmax(0,542px)]"
+                  /* O recuo do texto EXISTE no mobile, só é menor: 74px contra 210 no
+                     desktop. Colapsar para uma coluna só alinhava o texto com o
+                     índice, o que o original não faz. */
+                  className="grid grid-cols-[74px_minmax(0,1fr)] gap-y-3 border-t border-white/12 pt-[30px] pb-[66px] lg:grid-cols-[210px_minmax(0,542px)]"
                 >
                   <span className="fr-indice">{p.i}</span>
                   <div>
