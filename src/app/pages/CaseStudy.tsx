@@ -116,7 +116,7 @@ export default function CaseStudy() {
           srcSet={item.cover.src2x ? `${item.cover.src} 1400w, ${item.cover.src2x} 2200w` : undefined}
           sizes="100vw"
           alt={item.cover.alt}
-          fetchPriority="high"
+          fetchpriority="high"
           decoding="async"
           className="h-full w-full object-cover"
           draggable={false}

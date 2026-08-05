@@ -51,7 +51,7 @@ export default function HeroFramer() {
         srcSet={`${retrato1600} 1600w, ${retrato3200} 3200w`}
         sizes="100vw"
         alt="Mateus Bredoff"
-        fetchPriority="high"
+        fetchpriority="high"
         decoding="async"
         className="absolute inset-0 h-full w-full object-cover"
         draggable={false}
