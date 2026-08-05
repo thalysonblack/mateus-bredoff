@@ -1,3 +1,4 @@
+import { useMetaRota } from "../../hooks/useMetaRota";
 import Intro from "../sections/Intro";
 import Hero from "../sections/Hero";
 import About from "../sections/About";
@@ -45,6 +46,15 @@ import Footer from "../sections/Footer";
  * Layout monta a barra por conta própria.
  */
 export default function HomeV2() {
+  /* Declara os metadados como qualquer outra rota. Sem isto, a `/v2` herdava o
+     título de quem foi visitado antes dela — e ficava "certa" só quando era a
+     primeira página aberta. Rota que depende do cleanup da vizinha quebra no
+     dia em que a vizinha mudar.
+     Como esta rota não está em `content/meta.ts`, ela cai no padrão: título do
+     site, sem nome inventado. É o comportamento correto para uma alternativa
+     de direção que não é página pública do site. */
+  useMetaRota();
+
   return (
     <>
       <Intro />
