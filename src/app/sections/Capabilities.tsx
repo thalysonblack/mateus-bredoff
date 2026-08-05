@@ -95,30 +95,16 @@ const CAPABILITIES: Capability[] = [
 function Detail({ item }: { item: Capability }) {
   return (
     <>
-      {/* ⚠ PROPORÇÃO FIXA (16:10), e é isto que harmoniza a seção.
-          Respeitar a proporção nativa de cada arte fazia a figura variar de 404
-          a 799px de altura entre disciplinas — medido — e o painel inteiro
-          pulava a cada item percorrido, junto com a frase e as tags embaixo.
-          Aqui a arte é MINIATURA DE APOIO, não a apresentação da peça (essa
-          mora na página do case, onde a proporção nativa é respeitada), então
-          recortar é o preço certo a pagar por um bloco que não se mexe.
-          O `focus` compensa o recorte por peça. */}
-      <figure className="pb-[clamp(1rem,2vw,1.5rem)]">
-        <div className="w-full overflow-hidden" style={{ aspectRatio: "16 / 10" }}>
-          <img
-            key={item.art.src}
-            src={item.art.src}
-            sizes="(min-width: 768px) 40vw, 100vw"
-            alt={`${item.name} — ${item.art.from}`}
-            loading="lazy"
-            decoding="async"
-            draggable={false}
-            className="h-full w-full object-cover"
-            style={{ objectPosition: item.art.focus ?? "center" }}
-          />
-        </div>
-      </figure>
-
+      {/* A PEÇA SAIU DAQUI, e a seção volta à decisão original: painel de
+          TEXTO. A arte tinha entrado porque "faltava a foto" — mas ela não
+          faltava: as mesmas peças já apareceram no Selected Work, logo acima,
+          em tamanho maior e com o índice. Evidência que repete a vitrine não
+          acrescenta, subtrai: a segunda exibição tira o impacto da primeira, e
+          era o mesmo motivo pelo qual o carrossel foi cortado deste projeto.
+          O que só esta seção pode dizer é COMO ele trabalha cada disciplina —
+          e a imagem competia justamente com esse texto.
+          Some junto a proporção fixa de 16:10, que reservava altura para a
+          figura e deixava um vão morto acima do Pricing. */}
       <div className="flex flex-wrap gap-[0.4rem]">
         {item.tags.map((t) => (
           <span
