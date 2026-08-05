@@ -130,6 +130,27 @@ for (const rota of ROTAS_PRERENDER) {
   mkdirSync(dirname(destino), { recursive: true });
   writeFileSync(destino, saida);
   escritas++;
+
+  /* ⚠ AS DUAS FORMAS DA URL, e é isto que faltava.
+     Só `<rota>/index.html` significa que o HTML pré-renderizado chega em
+     `/work/stag/` e NÃO em `/work/stag` — e a forma sem barra é a que circula:
+     é o que o `<Link>` gera, o que aparece na barra de endereço e o que as
+     pessoas copiam. O `<head>` correto estava chegando na minoria dos acessos,
+     sem sintoma nenhum, porque a página renderiza igual dos dois jeitos.
+
+     Escrever `<rota>.html` ao lado cobre servidor que resolve por extensão
+     (`cleanUrls` do Vercel) e servidor que resolve por diretório. Custa um
+     arquivo pequeno por rota e não depende de acertar a configuração de
+     `trailingSlash` de um ambiente que só o deploy revela.
+
+     O canonical continua APONTANDO PARA UMA FORMA SÓ — duas URLs servindo o
+     mesmo conteúdo sem canonical concordante é conteúdo duplicado. */
+  if (rota !== '/') {
+    const semBarra = join(DIST, `${rota.replace(/^\//, '')}.html`);
+    mkdirSync(dirname(semBarra), { recursive: true });
+    writeFileSync(semBarra, saida);
+  }
+
   console.log(`  ${rota.padEnd(22)} → ${titulo}`);
 }
 
