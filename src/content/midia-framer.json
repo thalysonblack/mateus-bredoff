@@ -30,6 +30,14 @@
       "retrato": "1616x1010 desktop, 406x878 mobile",
       "capabilities": "280x280 desktop, 120x120 mobile",
       "video-case": "1600x1000"
+    },
+    "contagemDeVideo": {
+      "elementosVideoNasNoveRotas": 68,
+      "comFonteRealDecodificada": 3,
+      "arquivosUnicos": 2,
+      "nota": "Dos 68 <video>, 65 têm src=\"\" (string vazia) e devolvem MEDIA_ERR_SRC_NOT_SUPPORTED, renderizando com LARGURA ZERO. Os 3 com fonte estão todos em /work/alex-archer/, e dois deles apontam para o MESMO arquivo.",
+      "cardsDaEsteira": "São <img>, não <video>: 29 na home, 18 no /work, 2 em cada rota de case — 100% img, 0 video. Ao lado de cada card existe um <video> vazio de largura zero, que não pinta nada.",
+      "videoAlemDoAlexArcher": "Nenhum. As outras 5 rotas de case fecham com um <video> que tem poster e src nulo — a imagem do mar (poster-video-vazio)."
     }
   },
   "resumo": {
@@ -2052,7 +2060,7 @@
     {
       "id": "case-alexarcher-video-01",
       "grupo": "video-case",
-      "papel": "vídeo na pilha do case Alex Archer (captura do site dele)",
+      "papel": "vídeo na pilha do case Alex Archer (captura do site dele) — usado DUAS vezes na mesma pilha",
       "origem": {
         "url": "https://framerusercontent.com/assets/FyFjGvgUNiORumFjjpCIJ7lfDAU.mp4",
         "arquivo": "FyFjGvgUNiORumFjjpCIJ7lfDAU.mp4",
@@ -2076,17 +2084,20 @@
       "aparicoes": [
         {
           "rota": "/work/alex-archer/",
-          "ordem": null,
+          "ordem": 2,
           "meia": false,
           "render": "1585x1000",
+          "y": 2624,
           "viewport": 1600
         },
         {
           "rota": "/work/alex-archer/",
-          "ordem": null,
+          "ordem": 11,
           "meia": false,
           "render": "1585x1000",
-          "viewport": 1600
+          "y": 10699,
+          "viewport": 1600,
+          "nota": "MESMO arquivo repetido na pilha — o original usa o vídeo duas vezes"
         }
       ],
       "bytesEntregues": 3711448
@@ -2121,7 +2132,9 @@
           "ordem": null,
           "meia": false,
           "render": "1600x1000",
-          "viewport": 1600
+          "y": 16729,
+          "viewport": 1600,
+          "nota": "bloco em sangria no fim do case"
         }
       ],
       "bytesEntregues": 3254415
