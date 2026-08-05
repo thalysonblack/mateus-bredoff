@@ -323,6 +323,16 @@
   letter-spacing: var(--fr-indice-ls);
 }
 
+/* O SEGUNDO 16px: índice da nav do rodapé. Entrelinha 18 e tracking normal, ao
+   contrário do `.fr-indice` (17.6 / −0.48) que numera as etapas da /about. As
+   vars já existiam; faltava a classe, e sem ela `className="fr-nav-indice"` não
+   pinta nada — o tipo de regressão que passa no build e só aparece medindo. */
+.fr-nav-indice {
+  font-weight: 400;
+  font-size: var(--fr-nav-indice);
+  line-height: var(--fr-nav-indice-lh);
+}
+
 .fr-case-titulo {
   font-weight: 400;
   font-size: var(--fr-case-titulo);

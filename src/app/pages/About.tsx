@@ -102,7 +102,7 @@ function Bloco({
 }) {
   return (
     <section
-      className="grid grid-cols-1 gap-y-6 lg:grid-cols-[400px_minmax(0,1fr)]"
+      className="grid grid-cols-1 gap-y-6 lg:grid-cols-[var(--fr-rotulo-col)_minmax(0,1fr)]"
       style={{ paddingInline: "var(--fr-margem)" }}
     >
       <p className={`fr-secao-rotulo text-[var(--fr-cinza)] ${fio ? "border-t border-white/12 pt-[33px]" : ""}`}>

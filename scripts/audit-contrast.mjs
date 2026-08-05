@@ -8,6 +8,46 @@
  * entre o pixel mais claro e o mais escuro daquele recorte.
  *
  * Uso: node scripts/audit-contrast.mjs [url]
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * ⚠ ESTADO: AFERIDO EM PÁGINA CONTROLADA, COM DERIVA CONHECIDA EM PÁGINA REAL.
+ *
+ * **Não use o número absoluto deste script como prova em página real.** Para par
+ * de cor chapada sobre cor chapada — que é a maioria — a fórmula WCAG sobre os
+ * valores de cor é determinística, custa dez linhas e não tem nenhum destes
+ * problemas. Este medidor é para o que a fórmula NÃO alcança: texto sobre foto,
+ * sob `mix-blend-mode`, sobre gradiente.
+ *
+ * O que foi consertado (ver `aferir-contraste.html`): o `clip` do
+ * `page.screenshot` é em coordenadas de DOCUMENTO e o script passava o rect de
+ * `getClientRects()`, que é de VIEWPORT. No topo da página os dois coincidem, e
+ * é por isso que o defeito atravessou quatro rodadas de correção de método sem
+ * morrer — toda verificação rápida confirmava um script quebrado. Aferido
+ * depois do conserto: 21,00 / 6,48 / 4,54 / 2,30 batem o valor teórico e dão
+ * IDÊNTICOS em três condições (28px no topo, 12px, e 14000px abaixo).
+ *
+ * O QUE AINDA DERIVA, e que a página de aferição não expõe: em página real,
+ * pares idênticos medem diferente. Os quatro links do rodapé da /about são
+ * todos `#616B6F` sobre `#142126`, que a fórmula põe em 3,01:1, e mediram
+ *
+ *     Email 2,77   Behance 2,74   Instagram 2,60   X.com 2,47
+ *
+ * O desvio é MONOTÔNICO com a posição vertical: quanto mais baixo o elemento,
+ * mais baixo o número. Sobra um deslocamento progressivo do recorte.
+ *
+ * Já descartado, medindo — não repita este trabalho:
+ *   · não é o `.grain` (removido por script, valores idênticos);
+ *   · não é antialiasing (12px acerta igual a 28px na aferição);
+ *   · não é o Lenis mover por transform (ele usa scroll nativo: medido
+ *     `scrollY` = `scrollMax`, `transform: none` em html, body e main).
+ *
+ * Suspeita não testada, por onde começar: **`captureBeyondViewport`**. Quando o
+ * clip cai fora da viewport atual o Chrome compõe a captura além dela, e o
+ * padrão mudou entre versões do Puppeteer — é candidato natural a um
+ * deslocamento que cresce com a distância ao viewport, que é exatamente a
+ * assinatura observada. Vale testar fixando `captureBeyondViewport: false` com
+ * o clip de volta em coordenadas de viewport, e reaferir nos três blocos.
+ * ─────────────────────────────────────────────────────────────────────────────
  */
 import puppeteer from 'puppeteer-core';
 import { execFileSync } from 'node:child_process';
