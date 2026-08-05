@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router";
-import { gsap } from "../../../lib/gsap";
+import { gsap, ScrollTrigger } from "../../../lib/gsap";
 import { WORK } from "../../../content/work";
 
 /**
@@ -14,14 +14,29 @@ import { WORK } from "../../../content/work";
  * a tela de propósito — a faixa é uma esteira, não uma grade responsiva. Fazer
  * o card virar `100vw` no celular seria melhorar o original, não replicá-lo.
  *
- * A lista é duplicada e a esteira anda até `-50%`: no ponto de virada a segunda
- * cópia está exatamente onde a primeira começou, então o corte é invisível sem
- * precisar de rAF próprio medindo posição — que é justamente o defeito que este
- * repo já pagou uma vez (marquee com relógio próprio brigando com o Lenis).
+ * ⚠ A ESTEIRA NÃO ANDA SOZINHA: ela é movida pelo SCROLL.
+ *
+ * Ela nasceu aqui como tween em laço a 40px/s, um valor plausível que eu nunca
+ * tinha apurado. Medido no original, o card fica PARADO com a página parada e
+ * anda exatamente **0,400px na horizontal por px de scroll vertical** — razão
+ * constante ao longo de todo o percurso, e reversível: sobe a página, a esteira
+ * volta. Isso é `scrub`, não animação de tempo.
+ *
+ * É também o que explica a altura da rota: 2000px num conteúdo que cabe numa
+ * tela. O scroll vertical não existe para revelar conteúdo abaixo — ele é o
+ * controle da faixa horizontal. Uma tween automática reproduzia a aparência do
+ * print e errava a mecânica inteira: no original, quem não rola não vê a
+ * esteira andar.
+ *
+ * A lista é duplicada e o trilho começa deslocado uma cópia inteira para a
+ * esquerda: assim há material dos dois lados e o corte nunca aparece, sem rAF
+ * próprio medindo posição — que é o defeito que este repo já pagou uma vez
+ * (marquee com relógio próprio brigando com o Lenis).
  */
 
-/** Velocidade em px/s. NÃO foi medida no original — ver relatório. */
-const VELOCIDADE = 40;
+/** Quanto a esteira anda na horizontal por px de scroll vertical. MEDIDO no
+    original: 0,400 constante, do topo ao fim do percurso. */
+const RAZAO_SCROLL = 0.4;
 
 const CARD_W = 954;
 const CARD_H = 650;
@@ -77,15 +92,32 @@ export default function MarqueeTrabalho() {
   useEffect(() => {
     const trilho = trilhoRef.current;
     if (!trilho) return;
+    /* Movimento reduzido: a esteira simplesmente não responde ao scroll. Como
+       ela já nasce parada, não há nada a desligar além do vínculo. */
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const largura = WORK.length * (CARD_W + CALHA);
+    const umaCopia = WORK.length * (CARD_W + CALHA);
+
+    /* `invalidateOnRefresh` + `end` como função: o percurso depende do scroll
+       máximo do documento, que muda quando a altura muda (imagem que decodifica,
+       rodapé de 100vh em outra tela). Fixar o valor no boot deixaria a razão
+       certa só na primeira medição. */
     const tween = gsap.fromTo(
       trilho,
-      { x: 0 },
-      { x: -largura, duration: largura / VELOCIDADE, ease: "none", repeat: -1 },
+      { x: -umaCopia },
+      {
+        x: () => -umaCopia + RAZAO_SCROLL * ScrollTrigger.maxScroll(window),
+        ease: "none",
+        scrollTrigger: {
+          start: 0,
+          end: () => ScrollTrigger.maxScroll(window),
+          scrub: true,
+          invalidateOnRefresh: true,
+        },
+      },
     );
     return () => {
+      tween.scrollTrigger?.kill();
       tween.kill();
     };
   }, []);
