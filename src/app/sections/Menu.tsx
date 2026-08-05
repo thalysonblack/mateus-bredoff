@@ -90,7 +90,12 @@ export default function Menu() {
             </a>
           }
           bottom={
-            <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" className="link-quiet">
+            <a
+              href="https://www.instagram.com/sir.bredoff"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-quiet"
+            >
               Instagram
             </a>
           }

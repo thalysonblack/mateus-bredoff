@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router";
-import { initLenis, destroyLenis, scrollToTop } from "../lib/lenis";
+import { initLenis, destroyLenis, scrollToTop, scrollToElement } from "../lib/lenis";
 import { ScrollTrigger } from "../lib/gsap";
 import Menu from "./sections/Menu";
 import Home from "./pages/Home";
@@ -37,11 +37,25 @@ import HomeV2 from "./pages/HomeV2";
  *     nova nasce medindo a altura do documento antigo.
  */
 function RouteLifecycle() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
 
   useEffect(() => {
     ScrollTrigger.getAll().forEach((t) => t.kill());
-    scrollToTop(true);
+
+    /* Âncora na URL (`/#contato`): ir até o alvo em vez do topo.
+       Este link estava MORTO por dois motivos somados, e consertar um só não
+       resolveria: (1) com o Lenis no comando, o pulo nativo por hash não
+       acontece; (2) mesmo que acontecesse, o `scrollToTop` abaixo puxava a
+       página de volta assim que o pathname mudava. Por isso o desvio vem
+       ANTES, e é o Lenis quem move. */
+    const alvo = hash ? document.querySelector(hash) : null;
+    if (alvo) {
+      /* Um frame para a rota nova pintar: o alvo pode ter acabado de montar, e
+         medir antes disso dá a posição do documento anterior. */
+      requestAnimationFrame(() => scrollToElement(alvo as HTMLElement));
+    } else {
+      scrollToTop(true);
+    }
 
     /* Dois frames: um para o React pintar a rota nova, outro para o layout
        assentar antes de medir. */
@@ -49,7 +63,7 @@ function RouteLifecycle() {
       requestAnimationFrame(() => ScrollTrigger.refresh()),
     );
     return () => cancelAnimationFrame(raf);
-  }, [pathname]);
+  }, [pathname, hash]);
 
   return null;
 }

@@ -30,11 +30,18 @@ import { scrollToTop } from "../../../lib/lenis";
  * existem no original e não foram confirmados com o Mateus. Não invente perfil
  * de cliente: ou o dado chega, ou os dois rótulos saem da lista.
  */
-const CONTATO = [
+/* `href: null` = rótulo sem destino confirmado. Renderiza como texto, não como
+   link. O X.com estava apontando para `https://x.com/`, que é um link VIVO para
+   a home da rede — pior que o não-link do original, porque promete o perfil
+   dele e entrega outra coisa. No original essas âncoras não têm destino
+   nenhum; aqui viram `<span>`, que é a versão honesta: mesma aparência, sem
+   prometer clique nem enganar leitor de tela.
+   Quando o Mateus mandar o perfil, é trocar o `null` pela URL. */
+const CONTATO: { label: string; href: string | null }[] = [
   { label: "Email", href: "mailto:hello@mateusbredoff.com" },
   { label: "Behance", href: "https://www.behance.net/mateusbredoff" },
   { label: "Instagram", href: "https://www.instagram.com/sir.bredoff" },
-  { label: "X.com", href: "https://x.com/" },
+  { label: "X.com", href: null },
 ];
 
 /**
@@ -59,6 +66,17 @@ const CONTATO = [
  * que o pathname muda. Consertar é ensinar o `RouteLifecycle` a honrar
  * `location.hash` via `lenis.scrollTo` — mudança em `App.tsx`, fora desta fatia.
  */
+/* Aparência do item de contato, uma só para link e não-link: o rótulo sem
+   destino tem de ser INDISTINGUÍVEL na página estática, senão a lista fica
+   visualmente irregular por um motivo que o visitante não tem como ler.
+   O que NÃO se repete no `<span>` é o hover — cor que muda sob o cursor é
+   promessa de clique, e essa é justamente a promessa que não se pode fazer.
+
+   #616b6f no lugar do #5e686c do original: aquele mede 2,88:1 sobre o petróleo
+   e reprova em AA mesmo no mínimo de texto grande (3:1). Este mede 3,01:1. Ver
+   a nota do --fr-cinza em framer.css — não reverter para "ficar fiel". */
+const CLASSE_CONTATO = "fr-display-solto text-[#616b6f] block";
+
 const NAV = [
   { i: "01", label: "Home", to: "/" },
   { i: "02", label: "Works", to: "/work" },
@@ -86,19 +104,23 @@ export default function RodapeFramer() {
             <ul className="flex flex-col gap-[10px] pt-[42px]">
               {CONTATO.map((c) => (
                 <li key={c.label}>
-                  <a
-                    href={c.href}
-                    target={c.href.startsWith("http") ? "_blank" : undefined}
-                    rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                    /* #616b6f no lugar do #5e686c do original: aquele mede
-                       2,88:1 sobre o petróleo e reprova em AA mesmo no mínimo
-                       de texto grande (3:1). Este mede 3,01:1. Ver a nota do
-                       --fr-cinza em framer.css — não reverter para "ficar
-                       fiel". */
-                    className="fr-display-solto text-[#616b6f] block transition-colors duration-300 hover:text-[var(--fr-creme)]"
-                  >
-                    {c.label}
-                  </a>
+                  {c.href ? (
+                    <a
+                      href={c.href}
+                      target={c.href.startsWith("http") ? "_blank" : undefined}
+                      rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                      className={`${CLASSE_CONTATO} transition-colors duration-300 hover:text-[var(--fr-creme)]`}
+                    >
+                      {c.label}
+                    </a>
+                  ) : (
+                    /* Sem destino confirmado: `<span>`, e não `<a>` sem href.
+                       A âncora sem `href` — que é o que o original faz — fica
+                       fora da ordem de tabulação e ainda assim pode ser
+                       anunciada como link pelo leitor de tela: o pior dos dois
+                       mundos. O `<span>` diz a verdade, isto é um rótulo. */
+                    <span className={CLASSE_CONTATO}>{c.label}</span>
+                  )}
                 </li>
               ))}
             </ul>

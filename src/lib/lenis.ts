@@ -58,6 +58,24 @@ export function scrollToTop(immediate = true) {
   lenis.scrollTo(0, { immediate, force: true });
 }
 
+/**
+ * Ir até um elemento — o caminho para âncora (`/#contato`).
+ *
+ * Com o Lenis no comando, o pulo nativo por hash simplesmente não acontece: o
+ * navegador mexe no scroll nativo e o scroll interpolado ignora. Por isso todo
+ * link de âncora deste projeto passa por aqui.
+ *
+ * Não é `immediate`: âncora é gesto de navegação dentro da mesma página, e ver
+ * o percurso é o que diz ao visitante que ele continua onde estava.
+ */
+export function scrollToElement(alvo: HTMLElement, offset = 0) {
+  if (!lenis) {
+    alvo.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+  lenis.scrollTo(alvo, { offset, force: true });
+}
+
 export function destroyLenis() {
   if (lenisTicker) {
     gsap.ticker.remove(lenisTicker);
