@@ -43,26 +43,36 @@ function RouteLifecycle() {
     ScrollTrigger.getAll().forEach((t) => t.kill());
 
     /* Âncora na URL (`/#contato`): ir até o alvo em vez do topo.
-       Este link estava MORTO por dois motivos somados, e consertar um só não
-       resolveria: (1) com o Lenis no comando, o pulo nativo por hash não
-       acontece; (2) mesmo que acontecesse, o `scrollToTop` abaixo puxava a
-       página de volta assim que o pathname mudava. Por isso o desvio vem
-       ANTES, e é o Lenis quem move. */
-    const alvo = hash ? document.querySelector(hash) : null;
-    if (alvo) {
-      /* Um frame para a rota nova pintar: o alvo pode ter acabado de montar, e
-         medir antes disso dá a posição do documento anterior. */
-      requestAnimationFrame(() => scrollToElement(alvo as HTMLElement));
+       Estava morto por dois motivos somados: com o Lenis no comando o pulo
+       nativo por hash não acontece, e o `scrollToTop` puxava de volta assim que
+       o pathname mudava.
+
+       ⚠ E consertar isso não bastou. Resolver o alvo num rAF único funciona
+       DENTRO da mesma página e erra ~1400px vindo de outra rota: um frame
+       depois da troca o documento ainda está numa altura intermediária, e o
+       destino sai calculado contra ela. Por isso o desvio por hash mora junto
+       do `refresh()` atrasado — dois frames, o mesmo momento em que o layout já
+       assentou. Testar só o clique dentro da própria home dava 0px de erro e
+       escondia o caso comum, que é justamente o de fora: o item "Contact" vive
+       no rodapé de TODAS as rotas. */
+    let alvoRaf = 0;
+    const desviar = () => {
+      const alvo = hash ? document.querySelector(hash) : null;
+      if (alvo) scrollToElement(alvo as HTMLElement);
+      ScrollTrigger.refresh();
+    };
+
+    if (hash) {
+      alvoRaf = requestAnimationFrame(() => requestAnimationFrame(desviar));
     } else {
       scrollToTop(true);
+      /* Dois frames: um para o React pintar a rota nova, outro para o layout
+         assentar antes de medir. */
+      alvoRaf = requestAnimationFrame(() =>
+        requestAnimationFrame(() => ScrollTrigger.refresh()),
+      );
     }
-
-    /* Dois frames: um para o React pintar a rota nova, outro para o layout
-       assentar antes de medir. */
-    const raf = requestAnimationFrame(() =>
-      requestAnimationFrame(() => ScrollTrigger.refresh()),
-    );
-    return () => cancelAnimationFrame(raf);
+    return () => cancelAnimationFrame(alvoRaf);
   }, [pathname, hash]);
 
   return null;

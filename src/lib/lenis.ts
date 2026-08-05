@@ -73,6 +73,15 @@ export function scrollToElement(alvo: HTMLElement, offset = 0) {
     alvo.scrollIntoView({ behavior: "smooth", block: "start" });
     return;
   }
+
+  /* ⚠ `resize()` ANTES de mirar, e é isto que conserta a âncora vinda de outra
+     rota. O Lenis guarda a altura do documento para limitar o destino; ao
+     trocar de rota, a página nova ainda está montando quando o alvo é
+     resolvido, e o limite guardado é o da página ANTERIOR. O scroll então
+     executa um easing completo e sem interrupção — até o lugar errado. Como o
+     movimento parece perfeito, a tentação é caçar quem cancelou o scroll,
+     quando na verdade ele mirou errado desde o primeiro frame. */
+  lenis.resize();
   lenis.scrollTo(alvo, { offset, force: true });
 }
 
