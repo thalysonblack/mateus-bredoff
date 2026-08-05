@@ -1,26 +1,39 @@
 /**
  * Verifica os metadados POR ROTA — título, description e canonical.
  *
- * Sem SSR, o `<head>` da réplica só existe depois do JS. Ler o HTML servido
- * (curl) devolveria o `index.html` estático em todas as rotas e o teste passaria
- * verde sem provar nada. Por isso a leitura é no DOM, com o app montado.
+ * ## ⚠ São DOIS testes opostos, e cada um só prova o seu lado
  *
- * ⚠ Duas navegações são medidas, e as duas importam:
- *   1. **entrada direta** (`page.goto`) — cada rota carregada do zero;
- *   2. **navegação por dentro** (clique no link do rodapé) + `goBack()` — é aqui
- *      que o efeito de rota falha quando o cleanup restaura o título errado, e
- *      é o caso que `goto` NÃO cobre.
+ * **Runtime** (padrão) — lê no DOM, com o app montado. É o único jeito de
+ * provar o que o `useMetaRota` escreve. Ler o HTML servido aqui devolveria o
+ * `index.html` em todas as rotas e o teste passaria **verde sem provar nada**.
+ *
+ * **Servido** (`--servido <url>`) — lê o HTML cru, SEM navegador. É o único
+ * jeito de provar o pré-render: no DOM não dá para distinguir o que veio no
+ * HTML do que o JS escreveu depois, então medir ali aprovaria um build sem
+ * pré-render nenhum.
+ *
+ * Rodar o lado errado é um harness mentindo com cara de aprovação. Os dois usam
+ * a MESMA tabela de esperados — os títulos medidos no publicado — porque um
+ * teste que deriva a expectativa do código sob teste não testa nada.
  *
  * ⚠ Confere o status HTTP antes de medir. Já se mediu página 404 nesta árvore e
  * o relatório saiu "0 reprovados".
  *
- * uso: node scripts/verify-meta.mjs [porta]
+ * uso:
+ *   node scripts/verify-meta.mjs [porta]            → runtime, contra `pnpm dev`
+ *   node scripts/verify-meta.mjs --servido <url>    → pré-render, contra o build
+ *
+ * Para o modo servido, sirva o build por HTTP:
+ *   cd .prerender-check && python3 -m http.server 4699
+ *   node scripts/verify-meta.mjs --servido http://localhost:4699
  */
 import puppeteer from 'puppeteer-core';
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const iServido = process.argv.indexOf('--servido');
+const SERVIDO = iServido >= 0 ? process.argv[iServido + 1] : null;
 const PORTA = process.argv[2] || '5199';
-const BASE = `http://localhost:${PORTA}`;
+const BASE = SERVIDO || `http://localhost:${PORTA}`;
 
 /* Valores medidos no publicado em 04/08/2026 (HTML servido pelo Framer). */
 const ESPERADO = {
@@ -35,6 +48,48 @@ const ESPERADO = {
   '/work/bureau': 'Bureau - Mateus Bredoff',
   '/work/neox': 'Neox - Mateus Bredoff',
 };
+
+/* ---------------------------------------------------------------- servido --
+   Sem browser de propósito: `fetch` é exatamente o que um unfurl de link faz.
+   As tags do `index.html` são multilinha (`<meta\n name=…`), por isso `\s+` e
+   nunca um grep de uma linha só — foi assim que uma checagem minha reportou
+   "description ausente" num HTML em que ela estava correta. */
+if (SERVIDO) {
+  const pega = (html, re) => {
+    const m = html.match(re);
+    return m ? m[1].replace(/\s+/g, ' ').trim() : null;
+  };
+
+  let falhas = 0;
+  console.log(`HTML SERVIDO (sem JS) — ${BASE}\n${'-'.repeat(78)}`);
+  for (const [rota, titulo] of Object.entries(ESPERADO)) {
+    /* Barra final: servidor estático de diretório redireciona `/about` para
+       `/about/`; o Vercel serve os dois. `redirect: follow` é o padrão. */
+    const resp = await fetch(`${BASE}${rota === '/' ? '/' : `${rota}/`}`);
+    const html = await resp.text();
+    const t = pega(html, /<title>([^<]*)<\/title>/);
+    const d = pega(html, /<meta\s+name="description"\s+content="([^"]*)"/);
+    const c = pega(html, /<link rel="canonical" href="([^"]*)"/);
+    const og = pega(html, /<meta\s+property="og:title"\s+content="([^"]*)"/);
+
+    const ok =
+      resp.status === 200 &&
+      t === titulo &&
+      og === titulo &&
+      !!d &&
+      /* A description NÃO pode ser o nome do site: esse é o fallback do Framer
+         para campo nunca preenchido, e é justamente o que decidimos não
+         replicar. Se algum dia voltar a ser isso, foi regressão. */
+      d !== 'Mateus Bredoff' &&
+      !!c &&
+      c.endsWith(rota === '/' ? '/' : rota);
+    if (!ok) falhas++;
+    console.log(`${ok ? '✅' : '❌'} ${rota.padEnd(20)} ${resp.status} ${JSON.stringify(t)}`);
+    if (!ok) console.log(`     og:title=${JSON.stringify(og)} canonical=${c} desc=${JSON.stringify(d)}`);
+  }
+  console.log(`\nfalhas: ${falhas}`);
+  process.exit(falhas ? 1 : 0);
+}
 
 const leMeta = (page) =>
   page.evaluate(() => ({
