@@ -60,32 +60,59 @@ if (SERVIDO) {
     return m ? m[1].replace(/\s+/g, ' ').trim() : null;
   };
 
+  /**
+   * ⚠ AS DUAS FORMAS DE CADA URL — `/work/stag` E `/work/stag/`.
+   *
+   * Testar só uma é escolher a variante que funciona, e foi exatamente o que eu
+   * fiz na primeira versão: só a forma COM barra, com um comentário afirmando
+   * que "o Vercel serve as duas". O pré-render escrevia apenas
+   * `<rota>/index.html`, então a forma SEM barra — a que o `<Link>` gera, a que
+   * aparece na barra de endereço e a que as pessoas copiam — caía no fallback
+   * do SPA em servidor que não redireciona. 10/10 verde, metade dos acessos com
+   * o `<head>` errado.
+   *
+   * **Redirect que chega no lugar certo é aprovação**, não falha: servidor de
+   * diretório responde 301 de `/x` para `/x/`, e crawler e unfurl seguem. O que
+   * reprova é 200 com metadado errado.
+   *
+   * ⚠ Em `/`, `/about` e `/work` o título esperado é IGUAL ao do fallback
+   * (`Mateus Bredoff`), então título não distingue pré-render de fallback nessas
+   * rotas — só o **canonical** distingue, porque muda de rota para rota. É por
+   * isso que ele é obrigatório na asserção, e não um extra.
+   */
+  const formas = (rota) => (rota === '/' ? ['/'] : [rota, `${rota}/`]);
+
   let falhas = 0;
   console.log(`HTML SERVIDO (sem JS) — ${BASE}\n${'-'.repeat(78)}`);
   for (const [rota, titulo] of Object.entries(ESPERADO)) {
-    /* Barra final: servidor estático de diretório redireciona `/about` para
-       `/about/`; o Vercel serve os dois. `redirect: follow` é o padrão. */
-    const resp = await fetch(`${BASE}${rota === '/' ? '/' : `${rota}/`}`);
-    const html = await resp.text();
-    const t = pega(html, /<title>([^<]*)<\/title>/);
-    const d = pega(html, /<meta\s+name="description"\s+content="([^"]*)"/);
-    const c = pega(html, /<link rel="canonical" href="([^"]*)"/);
-    const og = pega(html, /<meta\s+property="og:title"\s+content="([^"]*)"/);
+    for (const url of formas(rota)) {
+      const resp = await fetch(`${BASE}${url}`);
+      const html = await resp.text();
+      const t = pega(html, /<title>([^<]*)<\/title>/);
+      const d = pega(html, /<meta\s+name="description"\s+content="([^"]*)"/);
+      const c = pega(html, /<link rel="canonical" href="([^"]*)"/);
+      const og = pega(html, /<meta\s+property="og:title"\s+content="([^"]*)"/);
 
-    const ok =
-      resp.status === 200 &&
-      t === titulo &&
-      og === titulo &&
-      !!d &&
-      /* A description NÃO pode ser o nome do site: esse é o fallback do Framer
-         para campo nunca preenchido, e é justamente o que decidimos não
-         replicar. Se algum dia voltar a ser isso, foi regressão. */
-      d !== 'Mateus Bredoff' &&
-      !!c &&
-      c.endsWith(rota === '/' ? '/' : rota);
-    if (!ok) falhas++;
-    console.log(`${ok ? '✅' : '❌'} ${rota.padEnd(20)} ${resp.status} ${JSON.stringify(t)}`);
-    if (!ok) console.log(`     og:title=${JSON.stringify(og)} canonical=${c} desc=${JSON.stringify(d)}`);
+      const ok =
+        resp.status === 200 &&
+        t === titulo &&
+        og === titulo &&
+        !!d &&
+        /* A description NÃO pode ser o nome do site: esse é o fallback do Framer
+           para campo nunca preenchido, e é justamente o que decidimos não
+           replicar. Se algum dia voltar a ser isso, foi regressão. */
+        d !== 'Mateus Bredoff' &&
+        !!c &&
+        /* Canonical na forma SEM barra, uma só, nas duas variantes de URL —
+           duas URLs servindo o mesmo conteúdo com canonical diferente é
+           conteúdo duplicado. */
+        c.endsWith(rota === '/' ? '/' : rota);
+
+      if (!ok) falhas++;
+      const redirecionou = resp.redirected ? ` (via redirect → ${new URL(resp.url).pathname})` : '';
+      console.log(`${ok ? '✅' : '❌'} ${url.padEnd(21)} ${resp.status} ${JSON.stringify(t)}${redirecionou}`);
+      if (!ok) console.log(`     og:title=${JSON.stringify(og)} canonical=${c} desc=${JSON.stringify(d)}`);
+    }
   }
   console.log(`\nfalhas: ${falhas}`);
   process.exit(falhas ? 1 : 0);

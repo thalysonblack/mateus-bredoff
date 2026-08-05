@@ -33,6 +33,29 @@ import { WORK } from "./work";
  * por `"Mateus Bredoff"` e apagar os casos especiais — nada mais muda.
  */
 
+/**
+ * ⚠ FORMA CANÔNICA DA URL: **sem barra final** (`/work/stag`).
+ *
+ * Não é preferência, é a forma que o site já produz em todo lugar: é o que o
+ * `<Link to={`/work/${slug}`}>` gera, o que aparece na barra de endereço e o
+ * que as pessoas copiam. O `canonical` é emitido nessa forma em TODAS as
+ * variantes, inclusive no HTML servido em `/work/stag/` — duas URLs com o mesmo
+ * conteúdo e canonical divergente é conteúdo duplicado.
+ *
+ * O pré-render grava as duas formas de arquivo (`<rota>.html` e
+ * `<rota>/index.html`) para que o `<head>` certo chegue nas duas URLs em
+ * qualquer servidor. Isso é COBERTURA, não indecisão: a forma preferida
+ * continua sendo uma só, declarada no canonical.
+ *
+ * O original serve os cases COM barra (`/work/stag/`). Link antigo indexado
+ * continua chegando: a URL responde e aponta o canonical para a forma nova.
+ *
+ * ⚠ NÃO foi adotado `"trailingSlash": false` no `vercel.json`, que faria o
+ * servidor redirecionar a forma com barra para a sem. Seria a versão mais forte
+ * da mesma decisão, e é impossível verificar fora do deploy — configuração de
+ * roteamento que não se testa e pode derrubar o site inteiro não entra às
+ * cegas. Fica como opção, junto da conferência do `rewrites`.
+ */
 export const NOME_DO_SITE = "Mateus Bredoff";
 
 /** ` - `, medido no original. Não é travessão. */
