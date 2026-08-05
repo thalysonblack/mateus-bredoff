@@ -54,7 +54,12 @@ export default function Hero() {
         width={1600}
         height={850}
         draggable={false}
-        className="absolute inset-0 z-10 h-full w-full object-cover"
+        /* SEM z-index: o nome mescla com esta imagem por `mix-blend-exclusion`,
+           e blend só enxerga o que está no MESMO stacking context. Um z-index
+           aqui isolaria a foto e o nome pintaria chapado. O empilhamento vem
+           da ordem do DOM — a imagem é declarada antes do nome, logo fica
+           atrás dele. */
+        className="absolute inset-0 h-full w-full object-cover"
         style={{ objectPosition: "center 22%" }}
       />
 
@@ -75,10 +80,22 @@ export default function Hero() {
 
       {/* O nome POR CIMA da foto, nos dois cantos de baixo: quem ele é à
           esquerda, o que faz à direita. Ancorado onde o fundo já é claro. */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex items-end justify-between gap-[clamp(1rem,4vw,4rem)] px-[var(--gutter)] pb-[clamp(1rem,3vh,2.5rem)]">
+      {/* Sem `z-index` neste invólucro: ele viria com `position` e criaria
+          stacking context, aprisionando o blend dos filhos. A ordem do DOM já
+          põe o nome acima da foto. O blend vai em CADA bloco, não aqui —
+          invólucro com blend mesclaria o conjunto como uma camada só. */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-[clamp(1rem,4vw,4rem)] px-[var(--gutter)] pb-[clamp(1rem,3vh,2.5rem)]">
         <h1
           className="t-display t-display-xl"
-          style={{ fontSize: "clamp(2.25rem,6.6vw,108px)", color: "#19272d" }}
+          style={{
+            fontSize: "clamp(2.25rem,6.6vw,108px)",
+            /* `exclusion` com branco: inverte contra a foto e devolve escuro
+               onde o fundo é claro, prata onde a camisa escurece. É o modo do
+               site publicado — `difference` inverte com contraste total e
+               endurece o meio-tom. */
+            color: "#fff",
+            mixBlendMode: "exclusion",
+          }}
         >
           Mateus
           <br />
@@ -86,7 +103,11 @@ export default function Hero() {
         </h1>
         <p
           className="t-display t-display-xl text-right"
-          style={{ fontSize: "clamp(2.25rem,6.6vw,108px)", color: "#19272d" }}
+          style={{
+            fontSize: "clamp(2.25rem,6.6vw,108px)",
+            color: "#fff",
+            mixBlendMode: "exclusion",
+          }}
         >
           Brand
           <br />
