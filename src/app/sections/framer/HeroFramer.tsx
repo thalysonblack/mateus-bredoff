@@ -74,22 +74,31 @@ export default function HeroFramer() {
         </a>
       </div>
 
-      {/* O nome. `absolute` sem z-index — ver o aviso do blend acima. */}
+      {/* O nome. `absolute` sem z-index — ver o aviso do blend acima.
+          ⚠ O modo é `exclusion`, NÃO `difference`. Os dois invertem contra o
+          fundo, mas o `difference` inverte com contraste total e o `exclusion`
+          amacia o meio-tom — sobre uma foto de pele e tecido a diferença é
+          visível a olho nu, e foi assim que o erro apareceu. Medido no
+          original: `mix-blend-mode: exclusion`.
+          E o blend vai em CADA bloco, não num invólucro que abrace os dois: no
+          original cada nome é sua própria camada. */}
       <div
         className="fr-nome absolute inset-x-0 bottom-0 flex items-end justify-between uppercase"
-        style={{
-          mixBlendMode: "difference",
-          color: "#fff",
-          paddingInline: "26px",
-          paddingBottom: "0",
-        }}
+        style={{ paddingInline: "26px" }}
       >
-        <span aria-label="Mateus Bredoff">
+        <span
+          style={{ mixBlendMode: "exclusion", color: "#fff" }}
+          aria-label="Mateus Bredoff"
+        >
           Mateus
           <br />
           Bredoff
         </span>
-        <span className="text-right max-md:hidden" aria-label="Brand Designer">
+        <span
+          className="text-right max-md:hidden"
+          style={{ mixBlendMode: "exclusion", color: "#fff" }}
+          aria-label="Brand Designer"
+        >
           Brand
           <br />
           Designer
