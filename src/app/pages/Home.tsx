@@ -50,7 +50,7 @@ export default function Home() {
      não declarava nada e o título certo aparecia por sorte — pela restauração
      que a rota anterior fazia ao desmontar. Rota que depende do cleanup da
      vizinha quebra no dia em que a vizinha mudar. */
-  useMetaRota({});
+  useMetaRota();
 
   return (
     <div className="fr">

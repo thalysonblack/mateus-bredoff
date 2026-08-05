@@ -13,10 +13,7 @@ import RodapeFramer from "../sections/framer/RodapeFramer";
 export default function WorkIndex() {
   /* `/work` no original também é só `Mateus Bredoff` — o sufixo de página só
      aparece nos cases. */
-  useMetaRota({
-    descricao:
-      "Selected work by Mateus Bredoff — visual identities, branding and art direction for companies building a clear and memorable presence.",
-  });
+  useMetaRota();
 
   /* `.fr` é a família Geist + o papel do original. Sem ela a página herda
      `ui-sans-serif` do sistema e TODA medida de largura de linha mente — foi

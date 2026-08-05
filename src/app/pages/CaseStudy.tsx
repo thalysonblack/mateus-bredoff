@@ -73,22 +73,12 @@ export default function CaseStudy() {
   const { slug } = useParams();
   const item = findWork(slug);
 
-  /* O título sai da COLEÇÃO, não de uma lista paralela: `item.title` é o mesmo
-     texto que a página estampa no `<h1>`, e o hook põe o ` - Mateus Bredoff`
-     que o original usa. Case novo entra em `content/work.ts` e já nasce com
-     título de aba certo. Slug inexistente → `item` é undefined → o hook cai em
-     `Mateus Bredoff` (o 404 não inventa nome de projeto).
-
-     A description é MONTADA a partir dos campos que já existem no item
-     (disciplinas + ano). Não é texto de case: os cases com `contentPending`
-     estão sem corpo escrito de propósito, e inventar resumo de projeto de
-     cliente é exatamente o que este repo não faz. */
-  useMetaRota({
-    titulo: item?.title,
-    descricao: item
-      ? `${item.title} — ${item.disciplines.join(", ")}, ${item.year}. Case study by brand designer Mateus Bredoff.`
-      : undefined,
-  });
+  /* Sem argumento: `content/meta.ts` resolve o slug contra a mesma coleção que
+     esta página lê, e é o MESMO módulo que o pré-render usa no build. Case novo
+     em `work.ts` já nasce com título de aba certo e com HTML estático próprio.
+     Slug inexistente cai em `Mateus Bredoff` — o 404 não inventa nome de
+     projeto. */
+  useMetaRota();
 
   if (!item) {
     return (

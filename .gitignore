@@ -5,6 +5,8 @@ node_modules/
 # Build output
 dist/
 build/
+# outDir de verificação do pré-render (scripts/prerender.mjs <dir>)
+.prerender-check/
 
 # Vite
 .vite/

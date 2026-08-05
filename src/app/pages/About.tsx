@@ -118,10 +118,7 @@ function Bloco({
 export default function About() {
   /* `/about` no original serve `<title>Mateus Bredoff</title>` — sem sufixo de
      página, igual à home e ao índice. Medido, não deduzido. */
-  useMetaRota({
-    descricao:
-      "Mateus Bredoff is a multidisciplinary designer focused on visual identities, based in Brazil and working worldwide.",
-  });
+  useMetaRota();
 
   /* Dois blocos revelam palavra a palavra. O manifesto do hero apaga em cinza e
      acende em branco (ele vive sob `exclusion`, então "branco" é o valor ANTES
