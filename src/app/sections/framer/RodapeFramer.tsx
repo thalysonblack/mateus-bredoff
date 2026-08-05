@@ -17,13 +17,48 @@ import { scrollToTop } from "../../../lib/lenis";
  * montar um segundo, os dois divergem no primeiro ajuste. Importe este.
  */
 
+/**
+ * Contato — os quatro rótulos são do original, mas só DOIS deles têm destino lá.
+ *
+ * Conferido no HTML publicado (ago/2026): `Behance` e `Instagram` são `<a>` com
+ * `href`; `Email` e `X.com` são `<a>` SEM `href` — texto que parece link e não
+ * leva a lugar nenhum. Os dois destinos reais foram copiados daqui:
+ *   Behance   → https://www.behance.net/mateusbredoff
+ *   Instagram → https://www.instagram.com/sir.bredoff   (era `instagram.com/`)
+ *
+ * ⚠ `hello@mateusbredoff.com` e o `x.com/` genérico continuam PLACEHOLDER — não
+ * existem no original e não foram confirmados com o Mateus. Não invente perfil
+ * de cliente: ou o dado chega, ou os dois rótulos saem da lista.
+ */
 const CONTATO = [
   { label: "Email", href: "mailto:hello@mateusbredoff.com" },
   { label: "Behance", href: "https://www.behance.net/mateusbredoff" },
-  { label: "Instagram", href: "https://instagram.com/" },
+  { label: "Instagram", href: "https://www.instagram.com/sir.bredoff" },
   { label: "X.com", href: "https://x.com/" },
 ];
 
+/**
+ * Nav do rodapé — quatro itens, os mesmos rótulos e a mesma ordem do original.
+ *
+ * ⚠ **Os destinos divergem, e a divergência é correção de defeito.** No
+ * publicado (conferido nas nove rotas) TRÊS dos quatro itens apontam para a
+ * mesma página:
+ *
+ *   01 Home    → `/`        ✅ igual aqui
+ *   02 Works   → `/about`   ❌ erro de autoria no Framer — aqui vai para `/work`
+ *   03 About   → `/about`   ✅ igual aqui
+ *   04 Contact → `/about`   ❌ não existe página de contato — aqui vai ao bloco
+ *
+ * Réplica não copia link quebrado: um índice de trabalho que leva ao "sobre" é
+ * descuido do builder, não decisão de design. O valor do original fica escrito
+ * aqui do lado para ninguém "restaurar a fidelidade" meses depois.
+ *
+ * ⚠ `/#contato` AINDA NÃO ANDA. O `id="contato"` existe (envolve este rodapé na
+ * home), mas com o Lenis no comando o scroll nativo por hash não acontece, e o
+ * `scrollToTop` do ciclo de rota em `App.tsx` puxa a página para o topo assim
+ * que o pathname muda. Consertar é ensinar o `RouteLifecycle` a honrar
+ * `location.hash` via `lenis.scrollTo` — mudança em `App.tsx`, fora desta fatia.
+ */
 const NAV = [
   { i: "01", label: "Home", to: "/" },
   { i: "02", label: "Works", to: "/work" },

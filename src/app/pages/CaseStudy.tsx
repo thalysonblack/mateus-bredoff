@@ -1,5 +1,5 @@
-import { useEffect } from "react";
 import { useParams, Link } from "react-router";
+import { useMetaRota } from "../../hooks/useMetaRota";
 import RodapeFramer from "../sections/framer/RodapeFramer";
 import { findWork, WORK, type WorkItem } from "../../content/work";
 
@@ -73,13 +73,22 @@ export default function CaseStudy() {
   const { slug } = useParams();
   const item = findWork(slug);
 
-  useEffect(() => {
-    const anterior = document.title;
-    document.title = "Mateus Bredoff";
-    return () => {
-      document.title = anterior;
-    };
-  }, []);
+  /* O título sai da COLEÇÃO, não de uma lista paralela: `item.title` é o mesmo
+     texto que a página estampa no `<h1>`, e o hook põe o ` - Mateus Bredoff`
+     que o original usa. Case novo entra em `content/work.ts` e já nasce com
+     título de aba certo. Slug inexistente → `item` é undefined → o hook cai em
+     `Mateus Bredoff` (o 404 não inventa nome de projeto).
+
+     A description é MONTADA a partir dos campos que já existem no item
+     (disciplinas + ano). Não é texto de case: os cases com `contentPending`
+     estão sem corpo escrito de propósito, e inventar resumo de projeto de
+     cliente é exatamente o que este repo não faz. */
+  useMetaRota({
+    titulo: item?.title,
+    descricao: item
+      ? `${item.title} — ${item.disciplines.join(", ")}, ${item.year}. Case study by brand designer Mateus Bredoff.`
+      : undefined,
+  });
 
   if (!item) {
     return (

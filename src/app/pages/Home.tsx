@@ -1,3 +1,4 @@
+import { useMetaRota } from "../../hooks/useMetaRota";
 import HeroFramer from "../sections/framer/HeroFramer";
 import BlocoRotulado from "../sections/framer/BlocoRotulado";
 import MarqueeTrabalho from "../sections/framer/MarqueeTrabalho";
@@ -45,6 +46,12 @@ const SOBRE = [
 ];
 
 export default function Home() {
+  /* A home DECLARA o seu título mesmo sendo igual ao do `index.html`. Antes ela
+     não declarava nada e o título certo aparecia por sorte — pela restauração
+     que a rota anterior fazia ao desmontar. Rota que depende do cleanup da
+     vizinha quebra no dia em que a vizinha mudar. */
+  useMetaRota({});
+
   return (
     <div className="fr">
       <HeroFramer />

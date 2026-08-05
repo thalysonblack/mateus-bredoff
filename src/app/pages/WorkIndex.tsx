@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useMetaRota } from "../../hooks/useMetaRota";
 import MarqueeTrabalho from "../sections/framer/MarqueeTrabalho";
 import RodapeFramer from "../sections/framer/RodapeFramer";
 
@@ -11,13 +11,12 @@ import RodapeFramer from "../sections/framer/RodapeFramer";
  * página, mas de outro site. O contrato aqui é réplica.
  */
 export default function WorkIndex() {
-  useEffect(() => {
-    const anterior = document.title;
-    document.title = "Mateus Bredoff";
-    return () => {
-      document.title = anterior;
-    };
-  }, []);
+  /* `/work` no original também é só `Mateus Bredoff` — o sufixo de página só
+     aparece nos cases. */
+  useMetaRota({
+    descricao:
+      "Selected work by Mateus Bredoff — visual identities, branding and art direction for companies building a clear and memorable presence.",
+  });
 
   /* `.fr` é a família Geist + o papel do original. Sem ela a página herda
      `ui-sans-serif` do sistema e TODA medida de largura de linha mente — foi

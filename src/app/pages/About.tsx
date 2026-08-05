@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useMetaRota } from "../../hooks/useMetaRota";
 import RodapeFramer from "../sections/framer/RodapeFramer";
 import { useRevelacaoPalavra } from "../sections/framer/useRevelacaoPalavra";
 import retrato1600 from "../../assets/optimized/hero-portrait-1600.webp";
@@ -116,13 +116,12 @@ function Bloco({
 }
 
 export default function About() {
-  useEffect(() => {
-    const anterior = document.title;
-    document.title = "Mateus Bredoff";
-    return () => {
-      document.title = anterior;
-    };
-  }, []);
+  /* `/about` no original serve `<title>Mateus Bredoff</title>` — sem sufixo de
+     página, igual à home e ao índice. Medido, não deduzido. */
+  useMetaRota({
+    descricao:
+      "Mateus Bredoff is a multidisciplinary designer focused on visual identities, based in Brazil and working worldwide.",
+  });
 
   /* Dois blocos revelam palavra a palavra. O manifesto do hero apaga em cinza e
      acende em branco (ele vive sob `exclusion`, então "branco" é o valor ANTES
