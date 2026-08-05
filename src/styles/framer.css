@@ -138,6 +138,17 @@
   --fr-margem: 24px;            /* padrão: /about, rodapé */
   --fr-margem-cabecalho: 32px;  /* cabeçalho do case */
   --fr-margem-pilha: 8px;       /* pilha de imagens do case */
+
+  /* A coluna do rótulo é FIXA, não fracionária: o conteúdo começa em x=424
+     tanto em 1600px quanto em 1200px. Como `25%` ela andaria — e deriva de
+     coluna é o que mais denuncia uma réplica. Espinha da /about e do rodapé. */
+  --fr-rotulo-col: 400px;
+
+  /* ⚠ 16px também são DOIS estilos, como os 12px. Este é o índice da nav do
+     rodapé (entrelinha 18, tracking normal); `--fr-indice` é o numeral das
+     etapas (17.6 / −0.48). Não unifique. */
+  --fr-nav-indice: 16px;
+  --fr-nav-indice-lh: 18px;
 }
 
 @media (max-width: 809px) {
@@ -181,7 +192,10 @@
 
     --fr-margem: 12px;
     --fr-margem-cabecalho: 12px;
-    --fr-margem-pilha: 12px;
+    /* 4px, não 12: em 390px as imagens do case saem em x=4 com 382 de largura
+       (390 − 2×4). A pilha aperta contra a borda mais do que o resto da
+       página — presumir uma margem única no mobile seria o erro fácil. */
+    --fr-margem-pilha: 4px;
   }
 }
 

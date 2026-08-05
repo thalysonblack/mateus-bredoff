@@ -86,9 +86,12 @@ export default function RodapeFramer() {
         {/* `mt-auto` em vez de posição absoluta: a linha fica colada no fundo do
             bloco de 100vh sem sair do fluxo, e continua embaixo do conteúdo se
             a tela for baixa demais para caber tudo. */}
-        {/* 46% e não os 45% do original: 45% mede 4,39:1 sobre o petróleo e
-            fica a 0,11 de passar em AA. Um ponto percentual resolve. */}
-        <div className="fr-micro mt-auto flex items-end justify-between pt-16 text-white/46">
+        {/* 48% e não os 45% do original: 45% mede 4,39:1 sobre o petróleo e
+            reprova em AA. Passei antes por `/46`, que o Tailwind compila para
+            alpha 0x75 = 45,88% e mede 4,509:1 — passava por 0,009, folga que
+            some no primeiro arredondamento que alguém encostar. `/48` mede
+            ~4,7:1 e sobrevive a mexida. */}
+        <div className="fr-micro mt-auto flex items-end justify-between pt-16 text-white/48">
           <span>© 2026</span>
           {/* `scrollToTop` do Lenis: com scroll interpolado, `window.scrollTo`
               não move nada e o link vira botão morto. */}
