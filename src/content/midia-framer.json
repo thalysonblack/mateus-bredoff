@@ -34,9 +34,9 @@
   },
   "resumo": {
     "assets": 46,
-    "arquivosEntregues": 67,
+    "arquivosEntregues": 66,
     "bytesOrigem": 78428137,
-    "bytesEntregues": 15974129,
+    "bytesEntregues": 14326989,
     "porGrupo": {
       "textura": {
         "assets": 1,
@@ -60,7 +60,7 @@
       },
       "peca-case": {
         "assets": 29,
-        "bytes": 6572106
+        "bytes": 4924966
       },
       "poster": {
         "assets": 2,
@@ -758,7 +758,7 @@
     {
       "id": "case-alexarcher-03",
       "grupo": "peca-case",
-      "papel": "peça 3 da pilha de /work/alex-archer/",
+      "papel": "peça 3 da pilha de /work/alex-archer/ — no original é um GIF animado de 1,6 MB num <img>; entregue só como MP4 (213 KB, 7,5x mais leve). Pede <video autoplay muted loop playsinline> no lugar do <img>. WebP animado foi medido e não ganha do GIF (1632 KB).",
       "origem": {
         "url": "https://framerusercontent.com/images/l6XVsGEMe8G3z0z0VNYagofxI.gif",
         "arquivo": "l6XVsGEMe8G3z0z0VNYagofxI.gif",
@@ -767,12 +767,6 @@
         "bytes": 1647140
       },
       "arquivos": [
-        {
-          "caminho": "src/assets/optimized/framer/case-alexarcher-03.gif",
-          "w": 960,
-          "h": 1200,
-          "bytes": 1647140
-        },
         {
           "caminho": "src/assets/optimized/framer/case-alexarcher-03.mp4",
           "w": 960,
@@ -794,7 +788,7 @@
           "viewport": 1600
         }
       ],
-      "bytesEntregues": 1866062
+      "bytesEntregues": 218922
     },
     {
       "id": "case-alexarcher-04",
@@ -2019,8 +2013,8 @@
       "origem": {
         "url": "https://framerusercontent.com/images/4FLsJW9otLBFSMRnLqG1SQOUZY.svg",
         "arquivo": "4FLsJW9otLBFSMRnLqG1SQOUZY.svg",
-        "w": 0,
-        "h": 0,
+        "w": 1920,
+        "h": 1920,
         "bytes": 782
       },
       "arquivos": [
