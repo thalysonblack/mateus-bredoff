@@ -78,6 +78,13 @@
   --fr-manchete-lh: 52.8px;
   --fr-manchete-ls: -1.44px;
 
+  /* A manchete tem DUAS entrelinhas no mesmo corpo de 48px, como o display tem
+     duas no de 64: 52.8 na /about e 52.32 no "Other Projects" do case. São
+     0,48px por linha — invisível numa linha, mas o "Other Projects" quebra em
+     várias e o desvio acumula, que é o tipo de deriva que denuncia réplica.
+     Medido nas duas rotas; não unifique por parecer erro de arredondamento. */
+  --fr-manchete-lh-case: 52.32px;
+
   /* O único peso 300 do site. Já declarado em fonts.css. */
   --fr-numero: 128px;
   --fr-numero-lh: 128px;
@@ -270,6 +277,14 @@
   font-weight: 400;
   font-size: var(--fr-manchete);
   line-height: var(--fr-manchete-lh);
+  letter-spacing: var(--fr-manchete-ls);
+}
+
+/* Variante do case. Só a entrelinha muda. */
+.fr-manchete-case {
+  font-weight: 400;
+  font-size: var(--fr-manchete);
+  line-height: var(--fr-manchete-lh-case);
   letter-spacing: var(--fr-manchete-ls);
 }
 

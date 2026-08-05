@@ -29,7 +29,7 @@ function Campo({ rotulo, children }: { rotulo: string; children: React.ReactNode
   return (
     <div>
       <p className="fr-secao-rotulo text-[var(--fr-cinza)]">{rotulo}</p>
-      <div className="fr-ficha text-[var(--fr-marrom)] pt-[14px]">{children}</div>
+      <div className="fr-ficha text-[var(--fr-marrom)] pt-[10px]">{children}</div>
     </div>
   );
 }
@@ -133,11 +133,11 @@ export default function CaseStudy() {
             mantém o blend vivo em vez de pintar branco chapado sobre branco. */}
         <h1 className="fr-case-titulo text-white mix-blend-exclusion self-start">{item.title}</h1>
 
-        <div className="flex flex-col gap-[47px]">
+        <div className="flex flex-col">
           <div>
             <p className="fr-secao-rotulo text-[var(--fr-cinza)]">About</p>
             {item.about.length > 0 ? (
-              <div className="flex flex-col gap-[25.6px] pt-[14px]">
+              <div className="flex flex-col gap-[25.6px] pt-[10px]">
                 {item.about.map((p, i) => (
                   <p key={i} className="fr-case-corpo text-[#666]">
                     {p}
@@ -147,12 +147,15 @@ export default function CaseStudy() {
             ) : (
               /* O original mostra lorem ipsum aqui. Uma linha honesta é melhor
                  que enchimento portado — e some sozinha quando o texto chegar. */
-              <p className="fr-case-corpo text-[#666] pt-[14px]">
+              <p className="fr-case-corpo text-[#666] pt-[10px]">
                 Case study in preparation.
               </p>
             )}
           </div>
 
+          {/* 31px e 43px, não um gap único: medido, o intervalo do corpo para
+              o Type é menor que o de Type para Year. */}
+          <div className="pt-[31px]" />
           <Campo rotulo="Type">
             <div className="flex flex-wrap gap-x-[15px] gap-y-1">
               {item.disciplines.map((d) => (
@@ -161,6 +164,7 @@ export default function CaseStudy() {
             </div>
           </Campo>
 
+          <div className="pt-[43px]" />
           <Campo rotulo="Year">{item.year}</Campo>
         </div>
       </header>
@@ -241,7 +245,7 @@ export default function CaseStudy() {
       {/* --- outros projetos: margem 24, duas colunas de 764 com calha 24 -- */}
       <section className="pt-[160px] pb-[120px]" style={{ paddingInline: "var(--fr-margem)" }}>
         <div className="flex items-start justify-between gap-6">
-          <h2 className="fr-manchete text-white mix-blend-exclusion">Other Projects</h2>
+          <h2 className="fr-manchete-case text-white mix-blend-exclusion">Other Projects</h2>
           <Link to="/work" className="fr-link-quieto text-[var(--fr-cinza)] shrink-0">
             View All
           </Link>

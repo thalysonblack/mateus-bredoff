@@ -74,7 +74,10 @@ export default function RodapeFramer() {
               <Link
                 key={n.label}
                 to={n.to}
-                className="flex h-[55px] items-center justify-between border-b border-white/12"
+                /* Alinhado ao TOPO, não centrado: o item tem 55px de altura, mas o
+                   original põe o rótulo a 3px do topo e deixa a folga embaixo,
+                   acima do fio. Centrar jogava a nav inteira 16px para baixo. */
+                className="flex h-[55px] items-start justify-between border-b border-white/12 pt-[3px]"
               >
                 <span className="fr-nav-indice text-white/50">{n.i}</span>
                 <span className="fr-nav-rodape text-white">{n.label}</span>
