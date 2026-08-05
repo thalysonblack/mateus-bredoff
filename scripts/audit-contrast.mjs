@@ -115,6 +115,58 @@ for (const vp of VIEWPORTS) {
   });
   await new Promise((r) => setTimeout(r, 2500));
 
+  const pararScroll = () =>
+    page.evaluate(
+      () =>
+        new Promise((res) => {
+          let ultimo = -1;
+          let iguais = 0;
+          const tick = () => {
+            const y = window.scrollY;
+            if (y === ultimo) {
+              if (++iguais >= 5) return res(y);
+            } else {
+              iguais = 0;
+              ultimo = y;
+            }
+            requestAnimationFrame(tick);
+          };
+          tick();
+        }),
+    );
+
+  /*
+   * UMA varredura de rolagem, não uma por nó.
+   *
+   * Com o clip em coordenadas de documento, a foto não depende mais de onde a
+   * página está — rolar serve só para DISPARAR o que espera o scroll (reveal
+   * por ScrollTrigger, imagem `lazy`, montagem sob demanda). Feito isso uma vez,
+   * os ~70 nós são fotografados sem mexer mais na página: some o custo de 70
+   * idas e vindas e some junto a chance de a página estar em movimento na hora
+   * da foto.
+   *
+   * Rola com roda de verdade porque é o único gesto que o Lenis interpola como
+   * faria com o usuário — `window.scrollTo` não move scroll interpolado.
+   */
+  for (let i = 0; i < 40; i++) {
+    const fim = await page.evaluate(
+      () => window.scrollY + window.innerHeight >= document.body.scrollHeight - 2,
+    );
+    if (fim) break;
+    await page.mouse.wheel({ deltaY: vp.height * 0.8 });
+    await new Promise((r) => setTimeout(r, 160));
+  }
+  await pararScroll();
+  /* O reveal ainda precisa de tempo: `animation:none` não segura Framer Motion
+     nem GSAP, que animam por WAAPI/rAF. */
+  await new Promise((r) => setTimeout(r, 900));
+
+  /* A coleta vem DEPOIS da varredura, e a ordem é obrigatória: o SplitText
+     reescreve o innerHTML dos parágrafos revelados, destruindo os nós que já
+     tivessem recebido `data-audit-idx`. Coletando antes, 160 dos 164 nós da
+     /about viravam referência morta e o relatório saía com 4 — verde, curto e
+     mentiroso. Medir o DOM DEPOIS de tudo que o scroll dispara é também o que
+     corresponde ao que o usuário enxerga. */
   const nodes = await page.evaluate(() => {
     const out = [];
     let idx = 0;
@@ -160,16 +212,37 @@ for (const vp of VIEWPORTS) {
     return out;
   });
 
-  const results = [];
-  for (const n of nodes) {
-    // Rola pro nó e ESPERA o reveal do Framer Motion terminar. `animation:none`
-    // não segura o Motion (ele anima por WAAPI/rAF), e medir 120ms depois do
-    // scroll pega o texto ainda em opacity 0 — foi o que produziu 46 nós
-    // "sem medida" na primeira rodada.
-    await page.evaluate((y) => window.scrollTo(0, Math.max(0, y - 260)), n.top);
-    await new Promise((r) => setTimeout(r, 900));
-    // recorte EXATO da caixa de linha, RE-LIDA após o reveal (que desloca em Y)
-    const box = await page.evaluate((id) => {
+  /*
+   * ⚠ ERRO DE MÉTODO Nº 5, o mais caro: `window.scrollTo` NÃO POSICIONA A
+   * PÁGINA quando o scroll é do Lenis.
+   *
+   * O que acontecia: `scrollTo` movia o scroll nativo, o Lenis puxava de volta
+   * para a posição interpolada dele, e a página seguia DESLIZANDO enquanto o
+   * script media. A caixa era lida num instante e o `screenshot({clip})` saía
+   * em outro, algumas centenas de milissegundos depois — o recorte caía num
+   * pedaço qualquer da página.
+   *
+   * O sintoma denunciava a causa: quanto MAIS LONGA a página, maior a distância
+   * que o Lenis percorria entre a leitura e a foto, e pior a medida. Os mesmos
+   * elementos do rodapé mediam 5,4:1 em `/work` (2000px) e 2,3:1 em
+   * `/work/alex-archer` (13800px). Contraste não depende do comprimento da
+   * página — o recorte é que saía do lugar. Isso reprovou creme sobre petróleo
+   * com 1,3:1 quando o valor real é 13,3:1.
+   *
+   * A correção tem duas partes, e as duas são necessárias:
+   *   1. ESPERAR O SCROLL PARAR de verdade (polling de rAF até `scrollY` ficar
+   *      igual por 5 quadros), em vez de dormir 900ms e torcer;
+   *   2. PROVAR que a caixa não se moveu: re-ler o rect DEPOIS da foto e
+   *      descartar a medida se ele andou. Sem essa prova, o dia em que outra
+   *      coisa mexer no scroll o medidor volta a mentir em silêncio — e um
+   *      medidor que mente é pior que medidor nenhum.
+   */
+
+  /* Recorte EXATO da caixa de linha, re-lida no momento do uso. Vive numa
+     função só porque é chamada DUAS vezes por nó: antes da foto para definir o
+     clip, e depois para provar que nada se moveu. */
+  const lerCaixa = (id) =>
+    page.evaluate((id) => {
       const el = document.querySelector(`[data-audit-idx="${id}"]`);
       if (!el) return null;
       const node = [...el.childNodes].find((c) => c.nodeType === 3 && (c.textContent || '').trim().length > 1);
@@ -183,16 +256,58 @@ for (const vp of VIEWPORTS) {
       return {
         x: Math.max(0, Math.round(r.left)),
         y: Math.round(r.top),
+        /* `sy` do MESMO instante da leitura: o clip do screenshot é em
+           coordenadas de DOCUMENTO, então y+sy é o que vale para a foto, e ler
+           o scroll separado abriria a janela para ele mudar no meio. */
+        sy: Math.round(window.scrollY),
         width: Math.max(1, Math.round(r.width)),
         height: Math.max(1, Math.round(r.height)),
       };
-    }, n.id);
-    if (!box) continue;
-    if (box.y < 0 || box.y + box.height > vp.height) continue;
+    }, id);
+
+  const results = [];
+  for (const n of nodes) {
+    const box = await lerCaixa(n.id);    if (!box) continue;
+    /*
+     * ⚠ ERRO DE MÉTODO Nº 6, e a causa REAL de o medidor mentir em página longa:
+     * o `clip` do `page.screenshot` é em coordenadas de DOCUMENTO, não de
+     * viewport (o Puppeteer captura além da viewport por padrão). O script
+     * passava o rect de `getClientRects()`, que é relativo à VIEWPORT.
+     *
+     * No topo da página os dois referenciais coincidem e tudo media certo — foi
+     * o que fez o defeito sobreviver. Rolado 13682px, o clip pedia o pixel do
+     * documento em y=742: o meio de um espaçador em branco. Todo texto abaixo
+     * da primeira tela era medido contra o pedaço errado da página, e o erro
+     * crescia com o comprimento dela.
+     *
+     * Aferido: com o clip em documento, o mesmo par de cores mede 21,00:1 no
+     * topo E 14000px abaixo. Sem a soma, o de baixo media o fundo vazio.
+     */
     let buf;
     try {
-      buf = await page.screenshot({ clip: box, encoding: 'binary' });
+      buf = await page.screenshot({
+        clip: { x: box.x, y: box.y + box.sy, width: box.width, height: box.height },
+        encoding: 'binary',
+      });
     } catch { continue; }
+
+    /* A PROVA de que o recorte é válido: se a caixa andou entre a leitura e a
+       foto, o pixel medido é de outro lugar da página. Descartar é a única
+       resposta honesta — o nó vai para `unmeasured`, nunca para "aprovado". */
+    const box2 = await lerCaixa(n.id);
+    if (
+      !box2 ||
+      Math.abs(box2.y + box2.sy - (box.y + box.sy)) > 1 ||
+      Math.abs(box2.x - box.x) > 1
+    ) {
+      results.push({
+        ...n, measured: null, required: n.large ? 3 : 4.5,
+        inkPixels: 0, pass: false, invalid: true,
+        motivo: 'a caixa se moveu entre a leitura e a foto',
+      });
+      continue;
+    }
+
     const m = measureClip(buf, box.width, box.height);
     if (!m) continue;
     const min = n.large ? 3 : 4.5;
@@ -215,6 +330,7 @@ for (const vp of VIEWPORTS) {
     checked: results.length,
     failures: results.filter((r) => !r.pass && !r.invalid).sort((a, b) => a.measured - b.measured).map(fmt),
     unmeasured: results.filter((r) => r.invalid).map(fmt),
+    todos: results.map((r) => `${r.measured}:1 — "${r.label}"`),
     worstPasses: results.filter((r) => r.pass)
       .sort((a, b) => a.measured - b.measured).slice(0, 6)
       .map((r) => `${r.measured}:1 (min ${r.required}) — "${r.label}" ${r.fontPx}px ${r.cls}`),

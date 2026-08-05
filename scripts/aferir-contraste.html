@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Aferição do medidor de contraste</title>
+    <!--
+      Página de AFERIÇÃO do `audit-contrast.mjs` — pares de contraste conhecidos,
+      calculados pela fórmula WCAG, para provar que o medidor reproduz o valor
+      certo antes de alguém acreditar nele.
+
+      Serve para duas coisas:
+
+      1. **Calibrar.** Se o medidor não devolve ~21,00 / ~6,48 / ~4,54 / ~2,30
+         aqui, ele está errado — e nenhuma medição dele em página real vale.
+
+      2. **Reproduzir o bug do recorte que desliza.** Os mesmos quatro pares
+         aparecem DUAS vezes: no topo e depois de 14000px de espaçador. Se o
+         medidor perde a posição em página longa (era o defeito: `window.scrollTo`
+         não move o scroll do Lenis, e a página seguia deslizando entre a leitura
+         da caixa e a foto), o bloco de baixo mede diferente do de cima.
+         **Os dois blocos têm de dar o MESMO número.** Contraste não depende de
+         onde o texto está na página.
+
+      uso: node scripts/audit-contrast.mjs "file:///<caminho>/scripts/aferir-contraste.html"
+    -->
+    <style>
+      body {
+        margin: 0;
+        background: #fff;
+        font-family: system-ui, sans-serif;
+      }
+      .par {
+        padding: 18px 24px;
+        font-size: 28px; /* >= 24px conta como texto grande na WCAG */
+      }
+      .p {
+        font-size: 12px;
+      }
+      .espacador {
+        height: 14000px;
+      }
+      h2 {
+        font-size: 14px;
+        padding: 24px;
+        margin: 0;
+        color: #000;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Bloco A — topo da pagina</h2>
+    <div class="par" style="color: #000000">alvo 21.00 preto sobre branco</div>
+    <div class="par" style="color: #5e5e5e">alvo 6.48 cinza medio sobre branco</div>
+    <div class="par" style="color: #767676">alvo 4.54 limite AA sobre branco</div>
+    <div class="par" style="color: #ababab">alvo 2.30 reprova de proposito</div>
+
+    <!-- Mesmos pares em corpo PEQUENO: é onde o antialiasing pesa, porque o
+         glifo fino tem mais pixel de borda que de núcleo. Se o medidor
+         subestimar aqui e acertar em 28px, o viés é do AA e não do recorte. -->
+    <h2>Bloco P — mesmos pares em 12px</h2>
+    <div class="par p" style="color: #000000">alvo 21.00 preto sobre branco P</div>
+    <div class="par p" style="color: #5e5e5e">alvo 6.48 cinza medio sobre branco P</div>
+    <div class="par p" style="color: #767676">alvo 4.54 limite AA sobre branco P</div>
+
+    <div class="espacador"></div>
+
+    <h2>Bloco B — mesmos pares, 14000px abaixo</h2>
+    <div class="par" style="color: #000000">alvo 21.00 preto sobre branco B</div>
+    <div class="par" style="color: #5e5e5e">alvo 6.48 cinza medio sobre branco B</div>
+    <div class="par" style="color: #767676">alvo 4.54 limite AA sobre branco B</div>
+    <div class="par" style="color: #ababab">alvo 2.30 reprova de proposito B</div>
+  </body>
+</html>
