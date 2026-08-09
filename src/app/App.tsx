@@ -8,6 +8,7 @@ import WorkIndex from "./pages/WorkIndex";
 import CaseStudy from "./pages/CaseStudy";
 import About from "./pages/About";
 import HomeV2 from "./pages/HomeV2";
+import HomeV3 from "./pages/HomeV3";
 
 /**
  * Mateus Bredoff — direção editorial, agora multi-página.
@@ -82,7 +83,7 @@ function Layout({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
   /* A barra de metadados vive DENTRO do Hero nas páginas que TÊM hero, e é o
      Layout que a monta nas rotas internas — se as duas montarem, ela duplica. */
-  const temHeroProprio = pathname === "/" || pathname === "/v2";
+  const temHeroProprio = pathname === "/" || pathname === "/v2" || pathname === "/v3";
 
   /* O `relative` do <main> é a âncora da barra sobreposta. Sem `z-index`
      junto, não cria stacking context — o `mix-blend` das páginas segue vivo. */
@@ -138,6 +139,9 @@ export default function App() {
           {/* V2: a alternativa de direção própria, viva e montável. `/` é a
               réplica do Framer; esta é a outra opção sobre a mesa. */}
           <Route path="/v2" element={<HomeV2 />} />
+          {/* V3: mecânica do noartmusic.com com a matéria do Mateus —
+              terceira direção sobre a mesa, comparável em outra aba. */}
+          <Route path="/v3" element={<HomeV3 />} />
           <Route path="/about" element={<About />} />
           <Route path="/work" element={<WorkIndex />} />
           <Route path="/work/:slug" element={<CaseStudy />} />

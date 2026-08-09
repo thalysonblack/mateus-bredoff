@@ -1,0 +1,186 @@
+/**
+ * V3 — "o portfólio como visor" (rota /v3).
+ *
+ * Mecânica do noartmusic.com — HUD de câmera em blend, duas vozes tipográficas,
+ * telemetria viva, índices em colchetes, módulos de ~1 tela — sobre a MATÉRIA
+ * do Mateus: paleta medida da réplica (papel/petróleo/creme), Geist como voz
+ * de manifesto e Martian Mono como voz de máquina. As duas fontes já são
+ * self-hostadas deste repo; nada da referência entra como matéria.
+ *
+ * Regras herdadas do projeto que valem aqui:
+ * - contraste se MEDE: corpo mono sobre papel usa --fr-quieto (~4,8:1) ou a
+ *   tinta cheia; o cinza #868686 só sobre o petróleo.
+ * - raio zero é lei (nenhuma pílula arredondada).
+ * - blend só na camada que precisa, sem stacking context no caminho.
+ */
+
+:root {
+  /* voz de máquina — Martian Mono, caixa alta. A Martian é LARGA: 12px dela
+     ocupa o que 13,3px da mono da referência ocupava. Corpo e rótulo abaixo
+     já compensam isso. */
+  --v3-mono-corpo: 12px;
+  --v3-mono-corpo-lh: 19px;
+  --v3-mono-rotulo: 11px;
+  --v3-mono-rotulo-lh: 16px;
+  --v3-mono-micro: 10px;
+
+  /* voz de manifesto — Geist bold caps, justificada, tracking apertado */
+  --v3-display: clamp(30px, 3.4vw, 54px);
+  --v3-display-lh: 1.04;
+  --v3-nome: clamp(44px, 8.6vw, 138px);
+
+  /* margem lateral única da versão (a referência usa ~32px em 1600) */
+  --v3-margem: clamp(16px, 2vw, 32px);
+
+  /* acento: o par de laranjas da direção autoral — o queimado no papel, o
+     claro na tinta. #a53a0b sobre petróleo mede ~1,8:1 (invisível); o par
+     existe exatamente por isso. Só em pino, quadradinho e numeral. */
+  --v3-acento: #a53a0b;
+  --v3-acento-tinta: #ec7a47;
+
+  /* quieto sobre papel: a Martian em 11px é FINA e o antialiasing come o
+     contraste aparente — preto@50% (4,8:1 nominal) lê abaixo disso. Petróleo
+     a 72% mede ~7,5:1 de verdade e mantém o papel de estado quieto. */
+  --v3-quieto: rgba(20, 33, 38, 0.72);
+  /* quieto sobre tinta: cinza-petróleo da direção autoral, ~5,9:1 real */
+  --v3-quieto-tinta: #8fa0a6;
+}
+
+/* ── vozes ─────────────────────────────────────────────────────────────── */
+
+.v3-mono {
+  font-family: 'Martian Mono', ui-monospace, monospace;
+  font-weight: 400;
+  font-size: var(--v3-mono-corpo);
+  line-height: var(--v3-mono-corpo-lh);
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.v3-rotulo {
+  font-family: 'Martian Mono', ui-monospace, monospace;
+  font-weight: 500;
+  font-size: var(--v3-mono-rotulo);
+  line-height: var(--v3-mono-rotulo-lh);
+  text-transform: uppercase;
+}
+
+.v3-micro {
+  font-family: 'Martian Mono', ui-monospace, monospace;
+  font-weight: 500; /* 400 em 9px virava antialiasing puro */
+  font-size: var(--v3-mono-micro);
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.v3-display {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 700;
+  font-size: var(--v3-display);
+  line-height: var(--v3-display-lh);
+  letter-spacing: -0.027em;
+  text-transform: uppercase;
+}
+
+/* justificação total — o gesto mais reconhecível da referência. Vale para as
+   DUAS vozes. A última linha fica natural (inter-word padrão). */
+.v3-justif {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+/* quadradinho que precede todo rótulo de seção e item de nav */
+.v3-q::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: currentColor;
+  margin-right: 9px;
+  vertical-align: 6%;
+}
+
+/* ── HUD fixo (crop marks) ─────────────────────────────────────────────────
+   Cantos em L + ticks no meio das bordas, brancos, em blend-difference:
+   escuros sobre o papel, claros sobre o retrato — a página inteira "dentro
+   do visor". pointer-events none; é moldura, não interface. */
+.v3-hud {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  color: #fff;
+}
+.v3-hud i {
+  position: absolute;
+  display: block;
+}
+.v3-hud .c {
+  width: 14px;
+  height: 14px;
+  border: 0 solid currentColor;
+}
+.v3-hud .c.tl { top: 10px; left: 10px; border-top-width: 1.5px; border-left-width: 1.5px; }
+.v3-hud .c.tr { top: 10px; right: 10px; border-top-width: 1.5px; border-right-width: 1.5px; }
+.v3-hud .c.bl { bottom: 10px; left: 10px; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+.v3-hud .c.br { bottom: 10px; right: 10px; border-bottom-width: 1.5px; border-right-width: 1.5px; }
+.v3-hud .t {
+  background: currentColor;
+}
+.v3-hud .t.l { left: 10px; top: 50%; width: 10px; height: 1.5px; }
+.v3-hud .t.r { right: 10px; top: 50%; width: 10px; height: 1.5px; }
+.v3-hud .t.m { left: 50%; top: 10px; width: 1.5px; height: 10px; }
+
+/* ── carrossel de cases ──────────────────────────────────────────────────
+   Scroll-snap NATIVO (a tira é o índice; sem lib). A trilha sangra a
+   viewport dos dois lados — cartão cortado na borda é o convite pro arrasto. */
+.v3-trilho {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-inline: var(--v3-margem);
+  scrollbar-width: none;
+  cursor: grab;
+}
+.v3-trilho::-webkit-scrollbar { display: none; }
+.v3-trilho > a {
+  flex: none;
+  width: min(560px, 78vw);
+  scroll-snap-align: start;
+  scroll-margin-inline-start: var(--v3-margem);
+}
+
+/* ── telemetria do hero: a cor depende do RECORTE do retrato ──────────────
+   Desktop (viewport paisagem): o cover mostra a foto inteira e a base chega
+   ao claro #eceded → tinta petróleo (11,9:1, medido na réplica).
+   Mobile (viewport retrato): o cover corta para o centro e a base vira barba
+   e camiseta escuras → creme, senão o texto some. Mesma regra do projeto:
+   o fundo do texto aqui não é constante — se mudar o enquadramento, remeça. */
+.v3-telem { color: var(--fr-petroleo); }
+.v3-telem .v3-card {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.25);
+}
+@media (max-width: 767px) {
+  .v3-telem { color: var(--fr-creme); }
+  .v3-telem .v3-card {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(20, 33, 38, 0.35);
+  }
+}
+
+/* pino do globo — pulso lento; motion reduzido o desliga */
+.v3-pino {
+  animation: v3-pulso 2.4s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+@keyframes v3-pulso {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v3-pino { animation: none; }
+}
