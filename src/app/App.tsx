@@ -9,6 +9,9 @@ import CaseStudy from "./pages/CaseStudy";
 import About from "./pages/About";
 import HomeV2 from "./pages/HomeV2";
 import HomeV3 from "./pages/HomeV3";
+import AboutV3 from "./pages/AboutV3";
+import WorkIndexV3 from "./pages/WorkIndexV3";
+import CaseV3 from "./pages/CaseV3";
 
 /**
  * Mateus Bredoff — direção editorial, agora multi-página.
@@ -83,7 +86,9 @@ function Layout({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
   /* A barra de metadados vive DENTRO do Hero nas páginas que TÊM hero, e é o
      Layout que a monta nas rotas internas — se as duas montarem, ela duplica. */
-  const temHeroProprio = pathname === "/" || pathname === "/v2" || pathname === "/v3";
+  /* Toda página da V3 monta a própria NavV3 — o startsWith cobre o site
+     inteiro da direção, senão a barra da réplica montaria em dobro. */
+  const temHeroProprio = pathname === "/" || pathname === "/v2" || pathname.startsWith("/v3");
 
   /* O `relative` do <main> é a âncora da barra sobreposta. Sem `z-index`
      junto, não cria stacking context — o `mix-blend` das páginas segue vivo. */
@@ -140,8 +145,11 @@ export default function App() {
               réplica do Framer; esta é a outra opção sobre a mesa. */}
           <Route path="/v2" element={<HomeV2 />} />
           {/* V3: mecânica do noartmusic.com com a matéria do Mateus —
-              terceira direção sobre a mesa, comparável em outra aba. */}
+              direção completa, site inteiro em rotas próprias. */}
           <Route path="/v3" element={<HomeV3 />} />
+          <Route path="/v3/about" element={<AboutV3 />} />
+          <Route path="/v3/work" element={<WorkIndexV3 />} />
+          <Route path="/v3/work/:slug" element={<CaseV3 />} />
           <Route path="/about" element={<About />} />
           <Route path="/work" element={<WorkIndex />} />
           <Route path="/work/:slug" element={<CaseStudy />} />
