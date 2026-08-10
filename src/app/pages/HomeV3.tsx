@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
-import { WORK } from "../../content/work";
+import { WORK, findWork } from "../../content/work";
 import { TIERS } from "../sections/Pricing";
 import { useMetaRota } from "../../hooks/useMetaRota";
-import portrait1600 from "../../assets/optimized/hero-portrait-1600.webp";
-import portrait3200 from "../../assets/optimized/hero-portrait-3200.webp";
 import { Hud, NavV3, LinhaSecao, Display, RodapeV3, Cantos, idx } from "../v3-system";
 
 /**
@@ -34,34 +32,46 @@ const LEAD_ABORDAGEM =
   "Mateus Bredoff is an independent brand designer working with companies that want a clear, relevant and memorable presence. Every identity starts from strategy — objectives, audience, competitors, market context — and lands as a visual system built with intention, made to connect emotionally and to last.";
 const LEAD_BRASIL =
   "Every project runs remotely, across time zones — immersion, visual direction, creation and delivery follow the same structured process wherever the brand lives. The distance never reaches the work.";
-/* ── hero: retrato COMO ambiente + nome em exclusion + telemetria ───────── */
+/* ── hero: as ARTES em tela cheia, trocando — o "vídeo" da referência ─────
+   Fusão fechada em 10/08: partido A aprovado ("a arte é o ambiente") vestindo
+   a anatomia exata do hero do noart — obra ao fundo, marca no CENTRO em
+   blend, statement mono no canto esquerdo da base, card do próximo no canto
+   direito. O retrato saiu da home (mora no /v3/about); quem abre o site é o
+   trabalho. */
 function HeroV3() {
-  const ultimo = WORK[0]; // a coleção já vem do mais recente
+  const [capa, setCapa] = useState(0);
+  useEffect(() => {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = setInterval(() => setCapa((c) => (c + 1) % WORK.length), 3600);
+    return () => clearInterval(id);
+  }, []);
+  const ultimo = WORK[0];
   return (
-    <section
-      className="relative flex h-[100dvh] min-h-[36rem] w-full flex-col justify-end overflow-clip"
-      style={{
-        /* cores amostradas no arquivo do retrato (mesma medição do hero da
-           réplica) — qualquer área que sobre casa sem emenda */
-        background:
-          "linear-gradient(180deg, #18373f 0%, #486067 25%, #8d9ca1 50%, #d4d8da 85%, #eceded 100%)",
-      }}
-    >
-      <img
-        src={portrait1600}
-        srcSet={`${portrait1600} 1600w, ${portrait3200} 3200w`}
-        sizes="100vw"
-        alt="Mateus Bredoff"
-        width={1600}
-        height={850}
-        draggable={false}
-        className="v3-heroimg absolute inset-0 h-full w-full select-none object-cover"
-        /* SEM z-index: o nome mescla por exclusion e blend só enxerga o mesmo
-           stacking context — o empilhamento vem da ordem do DOM */
+    <section className="relative flex h-[100dvh] min-h-[36rem] w-full flex-col justify-end overflow-clip" style={{ background: "#0d1518" }}>
+      {WORK.map((w, i) => (
+        <img
+          key={w.slug}
+          src={w.cover.src}
+          srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
+          sizes="100vw"
+          alt={w.cover.alt}
+          width={w.cover.w}
+          height={w.cover.h}
+          draggable={false}
+          className="absolute inset-0 h-full w-full select-none object-cover transition-opacity duration-700"
+          style={{ opacity: i === capa ? 1 : 0 }}
+        />
+      ))}
+
+      {/* véu de leitura na base — as capas variam de tom, o texto não */}
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-72"
+        style={{ background: "linear-gradient(0deg, rgba(13,21,24,0.78), transparent)" }}
+        aria-hidden="true"
       />
 
-      {/* nome — CENTRO da tela, o lugar do logo na referência. Camada própria,
-          exclusion (o modo do original dele: amacia o meio-tom sobre pele). */}
+      {/* nome — CENTRO da tela, o lugar do logo na referência; exclusion
+          mescla contra qualquer arte que estiver passando */}
       <h1
         className="pointer-events-none absolute inset-0 flex items-center justify-center text-center text-white"
         style={{
@@ -77,37 +87,44 @@ function HeroV3() {
         Mateus Bredoff
       </h1>
 
-      {/* linha de telemetria sobre a base clara do retrato */}
+      {/* telemetria da base — sempre creme: o véu garante o fundo */}
       <div
-        className="v3-telem relative flex items-end justify-between gap-6 pb-16 pt-5 max-md:flex-col max-md:items-start max-md:gap-8 max-md:pb-10"
-        style={{ paddingInline: "var(--v3-margem)" }}
+        className="relative flex items-end justify-between gap-6 pb-12 max-md:flex-col max-md:items-start max-md:gap-8 max-md:pb-10"
+        style={{ paddingInline: "var(--v3-margem)", color: "var(--fr-creme)" }}
       >
         <div>
           <p className="v3-rotulo v3-q pb-4">Brand Designer &amp; Art Director</p>
           <p className="v3-mono v3-justif max-w-[38ch]">{MANIFESTO}</p>
         </div>
 
-        <Link
-          to={`/v3/work/${ultimo.slug}`}
-          className="v3-card group flex items-center gap-4 p-3"
-          style={{ backdropFilter: "blur(20px)" }}
-        >
-          <span className="relative block">
-            <img
-              src={ultimo.cover.src}
-              alt=""
-              width={ultimo.cover.w}
-              height={ultimo.cover.h}
-              className="h-14 w-20 object-cover"
-            />
-            <i className="v3-foco" aria-hidden="true"><b /><b /><b /><b /></i>
+        <div className="flex shrink-0 flex-col items-end gap-3 max-md:items-start">
+          <span className="v3-rotulo tabular-nums" style={{ opacity: 0.7 }}>
+            <span style={{ color: "var(--v3-acento-tinta)" }}>{`[${String(capa + 1).padStart(2, "0")}]`}</span>
+            {" / "}
+            {String(WORK.length).padStart(2, "0")} — {WORK[capa].title}
           </span>
-          <span className="v3-rotulo">
-            <span className="block opacity-60">Latest case</span>
-            <span className="block pt-1">{ultimo.title}</span>
-            <span className="block opacity-60">{ultimo.year}</span>
-          </span>
-        </Link>
+          <Link
+            to={`/v3/work/${ultimo.slug}`}
+            className="group flex items-center gap-4 border border-white/20 p-3"
+            style={{ backdropFilter: "blur(20px)", background: "rgba(13,21,24,0.35)" }}
+          >
+            <span className="relative block">
+              <img
+                src={ultimo.cover.src}
+                alt=""
+                width={ultimo.cover.w}
+                height={ultimo.cover.h}
+                className="h-14 w-20 object-cover"
+              />
+              <i className="v3-foco" aria-hidden="true"><b /><b /><b /><b /></i>
+            </span>
+            <span className="v3-rotulo">
+              <span className="block opacity-60">Latest case</span>
+              <span className="block pt-1">{ultimo.title}</span>
+              <span className="block opacity-60">{ultimo.year}</span>
+            </span>
+          </Link>
+        </div>
       </div>
     </section>
   );
@@ -393,62 +410,86 @@ function LabV3() {
 function ServicosV3() {
   const preco = (n: number | null) =>
     n === null ? "On request" : `from US$ ${n.toLocaleString("en-US")}`;
+
+  /* a FOTO de cada serviço vem do trabalho real dele — a peça que melhor
+     representa o que o pacote entrega (pedido de 10/08: services com fotos).
+     Alex Archer: sistema tipográfico e aplicação impressa; Stag: o livro. */
+  const alex = findWork("alex-archer");
+  const stag = findWork("stag");
+  const fotos = [alex?.images[2], alex?.images[1], stag?.cover].filter(Boolean) as {
+    src: string;
+    src2x?: string;
+    w: number;
+    h: number;
+    alt: string;
+  }[];
+
   return (
     <section id="services" className="relative py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
       <Cantos />
       <LinhaSecao rotulo="Services" extra="[03]" />
       <div className="grid grid-cols-3 gap-4 max-lg:grid-cols-1" style={{ paddingInline: "var(--v3-margem)" }}>
-        {TIERS.map((t, i) => (
-          <article key={t.name} className="group flex flex-col">
-            {/* o "packshot" do serviço: painel de tinta com o nome grande —
-                a anatomia do card de produto da referência, sem inventar foto */}
-            <a
-              href="mailto:hello@mateusbredoff.com"
-              aria-label={`Request a quote — ${t.name}`}
-              className="group relative flex aspect-[4/3] flex-col justify-between p-6"
-              style={{ background: "var(--fr-petroleo)", color: "var(--fr-creme)" }}
-            >
-              <i className="v3-foco" aria-hidden="true"><b /><b /><b /><b /></i>
-              <span className="v3-micro" style={{ color: "var(--v3-acento-tinta)" }}>
-                {idx(i)}
-              </span>
-              <span
-                className="uppercase"
-                style={{
-                  fontFamily: "'Geist', ui-sans-serif, sans-serif",
-                  fontWeight: 700,
-                  fontSize: "clamp(28px, 2.6vw, 44px)",
-                  letterSpacing: "-0.025em",
-                  lineHeight: 0.95,
-                }}
+        {TIERS.map((t, i) => {
+          const foto = fotos[i];
+          return (
+            <article key={t.name} className="group flex flex-col">
+              {/* o product shot do serviço: peça real do portfólio */}
+              <a
+                href="mailto:hello@mateusbredoff.com"
+                aria-label={`Request a quote — ${t.name}`}
+                className="relative block overflow-hidden"
               >
-                {t.name}
-              </span>
-              <span className="v3-rotulo flex flex-wrap gap-x-4 gap-y-1" style={{ color: "var(--v3-quieto-tinta)" }}>
-                {t.scope.map((sc) => (
-                  <span key={sc} className="v3-q">
-                    {sc}
-                  </span>
-                ))}
-              </span>
-              <span className="v3-mais v3-rotulo absolute right-4 top-4" aria-hidden="true">
-                +
-              </span>
-            </a>
+                {foto ? (
+                  <img
+                    src={foto.src}
+                    srcSet={foto.src2x ? `${foto.src} 1400w, ${foto.src2x} 2200w` : undefined}
+                    sizes="(min-width: 1024px) 33vw, 100vw"
+                    alt={foto.alt}
+                    width={foto.w}
+                    height={foto.h}
+                    loading="lazy"
+                    decoding="async"
+                    draggable={false}
+                    className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                  />
+                ) : null}
+                <span
+                  className="v3-micro absolute left-4 top-4"
+                  style={{ color: "var(--fr-creme)", mixBlendMode: "difference" }}
+                >
+                  {idx(i)}
+                </span>
+                <span
+                  className="v3-mais v3-rotulo absolute right-4 top-4"
+                  style={{ color: "var(--fr-creme)", mixBlendMode: "difference" }}
+                  aria-hidden="true"
+                >
+                  +
+                </span>
+                <i className="v3-foco" aria-hidden="true" style={{ color: "#fff" }}><b /><b /><b /><b /></i>
+              </a>
 
-            {/* nome + prazo + preço sob o card, como o produto da referência */}
-            <div className="flex items-baseline justify-between gap-4 pt-3">
-              <span className="v3-rotulo">{t.name}</span>
-              <span className="v3-rotulo" style={{ color: "var(--v3-quieto)" }}>
-                {t.timeline}
-              </span>
-              <span className="v3-rotulo ml-auto">{preco(t.priceFrom)}</span>
-            </div>
-            <p className="v3-mono v3-justif pt-3" style={{ color: "var(--v3-quieto)" }}>
-              {t.description}
-            </p>
-          </article>
-        ))}
+              {/* nome + prazo + preço sob a foto, como o produto da referência */}
+              <div className="flex items-baseline justify-between gap-4 pt-3">
+                <span className="v3-rotulo">{t.name}</span>
+                <span className="v3-rotulo" style={{ color: "var(--v3-quieto)" }}>
+                  {t.timeline}
+                </span>
+                <span className="v3-rotulo ml-auto">{preco(t.priceFrom)}</span>
+              </div>
+              <ul className="v3-rotulo flex flex-wrap gap-x-4 gap-y-1 pt-3" style={{ color: "var(--v3-quieto)" }}>
+                {t.scope.map((sc) => (
+                  <li key={sc} className="v3-q">
+                    {sc}
+                  </li>
+                ))}
+              </ul>
+              <p className="v3-mono v3-justif pt-3" style={{ color: "var(--v3-quieto)" }}>
+                {t.description}
+              </p>
+            </article>
+          );
+        })}
       </div>
     </section>
   );
