@@ -28,10 +28,12 @@ import { Hud, NavV3, LinhaSecao, Display, RodapeV3, Cantos, idx } from "../v3-sy
 /* copy REAL — a mesma fonte do /about (manifesto e leads medidos do Framer) */
 const MANIFESTO =
   "I'm a multidisciplinary designer focused on visual identities, based in Brazil and working worldwide.";
+/* reescrito com licença dele (10/08: "pode reescrever a estrutura e conteúdo")
+   — compressão do material real do /about, sem fato novo */
 const LEAD_ABORDAGEM =
-  "My approach begins with a deep understanding of the environment in which your company operates. I analyze business objectives, target audience, competitors, and market context, conducting a careful conceptual investigation that transforms strategy into visual expression.";
+  "Mateus Bredoff is an independent brand designer working with companies that want a clear, relevant and memorable presence. Every identity starts from strategy — objectives, audience, competitors, market context — and lands as a visual system built with intention, made to connect emotionally and to last.";
 const LEAD_BRASIL =
-  "I am based in Brazil and work globally, collaborating with companies that understand the value of building a clear, relevant, and memorable presence.";
+  "Every project runs remotely, across time zones — immersion, visual direction, creation and delivery follow the same structured process wherever the brand lives. The distance never reaches the work.";
 const NUMEROS = [
   { valor: "62+", rotulo: "Clients" },
   { valor: "100+", rotulo: "Awards & Recognitions" },
@@ -124,8 +126,7 @@ function AboutV3() {
         style={{ paddingInline: "var(--v3-margem)" }}
       >
         <div className="col-span-6 max-lg:col-span-12">
-          {/* palavras DELE — recorte do lead real, não frase inventada */}
-          <Display>A unique identity, built with intention</Display>
+          <Display>Where strategy, art direction and business unite</Display>
         </div>
         <div className="col-span-4 col-start-9 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-10">
           <p className="v3-mono v3-justif">{LEAD_ABORDAGEM}</p>
