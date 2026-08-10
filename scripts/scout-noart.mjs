@@ -12,7 +12,7 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const BASE = 'https://www.noartmusic.com';
-const [wArg = '1600'] = process.argv.slice(2);
+const [wArg = '1600', rotaArg = '/'] = process.argv.slice(2);
 const W = +wArg;
 const OUT = '/tmp/noart-scout';
 mkdirSync(OUT, { recursive: true });
@@ -31,7 +31,7 @@ page.on('response', (r) => {
 });
 
 await page.setViewport({ width: W, height: 1000, deviceScaleFactor: 2 });
-await page.goto(BASE + '/', { waitUntil: 'networkidle2', timeout: 90000 });
+await page.goto(BASE + rotaArg, { waitUntil: 'networkidle2', timeout: 90000 });
 await page.evaluate(() => document.fonts.ready);
 
 /* rolar tudo antes de medir — lazy-mount trunca em silêncio */
@@ -147,13 +147,14 @@ const dados = await page.evaluate(() => {
 dados.fontesBaixadas = [...fontesBaixadas];
 
 /* fatias pra leitura visual */
+const slug = rotaArg.replace(/\//g, '_') || '_home';
 const nFatias = Math.min(14, Math.ceil(dados.altura / 1000));
 for (let i = 0; i < nFatias; i++) {
   await page.evaluate((y) => window.scrollTo(0, y), i * 1000);
   await new Promise((r) => setTimeout(r, 800));
-  await page.screenshot({ path: `${OUT}/${W}-${String(i).padStart(2, '0')}.png` });
+  await page.screenshot({ path: `${OUT}/${W}${slug}-${String(i).padStart(2, '0')}.png` });
 }
 
 console.error(`✓ ${dados.altura}px, ${dados.secoes.length} seções, ${dados.mecanica.length} nós de mecânica, ${nFatias} fatias`);
-writeFileSync(`${OUT}/scout-${W}.json`, JSON.stringify(dados, null, 2));
-console.log(`${OUT}/scout-${W}.json`);
+writeFileSync(`${OUT}/scout-${W}${slug}.json`, JSON.stringify(dados, null, 2));
+console.log(`${OUT}/scout-${W}${slug}.json`);

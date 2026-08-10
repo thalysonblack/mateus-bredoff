@@ -89,16 +89,19 @@ function HeroV3() {
 
         <Link
           to={`/v3/work/${ultimo.slug}`}
-          className="v3-card flex items-center gap-4 p-3"
+          className="v3-card group flex items-center gap-4 p-3"
           style={{ backdropFilter: "blur(20px)" }}
         >
-          <img
-            src={ultimo.cover.src}
-            alt=""
-            width={ultimo.cover.w}
-            height={ultimo.cover.h}
-            className="h-14 w-20 object-cover"
-          />
+          <span className="relative block">
+            <img
+              src={ultimo.cover.src}
+              alt=""
+              width={ultimo.cover.w}
+              height={ultimo.cover.h}
+              className="h-14 w-20 object-cover"
+            />
+            <i className="v3-foco" aria-hidden="true"><b /><b /><b /><b /></i>
+          </span>
           <span className="v3-rotulo">
             <span className="block opacity-60">Latest case</span>
             <span className="block pt-1">{ultimo.title}</span>
@@ -153,7 +156,7 @@ function WorkV3() {
       <div ref={trilho} className="v3-trilho" style={{ paddingInline: "var(--v3-margem)" }}>
         {WORK.map((w, i) => (
           <Link key={w.slug} to={`/v3/work/${w.slug}`} className="group">
-            <span className="block overflow-hidden bg-black/5">
+            <span className="relative block overflow-hidden bg-black/5">
               <img
                 src={w.cover.src}
                 srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
@@ -164,6 +167,7 @@ function WorkV3() {
                 loading={i > 1 ? "lazy" : undefined}
                 className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
               />
+              <i className="v3-foco" aria-hidden="true"><b /><b /><b /><b /></i>
             </span>
             <span className="flex items-baseline gap-3 pt-3">
               <span className="v3-micro" style={{ color: "var(--v3-acento)" }}>
@@ -180,7 +184,7 @@ function WorkV3() {
 
       <div className="flex items-center justify-center gap-6 pt-12">
         <button type="button" onClick={() => anda(-1)} className="v3-rotulo cursor-pointer">
-          ‹ Prev
+          <span className="v3-ante">‹</span> Prev
         </button>
         <span aria-hidden="true" className="flex items-end gap-[3px]">
           {[10, 6, 6, 6].map((h, i) => (
@@ -188,7 +192,7 @@ function WorkV3() {
           ))}
         </span>
         <button type="button" onClick={() => anda(1)} className="v3-rotulo cursor-pointer">
-          Next ›
+          Next <span className="v3-prox">›</span>
         </button>
       </div>
     </section>
@@ -334,7 +338,7 @@ function LabV3() {
   return (
     <section className="relative py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
       <Cantos />
-      <LinhaSecao rotulo="AI Lab" extra={`[${String(ENSAIOS.length).padStart(2, "0")}]`} />
+      <LinhaSecao rotulo="AI Lab" extra={`[${String(ENSAIOS.length).padStart(2, "0")}]`} acao={{ texto: "Explore the lab", to: "/v3/lab" }} />
       <div style={{ paddingInline: "var(--v3-margem)" }}>
         <Display className="max-w-[22ch]">Experiments in AI-driven brand design</Display>
 
@@ -346,20 +350,22 @@ function LabV3() {
             <span className="col-span-3">Medium</span>
           </div>
           {ENSAIOS.map((e, i) => (
-            <div key={e.brand} className="grid grid-cols-12 items-baseline gap-6 border-t border-black/12 py-4 max-md:grid-cols-2 max-md:gap-2">
+            <div key={e.brand} className="v3-linha grid grid-cols-12 items-baseline gap-6 border-t border-black/12 py-4 max-md:grid-cols-2 max-md:gap-2">
               <span className="v3-micro col-span-1 max-md:col-span-2" style={{ color: "var(--v3-acento)" }}>
                 {idx(i)}
               </span>
-              <span
-                className="col-span-4 uppercase max-md:col-span-2"
-                style={{
-                  fontFamily: "'Geist', ui-sans-serif, sans-serif",
-                  fontWeight: 700,
-                  fontSize: "clamp(18px, 1.6vw, 26px)",
-                  letterSpacing: "-0.02em",
-                }}
-              >
-                {e.brand}
+              <span className="col-span-4 max-md:col-span-2">
+                <span
+                  className="v3-desliza uppercase"
+                  style={{
+                    fontFamily: "'Geist', ui-sans-serif, sans-serif",
+                    fontWeight: 700,
+                    fontSize: "clamp(18px, 1.6vw, 26px)",
+                    letterSpacing: "-0.02em",
+                  }}
+                >
+                  {e.brand}
+                </span>
               </span>
               <span className="v3-rotulo col-span-4 max-md:col-span-1">{e.discipline}</span>
               <span className="v3-rotulo col-span-3 max-md:col-span-1" style={{ color: "var(--v3-quieto)" }}>
@@ -374,7 +380,7 @@ function LabV3() {
               rel="noopener noreferrer"
               className="v3-rotulo hover:underline"
             >
-              Follow the lab ↳
+              Follow the lab <span className="v3-seta">↳</span>
             </a>
           </div>
         </div>
@@ -399,9 +405,10 @@ function ServicosV3() {
             <a
               href="mailto:hello@mateusbredoff.com"
               aria-label={`Request a quote — ${t.name}`}
-              className="relative flex aspect-[4/3] flex-col justify-between p-6 transition-opacity group-hover:opacity-90"
+              className="group relative flex aspect-[4/3] flex-col justify-between p-6"
               style={{ background: "var(--fr-petroleo)", color: "var(--fr-creme)" }}
             >
+              <i className="v3-foco" aria-hidden="true"><b /><b /><b /><b /></i>
               <span className="v3-micro" style={{ color: "var(--v3-acento-tinta)" }}>
                 {idx(i)}
               </span>
@@ -424,7 +431,7 @@ function ServicosV3() {
                   </span>
                 ))}
               </span>
-              <span className="absolute right-4 top-4 v3-rotulo" aria-hidden="true">
+              <span className="v3-mais v3-rotulo absolute right-4 top-4" aria-hidden="true">
                 +
               </span>
             </a>

@@ -70,6 +70,7 @@ export function NavV3() {
   const grupos: { rotulo: string; extra?: string; to: string }[] = [
     { rotulo: "Work", extra: `[${String(WORK.length).padStart(2, "0")}]`, to: "/v3/work" },
     { rotulo: "About", to: "/v3/about" },
+    { rotulo: "Lab", extra: "[06]", to: "/v3/lab" },
     { rotulo: "Services", to: "/v3#services" },
     { rotulo: "Contact", to: "/v3#contact" },
   ];
@@ -87,11 +88,11 @@ export function NavV3() {
         </Link>
         {/* grupos de DOIS itens empilhados, distribuídos pela largura — a
             anatomia da referência (colunas espalhadas, não fila à direita) */}
-        <div className="flex w-[54%] justify-between max-md:w-auto max-md:flex-col max-md:gap-1">
-          {[grupos.slice(0, 2), grupos.slice(2)].map((col, ci) => (
+        <div className="flex w-[62%] justify-between max-md:w-auto max-md:flex-col max-md:gap-1">
+          {[grupos.slice(0, 2), grupos.slice(2, 4), grupos.slice(4)].map((col, ci) => (
             <div key={ci} className="flex flex-col gap-1">
               {col.map((g) => (
-                <Link key={g.rotulo} to={g.to} className="v3-rotulo v3-q">
+                <Link key={g.rotulo} to={g.to} className="v3-rotulo v3-qh">
                   {g.rotulo}
                   {g.extra ? <span className="pl-2 opacity-60">{g.extra}</span> : null}
                 </Link>
@@ -141,7 +142,7 @@ export function LinhaSecao({
       </span>
       {acao ? (
         <Link to={acao.to} className="v3-rotulo underline-offset-4 hover:underline">
-          {acao.texto} ↳
+          {acao.texto} <span className="v3-seta">↳</span>
         </Link>
       ) : null}
     </div>
@@ -185,6 +186,7 @@ export function RodapeV3() {
             <li><Link to="/v3" className="hover:underline">Home</Link></li>
             <li><Link to="/v3/work" className="hover:underline">Work</Link></li>
             <li><Link to="/v3/about" className="hover:underline">About</Link></li>
+            <li><Link to="/v3/lab" className="hover:underline">Lab</Link></li>
             <li><Link to="/v3#services" className="hover:underline">Services</Link></li>
           </ul>
         </nav>
@@ -216,7 +218,7 @@ export function RodapeV3() {
           <ul className="v3-rotulo grid gap-2 pt-5">
             <li>
               <a href="mailto:hello@mateusbredoff.com" className="hover:underline">
-                ↳ hello@mateusbredoff.com
+                <span className="v3-seta">↳</span> hello@mateusbredoff.com
               </a>
             </li>
           </ul>
@@ -231,7 +233,7 @@ export function RodapeV3() {
               <li key={c.label}>
                 {c.href ? (
                   <a href={c.href} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                    ↳ {c.label}
+                    <span className="v3-seta">↳</span> {c.label}
                   </a>
                 ) : (
                   <span style={{ color: "var(--v3-quieto)" }}>{c.label}</span>

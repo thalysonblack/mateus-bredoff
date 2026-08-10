@@ -12,6 +12,7 @@ import HomeV3 from "./pages/HomeV3";
 import AboutV3 from "./pages/AboutV3";
 import WorkIndexV3 from "./pages/WorkIndexV3";
 import CaseV3 from "./pages/CaseV3";
+import LabV3 from "./pages/LabV3";
 
 /**
  * Mateus Bredoff — direção editorial, agora multi-página.
@@ -148,6 +149,7 @@ export default function App() {
               direção completa, site inteiro em rotas próprias. */}
           <Route path="/v3" element={<HomeV3 />} />
           <Route path="/v3/about" element={<AboutV3 />} />
+          <Route path="/v3/lab" element={<LabV3 />} />
           <Route path="/v3/work" element={<WorkIndexV3 />} />
           <Route path="/v3/work/:slug" element={<CaseV3 />} />
           <Route path="/about" element={<About />} />

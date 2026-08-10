@@ -200,3 +200,70 @@
 @media (prefers-reduced-motion: reduce) {
   .v3-heroimg { animation: none; }
 }
+
+/* ── micro-interações (10/08): o hover fala a língua do visor ─────────────
+   Princípios: 150–250ms, ease-out, só transform/opacity (compositor).
+   A assinatura é o FOCO: colchetes de canto que travam no alvo hovered,
+   como ponto de AF de câmera — em card, packshot e thumb. */
+
+/* foco de visor: 4 cantos que aparecem e assentam (escala 1.08 → 1) */
+.v3-foco {
+  position: absolute;
+  inset: 8px;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(1.08);
+  transition: opacity 0.18s ease-out, transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.v3-foco b {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 0 solid currentColor;
+}
+.v3-foco b:nth-child(1) { top: 0; left: 0; border-top-width: 2px; border-left-width: 2px; }
+.v3-foco b:nth-child(2) { top: 0; right: 0; border-top-width: 2px; border-right-width: 2px; }
+.v3-foco b:nth-child(3) { bottom: 0; left: 0; border-bottom-width: 2px; border-left-width: 2px; }
+.v3-foco b:nth-child(4) { bottom: 0; right: 0; border-bottom-width: 2px; border-right-width: 2px; }
+.group:hover .v3-foco { opacity: 1; transform: scale(1); }
+
+/* nav e rótulos: o ■ é o indicador de estado — vazio em repouso, PREENCHE
+   no hover (ponto de foco travando) */
+.v3-qh::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: transparent;
+  border: 1.5px solid currentColor;
+  box-sizing: border-box;
+  margin-right: 9px;
+  vertical-align: 6%;
+  transition: background 0.15s ease-out;
+}
+.v3-qh:hover::before { background: currentColor; }
+
+/* seta ↳ que avança no hover — em todo link de ação */
+.v3-seta { display: inline-block; transition: transform 0.18s ease-out; }
+a:hover > .v3-seta { transform: translate(3px, 1px); }
+
+/* linha de tabela (lab, índices): o nome desliza e o índice acende */
+.v3-linha { transition: background 0.2s ease-out; }
+.v3-linha .v3-desliza { display: inline-block; transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1); }
+.v3-linha:hover .v3-desliza { transform: translateX(8px); }
+.v3-linha:hover { background: rgba(0, 0, 0, 0.03); }
+
+/* packshot de serviço: o + gira ao armar */
+.v3-mais { display: inline-block; transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1); }
+a:hover .v3-mais, .group:hover .v3-mais { transform: rotate(90deg); }
+
+/* prev/next: a seta puxa na direção do gesto */
+.v3-ante, .v3-prox { transition: transform 0.18s ease-out; }
+button:hover .v3-ante { transform: translateX(-3px); }
+button:hover .v3-prox { transform: translateX(3px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .v3-foco, .v3-qh::before, .v3-seta, .v3-desliza, .v3-mais, .v3-ante, .v3-prox {
+    transition: none;
+  }
+}
