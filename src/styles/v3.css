@@ -184,3 +184,19 @@
 @media (prefers-reduced-motion: reduce) {
   .v3-pino { animation: none; }
 }
+
+/* ── hero: movimento ambiente no retrato ─────────────────────────────────
+   A referência abre em VÍDEO. Sem material de vídeo do cliente, o retrato
+   ganha um zoom lentíssimo de vaivém — presença de imagem viva, sem inventar
+   footage. ⚠ transform na IMG, nunca num ancestral do nome em blend. */
+.v3-heroimg {
+  animation: v3-zoom 26s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes v3-zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.07); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v3-heroimg { animation: none; }
+}

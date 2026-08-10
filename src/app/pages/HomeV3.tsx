@@ -34,11 +34,6 @@ const LEAD_ABORDAGEM =
   "Mateus Bredoff is an independent brand designer working with companies that want a clear, relevant and memorable presence. Every identity starts from strategy — objectives, audience, competitors, market context — and lands as a visual system built with intention, made to connect emotionally and to last.";
 const LEAD_BRASIL =
   "Every project runs remotely, across time zones — immersion, visual direction, creation and delivery follow the same structured process wherever the brand lives. The distance never reaches the work.";
-const NUMEROS = [
-  { valor: "62+", rotulo: "Clients" },
-  { valor: "100+", rotulo: "Awards & Recognitions" },
-  { valor: "56+", rotulo: "Products to market" },
-];
 /* ── hero: retrato COMO ambiente + nome em exclusion + telemetria ───────── */
 function HeroV3() {
   const ultimo = WORK[0]; // a coleção já vem do mais recente
@@ -60,7 +55,7 @@ function HeroV3() {
         width={1600}
         height={850}
         draggable={false}
-        className="absolute inset-0 h-full w-full select-none object-cover"
+        className="v3-heroimg absolute inset-0 h-full w-full select-none object-cover"
         /* SEM z-index: o nome mescla por exclusion e blend só enxerga o mesmo
            stacking context — o empilhamento vem da ordem do DOM */
       />
@@ -133,31 +128,6 @@ function AboutV3() {
         </div>
       </div>
 
-      <div
-        className="mt-24 grid grid-cols-3 gap-6 border-t border-black/12 pt-6 max-md:mt-14 max-md:grid-cols-1 max-md:gap-4"
-        style={{ marginInline: "var(--v3-margem)" }}
-      >
-        {NUMEROS.map((n, i) => (
-          <div key={n.rotulo} className="flex items-baseline gap-3">
-            <span className="v3-micro" style={{ color: "var(--v3-acento)" }}>
-              {idx(i)}
-            </span>
-            <span
-              style={{
-                fontFamily: "'Geist', ui-sans-serif, sans-serif",
-                fontWeight: 700,
-                fontSize: "clamp(28px, 2.6vw, 42px)",
-                letterSpacing: "-0.02em",
-              }}
-            >
-              {n.valor}
-            </span>
-            <span className="v3-rotulo" style={{ color: "var(--v3-quieto)" }}>
-              {n.rotulo}
-            </span>
-          </div>
-        ))}
-      </div>
     </section>
   );
 }
@@ -346,61 +316,130 @@ function GloboV3() {
   );
 }
 
+/* ── lab: os ensaios de IA — tabela de registro, a única da página ────────
+   Lista herdada do AILab da direção editorial (lida das artes do
+   @sir.bredoff; a bio dele é "Brand Designer, Art Director & AI Creative").
+   Marcas de ensaio ficam tagueadas pelo CONTEXTO do lab — sem confissão
+   por item. */
+const ENSAIOS = [
+  { brand: "Fortis", discipline: "Typographic System", medium: "Print / Motion" },
+  { brand: "Bureau", discipline: "Electronic Music", medium: "Packaging / Merch" },
+  { brand: "Hōki", discipline: "Digital Product", medium: "Interface" },
+  { brand: "Neox", discipline: "Technical Apparel", medium: "Campaign" },
+  { brand: "Alex Archer", discipline: "Personal Brand", medium: "Editorial" },
+  { brand: "Bovine Beats", discipline: "Music Label", medium: "Cover Art" },
+];
+
+function LabV3() {
+  return (
+    <section className="relative py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+      <Cantos />
+      <LinhaSecao rotulo="AI Lab" extra={`[${String(ENSAIOS.length).padStart(2, "0")}]`} />
+      <div style={{ paddingInline: "var(--v3-margem)" }}>
+        <Display className="max-w-[22ch]">Experiments in AI-driven brand design</Display>
+
+        <div className="mt-14 max-md:mt-8">
+          <div className="v3-rotulo grid grid-cols-12 gap-6 border-t border-black/12 py-3 max-md:hidden" style={{ color: "var(--v3-quieto)" }}>
+            <span className="col-span-1">Nº</span>
+            <span className="col-span-4">Brand</span>
+            <span className="col-span-4">Discipline</span>
+            <span className="col-span-3">Medium</span>
+          </div>
+          {ENSAIOS.map((e, i) => (
+            <div key={e.brand} className="grid grid-cols-12 items-baseline gap-6 border-t border-black/12 py-4 max-md:grid-cols-2 max-md:gap-2">
+              <span className="v3-micro col-span-1 max-md:col-span-2" style={{ color: "var(--v3-acento)" }}>
+                {idx(i)}
+              </span>
+              <span
+                className="col-span-4 uppercase max-md:col-span-2"
+                style={{
+                  fontFamily: "'Geist', ui-sans-serif, sans-serif",
+                  fontWeight: 700,
+                  fontSize: "clamp(18px, 1.6vw, 26px)",
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                {e.brand}
+              </span>
+              <span className="v3-rotulo col-span-4 max-md:col-span-1">{e.discipline}</span>
+              <span className="v3-rotulo col-span-3 max-md:col-span-1" style={{ color: "var(--v3-quieto)" }}>
+                {e.medium}
+              </span>
+            </div>
+          ))}
+          <div className="border-t border-black/12 pt-5">
+            <a
+              href="https://www.instagram.com/sir.bredoff"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="v3-rotulo hover:underline"
+            >
+              Follow the lab ↳
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ── serviços: a mecânica de shop da referência com os tiers REAIS ──────── */
 function ServicosV3() {
   const preco = (n: number | null) =>
     n === null ? "On request" : `from US$ ${n.toLocaleString("en-US")}`;
   return (
-    <section
-      id="services"
-      className="relative py-20 max-md:py-12"
-      style={{ background: "var(--fr-petroleo)", color: "var(--fr-creme)" }}
-    >
-      <Cantos claro />
+    <section id="services" className="relative py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+      <Cantos />
       <LinhaSecao rotulo="Services" extra="[03]" />
-      <div
-        className="grid grid-cols-3 gap-4 max-lg:grid-cols-1"
-        style={{ paddingInline: "var(--v3-margem)" }}
-      >
+      <div className="grid grid-cols-3 gap-4 max-lg:grid-cols-1" style={{ paddingInline: "var(--v3-margem)" }}>
         {TIERS.map((t, i) => (
-          <article key={t.name} className="relative flex flex-col border border-white/15 p-6">
-            <span className="v3-micro" style={{ color: "var(--v3-acento-tinta)" }}>
-              {idx(i)}
-            </span>
-            <h3
-              className="pt-6 uppercase"
-              style={{
-                fontFamily: "'Geist', ui-sans-serif, sans-serif",
-                fontWeight: 700,
-                fontSize: "clamp(24px, 2vw, 32px)",
-                letterSpacing: "-0.02em",
-              }}
-            >
-              {t.name}
-            </h3>
-            <p className="v3-mono v3-justif pt-5" style={{ color: "var(--fr-creme)", opacity: 0.92 }}>
-              {t.description}
-            </p>
-            <ul className="v3-rotulo mt-8 grid gap-2 border-t border-white/15 pt-5">
-              {t.scope.map((s) => (
-                <li key={s} className="v3-q">
-                  {s}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-auto flex items-baseline justify-between gap-4 pt-10">
-              <span className="v3-rotulo" style={{ color: "var(--v3-quieto-tinta)" }}>
-                {t.timeline}
-              </span>
-              <span className="v3-rotulo">{preco(t.priceFrom)}</span>
-            </div>
+          <article key={t.name} className="group flex flex-col">
+            {/* o "packshot" do serviço: painel de tinta com o nome grande —
+                a anatomia do card de produto da referência, sem inventar foto */}
             <a
               href="mailto:hello@mateusbredoff.com"
-              className="v3-rotulo mt-5 block border-t border-white/15 pt-4 hover:underline"
               aria-label={`Request a quote — ${t.name}`}
+              className="relative flex aspect-[4/3] flex-col justify-between p-6 transition-opacity group-hover:opacity-90"
+              style={{ background: "var(--fr-petroleo)", color: "var(--fr-creme)" }}
             >
-              + Request a quote ↳
+              <span className="v3-micro" style={{ color: "var(--v3-acento-tinta)" }}>
+                {idx(i)}
+              </span>
+              <span
+                className="uppercase"
+                style={{
+                  fontFamily: "'Geist', ui-sans-serif, sans-serif",
+                  fontWeight: 700,
+                  fontSize: "clamp(28px, 2.6vw, 44px)",
+                  letterSpacing: "-0.025em",
+                  lineHeight: 0.95,
+                }}
+              >
+                {t.name}
+              </span>
+              <span className="v3-rotulo flex flex-wrap gap-x-4 gap-y-1" style={{ color: "var(--v3-quieto-tinta)" }}>
+                {t.scope.map((sc) => (
+                  <span key={sc} className="v3-q">
+                    {sc}
+                  </span>
+                ))}
+              </span>
+              <span className="absolute right-4 top-4 v3-rotulo" aria-hidden="true">
+                +
+              </span>
             </a>
+
+            {/* nome + prazo + preço sob o card, como o produto da referência */}
+            <div className="flex items-baseline justify-between gap-4 pt-3">
+              <span className="v3-rotulo">{t.name}</span>
+              <span className="v3-rotulo" style={{ color: "var(--v3-quieto)" }}>
+                {t.timeline}
+              </span>
+              <span className="v3-rotulo ml-auto">{preco(t.priceFrom)}</span>
+            </div>
+            <p className="v3-mono v3-justif pt-3" style={{ color: "var(--v3-quieto)" }}>
+              {t.description}
+            </p>
           </article>
         ))}
       </div>
@@ -418,6 +457,7 @@ export default function HomeV3() {
       <AboutV3 />
       <WorkV3 />
       <GloboV3 />
+      <LabV3 />
       <ServicosV3 />
       <RodapeV3 />
     </div>

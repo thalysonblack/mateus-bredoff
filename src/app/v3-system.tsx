@@ -175,7 +175,9 @@ export function RodapeV3() {
           </p>
         </div>
 
-        <nav className="col-span-3 col-start-6 max-lg:col-span-6 max-lg:col-start-1 max-lg:pt-8">
+        {/* quatro colunas de rótulo em colchete — a anatomia do rodapé da
+            referência ([experience]/[company]/[support]/[contact]/[follow]) */}
+        <nav className="col-span-2 col-start-5 max-lg:col-span-6 max-lg:col-start-1 max-lg:pt-8">
           <p className="v3-rotulo" style={{ color: "var(--v3-quieto)" }}>
             [Pages]
           </p>
@@ -183,28 +185,56 @@ export function RodapeV3() {
             <li><Link to="/v3" className="hover:underline">Home</Link></li>
             <li><Link to="/v3/work" className="hover:underline">Work</Link></li>
             <li><Link to="/v3/about" className="hover:underline">About</Link></li>
+            <li><Link to="/v3#services" className="hover:underline">Services</Link></li>
           </ul>
         </nav>
 
-        <div className="col-span-3 col-start-10 max-lg:col-span-6 max-lg:pt-8">
+        <nav className="col-span-2 col-start-7 max-lg:col-span-6 max-lg:pt-8">
+          <p className="v3-rotulo" style={{ color: "var(--v3-quieto)" }}>
+            [Work]
+          </p>
+          <ul className="v3-rotulo grid gap-2 pt-5">
+            {WORK.slice(0, 4).map((w) => (
+              <li key={w.slug}>
+                <Link to={`/v3/work/${w.slug}`} className="hover:underline">
+                  {w.title}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link to="/v3/work" className="hover:underline" style={{ color: "var(--v3-quieto)" }}>
+                All work ↳
+              </Link>
+            </li>
+          </ul>
+        </nav>
+
+        <div className="col-span-2 col-start-9 max-lg:col-span-6 max-lg:pt-8">
           <p className="v3-rotulo" style={{ color: "var(--v3-quieto)" }}>
             [Contact]
           </p>
           <ul className="v3-rotulo grid gap-2 pt-5">
-            {CONTATO.map((c) => (
+            <li>
+              <a href="mailto:hello@mateusbredoff.com" className="hover:underline">
+                ↳ hello@mateusbredoff.com
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div className="col-span-2 col-start-11 max-lg:col-span-6 max-lg:pt-8">
+          <p className="v3-rotulo" style={{ color: "var(--v3-quieto)" }}>
+            [Follow]
+          </p>
+          <ul className="v3-rotulo grid gap-2 pt-5">
+            {CONTATO.filter((c) => c.label !== "Email").map((c) => (
               <li key={c.label}>
                 {c.href ? (
-                  <a
-                    href={c.href}
-                    className="hover:underline"
-                    {...(c.href.startsWith("http")
-                      ? { target: "_blank", rel: "noopener noreferrer" }
-                      : {})}
-                  >
-                    ↳ {c.valor}
+                  <a href={c.href} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                    ↳ {c.label}
                   </a>
                 ) : (
-                  <span style={{ color: "var(--v3-quieto)" }}>{c.valor}</span>
+                  <span style={{ color: "var(--v3-quieto)" }}>{c.label}</span>
                 )}
               </li>
             ))}
