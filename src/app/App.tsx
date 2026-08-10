@@ -13,6 +13,9 @@ import AboutV3 from "./pages/AboutV3";
 import WorkIndexV3 from "./pages/WorkIndexV3";
 import CaseV3 from "./pages/CaseV3";
 import LabV3 from "./pages/LabV3";
+import HomeV3A from "./pages/HomeV3A";
+import HomeV3B from "./pages/HomeV3B";
+import HomeV3C from "./pages/HomeV3C";
 
 /**
  * Mateus Bredoff — direção editorial, agora multi-página.
@@ -148,6 +151,12 @@ export default function App() {
           {/* V3: mecânica do noartmusic.com com a matéria do Mateus —
               direção completa, site inteiro em rotas próprias. */}
           <Route path="/v3" element={<HomeV3 />} />
+          {/* Rodada de partidos de home (10/08, "a home não agrada" — as 4
+              hipóteses marcadas): três respostas, cada uma com racional
+              próprio, comparáveis em abas. */}
+          <Route path="/v3/a" element={<HomeV3A />} />
+          <Route path="/v3/b" element={<HomeV3B />} />
+          <Route path="/v3/c" element={<HomeV3C />} />
           <Route path="/v3/about" element={<AboutV3 />} />
           <Route path="/v3/lab" element={<LabV3 />} />
           <Route path="/v3/work" element={<WorkIndexV3 />} />
