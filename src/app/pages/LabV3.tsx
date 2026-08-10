@@ -1,86 +1,65 @@
+import { Link } from "react-router";
 import { useMetaRota } from "../../hooks/useMetaRota";
-import { Hud, NavV3, LinhaSecao, Display, RodapeV3, idx } from "../v3-system";
+import { findWork, type WorkImage } from "../../content/work";
+import { Hud, NavV3, LinhaSecao, RodapeV3 } from "../v3-system";
 
 /**
- * `/v3/lab` — a página do AI Lab na mecânica da /gallery da referência
- * (pedido de 10/08: "faz a página de LAB como essa").
+ * `/v3/lab` — a GALERIA, refeita como a /gallery da referência de verdade
+ * (10/08: "a página de lab vc não fez como pedi" — a primeira versão saiu
+ * como placas de texto; a referência é FOTO espalhada, sem legenda).
  *
- * CONTACT SHEET ESPARSO: quadros de tamanhos e proporções variados,
- * espalhados numa grade de 12 colunas com muito respiro — o vazio é parte
- * da composição, como na referência (fotos soltas, linhas irregulares).
+ * Contact sheet: linhas de quadros de tamanhos variados, sangrando nas
+ * bordas, com muito respiro vertical — e nenhum texto por foto. O material
+ * é o acervo real do repo: as peças do Alex Archer e as capas de Bureau e
+ * Neox (os ensaios do lab que têm arte publicada). Fortis, Hōki e Bovine
+ * Beats entram quando as artes do Instagram chegarem — a grade só cresce.
  *
- * Os quadros são PLACAS TIPOGRÁFICAS (petróleo, nome do ensaio em display,
- * disciplina e meio na base): as artes reais dos ensaios vivem no Instagram
- * do Mateus e ainda não estão no repo — placa tipográfica é design final
- * legítimo no vocabulário do visor, e vira moldura de foto no dia em que as
- * artes chegarem (trocar o miolo, manter a grade).
+ * Cada foto leva ao case de origem; a galeria é vitrine, não beco.
  */
 
-type Ensaio = {
-  brand: string;
-  discipline: string;
-  medium: string;
-  /** posição e proporção do quadro na grade — a irregularidade é o layout */
-  col: string;
-  aspecto: string;
-  invertida?: boolean;
+type Quadro = {
+  img: WorkImage;
+  slug: string;
+  /** posição, largura e deslocamento vertical — a dispersão é o layout */
+  classe: string;
 };
 
-const ENSAIOS: Ensaio[] = [
-  { brand: "Fortis", discipline: "Typographic System", medium: "Print / Motion", col: "col-start-1 col-span-4", aspecto: "4 / 5" },
-  { brand: "Bureau", discipline: "Electronic Music", medium: "Packaging / Merch", col: "col-start-7 col-span-5", aspecto: "3 / 2" },
-  { brand: "Hōki", discipline: "Digital Product", medium: "Interface", col: "col-start-10 col-span-3", aspecto: "1 / 1", invertida: true },
-  { brand: "Neox", discipline: "Technical Apparel", medium: "Campaign", col: "col-start-3 col-span-4", aspecto: "1 / 1" },
-  { brand: "Alex Archer", discipline: "Personal Brand", medium: "Editorial", col: "col-start-8 col-span-4", aspecto: "4 / 5" },
-  { brand: "Bovine Beats", discipline: "Music Label", medium: "Cover Art", col: "col-start-5 col-span-5", aspecto: "16 / 10", invertida: true },
-];
+function montarQuadros(): Quadro[] {
+  const aa = findWork("alex-archer");
+  const bureau = findWork("bureau");
+  const neox = findWork("neox");
+  if (!aa || !bureau || !neox) return [];
 
-const IG = "https://www.instagram.com/sir.bredoff";
+  const fotos: { img: WorkImage; slug: string }[] = [
+    { img: aa.cover, slug: aa.slug },
+    ...aa.images.map((img) => ({ img, slug: aa.slug })),
+    { img: bureau.cover, slug: bureau.slug },
+    { img: neox.cover, slug: neox.slug },
+  ];
 
-function Placa({ e, i }: { e: Ensaio; i: number }) {
-  const tinta = !e.invertida;
-  return (
-    <a
-      href={IG}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`group relative flex flex-col justify-between p-5 max-lg:col-span-1 max-lg:col-start-1 ${e.col}`}
-      style={{
-        aspectRatio: e.aspecto,
-        background: tinta ? "var(--fr-petroleo)" : "transparent",
-        color: tinta ? "var(--fr-creme)" : "var(--fr-petroleo)",
-        border: tinta ? "none" : "1.5px solid rgba(20,33,38,0.35)",
-      }}
-      aria-label={`${e.brand} — ${e.discipline}`}
-    >
-      <span className="flex items-baseline justify-between">
-        <span className="v3-micro" style={{ color: tinta ? "var(--v3-acento-tinta)" : "var(--v3-acento)" }}>
-          {idx(i)}
-        </span>
-        <span className="v3-mais v3-rotulo" aria-hidden="true">
-          +
-        </span>
-      </span>
-      <span
-        className="uppercase"
-        style={{
-          fontFamily: "'Geist', ui-sans-serif, sans-serif",
-          fontWeight: 700,
-          fontSize: "clamp(24px, 2.4vw, 40px)",
-          letterSpacing: "-0.025em",
-          lineHeight: 0.95,
-        }}
-      >
-        {e.brand}
-      </span>
-      <span className="v3-rotulo flex flex-wrap gap-x-4 gap-y-1" style={{ opacity: 0.75 }}>
-        <span className="v3-q">{e.discipline}</span>
-        <span>{e.medium}</span>
-      </span>
-      <i className="v3-foco" aria-hidden="true"><b /><b /><b /><b /></i>
-    </a>
-  );
+  /* a dispersão da referência: 5-4-5 por linha, larguras 2/3 colunas,
+     deslocamentos verticais quebrando a régua, pontas sangrando */
+  const mapa = [
+    "col-span-2 col-start-1 -ml-[24px] mt-0",
+    "col-span-3 col-start-4 mt-16",
+    "col-span-3 col-start-7 mt-4",
+    "col-span-2 col-start-10 mt-24",
+    "col-span-2 col-start-12 -mr-[24px] mt-8",
+    "col-span-2 col-start-2 mt-40",
+    "col-span-3 col-start-5 mt-24",
+    "col-span-2 col-start-8 mt-48",
+    "col-span-3 col-start-10 mt-16",
+    "col-span-2 col-start-1 -ml-[24px] mt-32",
+    "col-span-3 col-start-4 mt-12",
+    "col-span-2 col-start-7 mt-44",
+    "col-span-3 col-start-9 mt-20",
+    "col-span-2 col-start-12 -mr-[24px] mt-36",
+  ];
+
+  return fotos.slice(0, mapa.length).map((f, i) => ({ ...f, classe: mapa[i] }));
 }
+
+const QUADROS = montarQuadros();
 
 export default function LabV3() {
   useMetaRota();
@@ -90,28 +69,42 @@ export default function LabV3() {
       <NavV3 />
 
       <section className="pb-24 pt-28 max-md:pb-14">
-        <LinhaSecao
-          rotulo="AI Lab"
-          extra={`[${String(ENSAIOS.length).padStart(2, "0")}]`}
-        />
-        <div style={{ paddingInline: "var(--v3-margem)" }}>
-          <Display as="h1" immediate className="max-w-[22ch]">
-            Experiments in AI-driven brand design
-          </Display>
-        </div>
+        <LinhaSecao rotulo="AI Lab" extra={`[${String(QUADROS.length).padStart(2, "0")}]`} />
 
-        {/* o contact sheet: linhas irregulares, respiro grande */}
-        <div
-          className="mt-24 grid grid-cols-12 gap-x-6 gap-y-32 max-lg:grid-cols-1 max-lg:gap-y-10 max-md:mt-12"
-          style={{ paddingInline: "var(--v3-margem)" }}
-        >
-          {ENSAIOS.map((e, i) => (
-            <Placa key={e.brand} e={e} i={i} />
+        {/* o contact sheet — foto pura, sem legenda, como a referência */}
+        <div className="grid grid-cols-12 gap-x-6 gap-y-40 max-lg:gap-y-10 max-md:grid-cols-2 max-md:gap-x-3" style={{ paddingInline: "var(--v3-margem)" }}>
+          {QUADROS.map((q, i) => (
+            <Link
+              key={`${q.img.src}-${i}`}
+              to={`/v3/work/${q.slug}`}
+              className={`group relative block max-md:col-span-1 max-md:col-start-auto max-md:m-0 ${q.classe}`}
+              aria-label={q.img.alt}
+            >
+              <img
+                src={q.img.src}
+                srcSet={q.img.src2x ? `${q.img.src} 1400w, ${q.img.src2x} 2200w` : undefined}
+                sizes="(min-width: 1024px) 25vw, 46vw"
+                alt={q.img.alt}
+                width={q.img.w}
+                height={q.img.h}
+                loading={i > 3 ? "lazy" : undefined}
+                decoding="async"
+                draggable={false}
+                className="w-full object-cover"
+                style={{ aspectRatio: `${q.img.w} / ${q.img.h}` }}
+              />
+              <i className="v3-foco" aria-hidden="true"><b /><b /><b /><b /></i>
+            </Link>
           ))}
         </div>
 
-        <div className="mt-24 border-t border-black/12 pt-6 max-md:mt-12" style={{ marginInline: "var(--v3-margem)" }}>
-          <a href={IG} target="_blank" rel="noopener noreferrer" className="v3-rotulo hover:underline">
+        <div className="mt-28 border-t border-black/12 pt-6 max-md:mt-14" style={{ marginInline: "var(--v3-margem)" }}>
+          <a
+            href="https://www.instagram.com/sir.bredoff"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="v3-rotulo hover:underline"
+          >
             Follow the lab <span className="v3-seta">↳</span>
           </a>
         </div>

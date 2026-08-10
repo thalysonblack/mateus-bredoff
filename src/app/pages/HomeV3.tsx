@@ -101,7 +101,7 @@ function HeroV3() {
           <span className="v3-rotulo tabular-nums" style={{ opacity: 0.7 }}>
             <span style={{ color: "var(--v3-acento-tinta)" }}>{`[${String(capa + 1).padStart(2, "0")}]`}</span>
             {" / "}
-            {String(WORK.length).padStart(2, "0")} — {WORK[capa].title}
+            {String(WORK.length).padStart(2, "0")}
           </span>
           <Link
             to={`/v3/work/${ultimo.slug}`}
@@ -191,9 +191,6 @@ function WorkV3() {
                 {idx(i)}
               </span>
               <span className="v3-rotulo">{w.title}</span>
-              <span className="v3-rotulo ml-auto" style={{ color: "var(--v3-quieto)" }}>
-                {w.year}
-              </span>
             </span>
           </Link>
         ))}
@@ -322,10 +319,6 @@ function GloboV3() {
             <dt style={{ color: "var(--v3-quieto)" }}>Time zone</dt>
             <dd className="pt-1">GMT−3 (BRT)</dd>
           </div>
-          <div>
-            <dt style={{ color: "var(--v3-quieto)" }}>Reach</dt>
-            <dd className="pt-1">Worldwide</dd>
-          </div>
         </dl>
 
         {/* corpo à direita, embaixo — fecha o quadrante */}
@@ -337,69 +330,80 @@ function GloboV3() {
   );
 }
 
-/* ── lab: os ensaios de IA — tabela de registro, a única da página ────────
-   Lista herdada do AILab da direção editorial (lida das artes do
-   @sir.bredoff; a bio dele é "Brand Designer, Art Director & AI Creative").
-   Marcas de ensaio ficam tagueadas pelo CONTEXTO do lab — sem confissão
-   por item. */
+/* ── lab: esteira contínua — foto onde a arte existe, placa onde não ─────
+   Bureau, Neox e Alex Archer têm arte no repo; Fortis, Hōki e Bovine Beats
+   vivem só no IG dele. A esteira anda sozinha (marquee CSS), ao contrário do
+   carrossel manual do work. Legenda mínima: a régua anti-ruído de 10/08. */
 const ENSAIOS = [
-  { brand: "Fortis", discipline: "Typographic System", medium: "Print / Motion" },
-  { brand: "Bureau", discipline: "Electronic Music", medium: "Packaging / Merch" },
-  { brand: "Hōki", discipline: "Digital Product", medium: "Interface" },
-  { brand: "Neox", discipline: "Technical Apparel", medium: "Campaign" },
-  { brand: "Alex Archer", discipline: "Personal Brand", medium: "Editorial" },
-  { brand: "Bovine Beats", discipline: "Music Label", medium: "Cover Art" },
+  { brand: "Fortis", slug: null },
+  { brand: "Bureau", slug: "bureau" },
+  { brand: "Hōki", slug: null },
+  { brand: "Neox", slug: "neox" },
+  { brand: "Alex Archer", slug: "alex-archer" },
+  { brand: "Bovine Beats", slug: null },
 ];
+
+function TileLab({ e, i }: { e: (typeof ENSAIOS)[number]; i: number }) {
+  const foto = e.slug ? findWork(e.slug)?.cover : undefined;
+  return (
+    <div className="relative w-[340px] flex-none max-md:w-[240px]">
+      {foto ? (
+        <img
+          src={foto.src}
+          alt={foto.alt}
+          width={foto.w}
+          height={foto.h}
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+          className="aspect-[4/3] w-full object-cover"
+        />
+      ) : (
+        <span
+          className="flex aspect-[4/3] w-full flex-col justify-between p-4"
+          style={{ background: "var(--fr-petroleo)", color: "var(--fr-creme)" }}
+        >
+          <span className="v3-micro" style={{ color: "var(--v3-acento-tinta)" }}>
+            {idx(i)}
+          </span>
+          <span
+            className="uppercase"
+            style={{
+              fontFamily: "'Geist', ui-sans-serif, sans-serif",
+              fontWeight: 700,
+              fontSize: "26px",
+              letterSpacing: "-0.02em",
+              lineHeight: 0.95,
+            }}
+          >
+            {e.brand}
+          </span>
+        </span>
+      )}
+      <span className="flex items-baseline gap-3 pt-2">
+        <span className="v3-micro" style={{ color: "var(--v3-acento)" }}>
+          {idx(i)}
+        </span>
+        <span className="v3-rotulo">{e.brand}</span>
+      </span>
+    </div>
+  );
+}
 
 function LabV3() {
   return (
     <section className="relative py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
       <Cantos />
-      <LinhaSecao rotulo="AI Lab" extra={`[${String(ENSAIOS.length).padStart(2, "0")}]`} acao={{ texto: "Explore the lab", to: "/v3/lab" }} />
-      <div style={{ paddingInline: "var(--v3-margem)" }}>
-        <Display className="max-w-[22ch]">Experiments in AI-driven brand design</Display>
-
-        <div className="mt-14 max-md:mt-8">
-          <div className="v3-rotulo grid grid-cols-12 gap-6 border-t border-black/12 py-3 max-md:hidden" style={{ color: "var(--v3-quieto)" }}>
-            <span className="col-span-1">Nº</span>
-            <span className="col-span-4">Brand</span>
-            <span className="col-span-4">Discipline</span>
-            <span className="col-span-3">Medium</span>
-          </div>
-          {ENSAIOS.map((e, i) => (
-            <div key={e.brand} className="v3-linha grid grid-cols-12 items-baseline gap-6 border-t border-black/12 py-4 max-md:grid-cols-2 max-md:gap-2">
-              <span className="v3-micro col-span-1 max-md:col-span-2" style={{ color: "var(--v3-acento)" }}>
-                {idx(i)}
-              </span>
-              <span className="col-span-4 max-md:col-span-2">
-                <span
-                  className="v3-desliza uppercase"
-                  style={{
-                    fontFamily: "'Geist', ui-sans-serif, sans-serif",
-                    fontWeight: 700,
-                    fontSize: "clamp(18px, 1.6vw, 26px)",
-                    letterSpacing: "-0.02em",
-                  }}
-                >
-                  {e.brand}
-                </span>
-              </span>
-              <span className="v3-rotulo col-span-4 max-md:col-span-1">{e.discipline}</span>
-              <span className="v3-rotulo col-span-3 max-md:col-span-1" style={{ color: "var(--v3-quieto)" }}>
-                {e.medium}
-              </span>
-            </div>
+      <LinhaSecao
+        rotulo="AI Lab"
+        extra={`[${String(ENSAIOS.length).padStart(2, "0")}]`}
+        acao={{ texto: "Explore the lab", to: "/v3/lab" }}
+      />
+      <div className="v3-esteira-caixa">
+        <div className="v3-esteira">
+          {[...ENSAIOS, ...ENSAIOS].map((e, k) => (
+            <TileLab key={`${e.brand}-${k}`} e={e} i={k % ENSAIOS.length} />
           ))}
-          <div className="border-t border-black/12 pt-5">
-            <a
-              href="https://www.instagram.com/sir.bredoff"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="v3-rotulo hover:underline"
-            >
-              Follow the lab <span className="v3-seta">↳</span>
-            </a>
-          </div>
         </div>
       </div>
     </section>
@@ -472,21 +476,8 @@ function ServicosV3() {
               {/* nome + prazo + preço sob a foto, como o produto da referência */}
               <div className="flex items-baseline justify-between gap-4 pt-3">
                 <span className="v3-rotulo">{t.name}</span>
-                <span className="v3-rotulo" style={{ color: "var(--v3-quieto)" }}>
-                  {t.timeline}
-                </span>
                 <span className="v3-rotulo ml-auto">{preco(t.priceFrom)}</span>
               </div>
-              <ul className="v3-rotulo flex flex-wrap gap-x-4 gap-y-1 pt-3" style={{ color: "var(--v3-quieto)" }}>
-                {t.scope.map((sc) => (
-                  <li key={sc} className="v3-q">
-                    {sc}
-                  </li>
-                ))}
-              </ul>
-              <p className="v3-mono v3-justif pt-3" style={{ color: "var(--v3-quieto)" }}>
-                {t.description}
-              </p>
             </article>
           );
         })}

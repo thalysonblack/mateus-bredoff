@@ -267,3 +267,22 @@ button:hover .v3-prox { transform: translateX(3px); }
     transition: none;
   }
 }
+
+/* ── esteira do lab (home): marquee contínuo, CSS puro ────────────────────
+   Anda sozinha (não briga com o Lenis: é transform em keyframe, sem ler
+   scroll), pausa no hover, morre em reduced-motion. A lista é duplicada no
+   markup e o -50% fecha o loop sem emenda. */
+.v3-esteira-caixa { overflow: hidden; }
+.v3-esteira {
+  display: flex;
+  gap: 14px;
+  width: max-content;
+  animation: v3-rola 44s linear infinite;
+}
+.v3-esteira:hover { animation-play-state: paused; }
+@keyframes v3-rola {
+  to { transform: translateX(calc(-50% - 7px)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v3-esteira { animation: none; }
+}
