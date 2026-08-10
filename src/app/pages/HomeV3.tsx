@@ -5,7 +5,7 @@ import { TIERS } from "../sections/Pricing";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import portrait1600 from "../../assets/optimized/hero-portrait-1600.webp";
 import portrait3200 from "../../assets/optimized/hero-portrait-3200.webp";
-import { Hud, NavV3, LinhaSecao, Display, RodapeV3, idx } from "../v3-system";
+import { Hud, NavV3, LinhaSecao, Display, RodapeV3, Cantos, idx } from "../v3-system";
 
 /**
  * V3 — "o portfólio como visor". Terceira direção sobre a mesa, ao lado de
@@ -63,19 +63,18 @@ function HeroV3() {
            stacking context — o empilhamento vem da ordem do DOM */
       />
 
-      {/* nome — camada própria, exclusion (o modo do original dele, não o
-          difference da referência: exclusion amacia o meio-tom sobre pele) */}
+      {/* nome — CENTRO da tela, o lugar do logo na referência. Camada própria,
+          exclusion (o modo do original dele: amacia o meio-tom sobre pele). */}
       <h1
-        className="pointer-events-none relative w-full text-center text-white"
+        className="pointer-events-none absolute inset-0 flex items-center justify-center text-center text-white"
         style={{
           mixBlendMode: "exclusion",
           fontFamily: "'Geist', ui-sans-serif, sans-serif",
           fontWeight: 700,
-          fontSize: "var(--v3-nome)",
-          lineHeight: 0.82,
+          fontSize: "clamp(40px, 7.4vw, 118px)",
+          lineHeight: 0.86,
           letterSpacing: "-0.03em",
           textTransform: "uppercase",
-          marginBottom: "-0.06em", // sangra pela base — gesto aprovado do site dele
         }}
       >
         Mateus Bredoff
@@ -86,7 +85,10 @@ function HeroV3() {
         className="v3-telem relative flex items-end justify-between gap-6 pb-16 pt-5 max-md:flex-col max-md:items-start max-md:gap-8 max-md:pb-10"
         style={{ paddingInline: "var(--v3-margem)" }}
       >
-        <p className="v3-mono v3-justif max-w-[38ch]">{MANIFESTO}</p>
+        <div>
+          <p className="v3-rotulo v3-q pb-4">Brand Designer &amp; Art Director</p>
+          <p className="v3-mono v3-justif max-w-[38ch]">{MANIFESTO}</p>
+        </div>
 
         <Link
           to={`/v3/work/${ultimo.slug}`}
@@ -114,7 +116,8 @@ function HeroV3() {
 /* ── about: manifesto justificado + lead mono + números ─────────────────── */
 function AboutV3() {
   return (
-    <section className="py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+    <section className="relative py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+      <Cantos />
       <LinhaSecao rotulo="About" acao={{ texto: "More about me", to: "/v3/about" }} />
       <div
         className="grid grid-cols-12 gap-6"
@@ -169,7 +172,8 @@ function WorkV3() {
     el.scrollBy({ left: dir * passo, behavior: "smooth" });
   };
   return (
-    <section className="py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+    <section className="relative py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+      <Cantos />
       <LinhaSecao
         rotulo="Selected work"
         extra={`[${String(WORK.length).padStart(2, "0")}]`}
@@ -250,69 +254,92 @@ function GloboV3() {
   const pino = { x: C - R * 0.33, y: C + R * 0.26 };
 
   return (
-    <section className="py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+    <section
+      className="relative overflow-clip py-20 max-md:py-12"
+      style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}
+    >
+      <Cantos />
       <LinhaSecao rotulo="Around the world" />
+
+      {/* o globo é o CENTRO da seção, grande, atravessando as colunas — o
+          conteúdo flutua sobre ele, como na referência */}
+      <div className="pointer-events-none absolute left-1/2 top-1/2 w-[min(58vw,880px)] -translate-x-1/2 -translate-y-[44%] max-lg:w-[130vw] max-lg:opacity-70">
+        <svg viewBox="0 0 600 600" className="w-full" role="img" aria-label="Globo — pino no Brasil">
+          <g fill="none" stroke="currentColor" strokeOpacity="0.3" strokeWidth="1">
+            <circle cx={C} cy={C} r={R} />
+            <line x1={C} y1={C - R} x2={C} y2={C + R} />
+            {meridianos.map((rx) => (
+              <ellipse key={rx} cx={C} cy={C} rx={rx} ry={R} />
+            ))}
+            {paralelos.map((p) => (
+              <line key={p.y} x1={C - p.meia} y1={p.y} x2={C + p.meia} y2={p.y} />
+            ))}
+          </g>
+          <g className="v3-pino">
+            <rect x={pino.x - 5} y={pino.y - 5} width="10" height="10" fill="var(--v3-acento)" />
+            <rect
+              x={pino.x - 11}
+              y={pino.y - 11}
+              width="22"
+              height="22"
+              fill="none"
+              stroke="var(--v3-acento)"
+              strokeWidth="1"
+            />
+          </g>
+          <text
+            x={pino.x + 20}
+            y={pino.y + 4}
+            fill="currentColor"
+            style={{ fontFamily: "'Martian Mono', monospace", fontSize: 11, textTransform: "uppercase" }}
+          >
+            BRA — GMT−3
+          </text>
+        </svg>
+      </div>
+
       <div
-        className="grid grid-cols-12 items-center gap-6"
+        className="relative grid min-h-[640px] grid-cols-12 gap-6 max-lg:min-h-0"
         style={{ paddingInline: "var(--v3-margem)" }}
       >
-        <div className="col-span-5 max-lg:col-span-12">
+        {/* headline sobre o globo, à esquerda */}
+        <div className="col-span-6 max-lg:col-span-12">
           <Display>Based in Brazil, working worldwide</Display>
-          <p className="v3-mono v3-justif mt-10 max-w-[44ch]">{LEAD_BRASIL}</p>
-        </div>
 
-        <div className="col-span-4 col-start-7 max-lg:col-span-8 max-lg:col-start-1 max-lg:pt-10">
-          <svg viewBox="0 0 600 600" className="w-full" role="img" aria-label="Globo — pino no Brasil">
-            <g fill="none" stroke="currentColor" strokeOpacity="0.35" strokeWidth="1">
-              <circle cx={C} cy={C} r={R} />
-              <line x1={C} y1={C - R} x2={C} y2={C + R} />
-              {meridianos.map((rx) => (
-                <ellipse key={rx} cx={C} cy={C} rx={rx} ry={R} />
-              ))}
-              {paralelos.map((p) => (
-                <line key={p.y} x1={C - p.meia} y1={p.y} x2={C + p.meia} y2={p.y} />
-              ))}
-            </g>
-            <g className="v3-pino">
-              <rect x={pino.x - 5} y={pino.y - 5} width="10" height="10" fill="var(--v3-acento)" />
-              <rect
-                x={pino.x - 11}
-                y={pino.y - 11}
-                width="22"
-                height="22"
-                fill="none"
-                stroke="var(--v3-acento)"
-                strokeWidth="1"
-              />
-            </g>
-            <text
-              x={pino.x + 20}
-              y={pino.y + 4}
-              className="v3-micro"
-              fill="currentColor"
-              style={{ fontFamily: "'Martian Mono', monospace", fontSize: 11, textTransform: "uppercase" }}
-            >
-              BRA — GMT−3
-            </text>
-          </svg>
-        </div>
-
-        <div className="col-span-2 col-start-11 self-start max-lg:col-span-12 max-lg:col-start-1">
-          <dl className="v3-rotulo grid gap-4">
-            <div>
-              <dt style={{ color: "var(--v3-quieto)" }}>Local time</dt>
-              <dd className="pt-1 tabular-nums">{hora}</dd>
+          {/* coordenadas — centro geográfico do BRASIL (fato público; cidade
+              dele não se inventa) */}
+          <dl className="v3-rotulo mt-24 grid gap-1 max-lg:mt-10">
+            <div className="flex gap-3">
+              <dt style={{ color: "var(--v3-quieto)" }}>LAT:</dt>
+              <dd className="tabular-nums">14.2350° S</dd>
             </div>
-            <div>
-              <dt style={{ color: "var(--v3-quieto)" }}>Time zone</dt>
-              <dd className="pt-1">GMT−3 (BRT)</dd>
-            </div>
-            <div>
-              <dt style={{ color: "var(--v3-quieto)" }}>Reach</dt>
-              <dd className="pt-1">Worldwide</dd>
+            <div className="flex gap-3">
+              <dt style={{ color: "var(--v3-quieto)" }}>LON:</dt>
+              <dd className="tabular-nums">51.9253° W</dd>
             </div>
           </dl>
         </div>
+
+        {/* telemetria no alto direito */}
+        <dl className="v3-rotulo col-span-3 col-start-10 grid content-start gap-4 max-lg:col-span-6 max-lg:col-start-1 max-lg:pt-8">
+          <div>
+            <dt style={{ color: "var(--v3-quieto)" }}>Local time</dt>
+            <dd className="pt-1 tabular-nums">{hora}</dd>
+          </div>
+          <div>
+            <dt style={{ color: "var(--v3-quieto)" }}>Time zone</dt>
+            <dd className="pt-1">GMT−3 (BRT)</dd>
+          </div>
+          <div>
+            <dt style={{ color: "var(--v3-quieto)" }}>Reach</dt>
+            <dd className="pt-1">Worldwide</dd>
+          </div>
+        </dl>
+
+        {/* corpo à direita, embaixo — fecha o quadrante */}
+        <p className="v3-mono v3-justif col-span-4 col-start-9 self-end max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-8">
+          {LEAD_BRASIL}
+        </p>
       </div>
     </section>
   );
@@ -325,9 +352,10 @@ function ServicosV3() {
   return (
     <section
       id="services"
-      className="py-20 max-md:py-12"
+      className="relative py-20 max-md:py-12"
       style={{ background: "var(--fr-petroleo)", color: "var(--fr-creme)" }}
     >
+      <Cantos claro />
       <LinhaSecao rotulo="Services" extra="[03]" />
       <div
         className="grid grid-cols-3 gap-4 max-lg:grid-cols-1"

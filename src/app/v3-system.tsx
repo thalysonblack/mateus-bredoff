@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 import { Link } from "react-router";
 import { WORK } from "../content/work";
 import { revealLines } from "../animations/reveal";
@@ -85,16 +85,38 @@ export function NavV3() {
         <Link to="/v3" className="v3-rotulo">
           Mateus Bredoff
         </Link>
-        <div className="flex gap-x-8 gap-y-1 max-md:flex-col md:gap-x-12">
-          {grupos.map((g) => (
-            <Link key={g.rotulo} to={g.to} className="v3-rotulo v3-q">
-              {g.rotulo}
-              {g.extra ? <span className="pl-2 opacity-60">{g.extra}</span> : null}
-            </Link>
+        {/* grupos de DOIS itens empilhados, distribuídos pela largura — a
+            anatomia da referência (colunas espalhadas, não fila à direita) */}
+        <div className="flex w-[54%] justify-between max-md:w-auto max-md:flex-col max-md:gap-1">
+          {[grupos.slice(0, 2), grupos.slice(2)].map((col, ci) => (
+            <div key={ci} className="flex flex-col gap-1">
+              {col.map((g) => (
+                <Link key={g.rotulo} to={g.to} className="v3-rotulo v3-q">
+                  {g.rotulo}
+                  {g.extra ? <span className="pl-2 opacity-60">{g.extra}</span> : null}
+                </Link>
+              ))}
+            </div>
           ))}
         </div>
       </nav>
     </header>
+  );
+}
+
+/* marcas de canto POR SEÇÃO — a referência pontua cada módulo com os seus
+   próprios cantos, além do HUD do viewport. `claro` para blocos de tinta. */
+export function Cantos({ claro = false }: { claro?: boolean }) {
+  const cor = claro ? "rgba(237,230,225,0.4)" : "rgba(20,33,38,0.35)";
+  const b = "1.5px solid " + cor;
+  const base: CSSProperties = { position: "absolute", width: 12, height: 12 };
+  return (
+    <span aria-hidden="true">
+      <i style={{ ...base, top: 10, left: 10, borderTop: b, borderLeft: b }} />
+      <i style={{ ...base, top: 10, right: 10, borderTop: b, borderRight: b }} />
+      <i style={{ ...base, bottom: 10, left: 10, borderBottom: b, borderLeft: b }} />
+      <i style={{ ...base, bottom: 10, right: 10, borderBottom: b, borderRight: b }} />
+    </span>
   );
 }
 
@@ -135,7 +157,7 @@ export function RodapeV3() {
       style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)", paddingInline: "var(--v3-margem)" }}
     >
       <div className="grid grid-cols-12 gap-6 border border-black/20 p-8 max-md:p-5">
-        <div className="col-span-4 flex flex-col justify-between max-lg:col-span-12">
+        <div className="col-span-4 flex flex-col justify-between border-r border-black/20 pr-8 max-lg:col-span-12 max-lg:border-r-0 max-lg:pr-0">
           <p
             className="uppercase"
             style={{
