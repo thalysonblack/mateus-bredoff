@@ -13,9 +13,6 @@ import AboutV3 from "./pages/AboutV3";
 import WorkIndexV3 from "./pages/WorkIndexV3";
 import CaseV3 from "./pages/CaseV3";
 import LabV3 from "./pages/LabV3";
-import HomeV3A from "./pages/HomeV3A";
-import HomeV3B from "./pages/HomeV3B";
-import HomeV3C from "./pages/HomeV3C";
 
 /**
  * Mateus Bredoff — direção editorial, agora multi-página.
@@ -164,17 +161,24 @@ export default function App() {
           <Route path="/lab" element={<LabV3 />} />
 
           {/* ── ARQUIVO ───────────────────────────────────────────────────
-              Direção descartada não vira comentário no histórico: vira rota, e
-              as versões se comparam abrindo abas. Fora do pré-render e do
-              sitemap de propósito — é material de estúdio, não página do site.
-              `/arquivo/framer` é a réplica fiel do Framer publicado, que foi a
-              FONTE do conteúdo (medida rota a rota) e continua sendo a régua
-              contra a qual se confere um fato. */}
+              O que sobra aqui tem função ATIVA, não sentimental.
+              `/arquivo/framer` é a réplica fiel do publicado: foi a FONTE do
+              conteúdo, medida rota a rota, e segue sendo a régua contra a qual
+              se confere um fato do cliente. `/arquivo/v2` é a direção autoral
+              inteira, a única alternativa real de partido que resta.
+              Fora do pré-render de propósito — material de estúdio não aparece
+              em busca nem em unfurl.
+
+              As três homes de partido (`/arquivo/a` "a arte é o ambiente",
+              `/arquivo/b` "cartaz", `/arquivo/c` "noturno, uma luz") foram
+              APAGADAS a pedido dele em 15/08, depois de abertas lado a lado com
+              o site no ar. Serviram para escolher, a escolha foi feita e o
+              melhor da A já está DENTRO da home canônica — o hero de capas em
+              tela cheia é dela. Rota de arquivo se mantém enquanto responde uma
+              pergunta; deixar as três seria guardar pergunta já respondida.
+              Voltam com `git show 5309550` se algum dia forem precisas. */}
           <Route path="/arquivo/framer" element={<Home />} />
           <Route path="/arquivo/v2" element={<HomeV2 />} />
-          <Route path="/arquivo/a" element={<HomeV3A />} />
-          <Route path="/arquivo/b" element={<HomeV3B />} />
-          <Route path="/arquivo/c" element={<HomeV3C />} />
           <Route path="/arquivo/framer/about" element={<About />} />
           <Route path="/arquivo/framer/work" element={<WorkIndex />} />
           <Route path="/arquivo/framer/work/:slug" element={<CaseStudy />} />

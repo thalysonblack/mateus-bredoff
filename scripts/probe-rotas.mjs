@@ -28,7 +28,7 @@ const ROTAS = [
   '/', '/about', '/work', '/lab',
   '/work/alex-archer', '/work/bureau', '/work/neox', '/work/trivo',
   '/work/stag', '/work/ferraci', '/work/votare',
-  '/arquivo/framer', '/arquivo/v2', '/arquivo/a', '/arquivo/b', '/arquivo/c',
+  '/arquivo/framer', '/arquivo/v2',
   '/arquivo/framer/about', '/arquivo/framer/work', '/arquivo/framer/work/stag',
   '/rota-que-nao-existe',
 ];
