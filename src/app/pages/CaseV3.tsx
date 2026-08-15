@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router";
 import { useMetaRota } from "../../hooks/useMetaRota";
+import { useCraft } from "../../hooks/useCraft";
 import { findWork, WORK } from "../../content/work";
 import { Hud, NavV3, LinhaSecao, RodapeV3, idx } from "../v3-system";
 
@@ -22,10 +23,11 @@ export default function CaseV3() {
   const { slug } = useParams();
   const item = findWork(slug);
   useMetaRota();
+  const raiz = useCraft();
 
   if (!item) {
     return (
-      <div style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+      <div ref={raiz} style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
         <Hud />
         <NavV3 />
         <section className="flex min-h-svh flex-col justify-center" style={{ paddingInline: "var(--v3-margem)" }}>

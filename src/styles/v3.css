@@ -73,6 +73,21 @@
   text-transform: uppercase;
 }
 
+/* Hora viva do bloco "around the world". Grotesca, não mono: a Martian Mono
+   em corpo grande fica larga demais e o par de relógios não caberia lado a
+   lado na coluna. `tabular-nums` no elemento é obrigatório — sem ele o dígito
+   1 é mais estreito e o relógio TREME a cada segundo, que é o defeito que
+   mais denuncia relógio feito às pressas. */
+.v3-hora {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 500;
+  font-size: clamp(22px, 2vw, 30px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  padding-top: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
 .v3-display {
   font-family: 'Geist', ui-sans-serif, sans-serif;
   font-weight: 700;
@@ -131,6 +146,52 @@
 .v3-hud .t.l { left: 10px; top: 50%; width: 10px; height: 1.5px; }
 .v3-hud .t.r { right: 10px; top: 50%; width: 10px; height: 1.5px; }
 .v3-hud .t.m { left: 50%; top: 10px; width: 1.5px; height: 10px; }
+
+/* O fio sob o rótulo de cada seção. 1px do próprio petróleo em 14% — o mesmo
+   peso das bordas do sistema, para que a animação chame atenção pelo GESTO e
+   não pelo contraste. */
+.v3-fio-secao {
+  display: block;
+  height: 1px;
+  width: 100%;
+  margin-top: 12px;
+  background: rgba(20, 33, 38, 0.14);
+}
+
+/* O rótulo do visor: o nome da seção enquadrada.
+   ⚠ Ele nasceu no topo, sob o tique central, e foi medido POR CIMA da nav — a
+   barra ocupa a faixa inteira do topo com grupos espalhados pela largura, e o
+   rótulo caía em cima de "Work [07]". Mora na BASE, logo acima da régua de
+   progresso: ali o hero tem o manifesto à esquerda e o card à direita, e o
+   centro está livre em todas as seções. Centralizado por translate porque o
+   texto muda de largura a cada seção; com `left` fixo a palavra escorregaria
+   de lado a cada troca. */
+.v3-visor {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  letter-spacing: 0.14em;
+  opacity: 0;
+  white-space: nowrap;
+}
+
+/* A régua de progresso: 1px na base da tela, do acento, crescendo da esquerda.
+   É a única coisa da página que diz "falta tanto" — e faz isso sem número, sem
+   porcentagem e sem roubar um pixel de conteúdo. */
+.v3-regua {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1.5px;
+  width: 100%;
+  background: currentColor;
+  opacity: 0.55;
+  transform: scaleX(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .v3-visor { opacity: 1; }
+}
 
 /* ── carrossel de cases ──────────────────────────────────────────────────
    Scroll-snap NATIVO (a tira é o índice; sem lib). A trilha sangra a
@@ -280,6 +341,51 @@ button:hover .v3-prox { transform: translateX(3px); }
   animation: v3-rola 44s linear infinite;
 }
 .v3-esteira:hover { animation-play-state: paused; }
+
+/* Nome do serviço. Escala de DISPLAY, não de rótulo: o pedido de 15/08 foi
+   "os services achei tímido", e o que estava tímido era literalmente o corpo —
+   o nome do que ele vende saía em 12px de mono, do mesmo tamanho da legenda de
+   uma foto. Aqui ele passa a pesar o que pesa a manchete de uma seção. */
+.v3-servico {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 700;
+  font-size: clamp(30px, 3.4vw, 54px);
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+
+/* A faixa inteira é o alvo do clique. O fio do topo acende no acento (feito
+   em JS, porque depende de qual está ativa) e a seta avança — o mesmo
+   vocabulário de "↳ que avança" do resto do sistema, sem inventar um botão. */
+.v3-faixa { transition: background 0.25s ease-out; }
+.v3-faixa:hover { background: rgba(20, 33, 38, 0.03); }
+.v3-seta-cta {
+  color: var(--v3-acento);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.2s ease-out, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.v3-faixa:hover .v3-seta-cta,
+.v3-faixa:focus-visible .v3-seta-cta { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .v3-seta-cta { transition: none; }
+}
+
+/* Tile de ensaio do AI Lab. Ele virou link em 15/08 e um link tem de PARECER
+   clicável — o estado de hover é a única coisa que informa isso antes do
+   clique. A peça sobe 3px e o foco de canto trava nela; a legenda embaixo fica
+   fora do enquadramento (o `bottom` do foco desconta a linha de rótulo), senão
+   a moldura cercaria o texto junto e viraria um card, que é justamente o que
+   este sistema não usa. */
+.v3-tile { transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+.v3-tile:hover { transform: translateY(-3px); }
+.v3-tile .v3-foco { inset: 8px 8px 34px 8px; }
+.v3-tile img { transition: opacity 0.3s ease-out; }
+.v3-tile:hover img { opacity: 0.86; }
+@media (prefers-reduced-motion: reduce) {
+  .v3-tile:hover { transform: none; }
+}
 @keyframes v3-rola {
   to { transform: translateX(calc(-50% - 7px)); }
 }

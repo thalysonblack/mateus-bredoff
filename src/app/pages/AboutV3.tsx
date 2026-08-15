@@ -1,4 +1,5 @@
 import { useMetaRota } from "../../hooks/useMetaRota";
+import { useCraft } from "../../hooks/useCraft";
 import { Hud, NavV3, LinhaSecao, Display, RodapeV3 } from "../v3-system";
 
 /**
@@ -66,8 +67,9 @@ const idx = (i: number) => `[${String(i + 1).padStart(2, "0")}]`;
 
 export default function AboutV3() {
   useMetaRota();
+  const raiz = useCraft();
   return (
-    <div style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+    <div ref={raiz} style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
       <Hud />
       <NavV3 />
 

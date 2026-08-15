@@ -5,6 +5,8 @@ import { LAB } from "../../content/lab";
 import { TIERS } from "../sections/Pricing";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Hud, NavV3, LinhaSecao, Display, RodapeV3, Cantos, idx } from "../v3-system";
+import GloboTerra from "../sections/GloboTerra";
+import { useCraft } from "../../hooks/useCraft";
 
 /**
  * V3 — "o portfólio como visor". Terceira direção sobre a mesa, ao lado de
@@ -48,7 +50,7 @@ function HeroV3() {
   }, []);
   const ultimo = WORK[0];
   return (
-    <section className="relative flex h-[100dvh] min-h-[36rem] w-full flex-col justify-end overflow-clip" style={{ background: "#0d1518" }}>
+    <section data-secao="Index" className="relative flex h-[100dvh] min-h-[36rem] w-full flex-col justify-end overflow-clip" style={{ background: "#0d1518" }}>
       {WORK.map((w, i) => (
         <img
           key={w.slug}
@@ -134,7 +136,7 @@ function HeroV3() {
 /* ── about: manifesto justificado + lead mono + números ─────────────────── */
 function AboutV3() {
   return (
-    <section className="relative py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+    <section data-secao="About" className="relative py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
       <Cantos />
       <LinhaSecao rotulo="About" acao={{ texto: "More about me", to: "/about" }} />
       <div
@@ -164,7 +166,7 @@ function WorkV3() {
     el.scrollBy({ left: dir * passo, behavior: "smooth" });
   };
   return (
-    <section className="relative py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+    <section data-secao="Selected Work" className="relative py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
       <Cantos />
       <LinhaSecao
         rotulo="Selected work"
@@ -214,37 +216,72 @@ function WorkV3() {
   );
 }
 
-/* ── globo: wireframe ortográfico + pino no Brasil + hora viva ──────────── */
+/* ── globo: a Terra girando + os DOIS relógios ───────────────────────────
+   O desenho vive em sections/GloboTerra (canvas, dado real, gira com o
+   scroll) — leia o cabeçalho de lá antes de mexer.
+
+   A telemetria mudou de assunto. Antes eram dois campos sobre ELE (hora local,
+   fuso), o que não diz nada a quem está lendo: "GMT−3" é trivia. Agora são
+   DOIS relógios lado a lado, o dele e o de QUEM ESTÁ OLHANDO, com a distância
+   em horas entre os dois — o navegador já sabe o fuso do visitante, então isso
+   é fato puro, nada inventado, e é a própria frase da seção acontecendo na
+   tela: a distância existe, e não alcança o trabalho. Em São Paulo o bloco se
+   resolve sozinho e diz "same hours as you". */
+const FUSO_DELE = "America/Sao_Paulo";
+
+function relogio(tz: string) {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: tz,
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+}
+
+/** Diferença em horas entre dois fusos, medida no MESMO instante. */
+function distanciaEmHoras(a: string, b: string) {
+  const agora = new Date();
+  const emTz = (tz: string) =>
+    new Date(agora.toLocaleString("en-US", { timeZone: tz })).getTime();
+  return Math.round((emTz(b) - emTz(a)) / 3.6e6);
+}
+
 function GloboV3() {
   const [hora, setHora] = useState("--:--:--");
+  const [suaHora, setSuaHora] = useState("--:--:--");
+  const [visitante, setVisitante] = useState({ tz: "", delta: 0 });
+
   useEffect(() => {
-    const f = new Intl.DateTimeFormat("en-GB", {
-      timeZone: "America/Sao_Paulo",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
+    const tzVisitante =
+      Intl.DateTimeFormat().resolvedOptions().timeZone || FUSO_DELE;
+    setVisitante({
+      tz: tzVisitante,
+      delta: distanciaEmHoras(FUSO_DELE, tzVisitante),
     });
-    const tick = () => setHora(f.format(new Date()));
+
+    const dele = relogio(FUSO_DELE);
+    const seu = relogio(tzVisitante);
+    const tick = () => {
+      const agora = new Date();
+      setHora(dele.format(agora));
+      setSuaHora(seu.format(agora));
+    };
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
   }, []);
 
-  /* projeção ortográfica de frente: meridianos viram elipses (rx = R·sinλ),
-     paralelos viram cordas horizontais (y = R·sinφ, meia-largura R·cosφ) */
-  const R = 270;
-  const C = 300;
-  const meridianos = [15, 35, 55, 75].map((g) => R * Math.sin((g * Math.PI) / 180));
-  const paralelos = [-60, -40, -20, 0, 20, 40, 60].map((g) => {
-    const rad = (g * Math.PI) / 180;
-    return { y: C - R * Math.sin(rad), meia: R * Math.cos(rad) };
-  });
-  /* Brasil, com o disco centrado no Atlântico (~lon −30): lat −15, lon −50 */
-  const pino = { x: C - R * 0.33, y: C + R * 0.26 };
+  const mesmoFuso = visitante.delta === 0;
+  /* "5 hours behind you" lê melhor que "−5h": a frase é sobre a pessoa */
+  const distancia = mesmoFuso
+    ? "Same hours as you"
+    : `${Math.abs(visitante.delta)} ${Math.abs(visitante.delta) === 1 ? "hour" : "hours"} ${
+        visitante.delta > 0 ? "behind you" : "ahead of you"
+      }`;
 
   return (
-    <section
+    <section data-secao="Around the World"
       className="relative overflow-clip py-20 max-md:py-12"
       style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}
     >
@@ -253,39 +290,8 @@ function GloboV3() {
 
       {/* o globo é o CENTRO da seção, grande, atravessando as colunas — o
           conteúdo flutua sobre ele, como na referência */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 w-[min(58vw,880px)] -translate-x-1/2 -translate-y-[44%] max-lg:w-[130vw] max-lg:opacity-70">
-        <svg viewBox="0 0 600 600" className="w-full" role="img" aria-label="Globo — pino no Brasil">
-          <g fill="none" stroke="currentColor" strokeOpacity="0.3" strokeWidth="1">
-            <circle cx={C} cy={C} r={R} />
-            <line x1={C} y1={C - R} x2={C} y2={C + R} />
-            {meridianos.map((rx) => (
-              <ellipse key={rx} cx={C} cy={C} rx={rx} ry={R} />
-            ))}
-            {paralelos.map((p) => (
-              <line key={p.y} x1={C - p.meia} y1={p.y} x2={C + p.meia} y2={p.y} />
-            ))}
-          </g>
-          <g className="v3-pino">
-            <rect x={pino.x - 5} y={pino.y - 5} width="10" height="10" fill="var(--v3-acento)" />
-            <rect
-              x={pino.x - 11}
-              y={pino.y - 11}
-              width="22"
-              height="22"
-              fill="none"
-              stroke="var(--v3-acento)"
-              strokeWidth="1"
-            />
-          </g>
-          <text
-            x={pino.x + 20}
-            y={pino.y + 4}
-            fill="currentColor"
-            style={{ fontFamily: "'Martian Mono', monospace", fontSize: 11, textTransform: "uppercase" }}
-          >
-            BRA — GMT−3
-          </text>
-        </svg>
+      <div className="pointer-events-none absolute left-1/2 top-1/2 w-[min(58vw,880px)] -translate-x-1/2 -translate-y-[44%] max-lg:w-[128vw] max-lg:opacity-60">
+        <GloboTerra className="block aspect-square w-full" />
       </div>
 
       <div
@@ -295,32 +301,37 @@ function GloboV3() {
         {/* headline sobre o globo, à esquerda */}
         <div className="col-span-6 max-lg:col-span-12">
           <Display>Based in Brazil, working worldwide</Display>
-
-          {/* coordenadas — centro geográfico do BRASIL (fato público; cidade
-              dele não se inventa) */}
-          <dl className="v3-rotulo mt-24 grid gap-1 max-lg:mt-10">
-            <div className="flex gap-3">
-              <dt style={{ color: "var(--v3-quieto)" }}>LAT:</dt>
-              <dd className="tabular-nums">14.2350° S</dd>
-            </div>
-            <div className="flex gap-3">
-              <dt style={{ color: "var(--v3-quieto)" }}>LON:</dt>
-              <dd className="tabular-nums">51.9253° W</dd>
-            </div>
-          </dl>
         </div>
 
-        {/* telemetria no alto direito */}
-        <dl className="v3-rotulo col-span-3 col-start-10 grid content-start gap-4 max-lg:col-span-6 max-lg:col-start-1 max-lg:pt-8">
-          <div>
-            <dt style={{ color: "var(--v3-quieto)" }}>Local time</dt>
-            <dd className="pt-1 tabular-nums">{hora}</dd>
+        {/* os dois relógios: o dele e o de quem está lendo */}
+        <div className="col-span-4 col-start-9 self-start max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-10">
+          <div className="grid grid-cols-2 gap-x-6 border-t border-black/12 pt-4" data-entra>
+            <div>
+              <p className="v3-micro" style={{ color: "var(--v3-quieto)" }}>
+                His time
+              </p>
+              <p className="v3-hora tabular-nums">{hora}</p>
+              <p className="v3-micro pt-1" style={{ color: "var(--v3-quieto)" }}>
+                Brazil — GMT−3
+              </p>
+            </div>
+            <div>
+              <p className="v3-micro" style={{ color: "var(--v3-quieto)" }}>
+                Your time
+              </p>
+              <p className="v3-hora tabular-nums">{suaHora}</p>
+              <p className="v3-micro truncate pt-1" style={{ color: "var(--v3-quieto)" }}>
+                {visitante.tz.replace(/_/g, " ")}
+              </p>
+            </div>
           </div>
-          <div>
-            <dt style={{ color: "var(--v3-quieto)" }}>Time zone</dt>
-            <dd className="pt-1">GMT−3 (BRT)</dd>
-          </div>
-        </dl>
+          <p
+            className="v3-rotulo pt-4"
+            style={{ color: mesmoFuso ? "var(--v3-quieto)" : "var(--v3-acento)" }}
+          >
+            ■ {distancia}
+          </p>
+        </div>
 
         {/* corpo à direita, embaixo — fecha o quadrante */}
         <p className="v3-mono v3-justif col-span-4 col-start-9 self-end max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-8">
@@ -337,10 +348,28 @@ function GloboV3() {
    carrossel manual do work. Legenda mínima: a régua anti-ruído de 10/08. */
 const ENSAIOS = LAB;
 
+/**
+ * Um ensaio na esteira. **Sempre um link** — foi o pedido dele em 15/08 ("AI
+ * lab, não dá pra clicar?"), e a pergunta era justa: metade dos tiles eram
+ * `<div>`, então o cursor não mudava, o teclado não alcançava e clicar não
+ * fazia nada. Quem tem arte no repo vai para o próprio case; quem só existe no
+ * Instagram dele vai para `/lab`, onde a galeria mostra o resto.
+ *
+ * A placa dos que não têm arte também mudou. Era um retângulo de petróleo
+ * vazio com o nome no rodapé — três dos seis ensaios eram um buraco escuro na
+ * esteira. Agora é uma PEÇA: nome em corpo de cartaz sangrando pela borda,
+ * disciplina e meio (dados reais de `content/lab.ts`) na base, índice no alto.
+ * Sem arte para mostrar, a tipografia é a matéria — não um espaço reservado
+ * esperando imagem.
+ */
 function TileLab({ e, i }: { e: (typeof ENSAIOS)[number]; i: number }) {
   const foto = e.slug ? findWork(e.slug)?.cover : undefined;
   return (
-    <div className="relative w-[340px] flex-none max-md:w-[240px]">
+    <Link
+      to={e.slug ? `/work/${e.slug}` : "/lab"}
+      aria-label={`${e.brand} — ${e.discipline}`}
+      className="v3-tile group relative block w-[340px] flex-none max-md:w-[240px]"
+    >
       {foto ? (
         <img
           src={foto.src}
@@ -353,40 +382,69 @@ function TileLab({ e, i }: { e: (typeof ENSAIOS)[number]; i: number }) {
           className="aspect-[4/3] w-full object-cover"
         />
       ) : (
+        /* a placa como CARTAZ: o nome ocupa a peça e sangra, em vez de esperar
+           uma imagem que ainda não existe */
         <span
-          className="flex aspect-[4/3] w-full flex-col justify-between p-4"
+          className="relative flex aspect-[4/3] w-full flex-col justify-between overflow-clip p-4"
           style={{ background: "var(--fr-petroleo)", color: "var(--fr-creme)" }}
         >
-          <span className="v3-micro" style={{ color: "var(--v3-acento-tinta)" }}>
+          <span className="v3-micro relative z-10" style={{ color: "var(--v3-acento-tinta)" }}>
             {idx(i)}
           </span>
+          {/* ⚠ o fantasma é o NUMERAL, não o nome. Com o nome ele ecoava a si
+              mesmo — "BOVINE BEATS" gigante e translúcido atrás de "BOVINE
+              BEATS" sólido, a mesma palavra duas vezes na mesma peça. O
+              numeral dá o mesmo peso de cartaz sem repetir palavra alguma. */}
           <span
-            className="uppercase"
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-3 -top-6 tabular-nums"
             style={{
               fontFamily: "'Geist', ui-sans-serif, sans-serif",
               fontWeight: 700,
-              fontSize: "26px",
-              letterSpacing: "-0.02em",
-              lineHeight: 0.95,
+              fontSize: "150px",
+              letterSpacing: "-0.06em",
+              lineHeight: 0.8,
+              opacity: 0.11,
             }}
           >
-            {e.brand}
+            {idx(i)}
+          </span>
+          <span className="relative z-10 flex items-end justify-between gap-3">
+            <span
+              className="uppercase"
+              style={{
+                fontFamily: "'Geist', ui-sans-serif, sans-serif",
+                fontWeight: 700,
+                fontSize: "26px",
+                letterSpacing: "-0.02em",
+                lineHeight: 0.95,
+              }}
+            >
+              {e.brand}
+            </span>
+            <span className="v3-micro pb-1 text-right" style={{ color: "var(--v3-quieto-tinta)" }}>
+              {e.medium}
+            </span>
           </span>
         </span>
       )}
+      <i className="v3-foco" aria-hidden="true"><b /><b /><b /><b /></i>
       <span className="flex items-baseline gap-3 pt-2">
         <span className="v3-micro" style={{ color: "var(--v3-acento)" }}>
           {idx(i)}
         </span>
         <span className="v3-rotulo">{e.brand}</span>
+        <span className="v3-micro ml-auto" style={{ color: "var(--v3-quieto)" }}>
+          {e.discipline}
+        </span>
       </span>
-    </div>
+    </Link>
   );
 }
 
 function LabV3() {
   return (
-    <section className="relative py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+    <section data-secao="AI Lab" className="relative py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
       <Cantos />
       <LinhaSecao
         rotulo="AI Lab"
@@ -404,14 +462,40 @@ function LabV3() {
   );
 }
 
-/* ── serviços: a mecânica de shop da referência com os tiers REAIS ──────── */
+/* ── serviços: faixa de largura total + painel da peça ───────────────────
+   Refeito em 15/08 — "os services achei tímido", e o diagnóstico é preciso:
+   eram três cards com uma foto, o NOME em rótulo de 12px e o preço ao lado.
+   Ou seja, ele vende pacote de identidade e a home mostrava dois dados sobre
+   ele. Os TIERS já carregam `scope` (o que entra), `description` (para quem é)
+   e `timeline` (quanto leva), e nada disso chegava à tela.
+
+   A estrutura nova é FAIXA, não card: cada serviço atravessa a página com o
+   nome em corpo de display, o escopo em coluna, prazo e preço em escala de
+   leitura. É o gesto que ele mesmo apontou na REBOOT/Setters (serviço como
+   faixa que corta a página) — ⚠ sem a pílula arredondada de lá: raio zero é
+   lei neste sistema.
+
+   A peça vive num painel STICKY à direita e troca conforme a faixa é
+   percorrida. Três fotos pequenas viraram uma grande, e o painel é estrutura
+   que ainda não estava em uso nesta página (hero em tela cheia, about em duas
+   colunas, work em tira, globo no centro, lab em esteira) — a régua de nunca
+   repetir a estrutura da seção vizinha. */
+/* O que a peça do painel mostra, na língua do site. Uma linha por tier, na
+   mesma ordem de `fotos` — descreve a PEÇA, não o serviço, porque o nome do
+   serviço já está do lado. */
+const LEGENDA_PECA = [
+  "typographic system, Alex Archer",
+  "printed application, Alex Archer",
+  "editorial system, Stag",
+];
+
 function ServicosV3() {
+  const [ativo, setAtivo] = useState(0);
   const preco = (n: number | null) =>
     n === null ? "On request" : `from US$ ${n.toLocaleString("en-US")}`;
 
-  /* a FOTO de cada serviço vem do trabalho real dele — a peça que melhor
-     representa o que o pacote entrega (pedido de 10/08: services com fotos).
-     Alex Archer: sistema tipográfico e aplicação impressa; Stag: o livro. */
+  /* a peça de cada serviço vem do trabalho real dele: o sistema tipográfico e
+     a aplicação impressa do Alex Archer, e o livro do Stag */
   const alex = findWork("alex-archer");
   const stag = findWork("stag");
   const fotos = [alex?.images[2], alex?.images[1], stag?.cover].filter(Boolean) as {
@@ -423,58 +507,102 @@ function ServicosV3() {
   }[];
 
   return (
-    <section id="services" className="relative py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+    <section data-secao="Services"
+      id="services"
+      className="relative py-20 max-md:py-12"
+      style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}
+    >
       <Cantos />
-      <LinhaSecao rotulo="Services" extra="[03]" />
-      <div className="grid grid-cols-3 gap-4 max-lg:grid-cols-1" style={{ paddingInline: "var(--v3-margem)" }}>
-        {TIERS.map((t, i) => {
-          const foto = fotos[i];
-          return (
-            <article key={t.name} className="group flex flex-col">
-              {/* o product shot do serviço: peça real do portfólio */}
-              <a
-                href="mailto:hello@mateusbredoff.com"
-                aria-label={`Request a quote — ${t.name}`}
-                className="relative block overflow-hidden"
-              >
-                {foto ? (
-                  <img
-                    src={foto.src}
-                    srcSet={foto.src2x ? `${foto.src} 1400w, ${foto.src2x} 2200w` : undefined}
-                    sizes="(min-width: 1024px) 33vw, 100vw"
-                    alt={foto.alt}
-                    width={foto.w}
-                    height={foto.h}
-                    loading="lazy"
-                    decoding="async"
-                    draggable={false}
-                    className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                  />
-                ) : null}
-                <span
-                  className="v3-micro absolute left-4 top-4"
-                  style={{ color: "var(--fr-creme)", mixBlendMode: "difference" }}
-                >
-                  {idx(i)}
-                </span>
-                <span
-                  className="v3-mais v3-rotulo absolute right-4 top-4"
-                  style={{ color: "var(--fr-creme)", mixBlendMode: "difference" }}
-                  aria-hidden="true"
-                >
-                  +
-                </span>
-                <i className="v3-foco" aria-hidden="true" style={{ color: "#fff" }}><b /><b /><b /><b /></i>
-              </a>
+      <LinhaSecao rotulo="Services" extra={`[0${TIERS.length}]`} />
 
-              {/* nome + prazo + preço sob a foto, como o produto da referência */}
-              <div className="flex items-baseline justify-between gap-4 pt-3">
-                <span className="v3-rotulo">{t.name}</span>
-                <span className="v3-rotulo ml-auto">{preco(t.priceFrom)}</span>
-              </div>
-            </article>
-          );
-        })}
+      <div
+        className="grid grid-cols-12 gap-6 max-lg:gap-4"
+        style={{ paddingInline: "var(--v3-margem)" }}
+      >
+        {/* as faixas */}
+        <div className="col-span-8 max-lg:col-span-12" data-entra>
+          {TIERS.map((t, i) => (
+            <a
+              key={t.name}
+              href={`mailto:hello@mateusbredoff.com?subject=${encodeURIComponent(
+                `${t.name} — project enquiry`,
+              )}`}
+              onMouseEnter={() => setAtivo(i)}
+              onFocus={() => setAtivo(i)}
+              className="v3-faixa group grid grid-cols-8 gap-6 border-t border-black/12 py-7 max-md:grid-cols-4 max-md:gap-3 max-md:py-6"
+              style={{ borderTopColor: ativo === i ? "var(--v3-acento)" : undefined }}
+            >
+              <span className="v3-micro col-span-1 pt-3" style={{ color: "var(--v3-acento)" }}>
+                {idx(i)}
+              </span>
+
+              <span className="col-span-4 max-md:col-span-3">
+                <span className="v3-servico block">{t.name}</span>
+                <span className="v3-mono mt-3 block max-w-[46ch]" style={{ color: "var(--v3-quieto)" }}>
+                  {t.description}
+                </span>
+              </span>
+
+              {/* o que entra — o dado que o card antigo escondia */}
+              <ul className="col-span-2 grid content-start gap-1 pt-2 max-md:col-span-4 max-md:grid-cols-2 max-md:pt-4">
+                {t.scope.map((s) => (
+                  <li key={s} className="v3-micro" style={{ color: "var(--v3-quieto)" }}>
+                    <span style={{ color: "var(--v3-acento)" }}>+</span> {s}
+                  </li>
+                ))}
+              </ul>
+
+              <span className="col-span-1 grid content-start justify-items-end gap-2 pt-2 max-md:col-span-4 max-md:justify-items-start max-md:pt-3">
+                <span className="v3-rotulo whitespace-nowrap text-right max-md:text-left">
+                  {preco(t.priceFrom)}
+                </span>
+                <span className="v3-micro whitespace-nowrap" style={{ color: "var(--v3-quieto)" }}>
+                  {t.timeline}
+                </span>
+                <span className="v3-seta-cta v3-rotulo" aria-hidden="true">
+                  ↳
+                </span>
+              </span>
+            </a>
+          ))}
+          <div className="border-t border-black/12" />
+        </div>
+
+        {/* o painel: a peça do serviço percorrido, grande e sticky */}
+        <div className="col-span-4 max-lg:hidden">
+          <div className="sticky top-24">
+            <div className="relative aspect-[3/4] w-full overflow-clip">
+              {fotos.map((f, i) => (
+                <img
+                  key={f.src}
+                  src={f.src}
+                  srcSet={f.src2x ? `${f.src} 1400w, ${f.src2x} 2200w` : undefined}
+                  sizes="33vw"
+                  alt={f.alt}
+                  width={f.w}
+                  height={f.h}
+                  loading="lazy"
+                  decoding="async"
+                  draggable={false}
+                  className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
+                  style={{ opacity: ativo === i ? 1 : 0 }}
+                />
+              ))}
+              <i className="v3-foco" aria-hidden="true" style={{ color: "#fff", opacity: 1, transform: "none" }}>
+                <b /><b /><b /><b />
+              </i>
+            </div>
+            {/* ⚠ A legenda NÃO usa o `alt` da imagem. O alt do acervo é escrito
+                em português (é texto de acessibilidade da nossa base) e vinha
+                parar na tela de um site inteiro em inglês — "COMPLETE — ALEX
+                ARCHER — APLICAÇÃO IMPRESSA". Rótulo visível é conteúdo e tem
+                idioma; alt é metadado. São coisas diferentes. */}
+            <p className="v3-micro pt-3" style={{ color: "var(--v3-quieto)" }}>
+              <span style={{ color: "var(--v3-acento)" }}>■</span> {TIERS[ativo].name} —{" "}
+              {LEGENDA_PECA[ativo]}
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -482,8 +610,11 @@ function ServicosV3() {
 
 export default function HomeV3() {
   useMetaRota();
+  /* os gestos de scroll da página — ver `animations/craft.ts` e `useCraft` */
+  const raiz = useCraft();
+
   return (
-    <div style={{ background: "var(--fr-papel)" }}>
+    <div ref={raiz} style={{ background: "var(--fr-papel)" }}>
       <Hud />
       <NavV3 />
       <HeroV3 />

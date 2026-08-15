@@ -55,11 +55,20 @@ export function Display({
 }
 
 /* ── HUD: a página inteira dentro do visor ──────────────────────────────── */
+/**
+ * O HUD do visor. Além das marcas de canto, ele agora LÊ a página: o rótulo
+ * central diz qual seção está enquadrada e a régua da base mede o quanto já
+ * passou. Os dois são preenchidos por `animations/craft.ts` via `data-visor` e
+ * `data-regua` — este componente só oferece os lugares, e uma página sem o
+ * craft ligado simplesmente mostra o HUD mudo, como antes.
+ */
 export function Hud() {
   return (
     <div className="v3-hud" aria-hidden="true">
       <i className="c tl" /> <i className="c tr" /> <i className="c bl" /> <i className="c br" />
       <i className="t l" /> <i className="t r" /> <i className="t m" />
+      <span className="v3-visor v3-micro" data-visor />
+      <i className="v3-regua" data-regua />
     </div>
   );
 }
@@ -133,19 +142,23 @@ export function LinhaSecao({
   acao?: { texto: string; to: string };
 }) {
   return (
-    <div
-      className="flex items-baseline justify-between pb-10"
-      style={{ paddingInline: "var(--v3-margem)" }}
-    >
-      <span className="v3-rotulo v3-q">
-        {rotulo}
-        {extra ? <span className="pl-2 opacity-60">{extra}</span> : null}
-      </span>
-      {acao ? (
-        <Link to={acao.to} className="v3-rotulo underline-offset-4 hover:underline">
-          {acao.texto} <span className="v3-seta">↳</span>
-        </Link>
-      ) : null}
+    <div style={{ paddingInline: "var(--v3-margem)" }} className="pb-10">
+      <div className="flex items-baseline justify-between">
+        <span className="v3-rotulo v3-q">
+          {rotulo}
+          {extra ? <span className="pl-2 opacity-60">{extra}</span> : null}
+        </span>
+        {acao ? (
+          <Link to={acao.to} className="v3-rotulo underline-offset-4 hover:underline">
+            {acao.texto} <span className="v3-seta">↳</span>
+          </Link>
+        ) : null}
+      </div>
+      {/* O fio se DESENHA quando a seção chega (ver `animations/craft.ts`). É o
+          gesto que abre cada bloco: a régua do visor traçando o enquadramento
+          antes do conteúdo. Sem o craft ligado ele fica desenhado e parado, que
+          é o estado correto — a linha existe, a animação é o extra. */}
+      <i className="v3-fio-secao" data-fio aria-hidden="true" />
     </div>
   );
 }

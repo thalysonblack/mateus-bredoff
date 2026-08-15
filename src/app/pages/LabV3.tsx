@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { useMetaRota } from "../../hooks/useMetaRota";
+import { useCraft } from "../../hooks/useCraft";
 import { findWork, type WorkImage } from "../../content/work";
 import { LAB, LAB_CONTADOR, INSTAGRAM } from "../../content/lab";
 import { Hud, NavV3, LinhaSecao, RodapeV3, idx } from "../v3-system";
@@ -85,8 +86,9 @@ const QUADROS = montarQuadros();
 
 export default function LabV3() {
   useMetaRota();
+  const raiz = useCraft();
   return (
-    <div style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+    <div ref={raiz} style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
       <Hud />
       <NavV3 />
 

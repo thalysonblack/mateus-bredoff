@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { useMetaRota } from "../../hooks/useMetaRota";
+import { useCraft } from "../../hooks/useCraft";
 import { WORK } from "../../content/work";
 import { Hud, NavV3, RodapeV3, idx } from "../v3-system";
 
@@ -26,6 +27,7 @@ import { Hud, NavV3, RodapeV3, idx } from "../v3-system";
 
 export default function WorkIndexV3() {
   useMetaRota();
+  const raiz = useCraft();
   const [ativo, setAtivo] = useState(0);
   const capas = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -52,7 +54,7 @@ export default function WorkIndexV3() {
     }) as const;
 
   return (
-    <div style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+    <div ref={raiz} style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
       <Hud />
       <NavV3 />
 
