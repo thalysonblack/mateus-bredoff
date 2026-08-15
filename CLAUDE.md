@@ -5,11 +5,45 @@ o site publicado em Framer (`mateusbredoff.framer.website`). O artboard escalado
 do Figma (`src/imports/Home.tsx`) foi **aposentado e removido** — cada seção hoje é um
 componente React responsivo de verdade.
 
+## ⭐ Leia primeiro: qual é o site, hoje (15/08/2026)
+
+O site é a direção **"o portfólio como visor"** — a que morava em `/v3` e foi
+**promovida à raiz**. Ela nasceu da mecânica do `noartmusic.com` com a matéria
+do Mateus, e foi a única aprovada por ele depois de sete homes reprovadas.
+Enquanto vivia numa rota de laboratório, o que estava no ar não era o que
+estava aprovado — a promoção existe para fechar essa distância.
+
+```
+/                  HomeV3        hero de capas em tela cheia + anatomia do noart
+/about             AboutV3       manifesto, números, processo em 5 etapas
+/work              WorkIndexV3   teatro de 3 colunas, índice sticky
+/work/:slug        CaseV3        um componente para TODOS os cases
+/lab               LabV3         contact sheet dos ensaios de marca fictícia
+/arquivo/*         —             direções descartadas, montáveis para comparar
+```
+
+**As rotas canônicas não mudaram de nome** — são as mesmas do CMS dele e do
+Framer original. O que mudou foi qual componente as monta, e é por isso que
+`content/meta.ts` e o pré-render seguiram valendo sem uma linha de mudança.
+
+**`/arquivo/*` é material de estúdio, não site.** Fica fora do pré-render de
+propósito: sem HTML próprio, não aparece em busca nem em unfurl.
+`/arquivo/framer` é a réplica fiel do publicado — foi a FONTE do conteúdo,
+medida rota a rota, e continua sendo a régua contra a qual se confere um fato.
+
+⚠ **Este arquivo tem seções escritas quando o alvo era outro.** A parte de
+"Direção de design (branch `estilo-editorial`)" descreve o sistema da direção
+autoral, que hoje vive em `/arquivo/v2` — vale como histórico, não como
+instrução para a raiz. O sistema vivo é `src/app/v3-system.tsx` +
+`src/styles/v3.css`.
+
 ## Arquitetura de motion e scroll
 
 Dois sistemas, responsabilidade única, boot em ordem fixa — **scroll antes de
-motion**. Não existe sistema de navegação (Barba e afins): o site é uma página
-só, e roteador para uma rota é arquitetura sem função.
+motion**. Não existe sistema de navegação (Barba e afins): o roteamento é do
+`react-router`, e o ciclo de vida de rota vive em `App.tsx` (leia o comentário
+do `RouteLifecycle` antes de mexer — são três coisas obrigatórias por
+navegação, e esquecer qualquer uma dá bug fantasma).
 
 ```
 src/lib/lenis.ts          dono ÚNICO do scroll
@@ -161,6 +195,31 @@ pares de contraste conhecidos (21,00 / 6,44 / 4,54 / 2,30) descrita no históric
 do repo; o medidor tem de reproduzir esses valores antes de você acreditar nele.
 
 ## Armadilhas deste repo (todas custaram caro)
+
+### 🚨 As "peças de case" baixadas do Framer são STOCK DO TEMPLATE, não obra dele
+
+`midia-framer.json` mapeia 29 assets do grupo `peca-case` — 7 em `/work/stag/`,
+5 em `/work/trivo/`, 4 em `/work/ferraci/` — e eles estão otimizados e
+commitados em `src/assets/optimized/framer/`. É tentador ligá-los em
+`content/work.ts` e ver seis cases magros virarem cases inteiros de uma vez: o
+inventário bate, o manifesto diz a rota e a posição de cada um, e a alteração é
+mecânica.
+
+**Não ligue.** Abra as imagens antes. São renders genéricos do template que ele
+usou — anel de joia, um Porsche, controle de Xbox, mala Rimowa, uma bolsa
+**Gucci**, retrato de moda, musgo. Ligar isso publicaria produto de terceiro
+como portfólio do Mateus, com nome de projeto por baixo.
+
+É exatamente por isso que aqueles cases estão publicados com **lorem ipsum** no
+Framer: a página inteira é template não preenchido, imagem inclusive. Os cases
+magros não são uma migração incompleta — são a medida honesta do material que
+existe. Eles enchem quando o Mateus mandar as peças, e não antes.
+
+**A regra geral:** neste repo, inventário nunca autoriza publicação. Um asset
+mapeado prova que ele estava no HTML do original, não que seja obra do cliente.
+Antes de ligar arte que você não viu, monte uma folha de contato e OLHE —
+`ffmpeg` monta uma com `tile` (⚠ o `ffmpeg` daqui não tem `drawtext`, então o
+rótulo não entra na imagem: fixe a ordem dos arquivos e leia por posição).
 
 **`mix-blend` morre dentro de stacking context.** O spec do Figma pinta vários textos
 de branco com `mix-blend-difference/exclusion`, contando com a inversão contra o fundo.

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { WORK, findWork } from "../../content/work";
+import { LAB } from "../../content/lab";
 import { TIERS } from "../sections/Pricing";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Hud, NavV3, LinhaSecao, Display, RodapeV3, Cantos, idx } from "../v3-system";
@@ -36,7 +37,7 @@ const LEAD_BRASIL =
    Fusão fechada em 10/08: partido A aprovado ("a arte é o ambiente") vestindo
    a anatomia exata do hero do noart — obra ao fundo, marca no CENTRO em
    blend, statement mono no canto esquerdo da base, card do próximo no canto
-   direito. O retrato saiu da home (mora no /v3/about); quem abre o site é o
+   direito. O retrato saiu da home (mora no /about); quem abre o site é o
    trabalho. */
 function HeroV3() {
   const [capa, setCapa] = useState(0);
@@ -104,7 +105,7 @@ function HeroV3() {
             {String(WORK.length).padStart(2, "0")}
           </span>
           <Link
-            to={`/v3/work/${ultimo.slug}`}
+            to={`/work/${ultimo.slug}`}
             className="group flex items-center gap-4 border border-white/20 p-3"
             style={{ backdropFilter: "blur(20px)", background: "rgba(13,21,24,0.35)" }}
           >
@@ -135,7 +136,7 @@ function AboutV3() {
   return (
     <section className="relative py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
       <Cantos />
-      <LinhaSecao rotulo="About" acao={{ texto: "More about me", to: "/v3/about" }} />
+      <LinhaSecao rotulo="About" acao={{ texto: "More about me", to: "/about" }} />
       <div
         className="grid grid-cols-12 gap-6"
         style={{ paddingInline: "var(--v3-margem)" }}
@@ -168,11 +169,11 @@ function WorkV3() {
       <LinhaSecao
         rotulo="Selected work"
         extra={`[${String(WORK.length).padStart(2, "0")}]`}
-        acao={{ texto: "Explore all", to: "/v3/work" }}
+        acao={{ texto: "Explore all", to: "/work" }}
       />
       <div ref={trilho} className="v3-trilho" style={{ paddingInline: "var(--v3-margem)" }}>
         {WORK.map((w, i) => (
-          <Link key={w.slug} to={`/v3/work/${w.slug}`} className="group">
+          <Link key={w.slug} to={`/work/${w.slug}`} className="group">
             <span className="relative block overflow-hidden bg-black/5">
               <img
                 src={w.cover.src}
@@ -334,14 +335,7 @@ function GloboV3() {
    Bureau, Neox e Alex Archer têm arte no repo; Fortis, Hōki e Bovine Beats
    vivem só no IG dele. A esteira anda sozinha (marquee CSS), ao contrário do
    carrossel manual do work. Legenda mínima: a régua anti-ruído de 10/08. */
-const ENSAIOS = [
-  { brand: "Fortis", slug: null },
-  { brand: "Bureau", slug: "bureau" },
-  { brand: "Hōki", slug: null },
-  { brand: "Neox", slug: "neox" },
-  { brand: "Alex Archer", slug: "alex-archer" },
-  { brand: "Bovine Beats", slug: null },
-];
+const ENSAIOS = LAB;
 
 function TileLab({ e, i }: { e: (typeof ENSAIOS)[number]; i: number }) {
   const foto = e.slug ? findWork(e.slug)?.cover : undefined;
@@ -397,7 +391,7 @@ function LabV3() {
       <LinhaSecao
         rotulo="AI Lab"
         extra={`[${String(ENSAIOS.length).padStart(2, "0")}]`}
-        acao={{ texto: "Explore the lab", to: "/v3/lab" }}
+        acao={{ texto: "Explore the lab", to: "/lab" }}
       />
       <div className="v3-esteira-caixa">
         <div className="v3-esteira">

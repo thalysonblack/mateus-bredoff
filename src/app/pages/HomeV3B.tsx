@@ -101,7 +101,7 @@ export default function HomeV3B() {
             {WORK.map((w, i) => (
               <li key={w.slug}>
                 <Link
-                  to={`/v3/work/${w.slug}`}
+                  to={`/work/${w.slug}`}
                   onMouseEnter={() => setVivo(i)}
                   onFocus={() => setVivo(i)}
                   className="group flex items-baseline gap-5 border-t border-black/15 py-4"
@@ -151,7 +151,7 @@ export default function HomeV3B() {
           </div>
         </div>
         <div className="pt-10 text-center">
-          <Link to="/v3/work" className="v3-rotulo hover:underline">
+          <Link to="/work" className="v3-rotulo hover:underline">
             All work <span className="v3-seta">↳</span>
           </Link>
         </div>

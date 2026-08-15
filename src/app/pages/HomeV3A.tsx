@@ -66,7 +66,7 @@ export default function HomeV3A() {
           <div>
             <p className="v3-rotulo v3-q pb-3">Mateus Bredoff — Brand Designer</p>
             <Link
-              to={`/v3/work/${ativo.slug}`}
+              to={`/work/${ativo.slug}`}
               className="block uppercase hover:underline"
               style={{
                 fontFamily: "'Geist', ui-sans-serif, sans-serif",
@@ -96,7 +96,7 @@ export default function HomeV3A() {
             return (
               <Link
                 key={w.slug}
-                to={`/v3/work/${w.slug}`}
+                to={`/work/${w.slug}`}
                 className={`group relative block ${cheia ? "col-span-12" : "col-span-6 max-md:col-span-12"}`}
               >
                 <img
@@ -126,7 +126,7 @@ export default function HomeV3A() {
           })}
         </div>
         <div className="pt-6 text-center">
-          <Link to="/v3/work" className="v3-rotulo hover:underline">
+          <Link to="/work" className="v3-rotulo hover:underline">
             All work <span className="v3-seta">↳</span>
           </Link>
         </div>
@@ -148,7 +148,7 @@ export default function HomeV3A() {
           >
             Multidisciplinary designer focused on visual identities — based in Brazil, working worldwide.
           </p>
-          <Link to="/v3/about" className="v3-rotulo col-span-2 col-start-11 self-end text-right hover:underline max-md:col-span-12 max-md:col-start-1 max-md:text-left">
+          <Link to="/about" className="v3-rotulo col-span-2 col-start-11 self-end text-right hover:underline max-md:col-span-12 max-md:col-start-1 max-md:text-left">
             More <span className="v3-seta">↳</span>
           </Link>
         </div>

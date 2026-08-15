@@ -86,7 +86,7 @@ export default function HomeV3C() {
 
         {/* a janela: o último case brilhando na noite */}
         <Link
-          to={`/v3/work/${WORK[0].slug}`}
+          to={`/work/${WORK[0].slug}`}
           className="group relative mx-auto mb-14 block w-[min(880px,86vw)]"
         >
           <img
@@ -96,7 +96,7 @@ export default function HomeV3C() {
             alt={WORK[0].cover.alt}
             width={WORK[0].cover.w}
             height={WORK[0].cover.h}
-            fetchPriority="high"
+            fetchpriority="high"
             draggable={false}
             className="aspect-[16/9] w-full object-cover"
             style={{ boxShadow: `0 0 120px rgba(236,122,71,0.14)` }}
@@ -120,7 +120,7 @@ export default function HomeV3C() {
           <span className="v3-rotulo v3-q">
             Selected work <span className="pl-2 opacity-60">[{String(WORK.length).padStart(2, "0")}]</span>
           </span>
-          <Link to="/v3/work" className="v3-rotulo hover:underline">
+          <Link to="/work" className="v3-rotulo hover:underline">
             All work <span className="v3-seta">↳</span>
           </Link>
         </div>
@@ -132,7 +132,7 @@ export default function HomeV3C() {
             return (
               <Link
                 key={w.slug}
-                to={`/v3/work/${w.slug}`}
+                to={`/work/${w.slug}`}
                 className={`group relative col-span-7 max-md:col-span-12 ${esquerda ? "col-start-1" : "col-start-6"}`}
               >
                 <img

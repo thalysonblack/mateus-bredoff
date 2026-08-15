@@ -1,6 +1,7 @@
 import { useEffect, useRef, type CSSProperties } from "react";
 import { Link } from "react-router";
 import { WORK } from "../content/work";
+import { LAB_CONTADOR } from "../content/lab";
 import { revealLines } from "../animations/reveal";
 import "../styles/v3.css";
 
@@ -68,11 +69,11 @@ export function Hud() {
    não uma home apontando pra páginas de outra direção. */
 export function NavV3() {
   const grupos: { rotulo: string; extra?: string; to: string }[] = [
-    { rotulo: "Work", extra: `[${String(WORK.length).padStart(2, "0")}]`, to: "/v3/work" },
-    { rotulo: "About", to: "/v3/about" },
-    { rotulo: "Lab", extra: "[06]", to: "/v3/lab" },
-    { rotulo: "Services", to: "/v3#services" },
-    { rotulo: "Contact", to: "/v3#contact" },
+    { rotulo: "Work", extra: `[${String(WORK.length).padStart(2, "0")}]`, to: "/work" },
+    { rotulo: "About", to: "/about" },
+    { rotulo: "Lab", extra: `[${LAB_CONTADOR}]`, to: "/lab" },
+    { rotulo: "Services", to: "/#services" },
+    { rotulo: "Contact", to: "/#contact" },
   ];
   return (
     <header
@@ -83,7 +84,7 @@ export function NavV3() {
         className="flex items-start justify-between gap-4 py-4"
         style={{ paddingInline: "var(--v3-margem)" }}
       >
-        <Link to="/v3" className="v3-rotulo">
+        <Link to="/" className="v3-rotulo">
           Mateus Bredoff
         </Link>
         {/* grupos de DOIS itens empilhados, distribuídos pela largura — a
@@ -183,10 +184,10 @@ export function RodapeV3() {
             [Pages]
           </p>
           <ul className="v3-rotulo grid gap-2 pt-5">
-            <li><Link to="/v3" className="hover:underline">Home</Link></li>
-            <li><Link to="/v3/work" className="hover:underline">Work</Link></li>
-            <li><Link to="/v3/about" className="hover:underline">About</Link></li>
-            <li><Link to="/v3/lab" className="hover:underline">Lab</Link></li>
+            <li><Link to="/" className="hover:underline">Home</Link></li>
+            <li><Link to="/work" className="hover:underline">Work</Link></li>
+            <li><Link to="/about" className="hover:underline">About</Link></li>
+            <li><Link to="/lab" className="hover:underline">Lab</Link></li>
             <li><Link to="/v3#services" className="hover:underline">Services</Link></li>
           </ul>
         </nav>
@@ -198,13 +199,13 @@ export function RodapeV3() {
           <ul className="v3-rotulo grid gap-2 pt-5">
             {WORK.slice(0, 4).map((w) => (
               <li key={w.slug}>
-                <Link to={`/v3/work/${w.slug}`} className="hover:underline">
+                <Link to={`/work/${w.slug}`} className="hover:underline">
                   {w.title}
                 </Link>
               </li>
             ))}
             <li>
-              <Link to="/v3/work" className="hover:underline" style={{ color: "var(--v3-quieto)" }}>
+              <Link to="/work" className="hover:underline" style={{ color: "var(--v3-quieto)" }}>
                 All work ↳
               </Link>
             </li>

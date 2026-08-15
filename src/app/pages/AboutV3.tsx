@@ -2,7 +2,7 @@ import { useMetaRota } from "../../hooks/useMetaRota";
 import { Hud, NavV3, LinhaSecao, Display, RodapeV3 } from "../v3-system";
 
 /**
- * `/v3/about` — o sobre na direção "portfólio como visor".
+ * `/about` — o sobre na direção "portfólio como visor".
  *
  * Estrutura própria, não clone da home: manifesto como capa tipográfica,
  * leads em colunas defasadas, números em régua de quatro, e o PROCESSO como

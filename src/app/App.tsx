@@ -89,10 +89,15 @@ function RouteLifecycle() {
 function Layout({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
   /* A barra de metadados vive DENTRO do Hero nas páginas que TÊM hero, e é o
-     Layout que a monta nas rotas internas — se as duas montarem, ela duplica. */
-  /* Toda página da V3 monta a própria NavV3 — o startsWith cobre o site
-     inteiro da direção, senão a barra da réplica montaria em dobro. */
-  const temHeroProprio = pathname === "/" || pathname === "/v2" || pathname.startsWith("/v3");
+     Layout que a monta nas rotas internas — se as duas montarem, ela duplica.
+
+     Desde a promoção, TODA página do site monta a própria `NavV3`. Quem ainda
+     depende desta barra são só as internas da réplica arquivada, e por isso a
+     condição é uma lista de exceção e não uma regra: rota nova nasce sem a
+     barra duplicada, que é o defeito que este trecho existe para evitar.
+     A `/arquivo/framer` (home da réplica) tem hero próprio — a barra com
+     final é justamente o que a exclui. */
+  const barraDaReplica = pathname.startsWith("/arquivo/framer/");
 
   /* O `relative` do <main> é a âncora da barra sobreposta. Sem `z-index`
      junto, não cria stacking context — o `mix-blend` das páginas segue vivo. */
@@ -107,7 +112,7 @@ function Layout({ children }: { children: React.ReactNode }) {
           Sem `z-index` no ancestral de propósito: as páginas usam
           `mix-blend-exclusion` no texto do hero, e um stacking context aqui em
           cima apagaria o blend. O empilhamento vem da ordem do DOM. */}
-      {!temHeroProprio ? (
+      {barraDaReplica ? (
         <div className="pointer-events-none absolute inset-x-0 top-0">
           <div className="pointer-events-auto">
             <Menu />
@@ -144,29 +149,39 @@ export default function App() {
     <BrowserRouter>
       <Layout>
         <Routes>
-          <Route path="/" element={<Home />} />
-          {/* V2: a alternativa de direção própria, viva e montável. `/` é a
-              réplica do Framer; esta é a outra opção sobre a mesa. */}
-          <Route path="/v2" element={<HomeV2 />} />
-          {/* V3: mecânica do noartmusic.com com a matéria do Mateus —
-              direção completa, site inteiro em rotas próprias. */}
-          <Route path="/v3" element={<HomeV3 />} />
-          {/* Rodada de partidos de home (10/08, "a home não agrada" — as 4
-              hipóteses marcadas): três respostas, cada uma com racional
-              próprio, comparáveis em abas. */}
-          <Route path="/v3/a" element={<HomeV3A />} />
-          <Route path="/v3/b" element={<HomeV3B />} />
-          <Route path="/v3/c" element={<HomeV3C />} />
-          <Route path="/v3/about" element={<AboutV3 />} />
-          <Route path="/v3/lab" element={<LabV3 />} />
-          <Route path="/v3/work" element={<WorkIndexV3 />} />
-          <Route path="/v3/work/:slug" element={<CaseV3 />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/work" element={<WorkIndex />} />
-          <Route path="/work/:slug" element={<CaseStudy />} />
-          {/* Slug inexistente cai no próprio CaseStudy, que trata o 404 com a
+          {/* ── O SITE ────────────────────────────────────────────────────
+              A direção "portfólio como visor" (ex-`/v3`) é o site, promovida
+              à raiz em 15/08 — ela era o que ele aprovou e vivia numa rota de
+              laboratório, então o que estava no ar não era o que estava
+              aprovado. As rotas canônicas não mudaram de NOME: `/`, `/about`,
+              `/work`, `/work/:slug` são as mesmas do CMS dele e do original,
+              o que muda é qual componente as monta — por isso `meta.ts` e o
+              pré-render seguem valendo sem uma linha de mudança. */}
+          <Route path="/" element={<HomeV3 />} />
+          <Route path="/about" element={<AboutV3 />} />
+          <Route path="/work" element={<WorkIndexV3 />} />
+          <Route path="/work/:slug" element={<CaseV3 />} />
+          <Route path="/lab" element={<LabV3 />} />
+
+          {/* ── ARQUIVO ───────────────────────────────────────────────────
+              Direção descartada não vira comentário no histórico: vira rota, e
+              as versões se comparam abrindo abas. Fora do pré-render e do
+              sitemap de propósito — é material de estúdio, não página do site.
+              `/arquivo/framer` é a réplica fiel do Framer publicado, que foi a
+              FONTE do conteúdo (medida rota a rota) e continua sendo a régua
+              contra a qual se confere um fato. */}
+          <Route path="/arquivo/framer" element={<Home />} />
+          <Route path="/arquivo/v2" element={<HomeV2 />} />
+          <Route path="/arquivo/a" element={<HomeV3A />} />
+          <Route path="/arquivo/b" element={<HomeV3B />} />
+          <Route path="/arquivo/c" element={<HomeV3C />} />
+          <Route path="/arquivo/framer/about" element={<About />} />
+          <Route path="/arquivo/framer/work" element={<WorkIndex />} />
+          <Route path="/arquivo/framer/work/:slug" element={<CaseStudy />} />
+
+          {/* Slug inexistente cai no próprio case, que trata o 404 com a
               linguagem do site em vez de tela branca. */}
-          <Route path="*" element={<CaseStudy />} />
+          <Route path="*" element={<CaseV3 />} />
         </Routes>
       </Layout>
     </BrowserRouter>

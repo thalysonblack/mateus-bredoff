@@ -85,6 +85,13 @@ const FIXAS: Record<string, MetaRota> = {
     descricao:
       "Selected work by Mateus Bredoff — visual identities, branding and art direction for companies building a clear and memorable presence.",
   },
+  /* Rota que o original não tem: entrou com a direção nova, e por isso o
+     título ganha nome próprio em vez de repetir só o nome do site. */
+  "/lab": {
+    titulo: "Lab",
+    descricao:
+      "AI Lab — visual research by Mateus Bredoff, where brand systems are explored through generative image and 3D before they become identity work.",
+  },
 };
 
 /**
@@ -121,8 +128,10 @@ export function metaDaRota(pathname: string): MetaRota {
  * As rotas que ganham HTML próprio no build.
  *
  * Sai da COLEÇÃO, não de uma lista escrita à mão: case novo em `work.ts` já
- * nasce pré-renderizado. `/v2` fica fora de propósito — é a home autoral viva
- * para comparação, não uma página do site publicado.
+ * nasce pré-renderizado. As rotas de `/arquivo/*` ficam fora de propósito —
+ * são as direções descartadas, mantidas montáveis para comparação em aba, não
+ * páginas do site publicado. Sem HTML próprio elas não aparecem em busca nem
+ * em unfurl, que é exatamente o que se quer de material de estúdio.
  */
 export const ROTAS_PRERENDER = [
   ...Object.keys(FIXAS),

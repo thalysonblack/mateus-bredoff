@@ -4,7 +4,7 @@ import { findWork, WORK } from "../../content/work";
 import { Hud, NavV3, LinhaSecao, RodapeV3, idx } from "../v3-system";
 
 /**
- * `/v3/work/:slug` — UM componente para todos os cases (o schema é a coleção
+ * `/work/:slug` — UM componente para todos os cases (o schema é a coleção
  * de `content/work.ts`, como na réplica: seis páginas quase iguais divergem no
  * primeiro ajuste).
  *
@@ -33,7 +33,7 @@ export default function CaseV3() {
             404
           </p>
           <h1 className="v3-display pt-6">Case not found</h1>
-          <Link to="/v3/work" className="v3-rotulo mt-10 inline-block hover:underline">
+          <Link to="/work" className="v3-rotulo mt-10 inline-block hover:underline">
             Back to index ↳
           </Link>
         </section>
@@ -59,7 +59,7 @@ export default function CaseV3() {
           srcSet={item.cover.src2x ? `${item.cover.src} 1400w, ${item.cover.src2x} 2200w` : undefined}
           sizes="100vw"
           alt={item.cover.alt}
-          fetchPriority="high"
+          fetchpriority="high"
           decoding="async"
           draggable={false}
           className="absolute inset-0 h-full w-full object-cover"
@@ -189,9 +189,9 @@ export default function CaseV3() {
 
       {/* próximo case — o índice continua, nunca termina em beco */}
       <section className="py-20 max-md:py-12">
-        <LinhaSecao rotulo="Next case" acao={{ texto: "View all", to: "/v3/work" }} />
+        <LinhaSecao rotulo="Next case" acao={{ texto: "View all", to: "/work" }} />
         <Link
-          to={`/v3/work/${proximo.slug}`}
+          to={`/work/${proximo.slug}`}
           className="group block border-t border-black/12 pt-8"
           style={{ paddingInline: "var(--v3-margem)" }}
         >
