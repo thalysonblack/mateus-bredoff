@@ -36,7 +36,7 @@ function Campo({ rotulo, children }: { rotulo: string; children: React.ReactNode
 
 function Vizinho({ item }: { item: WorkItem }) {
   return (
-    <Link viewTransition to={`/work/${item.slug}`} className="relative block overflow-hidden">
+    <Link to={`/work/${item.slug}`} className="relative block overflow-hidden">
       <div className="w-full" style={{ aspectRatio: "764 / 520" }}>
         <img
           src={item.cover.src}
@@ -90,7 +90,7 @@ export default function CaseStudy() {
           <div>
             <p className="fr-secao-rotulo text-[var(--fr-cinza)]">404</p>
             <h1 className="fr-case-titulo pt-3">Case não encontrado</h1>
-            <Link viewTransition to="/work" className="fr-link-quieto text-[var(--fr-cinza)] mt-8 inline-block">
+            <Link to="/work" className="fr-link-quieto text-[var(--fr-cinza)] mt-8 inline-block">
               View All
             </Link>
           </div>
@@ -245,7 +245,7 @@ export default function CaseStudy() {
       <section className="pt-[160px] pb-[120px]" style={{ paddingInline: "var(--fr-margem)" }}>
         <div className="flex items-start justify-between gap-6">
           <h2 className="fr-manchete-case text-white mix-blend-exclusion">Other Projects</h2>
-          <Link viewTransition to="/work" className="fr-link-quieto text-[var(--fr-cinza)] shrink-0">
+          <Link to="/work" className="fr-link-quieto text-[var(--fr-cinza)] shrink-0">
             View All
           </Link>
         </div>

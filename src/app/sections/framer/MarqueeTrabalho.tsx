@@ -44,7 +44,7 @@ const CALHA = 24;
 
 function Card({ item }: { item: (typeof WORK)[number] }) {
   return (
-    <Link viewTransition
+    <Link
       to={`/work/${item.slug}`}
       className="relative block shrink-0 overflow-hidden"
       style={{ width: CARD_W, height: CARD_H }}

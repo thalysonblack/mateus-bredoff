@@ -128,7 +128,7 @@ export default function RodapeFramer() {
 
           <nav aria-label="Navegação do rodapé" className="self-start">
             {NAV.map((n) => (
-              <Link viewTransition
+              <Link
                 key={n.label}
                 to={n.to}
                 /* Alinhado ao TOPO, não centrado: o item tem 55px de altura, mas o

@@ -35,7 +35,7 @@ export default function CaseV3() {
             404
           </p>
           <h1 className="v3-display pt-6">Case not found</h1>
-          <Link viewTransition to="/work" className="v3-rotulo mt-10 inline-block hover:underline">
+          <Link to="/work" className="v3-rotulo mt-10 inline-block hover:underline">
             Back to index ↳
           </Link>
         </section>
@@ -192,7 +192,7 @@ export default function CaseV3() {
       {/* próximo case — o índice continua, nunca termina em beco */}
       <section className="py-20 max-md:py-12">
         <LinhaSecao rotulo="Next case" acao={{ texto: "View all", to: "/work" }} />
-        <Link viewTransition
+        <Link
           to={`/work/${proximo.slug}`}
           className="group block border-t border-black/12 pt-8"
           style={{ paddingInline: "var(--v3-margem)" }}

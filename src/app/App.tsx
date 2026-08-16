@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router";
 import { initLenis, destroyLenis, scrollToTop, scrollToElement } from "../lib/lenis";
 import { ScrollTrigger } from "../lib/gsap";
 import Menu from "./sections/Menu";
+import TransicaoRota from "./TransicaoRota";
 import Home from "./pages/Home";
 import WorkIndex from "./pages/WorkIndex";
 import CaseStudy from "./pages/CaseStudy";
@@ -101,6 +102,8 @@ function Layout({ children }: { children: React.ReactNode }) {
   return (
     <main className="relative antialiased">
       <RouteLifecycle />
+      {/* o obturador do visor — ver app/TransicaoRota.tsx */}
+      <TransicaoRota />
       {/* A barra é SOBREPOSTA, não faz parte do fluxo.
           No original ela flutua sobre o hero de cada rota; aqui ela estava no
           fluxo e empurrava a página inteira 57px para baixo (117px no mobile).
