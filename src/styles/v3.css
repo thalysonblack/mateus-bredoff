@@ -391,6 +391,29 @@ button:hover .v3-prox { transform: translateX(3px); }
   .v3-seta-cta { transition: none; }
 }
 
+/* Peça do enxame de Selected Work (ver `sections/WorkEnxame.tsx`).
+   A transição cobre transform E opacity porque as duas mudam juntas no hover —
+   a peça vem para a frente crescendo e clareando ao mesmo tempo, que é o que
+   lê como profundidade. `will-change` fica de fora de propósito: são sete
+   elementos já promovidos pelo parallax do ScrollTrigger, e promover de novo
+   só gasta memória de vídeo. */
+.v3-peca {
+  transition: opacity 0.35s ease-out, filter 0.35s ease-out;
+}
+.v3-peca:hover {
+  filter: none;
+}
+.v3-peca:hover span:first-child {
+  transform: scale(1.03);
+}
+.v3-peca span:first-child {
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  display: block;
+}
+@media (prefers-reduced-motion: reduce) {
+  .v3-peca, .v3-peca span:first-child { transition: none; }
+}
+
 /* Tile de ensaio do AI Lab. Ele virou link em 15/08 e um link tem de PARECER
    clicável — o estado de hover é a única coisa que informa isso antes do
    clique. A peça sobe 3px e o foco de canto trava nela; a legenda embaixo fica

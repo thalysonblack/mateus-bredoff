@@ -177,6 +177,10 @@ export default function App() {
               tela cheia é dela. Rota de arquivo se mantém enquanto responde uma
               pergunta; deixar as três seria guardar pergunta já respondida.
               Voltam com `git show 5309550` se algum dia forem precisas. */}
+          {/* A alternativa de Selected Work: a mesma home com a seção em
+              ENXAME em vez da tira com snap. Rota, e não branch, porque é assim
+              que se compara aqui — duas abas lado a lado. */}
+          <Route path="/arquivo/enxame" element={<HomeV3 work="enxame" />} />
           <Route path="/arquivo/framer" element={<Home />} />
           <Route path="/arquivo/v2" element={<HomeV2 />} />
           <Route path="/arquivo/framer/about" element={<About />} />

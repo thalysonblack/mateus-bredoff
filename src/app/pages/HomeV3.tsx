@@ -6,6 +6,7 @@ import { TIERS } from "../sections/Pricing";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Hud, NavV3, LinhaSecao, Display, RodapeV3, Cantos, idx } from "../v3-system";
 import GloboTerra from "../sections/GloboTerra";
+import WorkEnxame from "../sections/WorkEnxame";
 import { useCraft } from "../../hooks/useCraft";
 
 /**
@@ -608,7 +609,13 @@ function ServicosV3() {
   );
 }
 
-export default function HomeV3() {
+/**
+ * A home. `work="enxame"` troca APENAS a seção Selected Work pela dispersão de
+ * `sections/WorkEnxame` — é o que permite comparar os dois partidos em duas
+ * abas sem duplicar a página inteira (e sem que as duas cópias comecem a
+ * divergir no dia seguinte). Todo o resto é literalmente o mesmo componente.
+ */
+export default function HomeV3({ work = "tira" }: { work?: "tira" | "enxame" } = {}) {
   useMetaRota();
   /* os gestos de scroll da página — ver `animations/craft.ts` e `useCraft` */
   const raiz = useCraft();
@@ -619,7 +626,7 @@ export default function HomeV3() {
       <NavV3 />
       <HeroV3 />
       <AboutV3 />
-      <WorkV3 />
+      {work === "enxame" ? <WorkEnxame /> : <WorkV3 />}
       <GloboV3 />
       <LabV3 />
       <ServicosV3 />
