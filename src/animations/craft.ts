@@ -9,9 +9,9 @@ import { gsap, ScrollTrigger } from "../lib/gsap";
  * documento em movimento. Aqui estão os três gestos que atravessam o site,
  * declarados por atributo — nenhum componente precisa saber que o GSAP existe:
  *
+ *   data-foca              o BLOCO ENTRA FORA DE FOCO e a lente resolve
  *   data-parallax="0.12"   a peça anda mais devagar que a página → profundidade
  *   data-fio               o fio de seção se DESENHA da esquerda para a direita
- *   data-entra             o bloco sobe e aparece, escalonado entre irmãos
  *
  * ## As três regras que este arquivo obedece (todas custaram caro no repo)
  *
@@ -88,23 +88,52 @@ export function ligarCraft(raiz: HTMLElement | Document = document): CraftHandle
     if (st) triggers.push(st);
   });
 
-  /* ── 3. entrada escalonada ──────────────────────────────────────────────
-     Os filhos diretos marcados sobem juntos, com um atraso curto entre eles.
-     ⚠ 0.06s de stagger, não 0.2: acima disso o último item chega DEPOIS de a
-     pessoa já ter lido o primeiro, e a seção parece lenta em vez de coreografada. */
-  raiz.querySelectorAll<HTMLElement>("[data-entra]").forEach((grupo) => {
+  /* ── 3. O FOCO — o gesto de entrada do site ─────────────────────────────
+     Isto substituiu um `fade + translateY` escalonado, que o Thalyson recusou
+     em 16/08 ("não gostei, digo os efeitos, transições"). E a recusa era certa:
+     subir 26px e aparecer é o pacote que vem com qualquer biblioteca de scroll.
+     Não dizia nada sobre ESTE site.
+
+     Gravando a referência quadro a quadro (`scripts/gravar-ref.mjs`) ficou claro
+     o que o screenshot escondia: no bleibtgleich cada palavra **nasce borrada e
+     se resolve**. O filtro é `feGaussianBlur stdDeviation=19.45` +
+     `feColorMatrix` com alpha 20/−8, e o valor fracionário denuncia que o
+     stdDeviation está sendo ANIMADO a cada frame. A aparência líquida é o
+     threshold de alpha; o mecanismo por baixo é desfoque que resolve.
+
+     Aqui o threshold não entra — gota orgânica é a matéria da identidade dele.
+     Fica o mecanismo, dito no vocabulário deste site: o sistema inteiro se
+     apresenta como um VISOR (crop marks no HUD, marcas de foco de quatro cantos
+     em cada peça, "o portfólio como visor"), e um visor tem exatamente um
+     gesto — **focar**. A peça entra fora de foco e a lente resolve. É a
+     promessa que a moldura já fazia e que o movimento nunca cumpria.
+
+     ⚠ `blur` é filtro de composição e custa caro em área grande. Três defesas:
+     `once: true` (nunca re-anima), `will-change` ligado só durante a animação
+     (mantê-lo aceso reserva memória de vídeo para sempre), e o filtro REMOVIDO
+     no fim em vez de deixado em `blur(0)` — zero ainda paga o custo da camada. */
+  raiz.querySelectorAll<HTMLElement>("[data-foca]").forEach((grupo) => {
     const filhos = Array.from(grupo.children) as HTMLElement[];
     if (!filhos.length) return;
     const st = gsap.fromTo(
       filhos,
-      { y: 26, autoAlpha: 0 },
+      { filter: "blur(13px)", autoAlpha: 0, scale: 1.035 },
       {
-        y: 0,
+        filter: "blur(0px)",
         autoAlpha: 1,
-        duration: 0.7,
+        scale: 1,
+        duration: 0.95,
+        /* a lente para de girar antes de chegar: quase todo o percurso acontece
+           no primeiro terço, e o resto é o assentamento */
         ease: "power3.out",
-        stagger: 0.06,
-        scrollTrigger: { trigger: grupo, start: "top 88%", once: true },
+        stagger: 0.07,
+        onStart: () => filhos.forEach((f) => (f.style.willChange = "filter, transform, opacity")),
+        onComplete: () =>
+          filhos.forEach((f) => {
+            f.style.willChange = "";
+            f.style.filter = "";
+          }),
+        scrollTrigger: { trigger: grupo, start: "top 86%", once: true },
       },
     ).scrollTrigger;
     if (st) triggers.push(st);

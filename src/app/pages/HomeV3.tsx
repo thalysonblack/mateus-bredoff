@@ -174,7 +174,7 @@ function WorkV3() {
         extra={`[${String(WORK.length).padStart(2, "0")}]`}
         acao={{ texto: "Explore all", to: "/work" }}
       />
-      <div ref={trilho} className="v3-trilho" style={{ paddingInline: "var(--v3-margem)" }}>
+      <div ref={trilho} data-foca className="v3-trilho" style={{ paddingInline: "var(--v3-margem)" }}>
         {WORK.map((w, i) => (
           <Link key={w.slug} to={`/work/${w.slug}`} className="group">
             <span className="relative block overflow-hidden bg-black/5">
@@ -306,7 +306,7 @@ function GloboV3() {
 
         {/* os dois relógios: o dele e o de quem está lendo */}
         <div className="col-span-4 col-start-9 self-start pt-6 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-10">
-          <div className="grid grid-cols-2 gap-x-6 border-t border-black/12 pt-4" data-entra>
+          <div className="grid grid-cols-2 gap-x-6 border-t border-black/12 pt-4" data-foca>
             <div>
               <p className="v3-micro" style={{ color: "var(--v3-quieto)" }}>
                 His time
@@ -521,7 +521,7 @@ function ServicosV3() {
         style={{ paddingInline: "var(--v3-margem)" }}
       >
         {/* as faixas */}
-        <div className="col-span-8 max-lg:col-span-12" data-entra>
+        <div className="col-span-8 max-lg:col-span-12" data-foca>
           {TIERS.map((t, i) => (
             <a
               key={t.name}
