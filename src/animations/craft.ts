@@ -169,7 +169,11 @@ export function ligarCraft(raiz: HTMLElement | Document = document): CraftHandle
       });
     };
     secoes.forEach((sec) => {
-      const nome = sec.dataset.secao || "";
+      /* ⚠ A capa não se nomeia. Na primeira tela o visor escrevia "INDEX"
+         bem no meio do nome que sangra pela base — duas tipografias disputando
+         o mesmo eixo. E o argumento não é só de colisão: o visor existe para
+         dizer o que está enquadrado, e na capa o enquadramento JÁ É o nome. */
+      const nome = sec.dataset.secao === "Index" ? "" : sec.dataset.secao || "";
       const st = ScrollTrigger.create({
         trigger: sec,
         start: "top center",

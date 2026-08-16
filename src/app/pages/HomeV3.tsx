@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { WORK, findWork } from "../../content/work";
+import portrait1600 from "../../assets/optimized/hero-portrait-1600.webp";
+import portrait3200 from "../../assets/optimized/hero-portrait-3200.webp";
 import { LAB } from "../../content/lab";
+import { RECONHECIMENTO } from "../../content/reconhecimento";
 import { TIERS } from "../sections/Pricing";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Hud, NavV3, LinhaSecao, Display, RodapeV3, Cantos, idx } from "../v3-system";
@@ -43,57 +46,52 @@ const LEAD_BRASIL =
    direito. O retrato saiu da home (mora no /about); quem abre o site é o
    trabalho. */
 function HeroV3() {
-  const [capa, setCapa] = useState(0);
-  useEffect(() => {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = setInterval(() => setCapa((c) => (c + 1) % WORK.length), 3600);
-    return () => clearInterval(id);
-  }, []);
   const ultimo = WORK[0];
   return (
-    <section data-secao="Index" className="relative flex h-[100dvh] min-h-[36rem] w-full flex-col justify-end overflow-clip" style={{ background: "#0d1518" }}>
-      {WORK.map((w, i) => (
-        <img
-          key={w.slug}
-          src={w.cover.src}
-          srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
-          sizes="100vw"
-          alt={w.cover.alt}
-          width={w.cover.w}
-          height={w.cover.h}
-          draggable={false}
-          className="absolute inset-0 h-full w-full select-none object-cover transition-opacity duration-700"
-          style={{ opacity: i === capa ? 1 : 0 }}
-        />
-      ))}
+    <section
+      data-secao="Index"
+      className="relative flex h-[100dvh] min-h-[36rem] w-full flex-col justify-end overflow-clip"
+      style={{
+        /* ⚠ Cores AMOSTRADAS do arquivo do retrato, não escolhidas a olho: a
+           foto já é um gradiente petróleo→claro, e qualquer área que sobre no
+           `cover` casa sem emenda. Recriar um gradiente por baixo de foto com
+           fundo opaco é o erro que esta linha existe para não repetir. */
+        background:
+          "linear-gradient(180deg, #18373f 0%, #486067 25%, #8d9ca1 50%, #d4d8da 85%, #eceded 100%)",
+      }}
+    >
+      {/* O retrato como AMBIENTE — de volta em 16/08 a pedido dele ("a foto da
+          hero deixa a dele mesmo como já tínhamos"). Ele havia saído na fusão de
+          10/08, quando o hero passou a ser as capas trocando.
 
-      {/* véu de leitura na base — as capas variam de tom, o texto não */}
+          As duas aprovações convivem: volta a MATÉRIA que ele aprovou (o
+          retrato-ambiente do site publicado dele) dentro da ANATOMIA que ele
+          aprovou depois (nome no centro em blend, manifesto na base à esquerda,
+          card do último case à direita). O que saiu foi só o contador de capas,
+          que não tem mais o que contar.
+
+          O zoom lento faz o papel que o vídeo faz na referência: a primeira tela
+          respira sem pedir nada de quem chega. */}
+      <img
+        src={portrait1600}
+        srcSet={`${portrait1600} 1600w, ${portrait3200} 3200w`}
+        sizes="100vw"
+        alt="Mateus Bredoff"
+        width={1600}
+        height={850}
+        draggable={false}
+        className="v3-hero-foto absolute inset-0 h-full w-full select-none object-cover"
+      />
+
+      {/* véu de leitura na base — o retrato varia de tom, o texto não */}
       <div
         className="pointer-events-none absolute inset-x-0 bottom-0 h-72"
         style={{ background: "linear-gradient(0deg, rgba(13,21,24,0.78), transparent)" }}
         aria-hidden="true"
       />
 
-      {/* nome — CENTRO da tela, o lugar do logo na referência; exclusion
-          mescla contra qualquer arte que estiver passando */}
-      <h1
-        className="pointer-events-none absolute inset-0 flex items-center justify-center text-center text-white"
-        style={{
-          mixBlendMode: "exclusion",
-          fontFamily: "'Geist', ui-sans-serif, sans-serif",
-          fontWeight: 700,
-          fontSize: "clamp(40px, 7.4vw, 118px)",
-          lineHeight: 0.86,
-          letterSpacing: "-0.03em",
-          textTransform: "uppercase",
-        }}
-      >
-        Mateus Bredoff
-      </h1>
-
-      {/* telemetria da base — sempre creme: o véu garante o fundo */}
       <div
-        className="relative flex items-end justify-between gap-6 pb-12 max-md:flex-col max-md:items-start max-md:gap-8 max-md:pb-10"
+        className="relative flex items-end justify-between gap-6 pb-8 max-md:flex-col max-md:items-start max-md:gap-8 max-md:pb-6"
         style={{ paddingInline: "var(--v3-margem)", color: "var(--fr-creme)" }}
       >
         <div>
@@ -102,11 +100,6 @@ function HeroV3() {
         </div>
 
         <div className="flex shrink-0 flex-col items-end gap-3 max-md:items-start">
-          <span className="v3-rotulo tabular-nums" style={{ opacity: 0.7 }}>
-            <span style={{ color: "var(--v3-acento-tinta)" }}>{`[${String(capa + 1).padStart(2, "0")}]`}</span>
-            {" / "}
-            {String(WORK.length).padStart(2, "0")}
-          </span>
           <Link
             to={`/work/${ultimo.slug}`}
             className="group flex items-center gap-4 border border-white/20 p-3"
@@ -130,6 +123,37 @@ function HeroV3() {
           </Link>
         </div>
       </div>
+
+      {/* ⚠ O NOME SANGRA PELA BASE, e isto não é escolha de composição: é a
+          única faixa livre desta foto.
+
+          Quando o hero eram as capas trocando, o nome ficava no CENTRO — a
+          anatomia da referência, e ali o fundo era arte, então o centro era
+          neutro. Com o retrato de volta, o centro da tela é o ROSTO DELE: na
+          primeira montagem o "MATEUS BREDOFF" cruzou o nariz e a boca do
+          cliente. Já cometi este erro antes e ele está anotado — texto sobre
+          foto se resolve medindo a faixa livre contra a cabeça, nunca herdando
+          a posição que funcionava com outro fundo.
+
+          A base é livre (ombro e fundo claro), é onde o site publicado dele já
+          punha o nome, e é o que ele quis dizer com "como já tínhamos".
+          `exclusion` e não `difference`: sobre pele o exclusion amacia o
+          meio-tom. */}
+      <h1
+        className="pointer-events-none relative w-full text-center text-white"
+        style={{
+          mixBlendMode: "exclusion",
+          fontFamily: "'Geist', ui-sans-serif, sans-serif",
+          fontWeight: 700,
+          fontSize: "var(--v3-nome)",
+          lineHeight: 0.82,
+          letterSpacing: "-0.03em",
+          textTransform: "uppercase",
+          marginBottom: "-0.06em",
+        }}
+      >
+        Mateus Bredoff
+      </h1>
     </section>
   );
 }
@@ -609,6 +633,91 @@ function ServicosV3() {
   );
 }
 
+
+/* ── reconhecimento: a única TABELA da página ─────────────────────────────
+   Pedido de 16/08 — "a home ainda é curta, mais respiro, mais coisas pela
+   grandiosidade dele; um projeto dele estava na Abduzeedo". É a seção que diz o
+   que o portfólio não pode dizer sobre si mesmo: que outra gente escolheu
+   mostrar aquele trabalho.
+
+   Estrutura de REGISTRO, com cabeçalho de coluna — e é a única da página. Hero
+   em tela cheia, about em duas colunas, work em tira, globo no centro, lab em
+   esteira, services em faixa: a régua de nunca repetir a estrutura da vizinha
+   ainda vale, e uma lista de publicações é literalmente uma tabela de
+   ocorrências. Ano à esquerda porque é por ele que se lê uma trajetória.
+
+   ⚠ Item sem `href` vira RÓTULO, não link morto — ver a régua em
+   `content/reconhecimento.ts`. O World Brand Design fechou atrás de senha e a
+   matéria continua sendo fato; o que não pode é o site prometer um clique que
+   entrega uma tela de login. */
+function ReconhecimentoV3() {
+  return (
+    <section
+      data-secao="Recognition"
+      className="relative py-28 max-md:py-14"
+      style={{ background: "var(--fr-petroleo)", color: "var(--fr-creme)" }}
+    >
+      <LinhaSecao
+        rotulo="Recognition"
+        extra={`[${String(RECONHECIMENTO.length).padStart(2, "0")}]`}
+      />
+
+      <div style={{ paddingInline: "var(--v3-margem)" }}>
+        <div className="max-w-[52ch] pb-16 max-md:pb-10">
+          <Display>Published by people who had no reason to</Display>
+        </div>
+
+        {/* cabeçalho de coluna: o vernáculo de tabela de registro */}
+        <div
+          className="v3-micro grid grid-cols-12 gap-6 border-b pb-3 max-md:hidden"
+          style={{ color: "var(--v3-quieto-tinta)", borderColor: "rgba(237,230,225,0.22)" }}
+        >
+          <span className="col-span-1">Year</span>
+          <span className="col-span-3">Published in</span>
+          <span className="col-span-6">Feature</span>
+          <span className="col-span-2 text-right">Project</span>
+        </div>
+
+        <ul data-foca>
+          {RECONHECIMENTO.map((r) => {
+            const linha = (
+              <>
+                <span className="v3-rotulo col-span-1 tabular-nums max-md:col-span-2" style={{ color: "var(--v3-acento-tinta)" }}>
+                  {r.ano}
+                </span>
+                <span className="v3-reconhece col-span-3 max-md:col-span-10">{r.veiculo}</span>
+                <span className="v3-mono col-span-6 self-center max-md:col-span-12 max-md:pt-1" style={{ color: "var(--v3-quieto-tinta)" }}>
+                  {r.titulo}
+                </span>
+                <span className="v3-rotulo col-span-2 self-center text-right max-md:col-span-12 max-md:pt-1 max-md:text-left" style={{ color: "var(--v3-quieto-tinta)" }}>
+                  {r.projeto}
+                  {r.href ? <span className="v3-seta pl-2">↳</span> : null}
+                </span>
+              </>
+            );
+            const classe =
+              "v3-registro grid grid-cols-12 items-baseline gap-6 border-b py-6 max-md:grid-cols-12 max-md:gap-y-1 max-md:py-5";
+            const estilo = { borderColor: "rgba(237,230,225,0.22)" };
+            return (
+              <li key={`${r.veiculo}-${r.projeto}`}>
+                {r.href ? (
+                  <a href={r.href} target="_blank" rel="noopener noreferrer" className={`group ${classe}`} style={estilo}>
+                    {linha}
+                  </a>
+                ) : (
+                  <span className={classe} style={estilo}>
+                    {linha}
+                  </span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 /**
  * A home. `work="enxame"` troca APENAS a seção Selected Work pela dispersão de
  * `sections/WorkEnxame` — é o que permite comparar os dois partidos em duas
@@ -628,6 +737,7 @@ export default function HomeV3({ work = "tira" }: { work?: "tira" | "enxame" } =
       <AboutV3 />
       {work === "enxame" ? <WorkEnxame /> : <WorkV3 />}
       <GloboV3 />
+      <ReconhecimentoV3 />
       <LabV3 />
       <ServicosV3 />
       <RodapeV3 />

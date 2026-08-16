@@ -116,7 +116,42 @@ cdp.on('Page.screencastFrame', async ({ data, sessionId }) => {
 await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 70, everyNthFrame: 1 });
 
 /* ── a cena ──────────────────────────────────────────────────────────────── */
-if (cena === 'hover') {
+if (cena === 'click') {
+  /* A cena de TRANSIÇÃO DE PÁGINA. É a que mais precisa de gravação: dura menos
+     de um segundo, acontece uma vez, e nenhum screenshot a alcança — quando a
+     foto sai, ou a página velha ainda está inteira ou a nova já chegou.
+     ⚠ `page.click()` do puppeteer espera o elemento e pode perder o início da
+     animação; o clique vai por mouse real nas coordenadas medidas, e a gravação
+     já está rodando antes dele. */
+  /* ⚠ Achar o link por TEXTO é o que funciona na prática. Demo do Codrops usa
+     classes iguais em todos os links (`a.links`), então `:nth-of-type` erra
+     quando eles não são irmãos diretos — e o script silenciosamente não clica,
+     o screencast não recebe quadro nenhum (só manda frame quando a tela muda) e
+     a gravação sai vazia parecendo que o site não anima. */
+  const texto = opt('texto', null);
+  let alvo = null;
+  if (texto) {
+    const handles = await page.$$('a');
+    for (const h of handles) {
+      const t = (await h.evaluate((e) => e.innerText || '')).trim().toUpperCase();
+      if (t.includes(texto.toUpperCase())) { alvo = h; break; }
+    }
+  }
+  if (!alvo) alvo = seletor ? await page.$(seletor) : await page.$('a[href]:not([href^="#"])');
+  if (!alvo) {
+    console.error('não achei link para clicar — passe --seletor ou --texto');
+  } else {
+    const box = await alvo.boundingBox();
+    await new Promise((r) => setTimeout(r, 500));
+    if (box) {
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 6 });
+      await new Promise((r) => setTimeout(r, 250));
+      await page.mouse.down();
+      await page.mouse.up();
+    }
+  }
+  await new Promise((r) => setTimeout(r, dur));
+} else if (cena === 'hover') {
   const alvo = seletor ? await page.$(seletor) : null;
   if (alvo) {
     const box = await alvo.boundingBox();
