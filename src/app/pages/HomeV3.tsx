@@ -100,7 +100,7 @@ function HeroV3() {
         </div>
 
         <div className="flex shrink-0 flex-col items-end gap-3 max-md:items-start">
-          <Link
+          <Link viewTransition
             to={`/work/${ultimo.slug}`}
             className="group flex items-center gap-4 border border-white/20 p-3"
             style={{ backdropFilter: "blur(20px)", background: "rgba(13,21,24,0.35)" }}
@@ -200,7 +200,7 @@ function WorkV3() {
       />
       <div ref={trilho} data-foca className="v3-trilho" style={{ paddingInline: "var(--v3-margem)" }}>
         {WORK.map((w, i) => (
-          <Link key={w.slug} to={`/work/${w.slug}`} className="group">
+          <Link viewTransition key={w.slug} to={`/work/${w.slug}`} className="group">
             <span className="relative block overflow-hidden bg-black/5">
               <img
                 src={w.cover.src}
@@ -390,7 +390,7 @@ const ENSAIOS = LAB;
 function TileLab({ e, i }: { e: (typeof ENSAIOS)[number]; i: number }) {
   const foto = e.slug ? findWork(e.slug)?.cover : undefined;
   return (
-    <Link
+    <Link viewTransition
       to={e.slug ? `/work/${e.slug}` : "/lab"}
       aria-label={`${e.brand} — ${e.discipline}`}
       className="v3-tile group relative block w-[340px] flex-none max-md:w-[240px]"

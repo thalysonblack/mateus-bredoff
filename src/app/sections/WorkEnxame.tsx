@@ -131,7 +131,7 @@ export default function WorkEnxame() {
           const p = POSES[i % POSES.length];
           const naFrente = frente === w.slug;
           return (
-            <Link
+            <Link viewTransition
               key={w.slug}
               to={`/work/${w.slug}`}
               data-peca

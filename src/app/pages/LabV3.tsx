@@ -119,7 +119,7 @@ export default function LabV3() {
         {/* o contact sheet — foto pura, sem legenda, como a referência */}
         <div className="grid grid-cols-12 gap-x-6 gap-y-24 max-lg:gap-y-10 max-md:grid-cols-2 max-md:gap-x-3" style={{ paddingInline: "var(--v3-margem)" }}>
           {QUADROS.map((q, i) => (
-            <Link
+            <Link viewTransition
               key={`${q.img.src}-${i}`}
               to={`/work/${q.slug}`}
               className={`group relative block max-md:col-span-1 max-md:col-start-auto max-md:m-0 ${q.classe}`}

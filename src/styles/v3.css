@@ -391,6 +391,48 @@ button:hover .v3-prox { transform: translateX(3px); }
   .v3-seta-cta { transition: none; }
 }
 
+/* ── TRANSIÇÃO ENTRE PÁGINAS ──────────────────────────────────────────────
+   Pedida com a referência do Codrops (`async-page-transitions`). Gravei o demo
+   quadro a quadro com `scripts/gravar-ref.mjs --cena click`, e a mecânica de lá
+   tem três coisas acontecendo juntas: uma barra atravessa o topo, o numeral
+   gigante SOBE de baixo, e as linhas de dados entram como esqueleto que se
+   preenche. Esse esqueleto é o assunto do demo — a transição é assíncrona
+   porque cobre o tempo de BUSCAR o conteúdo.
+
+   ⚠ Aqui não há o que buscar: o site é SPA e a página seguinte já está no
+   bundle. Copiar o esqueleto seria encenar uma espera que não existe — mentira
+   de interface. O que se empresta é a direção do movimento (a página nova
+   chega de baixo) casada com o gesto que este site já tem: FOCAR.
+
+   Implementado com a View Transitions API nativa, via `<Link viewTransition>`
+   do react-router 7.13 — não com overlay orquestrado à mão. São ~20 linhas de
+   CSS contra um componente de transição inteiro, e o navegador tira o snapshot
+   sozinho, no frame certo. Onde não houver suporte (Firefox), a navegação
+   acontece direto: degradação sem código extra.
+
+   ⚠ Sem `::view-transition-group(root) { animation: none }` as duas camadas
+   fazem cross-fade por cima do que eu animo, e o resultado fica lavado. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+  ::view-transition-old(root) {
+    animation: v3-pag-sai 300ms cubic-bezier(0.4, 0, 1, 1) forwards;
+  }
+  ::view-transition-new(root) {
+    animation: v3-pag-entra 560ms cubic-bezier(0.16, 1, 0.3, 1) 60ms both;
+  }
+}
+@keyframes v3-pag-sai {
+  to { opacity: 0; filter: blur(9px); transform: scale(0.99); }
+}
+@keyframes v3-pag-entra {
+  from { opacity: 0; filter: blur(14px); transform: translateY(26px) scale(1.008); }
+  to   { opacity: 1; filter: blur(0);    transform: none; }
+}
+
 /* O retrato do hero, respirando. Faz o papel que o vídeo faz na referência: a
    primeira tela tem vida sem pedir nada de quem chega.
    ⚠ 24s e 1.06 de escala — devagar e curto de propósito. Zoom que se percebe

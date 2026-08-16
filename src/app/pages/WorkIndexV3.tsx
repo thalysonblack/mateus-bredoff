@@ -67,7 +67,7 @@ export default function WorkIndexV3() {
             <ol className="grid gap-3">
               {WORK.map((w, i) => (
                 <li key={w.slug} style={quieto(i === ativo)}>
-                  <Link to={`/work/${w.slug}`} className="v3-rotulo flex items-baseline gap-3 hover:underline">
+                  <Link viewTransition to={`/work/${w.slug}`} className="v3-rotulo flex items-baseline gap-3 hover:underline">
                     <span className="v3-micro" style={{ color: "var(--v3-acento)" }}>
                       {idx(i)}
                     </span>
@@ -91,7 +91,7 @@ export default function WorkIndexV3() {
               className="flex min-h-[74svh] items-center justify-center py-10"
               style={quieto(i === ativo)}
             >
-              <Link to={`/work/${w.slug}`} className="group relative block w-full">
+              <Link viewTransition to={`/work/${w.slug}`} className="group relative block w-full">
                 <img
                   src={w.cover.src}
                   srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
@@ -132,7 +132,7 @@ export default function WorkIndexV3() {
         </p>
         <div className="grid gap-12">
           {WORK.map((w, i) => (
-            <Link key={w.slug} to={`/work/${w.slug}`} className="block">
+            <Link viewTransition key={w.slug} to={`/work/${w.slug}`} className="block">
               <img
                 src={w.cover.src}
                 sizes="92vw"

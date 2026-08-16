@@ -93,7 +93,7 @@ export function NavV3() {
         className="flex items-start justify-between gap-4 py-4"
         style={{ paddingInline: "var(--v3-margem)" }}
       >
-        <Link to="/" className="v3-rotulo">
+        <Link viewTransition to="/" className="v3-rotulo">
           Mateus Bredoff
         </Link>
         {/* grupos de DOIS itens empilhados, distribuídos pela largura — a
@@ -102,7 +102,7 @@ export function NavV3() {
           {[grupos.slice(0, 2), grupos.slice(2, 4), grupos.slice(4)].map((col, ci) => (
             <div key={ci} className="flex flex-col gap-1">
               {col.map((g) => (
-                <Link key={g.rotulo} to={g.to} className="v3-rotulo v3-qh">
+                <Link viewTransition key={g.rotulo} to={g.to} className="v3-rotulo v3-qh">
                   {g.rotulo}
                   {g.extra ? <span className="pl-2 opacity-60">{g.extra}</span> : null}
                 </Link>
@@ -149,7 +149,7 @@ export function LinhaSecao({
           {extra ? <span className="pl-2 opacity-60">{extra}</span> : null}
         </span>
         {acao ? (
-          <Link to={acao.to} className="v3-rotulo underline-offset-4 hover:underline">
+          <Link viewTransition to={acao.to} className="v3-rotulo underline-offset-4 hover:underline">
             {acao.texto} <span className="v3-seta">↳</span>
           </Link>
         ) : null}
@@ -197,11 +197,11 @@ export function RodapeV3() {
             [Pages]
           </p>
           <ul className="v3-rotulo grid gap-2 pt-5">
-            <li><Link to="/" className="hover:underline">Home</Link></li>
-            <li><Link to="/work" className="hover:underline">Work</Link></li>
-            <li><Link to="/about" className="hover:underline">About</Link></li>
-            <li><Link to="/lab" className="hover:underline">Lab</Link></li>
-            <li><Link to="/v3#services" className="hover:underline">Services</Link></li>
+            <li><Link viewTransition to="/" className="hover:underline">Home</Link></li>
+            <li><Link viewTransition to="/work" className="hover:underline">Work</Link></li>
+            <li><Link viewTransition to="/about" className="hover:underline">About</Link></li>
+            <li><Link viewTransition to="/lab" className="hover:underline">Lab</Link></li>
+            <li><Link viewTransition to="/v3#services" className="hover:underline">Services</Link></li>
           </ul>
         </nav>
 
@@ -212,13 +212,13 @@ export function RodapeV3() {
           <ul className="v3-rotulo grid gap-2 pt-5">
             {WORK.slice(0, 4).map((w) => (
               <li key={w.slug}>
-                <Link to={`/work/${w.slug}`} className="hover:underline">
+                <Link viewTransition to={`/work/${w.slug}`} className="hover:underline">
                   {w.title}
                 </Link>
               </li>
             ))}
             <li>
-              <Link to="/work" className="hover:underline" style={{ color: "var(--v3-quieto)" }}>
+              <Link viewTransition to="/work" className="hover:underline" style={{ color: "var(--v3-quieto)" }}>
                 All work ↳
               </Link>
             </li>
