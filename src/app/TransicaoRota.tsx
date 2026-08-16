@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { gsap } from "../lib/gsap";
+import { WORK } from "../content/work";
 import { scrollToTop } from "../lib/lenis";
 
 /**
@@ -62,9 +63,25 @@ import { scrollToTop } from "../lib/lenis";
    não há uma segunda lista de rotas para divergir da primeira. */
 function nomeDaRota(p: string) {
   if (p === "/") return "Index";
-  if (p.startsWith("/work/")) return "Case";
+  if (p.startsWith("/work/")) {
+    const slug = p.split("/")[2] || "";
+    const item = WORK.find((w) => w.slug === slug);
+    return item ? item.title : "Case";
+  }
   const limpo = p.replace(/^\//, "").split("/")[0];
   return limpo.charAt(0).toUpperCase() + limpo.slice(1);
+}
+
+/* o índice da rota dentro do site, no vernáculo de [01] que o resto usa */
+const ORDEM = ["/", "/work", "/about", "/lab"];
+function indiceDaRota(p: string) {
+  const i = ORDEM.indexOf(p);
+  if (i >= 0) return `[${String(i + 1).padStart(2, "0")}]`;
+  if (p.startsWith("/work/")) {
+    const j = WORK.findIndex((w) => w.slug === p.split("/")[2]);
+    return j >= 0 ? `[${String(j + 1).padStart(2, "0")}]` : "[--]";
+  }
+  return "[--]";
 }
 
 export default function TransicaoRota() {
@@ -87,29 +104,46 @@ export default function TransicaoRota() {
     const rotulo = el.querySelector<HTMLElement>("[data-rotulo]");
     const traco = el.querySelector<HTMLElement>("[data-traco]");
 
+    const titulo = el.querySelector<HTMLElement>("[data-titulo]");
+    const indice = el.querySelector<HTMLElement>("[data-indice]");
+
     const tl = gsap.timeline({
       onComplete: () => {
         ocupado.current = false;
         el.style.pointerEvents = "none";
       },
     });
-    tl.to([rotulo, traco], { autoAlpha: 0, duration: 0.18, ease: "power2.in" })
-      .to(marca, { autoAlpha: 0, duration: 0.2 }, "<")
+    /* o título SAI por cima — completa o percurso que começou embaixo, em vez
+       de desaparecer no lugar. É o mesmo elemento atravessando o quadro. */
+    tl.to(titulo, { yPercent: -108, duration: 0.5, ease: "power3.in" })
+      .to([rotulo, traco, indice], { autoAlpha: 0, duration: 0.18, ease: "power2.in" }, "<+0.1")
+      .to(marca, { autoAlpha: 0, x: (i) => (i % 2 === 0 ? -20 : 20), y: (i) => (i < 2 ? -20 : 20), duration: 0.32 }, "<")
       /* as lâminas recuam com `expo.out`: quase todo o percurso no começo, e o
          fim quase parado — é o que faz o quadro "abrir" em vez de "deslizar" */
-      .to(lamina, { scaleY: 0, duration: 0.62, ease: "expo.out" }, "-=0.06")
-      /* o conteúdo da página nova entra focando, junto com a abertura */
+      .to(lamina, { scaleY: 0, duration: 0.66, ease: "expo.out" }, "-=0.24")
+      /* ⚠ O conteúdo entra por BLOCO, com stagger — não a página inteira num
+         bloco só. Era o segundo buraco: as lâminas abriam sobre uma página já
+         pronta e parada, e a chegada não tinha peso nenhum. Na referência os
+         dados entram linha a linha; aqui entram seção a seção, focando. */
+      /* ⚠ `:not(.v3-obturador)` NÃO é preciosismo. O obturador também é um
+         `<div>` filho de `<main>`, então `main > div > *` pegava as lâminas, o
+         traço e as quatro marcas JUNTO com o conteúdo — a animação de entrada
+         estava mexendo nas peças da própria transição, e o que devia entrar
+         focando dividia o stagger com elementos que precisam ficar invisíveis.
+         Só apareceu porque a verificação listou nó a nó em vez de contar. */
       .fromTo(
-        "main > div",
-        { filter: "blur(16px)", opacity: 0.35 },
+        "main > div:not(.v3-obturador) > *",
+        { filter: "blur(14px)", opacity: 0.3, y: 18 },
         {
           filter: "blur(0px)",
           opacity: 1,
-          duration: 0.7,
+          y: 0,
+          duration: 0.72,
           ease: "power3.out",
-          clearProps: "filter,opacity",
+          stagger: 0.055,
+          clearProps: "filter,opacity,transform",
         },
-        "-=0.5",
+        "-=0.52",
       );
   }, [pathname]);
 
@@ -142,27 +176,43 @@ export default function TransicaoRota() {
       const marca = el.querySelectorAll<HTMLElement>("[data-marca]");
       const rotulo = el.querySelector<HTMLElement>("[data-rotulo]");
       const traco = el.querySelector<HTMLElement>("[data-traco]");
-      if (rotulo) rotulo.textContent = nomeDaRota(url.pathname);
+      const titulo = el.querySelector<HTMLElement>("[data-titulo]");
+      const indice = el.querySelector<HTMLElement>("[data-indice]");
+      if (rotulo) rotulo.textContent = "Now entering";
+      if (titulo) titulo.textContent = nomeDaRota(url.pathname);
+      if (indice) indice.textContent = indiceDaRota(url.pathname);
 
       gsap.set(lamina, { scaleY: 0 });
-      gsap.set([rotulo, traco, ...Array.from(marca)], { autoAlpha: 0 });
+      gsap.set([rotulo, traco, indice, ...Array.from(marca)], { autoAlpha: 0 });
       gsap.set(traco, { scaleX: 0 });
+      /* o título começa ABAIXO da própria máscara — sobe para dentro dela */
+      gsap.set(titulo, { yPercent: 108, autoAlpha: 1 });
+      /* as marcas nascem AFASTADAS e convergem: o quadro se fechando é o que
+         elas contam. Aparecer no lugar não conta nada. */
+      gsap.set(marca, { x: (i) => (i % 2 === 0 ? -26 : 26), y: (i) => (i < 2 ? -26 : 26) });
 
       const tl = gsap.timeline();
       /* 1. FECHA — `power3.in` acelera até o encontro: lâmina tem massa */
       tl.to(lamina, { scaleY: 1, duration: 0.42, ease: "power3.in" })
-        /* 2. TRAVA — cantos convergem, traço corre, o destino é escrito */
-        .to(marca, { autoAlpha: 1, duration: 0.16 }, "-=0.08")
-        .to(traco, { autoAlpha: 1, scaleX: 1, duration: 0.5, ease: "expo.out" }, "<")
-        .to(rotulo, { autoAlpha: 1, duration: 0.22 }, "<+0.04")
-        /* 3. TROCA — com o quadro fechado, o salto de scroll não aparece */
+        /* 2. TRAVA — os cantos CONVERGEM para o enquadramento */
+        .to(marca, { autoAlpha: 1, x: 0, y: 0, duration: 0.5, ease: "expo.out" }, "-=0.10")
+        .to(traco, { autoAlpha: 1, scaleX: 1, duration: 0.55, ease: "expo.out" }, "<")
+        .to([rotulo, indice], { autoAlpha: 1, duration: 0.22 }, "<+0.06")
+        /* 3. O DESTINO SOBE — era isto que faltava. O quadro fechado é o único
+           momento em que o site tem a tela inteira, e ele estava vazio: um
+           rótulo de 10px e um traço. Agora o nome da página que vem entra em
+           corpo de display, subindo por baixo de uma máscara — a direção do
+           movimento é a da referência (o elemento grande vem de baixo) e o
+           corpo é o da lição de escala: uma escala de display, não duas. */
+        .to(titulo, { yPercent: 0, duration: 0.72, ease: "expo.out" }, "<-0.04")
+        /* 4. TROCA — com o quadro fechado, o salto de scroll não aparece */
         .call(() => {
           scrollToTop(true);
           navigate(url.pathname);
         })
-        /* respiro mínimo com o quadro cheio: sem isto a página nova pisca antes
-           de o olho registrar que houve um corte */
-        .to({}, { duration: 0.22 });
+        /* o quadro cheio SEGURA — sem este respiro o nome mal termina de subir
+           quando as lâminas já recuam, e o momento não se registra */
+        .to({}, { duration: 0.3 });
     };
 
     document.addEventListener("click", aoClicar, true);
@@ -179,7 +229,13 @@ export default function TransicaoRota() {
       <i data-lamina className="lam topo" />
       <i data-lamina className="lam base" />
       <span data-traco className="traco" />
+      {/* o quadro fechado, agora com conteúdo: rótulo + índice na régua, e o
+          nome do destino subindo por dentro de uma máscara */}
       <span data-rotulo className="rotulo v3-micro" />
+      <span data-indice className="indice v3-micro" />
+      <span className="mascara">
+        <span data-titulo className="titulo" />
+      </span>
       <i data-marca className="m tl" />
       <i data-marca className="m tr" />
       <i data-marca className="m bl" />

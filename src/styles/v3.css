@@ -432,14 +432,45 @@ button:hover .v3-prox { transform: translateX(3px); }
   transform-origin: left center;
   opacity: 0;
 }
-/* o destino, escrito no quadro fechado */
-.v3-obturador .rotulo {
+/* a régua do quadro fechado: rótulo à esquerda, índice à direita, os dois
+   ancorados no traço */
+.v3-obturador .rotulo,
+.v3-obturador .indice {
   position: absolute;
   top: calc(50% + 16px);
-  left: var(--v3-margem);
   color: var(--fr-creme);
   letter-spacing: 0.18em;
   opacity: 0;
+}
+.v3-obturador .rotulo { left: var(--v3-margem); }
+.v3-obturador .indice { right: var(--v3-margem); color: var(--v3-acento-tinta); }
+
+/* O NOME DO DESTINO — o que faltava no quadro fechado.
+   A máscara é `overflow: hidden` com a altura de uma linha: o título nasce
+   abaixo dela, sobe para dentro e depois sai por cima. Sem a máscara, o texto
+   apareceria flutuando no vazio em vez de ATRAVESSAR o quadro.
+   ⚠ Corpo de display, não de rótulo: este é o único instante em que o site tem
+   a tela inteira, e a lição da escala vale aqui como no resto — uma escala de
+   display, não duas. */
+.v3-obturador .mascara {
+  position: absolute;
+  left: var(--v3-margem);
+  right: var(--v3-margem);
+  bottom: calc(50% + 30px);
+  display: block;
+  overflow: hidden;
+  line-height: 0;
+}
+.v3-obturador .titulo {
+  display: block;
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 700;
+  font-size: clamp(40px, 7.6vw, 122px);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: var(--fr-creme);
+  will-change: transform;
 }
 /* as marcas de canto do quadro fechado: o mesmo vocabulário do HUD, agora
    enquadrando o vazio entre uma página e outra */
