@@ -86,8 +86,8 @@ export default function AboutV3() {
       {/* leads defasados: as duas metades da mesma ideia, uma por coluna */}
       <section className="py-20 max-md:py-12">
         <div className="grid grid-cols-12 gap-6" style={{ paddingInline: "var(--v3-margem)" }}>
-          <p className="v3-mono v3-justif col-span-4 max-lg:col-span-12">{LEAD[0]}</p>
-          <p className="v3-mono v3-justif col-span-5 col-start-7 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-6">
+          <p className="v3-leitura col-span-4 max-lg:col-span-12">{LEAD[0]}</p>
+          <p className="v3-leitura col-span-5 col-start-7 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-6">
             {LEAD[1]}
           </p>
         </div>
@@ -147,7 +147,7 @@ export default function AboutV3() {
                   {e.titulo}
                 </h3>
                 <p
-                  className="v3-mono v3-justif col-span-6 col-start-7 max-md:col-span-10 max-md:col-start-3"
+                  className="v3-leitura col-span-6 col-start-7 max-md:col-span-10 max-md:col-start-3"
                   style={{ color: "var(--fr-creme)", opacity: 0.92 }}
                 >
                   {e.corpo}

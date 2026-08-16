@@ -1,7 +1,8 @@
-import { useEffect, useRef, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { Link } from "react-router";
 import { WORK } from "../content/work";
 import { LAB_CONTADOR } from "../content/lab";
+import { RECONHECIMENTO } from "../content/reconhecimento";
 import { revealLines } from "../animations/reveal";
 import "../styles/v3.css";
 
@@ -257,6 +258,54 @@ export function RodapeV3() {
           </ul>
         </div>
       </div>
+
+      {/* ── a BARRA VIVA da base ────────────────────────────────────────────
+          Gesto tirado do nightjar.co, que ele apontou: o rodapé de lá não é um
+          mapa do site, é uma barra com o relógio da cidade (`SYD 05:54:25`) e a
+          última conquista rolando (`ALNF WINS GOLD AT GOOD DESIGN AWARDS
+          2025`). O rodapé vira o lugar onde o estúdio está VIVO, não onde o
+          site se repete.
+
+          A caixa de quatro colunas acima continua — ela é navegação real e o
+          sistema é de visor, não de página em branco. O que entra é a linha
+          embaixo, com os dois fatos que este site já apura: a hora dele e o
+          reconhecimento mais recente, lido de `content/reconhecimento.ts`. Fato
+          que já existe na página, num lugar onde ninguém precisa procurar. */}
+      <BarraViva />
     </footer>
+  );
+}
+
+function BarraViva() {
+  const [hora, setHora] = useState("--:--:--");
+  useEffect(() => {
+    const f = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "America/Sao_Paulo",
+      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false,
+    });
+    const tick = () => setHora(f.format(new Date()));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  /* o mais recente da lista — se um reconhecimento novo entrar, aparece aqui
+     sem ninguém editar duas coisas */
+  const ultimo = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano)[0];
+
+  return (
+    <div
+      className="mt-8 flex items-center justify-between gap-6 border-t border-black/12 pt-5 max-md:flex-col max-md:items-start max-md:gap-2"
+    >
+      <span className="v3-micro tabular-nums" style={{ color: "var(--v3-quieto)" }}>
+        BRA {hora}
+      </span>
+      {ultimo ? (
+        <span className="v3-micro text-right max-md:text-left" style={{ color: "var(--v3-quieto)" }}>
+          <span style={{ color: "var(--v3-acento)" }}>■</span>{" "}
+          {ultimo.projeto} featured on {ultimo.veiculo} — {ultimo.ano}
+        </span>
+      ) : null}
+    </div>
   );
 }

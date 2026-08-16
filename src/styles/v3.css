@@ -76,6 +76,36 @@
   letter-spacing: 0;
 }
 
+/* ⭐ A VOZ DE LEITURA — a correção que o nightjar.co expôs.
+   Medindo a referência (`scout-ref.mjs`), o sistema dela é o MESMO tipo que
+   este: dueto de grotesca + mono (Suisse Intl + Suisse Intl Mono). O que muda é
+   o uso, e é aí que estava o erro:
+
+     nightjar   mono 12px caps ×321 → RÓTULO · sans 14px caixa mista ×189 → LEITURA
+     aqui       mono 12px caps      → rótulo E PARÁGRAFO INTEIRO
+
+   O manifesto, os leads e as descrições de serviço rodavam em Martian Mono
+   CAIXA ALTA. Ler quarenta palavras assim cansa, e é o que fazia a página
+   parecer densa e suja onde ele queria clean. ⚠ E o pior: **este repo já sabia
+   disso** — a direção editorial anotou "parágrafo de corpo é grotesca em caixa
+   mista; caixa alta em 40 palavras não se lê", e a V3 violou a própria regra da
+   casa.
+
+   Peso 400 e não 700 (a referência anda toda em 300/400), altura de linha
+   generosa e nenhuma justificação: texto justificado em coluna estreita abre
+   rios, e o `.v3-justif` continua valendo só para a voz de MANIFESTO.
+
+   A mono não sai de cena — continua sendo rótulo, legenda, metadado, índice.
+   Cada voz volta para a função dela. */
+.v3-leitura {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: clamp(15px, 1.05vw, 17px);
+  line-height: 1.45;
+  letter-spacing: -0.006em;
+  text-transform: none;
+}
+
 .v3-rotulo {
   font-family: 'Martian Mono', ui-monospace, monospace;
   font-weight: 500;

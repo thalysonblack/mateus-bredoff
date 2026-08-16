@@ -131,12 +131,12 @@ export default function CaseV3() {
         <div className="col-span-6 col-start-5 flex flex-col gap-6 max-md:col-span-12 max-md:col-start-1">
           {item.about.length > 0 ? (
             item.about.map((p, i) => (
-              <p key={i} className="v3-mono v3-justif">
+              <p key={i} className="v3-leitura">
                 {p}
               </p>
             ))
           ) : (
-            <p className="v3-mono" style={{ color: "var(--v3-quieto)" }}>
+            <p className="v3-leitura" style={{ color: "var(--v3-quieto)" }}>
               Case study in preparation.
             </p>
           )}

@@ -96,7 +96,7 @@ function HeroV3() {
       >
         <div>
           <p className="v3-rotulo v3-q pb-4">Brand Designer &amp; Art Director</p>
-          <p className="v3-mono v3-justif max-w-[38ch]">{MANIFESTO}</p>
+          <p className="v3-leitura max-w-[46ch]">{MANIFESTO}</p>
         </div>
 
         <div className="flex shrink-0 flex-col items-end gap-3 max-md:items-start">
@@ -172,7 +172,7 @@ function AboutV3() {
           <Display>Where strategy, art direction and business unite</Display>
         </div>
         <div className="col-span-4 col-start-9 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-10">
-          <p className="v3-mono v3-justif">{LEAD_ABORDAGEM}</p>
+          <p className="v3-leitura">{LEAD_ABORDAGEM}</p>
         </div>
       </div>
 
@@ -359,7 +359,7 @@ function GloboV3() {
         </div>
 
         {/* corpo à direita, embaixo — fecha o quadrante */}
-        <p className="v3-mono v3-justif col-span-4 col-start-9 self-end max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-8">
+        <p className="v3-leitura col-span-4 col-start-9 self-end max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-8">
           {LEAD_BRASIL}
         </p>
       </div>
@@ -563,7 +563,7 @@ function ServicosV3() {
 
               <span className="col-span-4 max-md:col-span-3">
                 <span className="v3-servico block">{t.name}</span>
-                <span className="v3-mono mt-3 block max-w-[46ch]" style={{ color: "var(--v3-quieto)" }}>
+                <span className="v3-leitura mt-3 block max-w-[48ch]" style={{ color: "var(--v3-quieto)" }}>
                   {t.description}
                 </span>
               </span>
@@ -715,7 +715,7 @@ function ReconhecimentoV3() {
                   <span className="v3-micro shrink-0" style={{ color: "var(--v3-acento-tinta)" }}>
                     {idx(i)}
                   </span>
-                  <span className="v3-mono" style={{ color: "var(--fr-creme)" }}>
+                  <span className="v3-leitura" style={{ color: "var(--fr-creme)" }}>
                     {r.titulo}
                   </span>
                 </span>
