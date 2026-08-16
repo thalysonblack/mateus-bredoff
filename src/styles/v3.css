@@ -507,15 +507,28 @@ button:hover .v3-prox { transform: translateX(3px); }
   .v3-hero-foto { animation: none; will-change: auto; }
 }
 
-/* O nome do veículo na tabela de Recognition. Corpo de leitura, não de rótulo:
-   quem publicou é o dado que dá o peso da linha — "Abduzeedo" precisa ser lido
-   de longe, o título da matéria não. */
-.v3-reconhece {
+/* O nome do veículo, agora SOBRE a peça publicada. Corpo de display: quem
+   publicou é o argumento da seção, e argumento não se sussurra em 12px. Cai
+   sobre um véu porque as artes vão de preto a papel claro — sem ele o wordmark
+   sumiria justamente nas peças mais claras. */
+.v3-veiculo {
   font-family: 'Geist', ui-sans-serif, sans-serif;
-  font-weight: 500;
-  font-size: clamp(19px, 1.7vw, 27px);
-  line-height: 1.05;
-  letter-spacing: -0.025em;
+  font-weight: 700;
+  font-size: clamp(24px, 2.6vw, 42px);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--fr-creme);
+}
+
+/* O card inteiro reage quando LEVA a algum lugar. Item sem `href` (matéria
+   fechada atrás de senha) fica inerte de propósito: prometer hover e não
+   entregar clique é o mesmo defeito do link que mente. */
+.v3-recon img { transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+a.v3-recon:hover img { transform: scale(1.03); }
+a.v3-recon .v3-seta { display: inline-block; transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+a.v3-recon:hover .v3-seta { transform: translateX(4px); }
+@media (prefers-reduced-motion: reduce) {
+  .v3-recon img, a.v3-recon .v3-seta { transition: none; }
 }
 
 /* A linha inteira responde ao cursor quando LEVA a algum lugar. O `:where` mantém

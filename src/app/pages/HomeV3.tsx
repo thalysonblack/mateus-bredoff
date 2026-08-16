@@ -657,57 +657,82 @@ function ReconhecimentoV3() {
       className="relative py-28 max-md:py-14"
       style={{ background: "var(--fr-petroleo)", color: "var(--fr-creme)" }}
     >
+      <Cantos claro />
       <LinhaSecao
         rotulo="Recognition"
         extra={`[${String(RECONHECIMENTO.length).padStart(2, "0")}]`}
       />
 
       <div style={{ paddingInline: "var(--v3-margem)" }}>
-        <div className="max-w-[52ch] pb-16 max-md:pb-10">
+        <div className="max-w-[46ch] pb-20 max-md:pb-12">
           <Display>Published by people who had no reason to</Display>
         </div>
 
-        {/* cabeçalho de coluna: o vernáculo de tabela de registro */}
-        <div
-          className="v3-micro grid grid-cols-12 gap-6 border-b pb-3 max-md:hidden"
-          style={{ color: "var(--v3-quieto-tinta)", borderColor: "rgba(237,230,225,0.22)" }}
-        >
-          <span className="col-span-1">Year</span>
-          <span className="col-span-3">Published in</span>
-          <span className="col-span-6">Feature</span>
-          <span className="col-span-2 text-right">Project</span>
-        </div>
+        {/* ⚠ CARD com a PEÇA, não linha de tabela. A primeira versão era uma
+            tabela de registros — correta como dado e fraca como argumento:
+            "os services achei tímido" e "preciso de mais ênfase" são o mesmo
+            diagnóstico duas vezes. O que convence aqui não é o nome do veículo
+            em 27px, é a peça que ELE fez aparecendo grande, com o veículo por
+            cima dela.
 
-        <ul data-foca>
-          {RECONHECIMENTO.map((r) => {
-            const linha = (
+            Duas colunas, e a primeira sobe: a mais recente (Ginga, a da
+            Abduzeedo) fica no alto à esquerda, que é onde o olho começa. */}
+        <ul data-foca className="grid grid-cols-2 gap-x-6 gap-y-16 max-md:grid-cols-1 max-md:gap-y-10">
+          {RECONHECIMENTO.map((r, i) => {
+            const miolo = (
               <>
-                <span className="v3-rotulo col-span-1 tabular-nums max-md:col-span-2" style={{ color: "var(--v3-acento-tinta)" }}>
-                  {r.ano}
+                <span className="relative block overflow-hidden">
+                  <img
+                    src={r.foto.src}
+                    srcSet={r.foto.src2x ? `${r.foto.src} 1400w, ${r.foto.src2x} 2200w` : undefined}
+                    sizes="(min-width: 768px) 46vw, 92vw"
+                    alt={r.foto.alt}
+                    width={r.foto.w}
+                    height={r.foto.h}
+                    loading={i > 1 ? "lazy" : undefined}
+                    decoding="async"
+                    draggable={false}
+                    className="aspect-[4/3] w-full object-cover"
+                  />
+                  {/* o véu existe para o wordmark ter fundo em qualquer peça —
+                      as artes vão de preto a papel claro */}
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2"
+                    style={{ background: "linear-gradient(0deg, rgba(13,21,24,0.82), transparent)" }}
+                  />
+                  <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 max-md:p-4">
+                    <span className="v3-veiculo">{r.veiculo}</span>
+                    <span className="v3-rotulo shrink-0 pb-1" style={{ color: "var(--v3-acento-tinta)" }}>
+                      {r.ano}
+                      {r.href ? <span className="v3-seta pl-2">↳</span> : null}
+                    </span>
+                  </span>
+                  <i className="v3-foco" aria-hidden="true"><b /><b /><b /><b /></i>
                 </span>
-                <span className="v3-reconhece col-span-3 max-md:col-span-10">{r.veiculo}</span>
-                <span className="v3-mono col-span-6 self-center max-md:col-span-12 max-md:pt-1" style={{ color: "var(--v3-quieto-tinta)" }}>
-                  {r.titulo}
+
+                <span className="flex items-baseline gap-4 pt-4">
+                  <span className="v3-micro shrink-0" style={{ color: "var(--v3-acento-tinta)" }}>
+                    {idx(i)}
+                  </span>
+                  <span className="v3-mono" style={{ color: "var(--fr-creme)" }}>
+                    {r.titulo}
+                  </span>
                 </span>
-                <span className="v3-rotulo col-span-2 self-center text-right max-md:col-span-12 max-md:pt-1 max-md:text-left" style={{ color: "var(--v3-quieto-tinta)" }}>
-                  {r.projeto}
-                  {r.href ? <span className="v3-seta pl-2">↳</span> : null}
+                <span className="v3-micro block pl-9 pt-2" style={{ color: "var(--v3-quieto-tinta)" }}>
+                  Project — {r.projeto}
                 </span>
               </>
             );
-            const classe =
-              "v3-registro grid grid-cols-12 items-baseline gap-6 border-b py-6 max-md:grid-cols-12 max-md:gap-y-1 max-md:py-5";
-            const estilo = { borderColor: "rgba(237,230,225,0.22)" };
+            const classe = "v3-recon group block";
             return (
-              <li key={`${r.veiculo}-${r.projeto}`}>
+              <li key={`${r.veiculo}-${r.projeto}`} className={i % 2 === 1 ? "md:mt-16" : undefined}>
                 {r.href ? (
-                  <a href={r.href} target="_blank" rel="noopener noreferrer" className={`group ${classe}`} style={estilo}>
-                    {linha}
+                  <a href={r.href} target="_blank" rel="noopener noreferrer" className={classe}>
+                    {miolo}
                   </a>
                 ) : (
-                  <span className={classe} style={estilo}>
-                    {linha}
-                  </span>
+                  <span className={classe}>{miolo}</span>
                 )}
               </li>
             );

@@ -108,8 +108,48 @@ import artTrivo from "../assets/optimized/art-trivo-1400.webp";
 import artBureau from "../assets/optimized/art-bureau-1400.webp";
 import artBureauX from "../assets/optimized/art-bureau-2200.webp";
 import artNeox from "../assets/optimized/art-neox-1400.webp";
+import artGinga from "../assets/optimized/art-ginga-1400.webp";
+import artGinga2x from "../assets/optimized/art-ginga-2200.webp";
+import artRemanescentes from "../assets/optimized/art-remanescentes-1200.webp";
 
 export const WORK: WorkItem[] = [
+  /* ⚠ Ginga e Remanescentes entraram em 16/08/2026, e a lacuna que eles fecham
+     é a mais séria que este site tinha: o Behance dele publica NOVE projetos e a
+     coleção tinha SETE. Faltava justamente o trabalho mais recente — e o mais
+     reconhecido, com matéria na Abduzeedo. Um portfólio que não mostra o
+     projeto que rendeu imprensa está trabalhando contra o próprio dono.
+
+     As capas vieram das fontes públicas dele (Behance para Ginga em 2432×1904,
+     todays.design para Remanescentes), reencodadas aqui — é arte DELE, no site
+     DELE. Os dois entram `contentPending`, como os demais sem texto: peça e
+     metadados na tela, corpo vazio, nada inventado.
+
+     ⚠ Continuam de fora `Bentofolio®` e `Bentofolio 2`: são produto próprio
+     (template de portfólio), não identidade de cliente, e misturá-los na mesma
+     coleção mudaria o que a lista afirma ser. Decisão do Mateus. */
+  {
+    slug: "ginga",
+    title: "Ginga",
+    year: 2026,
+    disciplines: ["Branding", "Cultural Project"],
+    credits: [],
+    behanceUrl: "https://www.behance.net/gallery/253319999/Ginga",
+    about: [],
+    contentPending: true,
+    cover: img(artGinga, 1400, 1097, "Ginga — sistema de marca para projeto cultural de capoeira", artGinga2x),
+    images: [],
+  },
+  {
+    slug: "remanescentes",
+    title: "Remanescentes",
+    year: 2026,
+    disciplines: ["Visual Identity", "Print"],
+    credits: [],
+    about: [],
+    contentPending: true,
+    cover: img(artRemanescentes, 1200, 720, "Remanescentes — identidade visual, peças impressas"),
+    images: [],
+  },
   {
     slug: "alex-archer",
     title: "Alex Archer ®",

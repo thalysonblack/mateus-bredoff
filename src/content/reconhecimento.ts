@@ -19,11 +19,26 @@
  * mas viram rótulo, não link. É a mesma regra que o rodapé já aplica ao X.com:
  * neste site, link que não leva a lugar nenhum vira texto.
  *
+ * ⚠️ **Logo de veículo NÃO entra, e a decisão é de qualidade.** Ele pediu "logo
+ * do reconhecimento", e eu fui atrás dos três: o World Brand Design tem um JPG
+ * de 350×102, o Abduzeedo só expõe favicon de 32px e o todays.design nem isso
+ * (o `og:image` é um social card, não a marca). Logo pixelado num portfólio de
+ * DESIGNER é pior do que logo nenhum, e dois com marca e um sem seria pior
+ * ainda. A ênfase vem da PEÇA publicada, que é grande e é dele; o veículo entra
+ * como wordmark na tipografia do sistema. Se os arquivos vetoriais aparecerem,
+ * trocar aqui é uma linha por item.
+ *
  * ⚠️ **Números de vaidade ficam de fora.** O Behance mostra contagem de views,
  * mas a página mistura os números do projeto com os das recomendações ao lado, e
  * não consegui isolar com confiança. Número que não sei ler não vai para a tela
  * de cliente.
  */
+import artGinga from "../assets/optimized/art-ginga-1400.webp";
+import artGinga2x from "../assets/optimized/art-ginga-2200.webp";
+import artRemanescentes from "../assets/optimized/art-remanescentes-1200.webp";
+import artVotare from "../assets/optimized/art-votare-1400.webp";
+import artTrivo from "../assets/optimized/art-trivo-1400.webp";
+
 export type Reconhecimento = {
   /** quem publicou */
   veiculo: string;
@@ -36,6 +51,8 @@ export type Reconhecimento = {
   href: string | null;
   /** o que eu vi ao abrir, e quando */
   verificado: string;
+  /** a PEÇA que foi publicada — é ela que dá ênfase, não o nome do veículo */
+  foto: { src: string; src2x?: string; w: number; h: number; alt: string };
 };
 
 export const RECONHECIMENTO: Reconhecimento[] = [
@@ -46,6 +63,7 @@ export const RECONHECIMENTO: Reconhecimento[] = [
     ano: 2026,
     href: "https://abduzeedo.com/branding-system-ginga-capoeira-cultural-project",
     verificado: "HTTP 200 em 16/08/2026 — título e crédito a Bredoff conferidos na página",
+    foto: { src: artGinga, src2x: artGinga2x, w: 1400, h: 1097, alt: "Ginga — sistema de marca para projeto cultural de capoeira" },
   },
   {
     veiculo: "todays.design",
@@ -54,6 +72,7 @@ export const RECONHECIMENTO: Reconhecimento[] = [
     ano: 2026,
     href: "https://todays.design/mateusbredoff/clxfcn9wh009ga8pcpalhwlqa",
     verificado: "HTTP 200 em 16/08/2026 — título confere",
+    foto: { src: artRemanescentes, w: 1200, h: 720, alt: "Remanescentes — identidade visual, peças impressas" },
   },
   {
     veiculo: "World Brand Design",
@@ -62,6 +81,7 @@ export const RECONHECIMENTO: Reconhecimento[] = [
     ano: 2026,
     href: null,
     verificado: "401 em 16/08/2026 (o site passou a exigir senha) — título indexado, entra como rótulo",
+    foto: { src: artVotare, w: 2800, h: 2100, alt: "Votare — identidade cívica" },
   },
   {
     veiculo: "World Brand Design",
@@ -70,6 +90,7 @@ export const RECONHECIMENTO: Reconhecimento[] = [
     ano: 2025,
     href: null,
     verificado: "levantado em 25/07/2026 com o site aberto; 401 em 16/08 — entra como rótulo",
+    foto: { src: artTrivo, w: 1400, h: 930, alt: "Trivo — identidade visual" },
   },
 ];
 
