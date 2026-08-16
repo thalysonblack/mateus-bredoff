@@ -45,7 +45,7 @@
      foram para 7–8 colunas na mesma leva. Subir o corpo sem abrir a coluna
      transforma manchete em pilha de linhas órfãs. */
   --v3-display: clamp(30px, 5.2vw, 84px);
-  --v3-display-lh: 0.98;
+  --v3-display-lh: 1.0;
   --v3-nome: clamp(44px, 8.6vw, 138px);
 
   /* margem lateral única da versão (a referência usa ~32px em 1600) */
@@ -137,13 +137,26 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ⭐ VIRADA DE 16/08 — "https://nightjar.co MAIS ASSIM".
+   Eu tinha medido a referência e NÃO aplicado o principal, justificando que
+   peso e caixa alta eram a assinatura do partido aprovado. Ele respondeu pedindo
+   o movimento. Argumento de coerência não vence pedido dele — e ele estava
+   certo: o que fazia o nightjar respirar não era o espaço, era o PESO.
+
+   Medido lá: display 64px, weight **400**, caixa MISTA, `line-height` 1.0,
+   tracking −0,01em. Aqui era 84px em 700, caixa alta, −0,038em — quatro
+   decisões somando peso na mesma palavra.
+
+   O corpo continua grande (a lição do bleibtgleich sobre uma escala de display
+   segue de pé); o que sai é o peso do traço e o berro da caixa alta. Grande e
+   leve é o que dá presença sem gritar. */
 .v3-display {
   font-family: 'Geist', ui-sans-serif, sans-serif;
-  font-weight: 700;
+  font-weight: 400;
   font-size: var(--v3-display);
   line-height: var(--v3-display-lh);
-  letter-spacing: -0.038em;
-  text-transform: uppercase;
+  letter-spacing: -0.014em;
+  text-transform: none;
 }
 
 /* justificação total — o gesto mais reconhecível da referência. Vale para as
@@ -153,16 +166,12 @@
   text-justify: inter-word;
 }
 
-/* quadradinho que precede todo rótulo de seção e item de nav */
-.v3-q::before {
-  content: '';
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  background: currentColor;
-  margin-right: 9px;
-  vertical-align: 6%;
-}
+/* ⚠ O quadradinho antes de todo rótulo SAIU na virada de 16/08. Ele decorava
+   cada rótulo de seção e cada item de nav — e decoração repetida em todo lugar
+   deixa de significar e vira textura. O nightjar não tem nenhum; o ■ segue
+   vivo onde CARREGA sentido (estado ativo, o marcador do reconhecimento mais
+   recente na barra viva), que é o que um símbolo deve fazer. */
+.v3-q::before { content: none; }
 
 /* ── HUD fixo (crop marks) ─────────────────────────────────────────────────
    Cantos em L + ticks no meio das bordas, brancos, em blend-difference:
@@ -397,11 +406,11 @@ button:hover .v3-prox { transform: translateX(3px); }
    uma foto. Aqui ele passa a pesar o que pesa a manchete de uma seção. */
 .v3-servico {
   font-family: 'Geist', ui-sans-serif, sans-serif;
-  font-weight: 700;
+  font-weight: 400;
   font-size: clamp(30px, 3.4vw, 54px);
-  line-height: 0.94;
-  letter-spacing: -0.035em;
-  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: -0.018em;
+  text-transform: none;
 }
 
 /* A faixa inteira é o alvo do clique. O fio do topo acende no acento (feito
@@ -541,20 +550,33 @@ button:hover .v3-prox { transform: translateX(3px); }
    publicou é o argumento da seção, e argumento não se sussurra em 12px. Cai
    sobre um véu porque as artes vão de preto a papel claro — sem ele o wordmark
    sumiria justamente nas peças mais claras. */
+/* o veículo na LINHA compacta — corpo de leitura, peso leve, caixa mista:
+   o suficiente para ancorar a linha sem virar manchete */
+.v3-recon-veiculo {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: clamp(17px, 1.35vw, 21px);
+  line-height: 1.1;
+  letter-spacing: -0.012em;
+  color: var(--fr-creme);
+}
+
 .v3-veiculo {
   font-family: 'Geist', ui-sans-serif, sans-serif;
-  font-weight: 700;
+  font-weight: 400;
   font-size: clamp(24px, 2.6vw, 42px);
-  line-height: 0.95;
-  letter-spacing: -0.03em;
+  line-height: 1;
+  letter-spacing: -0.016em;
   color: var(--fr-creme);
 }
 
 /* O card inteiro reage quando LEVA a algum lugar. Item sem `href` (matéria
    fechada atrás de senha) fica inerte de propósito: prometer hover e não
    entregar clique é o mesmo defeito do link que mente. */
-.v3-recon img { transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
-a.v3-recon:hover img { transform: scale(1.03); }
+.v3-recon { transition: padding-left 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+a.v3-recon:hover { padding-left: 10px; }
+.v3-recon img { transition: opacity 0.3s ease-out; }
+a.v3-recon:hover img { opacity: 0.82; }
 a.v3-recon .v3-seta { display: inline-block; transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
 a.v3-recon:hover .v3-seta { transform: translateX(4px); }
 @media (prefers-reduced-motion: reduce) {

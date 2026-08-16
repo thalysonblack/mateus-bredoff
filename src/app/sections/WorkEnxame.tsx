@@ -96,7 +96,6 @@ export default function WorkEnxame() {
       className="relative py-28 max-md:py-14"
       style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}
     >
-      <Cantos />
       <LinhaSecao
         rotulo="Selected work"
         extra={`[${String(WORK.length).padStart(2, "0")}]`}

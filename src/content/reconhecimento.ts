@@ -19,14 +19,19 @@
  * mas viram rótulo, não link. É a mesma regra que o rodapé já aplica ao X.com:
  * neste site, link que não leva a lugar nenhum vira texto.
  *
- * ⚠️ **Logo de veículo NÃO entra, e a decisão é de qualidade.** Ele pediu "logo
- * do reconhecimento", e eu fui atrás dos três: o World Brand Design tem um JPG
- * de 350×102, o Abduzeedo só expõe favicon de 32px e o todays.design nem isso
- * (o `og:image` é um social card, não a marca). Logo pixelado num portfólio de
- * DESIGNER é pior do que logo nenhum, e dois com marca e um sem seria pior
- * ainda. A ênfase vem da PEÇA publicada, que é grande e é dele; o veículo entra
- * como wordmark na tipografia do sistema. Se os arquivos vetoriais aparecerem,
- * trocar aqui é uma linha por item.
+ * ⚠️ **LOGO: o campo existe e só um veículo tem arquivo.** Ele pediu os logos
+ * duas vezes, e eu fui atrás por todos os caminhos — HTML, CSS, SVG inline,
+ * favicon, `og:image`, caminhos convencionais (`/logo.svg`), e por último
+ * capturando o header em 4× para recortar o wordmark:
+ *
+ *   World Brand Design  →  logo real, 350×102 ✓ (está em uso abaixo)
+ *   Abduzeedo           →  só favicon 32×32; o header não tem SVG nem <img>
+ *   todays.design       →  nada; o `og:image` é social card, não marca
+ *
+ * O componente já lê `logo` quando existe e cai no wordmark quando não — então
+ * assim que os arquivos chegarem (do Thalyson, do Mateus ou do press kit dos
+ * veículos) é UMA LINHA por item. O que não dá é subir marca de terceiro
+ * pixelada num portfólio de designer.
  *
  * ⚠️ **Números de vaidade ficam de fora.** O Behance mostra contagem de views,
  * mas a página mistura os números do projeto com os das recomendações ao lado, e
@@ -38,6 +43,7 @@ import artGinga2x from "../assets/optimized/art-ginga-2200.webp";
 import artRemanescentes from "../assets/optimized/art-remanescentes-1200.webp";
 import artVotare from "../assets/optimized/art-votare-1400.webp";
 import artTrivo from "../assets/optimized/art-trivo-1400.webp";
+import logoWbd from "../assets/optimized/logo-worldbranddesign.webp";
 
 export type Reconhecimento = {
   /** quem publicou */
@@ -51,8 +57,10 @@ export type Reconhecimento = {
   href: string | null;
   /** o que eu vi ao abrir, e quando */
   verificado: string;
-  /** a PEÇA que foi publicada — é ela que dá ênfase, não o nome do veículo */
+  /** a PEÇA que foi publicada */
   foto: { src: string; src2x?: string; w: number; h: number; alt: string };
+  /** logo do veículo, quando existe arquivo utilizável; senão vira wordmark */
+  logo?: { src: string; w: number; h: number };
 };
 
 export const RECONHECIMENTO: Reconhecimento[] = [
@@ -82,6 +90,7 @@ export const RECONHECIMENTO: Reconhecimento[] = [
     href: null,
     verificado: "401 em 16/08/2026 (o site passou a exigir senha) — título indexado, entra como rótulo",
     foto: { src: artVotare, w: 2800, h: 2100, alt: "Votare — identidade cívica" },
+    logo: { src: logoWbd, w: 350, h: 102 },
   },
   {
     veiculo: "World Brand Design",
@@ -91,6 +100,7 @@ export const RECONHECIMENTO: Reconhecimento[] = [
     href: null,
     verificado: "levantado em 25/07/2026 com o site aberto; 401 em 16/08 — entra como rótulo",
     foto: { src: artTrivo, w: 1400, h: 930, alt: "Trivo — identidade visual" },
+    logo: { src: logoWbd, w: 350, h: 102 },
   },
 ];
 

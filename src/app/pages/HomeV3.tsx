@@ -162,18 +162,19 @@ function HeroV3() {
 function AboutV3() {
   return (
     <section data-secao="About" className="relative py-28 max-md:py-14" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
-      <Cantos />
       <LinhaSecao rotulo="About" acao={{ texto: "More about me", to: "/about" }} />
-      <div
-        className="grid grid-cols-12 gap-6"
-        style={{ paddingInline: "var(--v3-margem)" }}
-      >
-        <div className="col-span-7 max-lg:col-span-12">
-          <Display>Where strategy, art direction and business unite</Display>
-        </div>
-        <div className="col-span-4 col-start-9 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-10">
-          <p className="v3-leitura">{LEAD_ABORDAGEM}</p>
-        </div>
+      {/* ⚠ DIAGRAMAÇÃO virada em 16/08 — "não gostei da diagramação do site",
+          com o nightjar.co como régua. Era manchete à esquerda e texto na
+          coluna 9, os dois disputando a largura com um vão morto no meio: o
+          conteúdo ficava ESPALHADO, e espalhado lê como cheio.
+
+          Lá tudo empilha numa coluna estreita à esquerda e o resto da tela fica
+          vazio de propósito — o vazio é o que dá o ar, não o espaçamento entre
+          blocos. Aqui a manchete e o lead passam a ser um bloco só, alinhados,
+          com a metade direita livre. */}
+      <div className="max-w-[46vw] max-md:max-w-none" style={{ paddingInline: "var(--v3-margem)" }}>
+        <Display>Where strategy, art direction and business unite</Display>
+        <p className="v3-leitura max-w-[44ch] pt-10">{LEAD_ABORDAGEM}</p>
       </div>
 
     </section>
@@ -192,7 +193,6 @@ function WorkV3() {
   };
   return (
     <section data-secao="Selected Work" className="relative py-28 max-md:py-14" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
-      <Cantos />
       <LinhaSecao
         rotulo="Selected work"
         extra={`[${String(WORK.length).padStart(2, "0")}]`}
@@ -310,7 +310,6 @@ function GloboV3() {
       className="relative overflow-clip py-28 max-md:py-14"
       style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}
     >
-      <Cantos />
       <LinhaSecao rotulo="Around the world" />
 
       {/* o globo é o CENTRO da seção, grande, atravessando as colunas — o
@@ -323,8 +322,8 @@ function GloboV3() {
         className="relative grid min-h-[640px] grid-cols-12 gap-6 max-lg:min-h-0"
         style={{ paddingInline: "var(--v3-margem)" }}
       >
-        {/* headline sobre o globo, à esquerda */}
-        <div className="col-span-7 max-lg:col-span-12">
+        {/* headline sobre o globo, na coluna estreita da esquerda */}
+        <div className="col-span-6 max-lg:col-span-12">
           <Display>Based in Brazil, working worldwide</Display>
         </div>
 
@@ -470,7 +469,6 @@ function TileLab({ e, i }: { e: (typeof ENSAIOS)[number]; i: number }) {
 function LabV3() {
   return (
     <section data-secao="AI Lab" className="relative py-28 max-md:py-14" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
-      <Cantos />
       <LinhaSecao
         rotulo="AI Lab"
         extra={`[${String(ENSAIOS.length).padStart(2, "0")}]`}
@@ -537,7 +535,6 @@ function ServicosV3() {
       className="relative py-28 max-md:py-14"
       style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}
     >
-      <Cantos />
       <LinhaSecao rotulo="Services" extra={`[0${TIERS.length}]`} />
 
       <div
@@ -545,7 +542,7 @@ function ServicosV3() {
         style={{ paddingInline: "var(--v3-margem)" }}
       >
         {/* as faixas */}
-        <div className="col-span-8 max-lg:col-span-12" data-foca>
+        <div className="col-span-7 max-lg:col-span-12" data-foca>
           {TIERS.map((t, i) => (
             <a
               key={t.name}
@@ -594,7 +591,7 @@ function ServicosV3() {
         </div>
 
         {/* o painel: a peça do serviço percorrido, grande e sticky */}
-        <div className="col-span-4 max-lg:hidden">
+        <div className="col-span-4 col-start-9 max-lg:hidden">
           <div className="sticky top-24">
             <div className="relative aspect-[3/4] w-full overflow-clip">
               {fotos.map((f, i) => (
@@ -657,86 +654,83 @@ function ReconhecimentoV3() {
       className="relative py-28 max-md:py-14"
       style={{ background: "var(--fr-petroleo)", color: "var(--fr-creme)" }}
     >
-      <Cantos claro />
-      <LinhaSecao
-        rotulo="Recognition"
-        extra={`[${String(RECONHECIMENTO.length).padStart(2, "0")}]`}
-      />
+      <LinhaSecao rotulo="Recognition" extra={`[${String(RECONHECIMENTO.length).padStart(2, "0")}]`} />
 
       <div style={{ paddingInline: "var(--v3-margem)" }}>
-        <div className="max-w-[46ch] pb-20 max-md:pb-12">
+        {/* ⚠ Terceira forma desta seção, e a régua veio do nightjar: "os cards
+            estão muito grandes". Estavam — a peça em 4:3 ocupando meia largura
+            transformava cada reconhecimento num anúncio, e quatro anúncios
+            seguidos gritam em vez de convencer.
+
+            A diagramação de lá é o oposto: tudo alinhado à esquerda numa coluna
+            estreita, texto pequeno, e a maior parte da tela vazia. Aqui isso
+            vira LINHA com miniatura — a foto continua (ele pediu), mas em
+            88px, do tamanho de um dado e não de um cartaz. O que ocupa a tela
+            passa a ser o ar entre as linhas. */}
+        <div className="max-w-[44vw] pb-24 max-md:max-w-none max-md:pb-12">
           <Display>Published by people who had no reason to</Display>
         </div>
 
-        {/* ⚠ CARD com a PEÇA, não linha de tabela. A primeira versão era uma
-            tabela de registros — correta como dado e fraca como argumento:
-            "os services achei tímido" e "preciso de mais ênfase" são o mesmo
-            diagnóstico duas vezes. O que convence aqui não é o nome do veículo
-            em 27px, é a peça que ELE fez aparecendo grande, com o veículo por
-            cima dela.
-
-            Duas colunas, e a primeira sobe: a mais recente (Ginga, a da
-            Abduzeedo) fica no alto à esquerda, que é onde o olho começa. */}
-        <ul data-foca className="grid grid-cols-2 gap-x-6 gap-y-16 max-md:grid-cols-1 max-md:gap-y-10">
+        <ul data-foca className="grid max-w-[104ch]">
           {RECONHECIMENTO.map((r, i) => {
             const miolo = (
               <>
-                <span className="relative block overflow-hidden">
-                  <img
-                    src={r.foto.src}
-                    srcSet={r.foto.src2x ? `${r.foto.src} 1400w, ${r.foto.src2x} 2200w` : undefined}
-                    sizes="(min-width: 768px) 46vw, 92vw"
-                    alt={r.foto.alt}
-                    width={r.foto.w}
-                    height={r.foto.h}
-                    loading={i > 1 ? "lazy" : undefined}
-                    decoding="async"
-                    draggable={false}
-                    className="aspect-[4/3] w-full object-cover"
-                  />
-                  {/* o véu existe para o wordmark ter fundo em qualquer peça —
-                      as artes vão de preto a papel claro */}
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2"
-                    style={{ background: "linear-gradient(0deg, rgba(13,21,24,0.82), transparent)" }}
-                  />
-                  <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 max-md:p-4">
-                    <span className="v3-veiculo">{r.veiculo}</span>
-                    <span className="v3-rotulo shrink-0 pb-1" style={{ color: "var(--v3-acento-tinta)" }}>
-                      {r.ano}
-                      {r.href ? <span className="v3-seta pl-2">↳</span> : null}
-                    </span>
-                  </span>
-                  <i className="v3-foco" aria-hidden="true"><b /><b /><b /><b /></i>
-                </span>
-
-                <span className="flex items-baseline gap-4 pt-4">
-                  <span className="v3-micro shrink-0" style={{ color: "var(--v3-acento-tinta)" }}>
-                    {idx(i)}
-                  </span>
-                  <span className="v3-leitura" style={{ color: "var(--fr-creme)" }}>
+                <img
+                  src={r.foto.src}
+                  alt={r.foto.alt}
+                  width={r.foto.w}
+                  height={r.foto.h}
+                  loading={i > 1 ? "lazy" : undefined}
+                  decoding="async"
+                  draggable={false}
+                  className="h-10 w-14 shrink-0 object-cover max-md:h-9 max-md:w-12"
+                />
+                <span className="min-w-0 flex-1">
+                  {/* logo quando existe arquivo utilizável, wordmark quando
+                      não — ver a auditoria em `content/reconhecimento.ts` */}
+                  {r.logo ? (
+                    <img
+                      src={r.logo.src}
+                      alt={r.veiculo}
+                      width={r.logo.w}
+                      height={r.logo.h}
+                      loading="lazy"
+                      decoding="async"
+                      className="block h-[26px] w-auto opacity-95"
+                      style={{ filter: "invert(1) brightness(1.6) grayscale(1)" }}
+                    />
+                  ) : (
+                    <span className="v3-recon-veiculo block">{r.veiculo}</span>
+                  )}
+                  <span className="v3-leitura mt-1 block truncate" style={{ color: "var(--v3-quieto-tinta)" }}>
                     {r.titulo}
                   </span>
                 </span>
-                <span className="v3-micro block pl-9 pt-2" style={{ color: "var(--v3-quieto-tinta)" }}>
-                  Project — {r.projeto}
+                <span className="v3-micro w-28 shrink-0 text-right max-md:hidden" style={{ color: "var(--v3-quieto-tinta)" }}>
+                  {r.projeto}
+                </span>
+                <span className="v3-micro w-16 shrink-0 text-right tabular-nums" style={{ color: "var(--v3-acento-tinta)" }}>
+                  {r.ano}
+                  {r.href ? <span className="v3-seta pl-2">↳</span> : null}
                 </span>
               </>
             );
-            const classe = "v3-recon group block";
+            const classe =
+              "v3-recon flex items-center gap-6 border-t py-6 max-md:gap-4 max-md:py-5";
+            const estilo = { borderColor: "rgba(237,230,225,0.18)" };
             return (
-              <li key={`${r.veiculo}-${r.projeto}`} className={i % 2 === 1 ? "md:mt-16" : undefined}>
+              <li key={`${r.veiculo}-${r.projeto}`}>
                 {r.href ? (
-                  <a href={r.href} target="_blank" rel="noopener noreferrer" className={classe}>
+                  <a href={r.href} target="_blank" rel="noopener noreferrer" className={`group ${classe}`} style={estilo}>
                     {miolo}
                   </a>
                 ) : (
-                  <span className={classe}>{miolo}</span>
+                  <span className={classe} style={estilo}>{miolo}</span>
                 )}
               </li>
             );
           })}
+          <li className="border-t" style={{ borderColor: "rgba(237,230,225,0.18)" }} />
         </ul>
       </div>
     </section>
