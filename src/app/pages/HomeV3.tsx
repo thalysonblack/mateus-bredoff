@@ -136,14 +136,14 @@ function HeroV3() {
 /* ── about: manifesto justificado + lead mono + números ─────────────────── */
 function AboutV3() {
   return (
-    <section data-secao="About" className="relative py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+    <section data-secao="About" className="relative py-28 max-md:py-14" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
       <Cantos />
       <LinhaSecao rotulo="About" acao={{ texto: "More about me", to: "/about" }} />
       <div
         className="grid grid-cols-12 gap-6"
         style={{ paddingInline: "var(--v3-margem)" }}
       >
-        <div className="col-span-6 max-lg:col-span-12">
+        <div className="col-span-7 max-lg:col-span-12">
           <Display>Where strategy, art direction and business unite</Display>
         </div>
         <div className="col-span-4 col-start-9 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-10">
@@ -166,7 +166,7 @@ function WorkV3() {
     el.scrollBy({ left: dir * passo, behavior: "smooth" });
   };
   return (
-    <section data-secao="Selected Work" className="relative py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+    <section data-secao="Selected Work" className="relative py-28 max-md:py-14" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
       <Cantos />
       <LinhaSecao
         rotulo="Selected work"
@@ -282,7 +282,7 @@ function GloboV3() {
 
   return (
     <section data-secao="Around the World"
-      className="relative overflow-clip py-20 max-md:py-12"
+      className="relative overflow-clip py-28 max-md:py-14"
       style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}
     >
       <Cantos />
@@ -299,12 +299,12 @@ function GloboV3() {
         style={{ paddingInline: "var(--v3-margem)" }}
       >
         {/* headline sobre o globo, à esquerda */}
-        <div className="col-span-6 max-lg:col-span-12">
+        <div className="col-span-7 max-lg:col-span-12">
           <Display>Based in Brazil, working worldwide</Display>
         </div>
 
         {/* os dois relógios: o dele e o de quem está lendo */}
-        <div className="col-span-4 col-start-9 self-start max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-10">
+        <div className="col-span-4 col-start-9 self-start pt-6 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-10">
           <div className="grid grid-cols-2 gap-x-6 border-t border-black/12 pt-4" data-entra>
             <div>
               <p className="v3-micro" style={{ color: "var(--v3-quieto)" }}>
@@ -444,7 +444,7 @@ function TileLab({ e, i }: { e: (typeof ENSAIOS)[number]; i: number }) {
 
 function LabV3() {
   return (
-    <section data-secao="AI Lab" className="relative py-20 max-md:py-12" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+    <section data-secao="AI Lab" className="relative py-28 max-md:py-14" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
       <Cantos />
       <LinhaSecao
         rotulo="AI Lab"
@@ -509,7 +509,7 @@ function ServicosV3() {
   return (
     <section data-secao="Services"
       id="services"
-      className="relative py-20 max-md:py-12"
+      className="relative py-28 max-md:py-14"
       style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}
     >
       <Cantos />

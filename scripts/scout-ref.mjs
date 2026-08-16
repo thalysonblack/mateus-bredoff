@@ -1,20 +1,33 @@
 /**
- * Scout da REFERÊNCIA noartmusic.com — mineração de MECÂNICA, não réplica.
- * Referência de terceiro: copia-se o gesto (estrutura, interação, composição),
- * nunca a matéria (fonte/cor). Por isso, além do que o audit-framer colhe,
- * extrai mixBlendMode / filter / position fixed|sticky / transform dos nós
- * grandes — é onde a mecânica vive e a geometria não denuncia.
+ * Scout de REFERÊNCIA — mineração de MECÂNICA, não réplica.
  *
- * uso: node scripts/scout-noart.mjs [width]
+ * Referência de terceiro: copia-se o GESTO (estrutura, interação, composição),
+ * nunca a matéria (fonte, cor, imagem). Por isso, além do que o `audit-framer`
+ * colhe, este extrai mixBlendMode / filter / position fixed|sticky / backdrop
+ * dos nós grandes — é onde a mecânica vive e a geometria não denuncia.
+ *
+ * Nasceu apontado para o noartmusic.com (a referência de agosto/26) e virou
+ * genérico na segunda vez que precisei dele: scout que só sabe minerar um site
+ * é um script morto no dia seguinte.
+ *
+ * uso: node scripts/scout-ref.mjs <url> [width]
+ *      node scripts/scout-ref.mjs https://bleibtgleich.dev 1600
  */
 import puppeteer from 'puppeteer-core';
 import { writeFileSync, mkdirSync } from 'node:fs';
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-const BASE = 'https://www.noartmusic.com';
-const [wArg = '1600', rotaArg = '/'] = process.argv.slice(2);
+const [urlArg, wArg = '1600'] = process.argv.slice(2);
+if (!urlArg) {
+  console.error('uso: node scripts/scout-ref.mjs <url> [width]');
+  process.exit(1);
+}
+const alvo = new URL(urlArg.startsWith('http') ? urlArg : `https://${urlArg}`);
+const BASE = alvo.origin;
+const rotaArg = alvo.pathname;
 const W = +wArg;
-const OUT = '/tmp/noart-scout';
+/* uma pasta por domínio: minerar duas referências não mistura as fatias */
+const OUT = `/tmp/scout-${alvo.hostname.replace(/[^a-z0-9]/gi, '-')}`;
 mkdirSync(OUT, { recursive: true });
 
 const browser = await puppeteer.launch({

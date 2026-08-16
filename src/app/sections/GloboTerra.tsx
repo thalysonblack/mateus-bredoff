@@ -152,16 +152,29 @@ export default function GloboTerra({ className = "" }: { className?: string }) {
         ctx.globalAlpha = Math.min(1, 0.25 + pz * 0.7);
         ctx.lineWidth = 1;
         ctx.strokeRect(px - 8.5, py - 8.5, 17, 17);
-        /* fio até a borda + rótulo: a etiqueta segue o ponto, não a moldura */
+        /* fio até a borda + rótulo: a etiqueta segue o ponto, não a moldura.
+           ⚠ O rótulo VIRA DE LADO quando não cabe. Canvas não quebra linha nem
+           avisa que estourou: ele simplesmente pinta fora e o pixel some. Com a
+           escala nova o Brasil passou a girar perto da borda direita e a
+           etiqueta saía cortada em "BRA — G" — um dado do cliente exibido pela
+           metade, que é pior do que não exibir. Mede-se o texto antes e escolhe
+           o lado que sobra. */
+        ctx.font = "600 10px 'Martian Mono', ui-monospace, monospace";
+        ctx.textBaseline = "middle";
+        const rotulo = "BRA — GMT−3";
+        const larg = ctx.measureText(rotulo).width;
+        const cabeDireita = px + 40 + larg <= lado - 4;
+        const dir = cabeDireita ? 1 : -1;
+
         ctx.beginPath();
-        ctx.moveTo(px + 9, py);
-        ctx.lineTo(px + 34, py);
+        ctx.moveTo(px + 9 * dir, py);
+        ctx.lineTo(px + 34 * dir, py);
         ctx.stroke();
         ctx.globalAlpha = Math.min(1, 0.45 + pz * 0.55);
         ctx.fillStyle = tinta;
-        ctx.font = "600 10px 'Martian Mono', ui-monospace, monospace";
-        ctx.textBaseline = "middle";
-        ctx.fillText("BRA — GMT−3", px + 40, py);
+        ctx.textAlign = cabeDireita ? "left" : "right";
+        ctx.fillText(rotulo, px + 40 * dir, py);
+        ctx.textAlign = "left";
         ctx.fillStyle = acento;
       }
       ctx.globalAlpha = 1;

@@ -25,8 +25,27 @@
   --v3-mono-micro: 10px;
 
   /* voz de manifesto — Geist bold caps, justificada, tracking apertado */
-  --v3-display: clamp(30px, 3.4vw, 54px);
-  --v3-display-lh: 1.04;
+  /* ⚠ A escala do display subiu de 3,4vw/54px para 5,2vw/84px em 16/08, e o
+     motivo saiu de uma MEDIÇÃO, não de gosto.
+
+     Minerando o bleibtgleich.dev (referência que ele salvou; scout em
+     `scripts/scout-ref.mjs`) o achado não foi o efeito líquido nem o preto e
+     branco — foi que **ele usa UMA escala de display, não duas**: o nome do
+     hero e os títulos de seção medem os MESMOS 100px. Aqui o hero estava em
+     118px e as seções caíam para 54px, menos da metade. Não era o hero que
+     estava grande: eram as seções que estavam pequenas, e é daí que vinha a
+     sensação de que o miolo da página desanda depois da primeira tela.
+
+     84px contra 118px do hero mantém a hierarquia (o nome ainda manda) sem o
+     degrau que fazia cada seção pedir desculpa por existir. O tracking fechou
+     junto — −0,027em era frouxo para este corpo; a referência anda em −0,05em
+     e −0,038em é onde a Geist ainda respira.
+
+     ⚠ Escala maior exige LARGURA: as manchetes que viviam em `col-span-6`
+     foram para 7–8 colunas na mesma leva. Subir o corpo sem abrir a coluna
+     transforma manchete em pilha de linhas órfãs. */
+  --v3-display: clamp(30px, 5.2vw, 84px);
+  --v3-display-lh: 0.98;
   --v3-nome: clamp(44px, 8.6vw, 138px);
 
   /* margem lateral única da versão (a referência usa ~32px em 1600) */
@@ -93,7 +112,7 @@
   font-weight: 700;
   font-size: var(--v3-display);
   line-height: var(--v3-display-lh);
-  letter-spacing: -0.027em;
+  letter-spacing: -0.038em;
   text-transform: uppercase;
 }
 
