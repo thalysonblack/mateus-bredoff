@@ -552,3 +552,81 @@
   overflow: hidden;
   background: var(--fr-petroleo, #14201f);
 }
+
+/* ── A SESSÃO, refinada ────────────────────────────────────────────────────
+   "gostei da I, vamos melhorar mais". Quatro camadas de acabamento — todas em
+   CSS, nenhuma com JS de scroll:
+
+   1. O CARD QUE ESTÁ SENDO COBERTO RECUA. Com `sticky` puro, a peça de baixo
+      some por trás da próxima e o efeito lê como corte. Aqui ela escurece e
+      encolhe um fio enquanto é coberta, e a pilha ganha CAMADA — a profundidade
+      que ele pediu, e que é de acabamento, não de eixo: some junto com o
+      movimento desligado e a página continua de pé.
+      `animation-timeline: view()` faz isso sem uma linha de JS; onde não houver
+      suporte, o card simplesmente não recua e nada quebra.
+   2. A ARTE RESPIRA. Zoom de 1 → 1,05 em 22s, alternando. Devagar de propósito:
+      zoom que se percebe como animação vira inquietação numa peça que a pessoa
+      está tentando ver.
+   3. O NOME ENTRA. A ficha da base sobe quando o card assume a tela.
+   4. A RÉGUA DA SESSÃO. Um fio de 1px que mede o percurso pelas nove peças —
+      telemetria em vez de bolinha de carrossel. */
+.p-sessao-card > .p-sessao-camada {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 42%;
+}
+@supports (animation-timeline: view()) {
+  .p-sessao-card > .p-sessao-camada {
+    animation: p-recua linear both;
+    animation-timeline: view();
+    animation-range: exit-crossing 0% exit-crossing 100%;
+  }
+}
+@keyframes p-recua {
+  to {
+    transform: scale(0.94);
+    filter: brightness(0.42) saturate(0.75);
+  }
+}
+
+.p-sessao-art {
+  animation: p-respira 22s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes p-respira {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
+}
+
+/* a régua da sessão: cresce com o scroll da própria seção */
+.p-regua-sessao {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  height: 1px;
+  background: rgba(236, 234, 229, 0.22);
+}
+.p-regua-sessao > i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--p-acento);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+@supports (animation-timeline: scroll()) {
+  .p-regua-sessao > i {
+    animation: p-mede linear both;
+    animation-timeline: view(block);
+    animation-range: contain 0% contain 100%;
+  }
+}
+@keyframes p-mede {
+  to { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p-sessao-card > .p-sessao-camada { animation: none; }
+  .p-sessao-art { animation: none; }
+  .p-regua-sessao > i { animation: none; transform: scaleX(1); opacity: 0.4; }
+}

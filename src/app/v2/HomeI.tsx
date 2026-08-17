@@ -86,9 +86,32 @@ export default function HomeI() {
       </section>
 
       {/* ═ A SESSÃO — nove telas que se cobrem ═══════════════════════════ */}
-      <div className="-mx-[var(--p-margem)] mt-[12svh]">
+      <div className="flex items-baseline justify-between gap-6 pt-[16svh]">
+        <p className="p-rotulo">Selected work — {String(WORK.length).padStart(2, "0")}</p>
+        <Link to="/v2/work" className="p-marca p-link">
+          Index →
+        </Link>
+      </div>
+
+      <div className="relative -mx-[var(--p-margem)] mt-6">
+        {/* a régua da sessão: mede o percurso pelas nove peças. Fio de 1px em
+            vez de bolinhas — o site inteiro é telemetria, não interface. */}
+        <div className="p-regua-sessao" aria-hidden="true">
+          <i />
+        </div>
+
         {WORK.map((w, k) => (
           <article key={w.slug} className="p-sessao-card">
+            {/* a peça INTEIRA é o alvo do clique, não só o rótulo do canto: numa
+                tela em que a arte ocupa tudo, obrigar a mirar num link de 13px é
+                pedir precisão sem motivo. O rótulo continua, porque affordance
+                de clique não se adivinha. */}
+            <Link
+              to={`/v2/work/${w.slug}`}
+              className="absolute inset-0 z-10"
+              aria-label={`Open ${w.title}`}
+            />
+            <div className="p-sessao-camada">
             <img
               src={w.cover.src}
               srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
@@ -99,8 +122,9 @@ export default function HomeI() {
               loading={k > 1 ? "lazy" : undefined}
               decoding="async"
               draggable={false}
-              className="absolute inset-0 h-full w-full object-cover"
+              className="p-sessao-art absolute inset-0 h-full w-full object-cover"
             />
+            </div>
 
             {/* o contador PARTIDO: o número no centro, o total na borda */}
             {/* ⚠ SEM `mix-blend-difference` aqui. A primeira montagem usava,
@@ -138,7 +162,7 @@ export default function HomeI() {
                 color: "#fff",
               }}
             >
-              <div>
+              <div className="p-sessao-ficha">
                 <p className="p-especime" style={{ ["--n" as string]: w.title.length + 8 }}>
                   {w.title}
                 </p>
@@ -146,9 +170,7 @@ export default function HomeI() {
                   {w.disciplines.join(", ")} — {w.year}
                 </p>
               </div>
-              <Link to={`/v2/work/${w.slug}`} className="p-corpo p-link shrink-0">
-                Open project →
-              </Link>
+              <span className="p-corpo p-link relative z-20 shrink-0">Open project →</span>
             </div>
           </article>
         ))}
