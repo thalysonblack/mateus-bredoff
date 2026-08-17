@@ -816,6 +816,15 @@
   inset: 0;
   z-index: 80;
   will-change: transform;
+  /* ⚠⚠ ESTADO INICIAL FORA DA TELA, E ISSO É OBRIGATÓRIO. A folha é `fixed
+     inset:0` na cor do papel: sem transform inicial ela nasce COBRINDO a página
+     e o site abre em branco — com o DOM inteiro montado por baixo, que é o pior
+     tipo de defeito, porque toda medição de conteúdo passa. Só o GSAP a traz
+     para dentro, no clique.
+     O obturador anterior não tinha esse risco porque nascia com `scaleY: 0`
+     declarado no CSS; ao trocar a mecânica, o estado inicial veio junto e eu
+     não o repus. */
+  transform: translate3d(-101%, 0, 0);
 }
 .p-folha-fio {
   position: absolute;
