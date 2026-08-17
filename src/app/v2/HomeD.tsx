@@ -81,6 +81,12 @@ export default function HomeD() {
          Dentro do campo e fora de uma palavra, a peça anterior FICA. */
       const noPonto = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
       const alvo = noPonto?.closest<HTMLElement>("[data-peca]");
+      /* ⭐ de que lado a arte deve entrar: o MESMO de onde vem a fita desta
+         linha. Linhas pares desfilam para a esquerda (o conteúdo chega pela
+         direita), ímpares ao contrário. Ler isso do DOM evita duplicar em JS a
+         regra que já está no CSS. */
+      const linha = noPonto?.closest<HTMLElement>("[data-linha]");
+      if (linha) lado.current = Number(linha.dataset.linha) % 2 === 1 ? -1 : 1;
       const naTrama = !!noPonto && !!campo.current?.contains(noPonto);
       const slug = alvo?.dataset.peca ?? (naTrama ? ultimo : null);
       if (slug === ultimo) return;
@@ -166,6 +172,8 @@ export default function HomeD() {
   /* as duas lâminas do visor e qual delas está na frente */
   const lamina = useRef<HTMLImageElement[]>([]);
   const ativo = useRef(-1);
+  /* de que lado a próxima arte entra: +1 pela direita, −1 pela esquerda */
+  const lado = useRef(1);
   useLayoutEffect(() => {
     const el = visor.current;
     const camadas = lamina.current;
@@ -194,7 +202,7 @@ export default function HomeD() {
 
     if (reduzido) {
       gsap.set(el, { autoAlpha: 1, clipPath: "inset(0% 0% 0% 0%)" });
-      gsap.set(entra, { autoAlpha: 1, yPercent: 0, scale: 1, filter: "none", zIndex: 2 });
+      gsap.set(entra, { autoAlpha: 1, xPercent: 0, yPercent: 0, scale: 1, filter: "none", zIndex: 2 });
       if (sai) gsap.set(sai, { autoAlpha: 0, zIndex: 1 });
       aberto.current = true;
       return;
@@ -211,20 +219,26 @@ export default function HomeD() {
         gsap.set(entra, { zIndex: 2, autoAlpha: 1 });
         if (sai) gsap.set(sai, { zIndex: 1 });
 
-        /* TROCA — a moldura não se mexe: nada de clipPath aqui. */
+        /* TROCA — a moldura não se mexe: nada de clipPath aqui.
+           ⚠ O DESLIZE É LATERAL, e no sentido da linha: a arte entra pelo mesmo
+           lado de onde a fita vem, e a anterior sai pelo oposto, mais devagar
+           (parallax). Já foi vertical, e o eixo brigava com a trama — aqui tudo
+           anda na horizontal, então a troca ler no mesmo eixo faz o visor
+           parecer uma JANELA sobre a fita em vez de um slot separado. */
         if (aberto.current) {
+          const d = lado.current;
           gsap
             .timeline()
             .fromTo(
               entra,
-              { yPercent: 100, scale: 1.06, filter: "blur(9px)" },
-              { yPercent: 0, scale: 1, filter: "blur(0px)", duration: 0.72, ease: "expo.out" },
+              { xPercent: 100 * d, scale: 1.04, filter: "blur(8px)" },
+              { xPercent: 0, scale: 1, filter: "blur(0px)", duration: 0.78, ease: "expo.out" },
               0,
             )
             .fromTo(
               sai,
-              { yPercent: 0, scale: 1 },
-              { yPercent: -26, scale: 1.06, duration: 0.72, ease: "expo.out" },
+              { xPercent: 0, scale: 1 },
+              { xPercent: -32 * d, scale: 1.04, duration: 0.78, ease: "expo.out" },
               0,
             );
           return;
@@ -241,8 +255,8 @@ export default function HomeD() {
           )
           .fromTo(
             entra,
-            { yPercent: 12, scale: 1.08, filter: "blur(13px)" },
-            { yPercent: 0, scale: 1, filter: "blur(0px)", duration: 0.8, ease: "expo.out" },
+            { xPercent: 10 * lado.current, scale: 1.08, filter: "blur(13px)" },
+            { xPercent: 0, scale: 1, filter: "blur(0px)", duration: 0.8, ease: "expo.out" },
             0,
           );
       });
@@ -265,7 +279,7 @@ export default function HomeD() {
             numa linha para as três e atenua tudo que não está sob o cursor. */}
         <div ref={campo} className="p-trama-campo grid min-h-0 flex-1 gap-[var(--p-trama-gap)] pb-[7vh]">
           {[fita, [...fita].reverse(), [...WORK.slice(3), ...WORK.slice(0, 3), ...WORK.slice(3), ...WORK.slice(0, 3)]].map((linha, li) => (
-            <div key={li} className="p-trama p-trama--peca -mx-[var(--p-margem)]">
+            <div key={li} data-linha={li} className="p-trama p-trama--peca -mx-[var(--p-margem)]">
               {/* o wrapper recebe o empurrão do SCROLL (transform escrito pelo
                   ticker); a fita de dentro segue no loop próprio. Ímpares vão
                   para o outro lado. Duas camadas porque com uma só seria preciso
