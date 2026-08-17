@@ -87,6 +87,17 @@ export type VisorFluido = {
   travar(p: number | null): void;
   /** conclui a troca: a nova vira a atual */
   concluir(): void;
+  /**
+   * Fecha uma transição INTERROMPIDA no meio, pelo que está dominando a tela.
+   *
+   * ⚠ Sem isto, trocar de peça antes de a anterior terminar zerava o progresso
+   * e a imagem SALTAVA de volta para a lâmina da frente — e se a peça nova era
+   * justamente a que já estava lá, a troca acontecia sem efeito nenhum. Foi o
+   * que ele viu duas vezes ("às vezes a troca acontece sem o efeito").
+   * Promove a lâmina de trás se ela já passou da metade; senão, mantém a da
+   * frente. Nos dois casos a próxima transição PARTE do que está na tela.
+   */
+  resolver(): void;
   passo(dt: number): void;
   destruir(): void;
 };
@@ -265,6 +276,16 @@ export function criarVisorFluido(alvo: HTMLElement, modo: 1 | 2 | 3 | 4 = 1): Vi
       razaoA = razaoB;
       program.uniforms.uA.value = texA;
       program.uniforms.uArteA.value = razaoA;
+      program.uniforms.uP.value = 0;
+    },
+    resolver() {
+      if (travado !== null) return;
+      if ((program.uniforms.uP.value as number) >= 0.5) {
+        texA = texB;
+        razaoA = razaoB;
+        program.uniforms.uA.value = texA;
+        program.uniforms.uArteA.value = razaoA;
+      }
       program.uniforms.uP.value = 0;
     },
     passo(dt) {

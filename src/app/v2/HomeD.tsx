@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { gsap, prefersReducedMotion } from "../../lib/gsap";
 import { criarVisorFluido, type VisorFluido } from "../../lib/visorFluido";
 import { WORK } from "../../content/work";
+import { REEL } from "../../content/reel";
 import { RECONHECIMENTO } from "../../content/reconhecimento";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha, Bloco } from "./sistema";
@@ -300,8 +301,13 @@ export default function HomeD({
     const meuTurno = ++geracao.current;
     void v.garantir(src).then(() => {
       if (geracao.current !== meuTurno || !visor.current) return;
+      /* ⚠ ORDEM OBRIGATÓRIA: matar o tween, RESOLVER o que ficou pela metade e
+         só então instalar a lâmina nova. Sem o `resolver`, o progresso zerava e
+         a tela saltava para a lâmina da frente — e quando a peça nova era a que
+         já estava lá, a troca acontecia sem efeito nenhum. */
       tween.current?.kill();
       tween.current = null;
+      v.resolver();
       v.iniciar(src, lado.current as 1 | -1);
 
       const dissolve = () => {
@@ -346,37 +352,14 @@ export default function HomeD({
   }, [sob]);
   const recentes = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano).slice(0, 2);
 
-  /**
-   * O SHOWREEL — cinco frames, um trocando por vez.
-   *
-   * ⚠ Duas fórmulas erradas antes desta, e as duas falhavam do mesmo jeito:
-   * repetiam projeto na tira. Índice derivado de aritmética (`i*passo +
-   * avanço`) só garante distinção se o passo for primo com a coleção E o avanço
-   * for igual para todos — e avanço igual é justamente o que faz a tira piscar
-   * toda junta, que lê como carrossel.
-   *
-   * Então o estado é a própria tira: cinco projetos visíveis, e a cada batida
-   * UM frame (round-robin) recebe o próximo projeto que ainda não está na tela.
-   * Distinção garantida por construção, troca escalonada por construção.
-   */
-  const [tira, setTira] = useState(() => [0, 1, 2, 3, 4].map((i) => (i * 5) % WORK.length));
+  /* o player do reel, aberto pelo clique na capa */
+  const [reelAberto, setReelAberto] = useState(false);
   useEffect(() => {
-    let vez = 0;
-    const id = setInterval(() => {
-      setTira((atual) => {
-        const posicao = vez % atual.length;
-        vez += 1;
-        const visiveis = new Set(atual);
-        let proximo = (atual[posicao] + 1) % WORK.length;
-        while (visiveis.has(proximo)) proximo = (proximo + 1) % WORK.length;
-        const novo = [...atual];
-        novo[posicao] = proximo;
-        return novo;
-      });
-    }, 1400);
-    return () => clearInterval(id);
-  }, []);
-  const quadros = tira.map((i) => WORK[i]);
+    if (!reelAberto) return;
+    const fecha = (e: KeyboardEvent) => e.key === "Escape" && setReelAberto(false);
+    window.addEventListener("keydown", fecha);
+    return () => window.removeEventListener("keydown", fecha);
+  }, [reelAberto]);
   /* a fita é duplicada no markup e o −50% do keyframe fecha o loop sem emenda */
   const fita = [...WORK, ...WORK];
 
@@ -454,23 +437,30 @@ export default function HomeD({
               built to last.
             </p>
 
-            {/* O SHOWREEL — cinco frames 16:9 que trocam sozinhos.
-                ⚠ Não é grade de portfólio: é uma tira de FRAMES, do tamanho de
-                miniatura de decupagem, e cada um cicla no seu tempo. Grade
-                parada aqui competiria com a trama; ciclando devagar e fora de
-                fase, lê como reel rodando ao fundo — e ocupa com matéria o
-                vazio que sobrava nesta coluna.
-                A proporção é a MESMA do visor (16:9), então a home passa a ter
-                uma razão só de imagem, do frame miúdo ao quadro grande. */}
-            <div className="p-reel" aria-hidden="true">
-              {quadros.map((w, i) => (
-                <span key={i} className="p-reel-frame">
-                  <img src={w.cover.src} alt="" decoding="async" draggable={false} />
-                </span>
-              ))}
-            </div>
+            {/* A CAPA DO SHOWREEL — 16:9, e o vídeo abre no clique.
+                ⚠ Era uma tira de cinco frames ciclando, e ele corrigiu: o reel
+                é UM vídeo, então o que vive aqui é a THUMB dele. Frame único
+                diz "existe um filme"; tira de frames dizia "existe uma galeria".
+                Mesma proporção do visor, então a home tem uma razão só de
+                imagem — do frame da capa ao quadro que segue o cursor. */}
+            {REEL.video ? (
+              <button type="button" className="p-reel" onClick={() => setReelAberto(true)}>
+                <img src={REEL.capa.src} alt="" decoding="async" draggable={false} />
+                <span className="p-reel-play" aria-hidden="true" />
+                <span className="sr-only">Play showreel</span>
+              </button>
+            ) : (
+              /* ⚠ sem arquivo, a capa NÃO finge que abre: um play que não toca
+                 nada é pior que play nenhum. Mesma regra que mantém os cases
+                 magros em vez de preenchidos com arte de template. */
+              <span className="p-reel p-reel--mudo">
+                <img src={REEL.capa.src} alt="" decoding="async" draggable={false} />
+              </span>
+            )}
             <p className="p-marca pt-2" style={{ color: "var(--p-quieto)" }}>
-              Reel — {String(WORK.length).padStart(2, "0")} identities, 2021—2026
+              {REEL.titulo} — {REEL.ano}
+              {REEL.duracao ? ` · ${REEL.duracao}` : ""}
+              {REEL.video ? "" : " · em edição"}
             </p>
           </div>
 
@@ -534,6 +524,15 @@ export default function HomeD({
           </div>
         </div>
       </section>
+
+      {/* O PLAYER — a peça inteira em tela, sobre a página apagada.
+          Sem moldura nem cromo: o vídeo E o fundo, porque qualquer controle
+          desenhado aqui competiria com a arte que o reel está mostrando. */}
+      {reelAberto && REEL.video ? (
+        <div className="p-player" onClick={() => setReelAberto(false)} role="presentation">
+          <video src={REEL.video} autoPlay controls playsInline className="p-player-video" />
+        </div>
+      ) : null}
 
       {/* O VISOR — a peça, já que ela saiu de dentro da letra.
           ⚠ ELE É O CURSOR: *"o que eu quis dizer era pra que o mouse no hover

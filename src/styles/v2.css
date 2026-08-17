@@ -447,10 +447,13 @@
   transition: opacity 0.35s ease-out;
 }
 .p-trama-campo {
-  /* ⭐ TRÊS LINHAS IGUAIS NO QUE SOBRA. A altura não é escolhida, é o resto da
-     tela depois do cabeçalho, da ficha e do rodapé — é assim que a home cabe em
-     100svh em qualquer janela sem inventar breakpoint. */
-  grid-template-rows: repeat(3, minmax(0, 1fr));
+  /* ⚠ AS LINHAS TÊM A ALTURA DO TEXTO, e o conjunto é que se centra no espaço
+     livre (`align-content: center`). Elas já foram `1fr` cada, dividindo todo o
+     resto da tela: quando a trama ganhou os 140px que sobravam embaixo, cada
+     faixa esticou e as três linhas se afastaram — "aproxima mais como estava".
+     Prendendo a altura ao texto, o ar que sobra fica EM VOLTA da trama, e não
+     entre as linhas dela, que é onde ele destrói o bloco. */
+  align-content: center;
   /* ⚠ O CORPO CABE NA FAIXA, COM O DESCENDENTE INTEIRO. A fita tem
      `overflow: hidden` (precisa dele no eixo X), e num eixo só não dá para
      escapar — `overflow-y: visible` com `overflow-x: hidden` vira `auto`. Então
@@ -746,33 +749,71 @@
 .p-trama-scroll { will-change: transform; }
 
 /* ── O SHOWREEL ───────────────────────────────────────────────────────────
-   "frames pequenos de 16:9 de um show reel e um texto embaixo" (17/08), para o
-   vazio da primeira coluna. Frames de DECUPAGEM: miúdos, encostados, sem raio
-   e sem sombra — o que os faz ler como tira de filme e não como grade de
-   portfólio é o tamanho e a cadência, não moldura.
-
-   ⚠ Raio ZERO aqui, de propósito. O único canto arredondado do sistema é o do
-   visor (4px), porque ele é a única peça que não é papel; repetir o raio na
-   tira tiraria dele essa exclusividade. */
+   A capa do reel, 16:9, que abre o vídeo no clique. Raio ZERO, sem sombra: o
+   único canto arredondado do sistema é o do visor (4px), porque ele é a única
+   peça que não é papel — repetir o raio aqui tiraria dele essa exclusividade.
+   O play é um triângulo em `clip-path`, não um ícone importado: é a mesma
+   economia do selo do Behance, desenhado em vez de baixado. */
 .p-reel {
-  display: flex;
-  gap: 4px;
-  padding-top: 18px;
-  max-width: 42ch;
-}
-.p-reel-frame {
+  position: relative;
   display: block;
-  flex: 1 1 0;
+  width: min(100%, 268px);
   aspect-ratio: 16 / 9;
+  margin-top: 18px;
   overflow: hidden;
   background: var(--p-fio);
+  padding: 0;
+  border: 0;
+  cursor: pointer;
 }
-.p-reel-frame img {
+.p-reel img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* a troca é seca, como corte de reel — fade aqui viraria slideshow */
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease-out;
+}
+.p-reel:hover img { transform: scale(1.03); }
+/* ⚠ sem vídeo a capa não é botão: nem cursor de mão, nem play, nem hover */
+.p-reel--mudo { cursor: default; }
+.p-reel--mudo:hover img { transform: none; }
+.p-reel-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  background: var(--p-acento);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  transform: scale(0.9);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.p-reel:hover .p-reel-play { transform: scale(1); }
+
+/* ── O PLAYER ─────────────────────────────────────────────────────────────
+   A página inteira apaga e o filme ocupa a tela. Fundo na TINTA do sistema, não
+   em preto puro: preto puro é de outro sistema, e a página que fica por baixo é
+   papel. */
+.p-player {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: var(--p-margem);
+  background: rgba(20, 32, 31, 0.94);
+  animation: p-player-entra 0.32s ease-out both;
+}
+@keyframes p-player-entra {
+  from { opacity: 0; }
+}
+.p-player-video {
+  width: min(100%, 1400px);
+  max-height: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 4px;
+  background: #000;
 }
 
 /* ── O VISOR: A PEÇA VIRA O CURSOR ─────────────────────────────────────────
