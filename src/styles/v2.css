@@ -850,14 +850,7 @@
   aspect-ratio: 16 / 9;
   object-fit: cover;
 }
-.p-arquivo-ficha {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: space-between;
-}
+/* ⓘ `.p-arquivo-ficha` removida: a tabela já nomeia a peça enquadrada */
 @media (max-width: 1024px) {
   .p-arquivo { flex-direction: column; }
   .p-arquivo-lista { width: 100%; border-right: 0; padding-right: 0; }

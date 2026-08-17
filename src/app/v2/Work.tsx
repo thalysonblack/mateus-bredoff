@@ -172,12 +172,9 @@ export default function WorkV2() {
               <img src={peca.cover.src} alt={peca.cover.alt} decoding="async" draggable={false} />
             </span>
           ) : null}
-          <p className="p-marca p-arquivo-ficha">
-            <span>FIG. {String(ativo + 1).padStart(2, "0")}</span>
-            <span>
-              {peca.title} — {peca.year}
-            </span>
-          </p>
+          {/* ⓘ a ficha "FIG. 08 · Votare — 2025" saiu a pedido dele: a tabela ao
+              lado já nomeia a peça enquadrada, e repetir o nome embaixo da
+              imagem era o mesmo dado dito duas vezes. */}
         </div>
       </section>
     </Prancha>
