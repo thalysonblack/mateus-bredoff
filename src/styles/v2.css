@@ -745,6 +745,36 @@
    ao scroll". */
 .p-trama-scroll { will-change: transform; }
 
+/* ── O SHOWREEL ───────────────────────────────────────────────────────────
+   "frames pequenos de 16:9 de um show reel e um texto embaixo" (17/08), para o
+   vazio da primeira coluna. Frames de DECUPAGEM: miúdos, encostados, sem raio
+   e sem sombra — o que os faz ler como tira de filme e não como grade de
+   portfólio é o tamanho e a cadência, não moldura.
+
+   ⚠ Raio ZERO aqui, de propósito. O único canto arredondado do sistema é o do
+   visor (4px), porque ele é a única peça que não é papel; repetir o raio na
+   tira tiraria dele essa exclusividade. */
+.p-reel {
+  display: flex;
+  gap: 4px;
+  padding-top: 18px;
+  max-width: 42ch;
+}
+.p-reel-frame {
+  display: block;
+  flex: 1 1 0;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--p-fio);
+}
+.p-reel-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* a troca é seca, como corte de reel — fade aqui viraria slideshow */
+}
+
 /* ── O VISOR: A PEÇA VIRA O CURSOR ─────────────────────────────────────────
    *"o que eu quis dizer era pra que o mouse no hover virasse o projeto"* —
    o ponteiro não ganha um acompanhante, ele É SUBSTITUÍDO pela peça.

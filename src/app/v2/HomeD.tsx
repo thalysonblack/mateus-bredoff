@@ -345,6 +345,38 @@ export default function HomeD({
     });
   }, [sob]);
   const recentes = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano).slice(0, 2);
+
+  /**
+   * O SHOWREEL — cinco frames, um trocando por vez.
+   *
+   * ⚠ Duas fórmulas erradas antes desta, e as duas falhavam do mesmo jeito:
+   * repetiam projeto na tira. Índice derivado de aritmética (`i*passo +
+   * avanço`) só garante distinção se o passo for primo com a coleção E o avanço
+   * for igual para todos — e avanço igual é justamente o que faz a tira piscar
+   * toda junta, que lê como carrossel.
+   *
+   * Então o estado é a própria tira: cinco projetos visíveis, e a cada batida
+   * UM frame (round-robin) recebe o próximo projeto que ainda não está na tela.
+   * Distinção garantida por construção, troca escalonada por construção.
+   */
+  const [tira, setTira] = useState(() => [0, 1, 2, 3, 4].map((i) => (i * 5) % WORK.length));
+  useEffect(() => {
+    let vez = 0;
+    const id = setInterval(() => {
+      setTira((atual) => {
+        const posicao = vez % atual.length;
+        vez += 1;
+        const visiveis = new Set(atual);
+        let proximo = (atual[posicao] + 1) % WORK.length;
+        while (visiveis.has(proximo)) proximo = (proximo + 1) % WORK.length;
+        const novo = [...atual];
+        novo[posicao] = proximo;
+        return novo;
+      });
+    }, 1400);
+    return () => clearInterval(id);
+  }, []);
+  const quadros = tira.map((i) => WORK[i]);
   /* a fita é duplicada no markup e o −50% do keyframe fecha o loop sem emenda */
   const fita = [...WORK, ...WORK];
 
@@ -359,7 +391,12 @@ export default function HomeD({
           ocupa o que sobra depois do cabeçalho, da ficha e do rodapé, e as três
           fitas dividem esse resto em `1fr` cada. Sem isso a página cresce e
           reaparece o scroll de documento que ele cortou. */}
-      <section className="flex h-full min-h-0 flex-col justify-between pt-6">
+      {/* ⚠ SEM `justify-between`: com ele a sobra vertical caía DEPOIS da ficha —
+          medido, 140px de nada entre a última linha e o rodapé, e reduzir
+          paddings só piorava (menos conteúdo = mais sobra para distribuir).
+          O campo da trama é quem absorve o resto (`flex-1`), então a ficha
+          encosta no rodapé por construção. */}
+      <section className="flex min-h-0 flex-1 flex-col pt-6">
         {/* a trama — o nome de cada marca, em corpo de cartaz, atravessando a
             tela. Três fitas em sentidos alternados: a segunda começa pelo fim da
             coleção para que duas linhas nunca mostrem o mesmo projeto lado a
@@ -410,11 +447,32 @@ export default function HomeD({
           className="grid grid-cols-12 pt-9 max-md:pt-6"
           style={{ columnGap: "var(--p-gap-x)", rowGap: "var(--p-gap-y)" }}
         >
-          <p className="p-corpo col-span-4 max-w-[42ch] max-lg:col-span-12">
-            Brand designer and art director, based in Brazil, working worldwide.
-            Every identity starts from strategy and lands as a visual system
-            built to last.
-          </p>
+          <div className="col-span-4 max-lg:col-span-12">
+            <p className="p-corpo max-w-[42ch]">
+              Brand designer and art director, based in Brazil, working worldwide.
+              Every identity starts from strategy and lands as a visual system
+              built to last.
+            </p>
+
+            {/* O SHOWREEL — cinco frames 16:9 que trocam sozinhos.
+                ⚠ Não é grade de portfólio: é uma tira de FRAMES, do tamanho de
+                miniatura de decupagem, e cada um cicla no seu tempo. Grade
+                parada aqui competiria com a trama; ciclando devagar e fora de
+                fase, lê como reel rodando ao fundo — e ocupa com matéria o
+                vazio que sobrava nesta coluna.
+                A proporção é a MESMA do visor (16:9), então a home passa a ter
+                uma razão só de imagem, do frame miúdo ao quadro grande. */}
+            <div className="p-reel" aria-hidden="true">
+              {quadros.map((w, i) => (
+                <span key={i} className="p-reel-frame">
+                  <img src={w.cover.src} alt="" decoding="async" draggable={false} />
+                </span>
+              ))}
+            </div>
+            <p className="p-marca pt-2" style={{ color: "var(--p-quieto)" }}>
+              Reel — {String(WORK.length).padStart(2, "0")} identities, 2021—2026
+            </p>
+          </div>
 
           {/* ⚠ TRÊS COLUNAS, NÃO QUATRO. Com `col-span-4` o ano desta lista terminava
               encostado no Recognition e lia como se fosse a data DELE — a coluna 9

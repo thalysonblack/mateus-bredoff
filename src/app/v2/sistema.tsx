@@ -133,7 +133,12 @@ export function Prancha({
           </p>
         </header>
 
-        <main className="flex-1">{children}</main>
+        {/* ⚠ `flex flex-col` no main, e não só `flex-1`: o wrapper da prancha
+            usa `min-h-svh` (min-height), e `height: 100%` de um filho não
+            resolve contra altura MÍNIMA. Sem isto, a rota que pedia `h-full`
+            ficava do tamanho do conteúdo e a sobra vertical caía toda entre ela
+            e o rodapé — medido, 140px de nada na home. */}
+        <main className="flex flex-1 flex-col">{children}</main>
 
         {/* rodapé da prancha: os três metadados que o corentin ancora na base —
             onde ele está, que horas são lá, e o ano do arquivo */}
