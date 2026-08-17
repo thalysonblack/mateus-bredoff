@@ -43,7 +43,6 @@ import { CONTATO } from "../v3-system";
  */
 
 const PARTES = [
-  { id: "approach", nome: "Approach" },
   { id: "services", nome: "Services" },
   { id: "method", nome: "Method" },
   { id: "contact", nome: "Contact" },
@@ -51,7 +50,7 @@ const PARTES = [
 
 export default function AboutB() {
   useMetaRota();
-  const [parte, setParte] = useState("approach");
+  const [parte, setParte] = useState("services");
   const revDoc = useRevelar<HTMLElement>();
   /* ⚠ CADA BLOCO COM `.p-sobe` PRECISA DO SEU OBSERVER. A classe nasce em
      `opacity: 0` e só acende quando um ANCESTRAL ganha `.p-visivel` — sem a
@@ -77,6 +76,11 @@ export default function AboutB() {
         </figure>
         <div className="p-capa-texto">
           <p className="p-manifesto">{LEAD[0]}</p>
+          {/* ⚠ O APPROACH SOBE PARA A CAPA. Medido: entre o fim do manifesto e a
+              legenda sobravam 325px de vazio MORTO — a coluna não usava a altura
+              da foto, e vazio que não é respiro é buraco. Aqui ele é leitura, e
+              de quebra o dossiê começa direto no que interessa (Services). */}
+          <p className="p-capa-corpo">{LEAD[1]}</p>
           <p className="p-marca p-capa-pe">
             <span>Mateus Bredoff</span>
             <span>Brand designer &amp; art director · Brazil</span>
@@ -122,21 +126,15 @@ export default function AboutB() {
             ))}
           </nav>
 
+          {/* as ferramentas descem para cá com o approach — metadado de
+              documento, no lugar onde metadado vive */}
+          <p className="p-marca p-sumario-tools">Tools — {FERRAMENTAS.join(", ")}</p>
         </aside>
 
         <div className="p-documento">
-          <article id="approach" className="p-parte p-sobe">
-            <p className="p-parte-cabeca">
-              <span>01</span>
-              <span className="p-rotulo">Approach</span>
-            </p>
-            <p className="p-parte-lead">{LEAD[1]}</p>
-            <p className="p-marca p-parte-pe">Tools — {FERRAMENTAS.join(", ")}</p>
-          </article>
-
           <article id="services" className="p-parte p-sobe">
             <p className="p-parte-cabeca">
-              <span>02</span>
+              <span>01</span>
               <span className="p-rotulo">Services — {String(TIERS.length).padStart(2, "0")}</span>
             </p>
 
@@ -174,7 +172,7 @@ export default function AboutB() {
 
           <article id="method" className="p-parte p-sobe">
             <p className="p-parte-cabeca">
-              <span>03</span>
+              <span>02</span>
               <span className="p-rotulo">Method — {String(PROCESSO.length).padStart(2, "0")}</span>
             </p>
             <p className="p-parte-lead">{PROCESSO_MANCHETE}</p>
@@ -184,7 +182,7 @@ export default function AboutB() {
                   <span className="p-etapa-n">{String(i + 1).padStart(2, "0")}</span>
                   <div>
                     <p className="p-item">{e.titulo}</p>
-                    <p className="p-corpo max-w-[62ch]" style={{ color: "var(--p-quieto)" }}>
+                    <p className="p-corpo" style={{ color: "var(--p-quieto)" }}>
                       {e.corpo}
                     </p>
                   </div>
@@ -195,7 +193,7 @@ export default function AboutB() {
 
           <article id="contact" className="p-parte p-sobe">
             <p className="p-parte-cabeca">
-              <span>04</span>
+              <span>03</span>
               <span className="p-rotulo">Contact &amp; inquiries</span>
             </p>
             <ul className="p-contatos">

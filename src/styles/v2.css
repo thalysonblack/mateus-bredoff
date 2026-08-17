@@ -1029,14 +1029,25 @@
    no topo dele. Antes a foto era um bloco de 4 colunas com ~450px de vazio
    morto embaixo — foto que ilustra texto fica pequena e deixa poço; foto que é
    CAPA ocupa a tela e o texto se alinha a ela. */
-.p-capa {
+/* ⚠⚠ TUDO NA MESMA GRADE DE 12. Medido antes de unificar: o manifesto começava
+   em 720, a nav do cabeçalho em 716, o documento em 457 e o segundo número em
+   446 — quatro linhas verticais diferentes na mesma página, e é isso que ele
+   leu como "mal diagramada". Numa prancha a grade é UMA: coluna 1 na margem,
+   coluna 6 onde o cabeçalho já abre a navegação. */
+.p-capa,
+.p-numeros-abertura,
+.p-dossie {
   display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: var(--p-gap-x);
+}
+.p-capa {
   align-items: start;
   padding-top: 22px;
   padding-bottom: 56px;
 }
+.p-capa > .p-retrato { grid-column: 1 / span 5; }
+.p-capa > .p-capa-texto { grid-column: 6 / span 7; }
 .p-retrato {
   margin: 0 0 0 calc(var(--p-margem) * -1);
   overflow: hidden;
@@ -1049,6 +1060,14 @@
   height: 100%;
   object-fit: cover;
   object-position: 56% 28%;
+}
+.p-capa-corpo {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-size: clamp(15px, 1.15vw, 17px);
+  line-height: 1.5;
+  max-width: 58ch;
+  color: var(--p-quieto);
+  padding-top: 26px;
 }
 .p-capa-texto {
   display: flex;
@@ -1172,13 +1191,12 @@
    Ver o cabeçalho de `AboutB.tsx` para a diferença entre as duas propostas. */
 /* os números de abertura: credencial em corpo grande, logo abaixo do rosto */
 .p-numeros-abertura {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  column-gap: var(--p-gap-x);
   padding: 44px 0 56px;
   border-top: 1px solid var(--p-fio);
   margin-top: 40px;
 }
+/* cada número ocupa três colunas: 1, 4, 7 e 10 — as mesmas linhas da grade */
+.p-numeros-abertura > * { grid-column: span 3; }
 .p-numero-big {
   font-family: 'Geist', ui-sans-serif, sans-serif;
   font-weight: 400;
@@ -1194,12 +1212,14 @@
 }
 
 .p-dossie {
-  display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
-  column-gap: var(--p-gap-x);
   padding-top: 56px;
   border-top: 1px solid var(--p-fio);
 }
+/* ⭐ o sumário na coluna 1 (a margem) e o documento na 6 — a MESMA linha em que
+   o manifesto começa e em que o cabeçalho abre a navegação. É esse alinhamento
+   que faz a página ler como um documento só. */
+.p-sumario { grid-column: 1 / span 4; }
+.p-documento { grid-column: 6 / span 7; }
 .p-sumario {
   position: sticky;
   top: 24px;
@@ -1218,6 +1238,13 @@
 }
 .p-sumario-item:hover,
 .p-sumario-item.aceso { color: var(--p-ink); }
+/* ⭐ O ACENTO, com coragem e uma vez só. A página inteira era tinta e cinza —
+   "falta taste" costuma ser isso: zero acento, e nenhuma cor do sistema em
+   lugar nenhum. Ele entra onde carrega informação: o marcador do item que está
+   sendo lido, e o único preço que existe de verdade. */
+.p-sumario-item.aceso > :first-child { color: var(--p-acento); }
+.p-sumario-tools { padding-top: 40px; color: var(--p-quieto); }
+.p-precos tbody tr:first-child .p-precos-valor { color: var(--p-acento); }
 .p-sumario-ficha { display: grid; gap: 14px; }
 .p-sumario-ficha dt { color: var(--p-quieto); }
 .p-sumario-valor {
@@ -1253,7 +1280,9 @@
   font-size: clamp(17px, 1.5vw, 23px);
   line-height: 1.42;
   letter-spacing: -0.012em;
-  max-width: 62ch;
+  /* ⚠ SEM `max-width` em ch aqui: a coluna do documento já é a medida de
+     leitura, e um teto em ch fazia o parágrafo parar em 1402 enquanto a tabela
+     ia até 1640 — duas bordas direitas na mesma coluna. */
 }
 .p-parte-pe { padding-top: 20px; color: var(--p-quieto); }
 
@@ -1304,13 +1333,12 @@
 @media (max-width: 1024px) {
   /* os números de abertura: credencial em corpo grande, logo abaixo do rosto */
 .p-numeros-abertura {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  column-gap: var(--p-gap-x);
   padding: 44px 0 56px;
   border-top: 1px solid var(--p-fio);
   margin-top: 40px;
 }
+/* cada número ocupa três colunas: 1, 4, 7 e 10 — as mesmas linhas da grade */
+.p-numeros-abertura > * { grid-column: span 3; }
 .p-numero-big {
   font-family: 'Geist', ui-sans-serif, sans-serif;
   font-weight: 400;
