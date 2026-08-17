@@ -53,8 +53,11 @@ export default function HomeC() {
             width={ultimo.cover.w}
             height={ultimo.cover.h}
             draggable={false}
-            className="w-full object-cover"
-            style={{ aspectRatio: "4 / 5" }}
+            /* ⚠ proporção NATIVA da peça, não 4:5 forçado: a capa do Ginga é
+               4:3 e o recorte cortava a arte do cliente para caber no layout —
+               o avesso do trabalho dele */
+            className="w-full"
+            style={{ aspectRatio: `${ultimo.cover.w} / ${ultimo.cover.h}` }}
           />
           <span className="p-marca flex items-baseline justify-between pt-2">
             <span>Latest — {ultimo.title}</span>
