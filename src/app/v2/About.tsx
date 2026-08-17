@@ -1,5 +1,6 @@
-import { WORK } from "../../content/work";
-import { corDe } from "../../content/cores";
+import retrato from "../../assets/optimized/hero-portrait-1600.webp";
+import retrato2x from "../../assets/optimized/hero-portrait-3200.webp";
+import { TIERS } from "../sections/Pricing";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha, Bloco } from "./sistema";
 import { CONTATO } from "../v3-system";
@@ -78,8 +79,6 @@ const FERRAMENTAS = [
 
 export default function AboutV2() {
   useMetaRota();
-  /* a faixa das marcas: duas cópias fecham o loop do keyframe base (−50%) */
-  const fita = [...WORK, ...WORK];
 
   return (
     <Prancha n="03" nome="About" superficie="papel" status="Available for projects">
@@ -89,9 +88,28 @@ export default function AboutV2() {
           "62+ clients" em 190px é um dado genérico ocupando o lugar do
           argumento. Aqui o argumento é a FRASE, e os números viram régua. */}
       <section className="grid grid-cols-12 pt-12 max-md:pt-8" style={{ columnGap: "var(--p-gap-x)" }}>
-        <p className="p-manifesto col-span-7 max-lg:col-span-12">{LEAD[0]}</p>
+        {/* ⭐ O RETRATO. Faltava a pessoa numa página que fala na primeira
+            pessoa — e num estúdio de uma pessoa só, o rosto é o que separa
+            "designer" de "este designer". Sangra pela esquerda, na largura da
+            margem da prancha, para não virar avatar de perfil. */}
+        <figure className="p-retrato col-span-4 max-lg:col-span-6 max-md:col-span-12">
+          <img
+            src={retrato}
+            srcSet={`${retrato} 1600w, ${retrato2x} 3200w`}
+            sizes="(max-width: 1024px) 50vw, 30vw"
+            alt="Mateus Bredoff"
+            width={1600}
+            height={850}
+            decoding="async"
+            draggable={false}
+          />
+        </figure>
 
-        <div className="col-span-4 col-start-9 grid gap-9 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-10">
+        <p className="p-manifesto col-span-7 col-start-6 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-10">
+          {LEAD[0]}
+        </p>
+
+        <div className="col-span-5 col-start-6 grid gap-9 pt-12 max-lg:col-span-12 max-lg:col-start-1">
           <Bloco rotulo="Approach">
             <p className="p-corpo max-w-[46ch]">{LEAD[1]}</p>
           </Bloco>
@@ -138,24 +156,48 @@ export default function AboutV2() {
         ))}
       </section>
 
-      {/* ─ 3. AS MARCAS, EM SANGRIA ──────────────────────────────────────
-          ⭐ Faltava O TRABALHO. Uma about de brand designer sem uma marca dele
-          na tela é um currículo — e a peça mais forte deste projeto são os
-          nomes que ele desenhou. A faixa é a trama da home em escala de
-          passagem, cada nome na SUA cor: amarra as duas páginas pelo mesmo
-          gesto e transforma o vão entre "quem é" e "como trabalha" em matéria.
-          Sem hover aqui: conteúdo que se move sob cursor parado erra o
-          hit-test, e esta faixa é passagem, não índice. */}
-      <section aria-hidden="true" className="p-trama p-faixa -mx-[var(--p-margem)] my-16">
-        <div className="p-trama-fita p-faixa-fita">
-          {fita.map((w, k) => (
-            <span key={`${w.slug}-${k}`} className="flex items-baseline gap-[0.3em]">
-              <span className="p-faixa-nome" style={{ color: corDe(w.slug) }}>
-                {w.title}
-              </span>
-              <span className="p-faixa-ponto">·</span>
-            </span>
-          ))}
+      {/* ─ 3. OS SERVIÇOS, EM TINTA ─────────────────────────────────────
+          ⭐ "essa section tem que brilhar os olhos" — e o que brilha nesta
+          direção é SUPERFÍCIE, não efeito: o bloco de serviços sangra de borda
+          a borda em tinta, e é a única troca de superfície DENTRO de uma
+          página no site inteiro. Depois de duas telas de papel, ele acende.
+
+          A anatomia é a linha de recibo: nome e preço nos cantos opostos, o
+          escopo miúdo embaixo. Preço é a informação que a pessoa veio buscar e
+          não pode estar em corpo de rodapé.
+
+          ⚠ Só o Essential tem preço — é o que ele publica no Behance (US$
+          2.500). Os outros dois seguem "On request" porque preço é fato do
+          cliente e não se inventa. */}
+      <section className="p-tinta p-servicos -mx-[var(--p-margem)] my-16">
+        <div style={{ paddingInline: "var(--p-margem)" }}>
+          <p className="p-rotulo pb-10">Services — {String(TIERS.length).padStart(2, "0")}</p>
+          <ul>
+            {TIERS.map((t, i) => (
+              <li key={t.name} className="p-fio p-servico">
+                <div className="p-servico-linha">
+                  <span className="p-marca p-servico-n">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="p-servico-nome">{t.name}</span>
+                  <span className="p-servico-preco">
+                    {t.priceFrom === null ? (
+                      "On request"
+                    ) : (
+                      <>
+                        <span className="p-servico-de">from </span>
+                        {`$${t.priceFrom.toLocaleString("en-US")}`}
+                      </>
+                    )}
+                  </span>
+                </div>
+                <div className="p-servico-ficha">
+                  <p className="p-corpo max-w-[52ch]">{t.description}</p>
+                  <p className="p-marca p-servico-escopo">
+                    {t.scope.join(" · ")} <span className="p-servico-prazo">{t.timeline}</span>
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 

@@ -984,6 +984,79 @@
   letter-spacing: -0.03em;
 }
 
+/* ── O RETRATO ─────────────────────────────────────────────────────────────
+   ⚠ Sangra pela ESQUERDA até a borda da tela (margem negativa da prancha): num
+   estúdio de uma pessoa só o rosto é o que separa "designer" de ESTE designer,
+   e enquadrado numa caixinha ele vira avatar de perfil. A foto tem fundo
+   petróleo, que é a tinta do sistema — ela combina com a página por
+   construção, não por tratamento. */
+.p-retrato {
+  margin: 0 0 0 calc(var(--p-margem) * -1);
+  overflow: hidden;
+}
+.p-retrato img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: 58% 30%;
+}
+
+/* ── OS SERVIÇOS, EM TINTA ────────────────────────────────────────────────
+   "essa section tem que brilhar os olhos". Nesta direção o que brilha é
+   SUPERFÍCIE — esta é a única troca de superfície DENTRO de uma página no site
+   inteiro, e depois de duas telas de papel ela acende sozinha.
+   A anatomia é a linha de RECIBO: nome e preço nos cantos opostos, escopo
+   miúdo embaixo. Preço é o que a pessoa veio buscar; em corpo de rodapé, ele
+   dizia que não importava. */
+.p-servicos {
+  padding-block: 72px;
+}
+.p-servico {
+  padding-block: 26px;
+}
+.p-servico-linha {
+  display: grid;
+  grid-template-columns: 2.6rem 1fr auto;
+  align-items: baseline;
+  gap: 12px;
+}
+.p-servico-n { color: var(--p-quieto); }
+.p-servico-nome,
+.p-servico-preco {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: clamp(28px, 3.2vw, 50px);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+}
+.p-servico-preco { text-align: right; }
+.p-servico-de {
+  font-size: 0.42em;
+  letter-spacing: 0.04em;
+  color: var(--p-quieto);
+}
+.p-servico-ficha {
+  display: grid;
+  grid-template-columns: 2.6rem 1fr;
+  gap: 12px;
+  padding-top: 12px;
+}
+.p-servico-ficha > :first-child { grid-column: 2; }
+.p-servico-escopo {
+  grid-column: 2;
+  padding-top: 8px;
+  color: var(--p-quieto);
+}
+.p-servico-prazo::before { content: " — "; }
+@media (max-width: 720px) {
+  .p-servico-linha { grid-template-columns: 2rem 1fr; }
+  .p-servico-preco { grid-column: 2; text-align: left; padding-top: 6px; }
+  .p-servico-ficha { grid-template-columns: 1fr; }
+  .p-servico-ficha > :first-child,
+  .p-servico-escopo { grid-column: 1; }
+}
+
 /* a faixa das marcas: a trama da home em escala de PASSAGEM */
 .p-faixa { padding: 4px 0; }
 .p-faixa-fita { animation-duration: 78s; }
