@@ -909,6 +909,16 @@
   position: absolute;
   inset: 0;
 }
+/* ⚠ o caminho SEM WebGL: a peça entra como imagem, porque um quadro cinza
+   seguindo o cursor não mostra nada — e mostrar a peça é a única função do
+   visor. Sem fluido, com a peça. */
+.p-visor-plano {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .p-visor-quadro canvas {
   display: block;
   width: 100%;

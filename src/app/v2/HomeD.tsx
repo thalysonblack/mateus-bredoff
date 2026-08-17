@@ -187,6 +187,7 @@ export default function HomeD({
     if (!tela) return;
     const v = criarVisorFluido(tela, fluidoModo);
     fluido.current = v;
+    setSemGL(!v);
     if (!v) return;
     /* só em desenvolvimento: o harness de verificação congela a transição por
        aqui, porque screenshot é lento demais para pegar o meio de 1s */
@@ -253,6 +254,10 @@ export default function HomeD({
   const lado = useRef(1);
   /* a caixa onde o canvas do WebGL é pendurado */
   const quadro = useRef<HTMLDivElement | null>(null);
+  /* ⚠ sem WebGL o visor abria um QUADRO CINZA VAZIO seguindo o cursor — o
+     fundo da máscara e nada dentro. Neste caso a peça entra como imagem
+     simples: sem fluido, mas a peça é a razão de o visor existir. */
+  const [semGL, setSemGL] = useState(false);
   /* só a última troca pedida vale: descarta carregamentos que resolvem fora de
      ordem quando o cursor varre a trama */
   const geracao = useRef(0);
@@ -566,6 +571,15 @@ export default function HomeD({
           3840×2804, 1400×1663…) o visor mudava de formato a cada nome. */}
       <div ref={anel} className="p-visor-anel" aria-hidden="true">
         <div ref={visor} className="p-visor">
+          {semGL && sob ? (
+            <img
+              className="p-visor-plano"
+              src={sob.cover.src2x ?? sob.cover.src}
+              alt=""
+              decoding="async"
+              draggable={false}
+            />
+          ) : null}
           {/* ⚠ O QUADRO É UM CANVAS, não duas <img>: a troca fluida precisa das
               duas artes na MESMA superfície para o shader misturar uma na outra.
               O renderer é montado uma vez (ver o efeito acima) e sobrevive a
