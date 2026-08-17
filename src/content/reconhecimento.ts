@@ -55,7 +55,6 @@
  */
 import artGinga from "../assets/optimized/art-ginga-1400.webp";
 import artGinga2x from "../assets/optimized/art-ginga-2200.webp";
-import artRemanescentes from "../assets/optimized/art-remanescentes-1200.webp";
 import artVotare from "../assets/optimized/art-votare-1400.webp";
 import artTrivo from "../assets/optimized/art-trivo-1400.webp";
 import artTrivoTipo from "../assets/optimized/art-trivo-tipografia-1200.webp";
@@ -134,15 +133,6 @@ export const RECONHECIMENTO: Reconhecimento[] = [
     foto: { src: artGinga, src2x: artGinga2x, w: 1400, h: 1097, alt: "Ginga — sistema de marca para projeto cultural de capoeira" },
   },
   {
-    veiculo: "todays.design",
-    titulo: "Remanescentes — Visual Identity",
-    projeto: "Remanescentes",
-    ano: 2026,
-    href: "https://todays.design/mateusbredoff/clxfcn9wh009ga8pcpalhwlqa",
-    verificado: "HTTP 200 em 16/08/2026 — título confere",
-    foto: { src: artRemanescentes, w: 1200, h: 720, alt: "Remanescentes — identidade visual, peças impressas" },
-  },
-  {
     veiculo: "World Brand Design",
     titulo: "Mateus Bredoff Develops Alex Archer Into a Structured Identity System",
     projeto: "Alex Archer",
@@ -196,6 +186,9 @@ export const RECONHECIMENTO: Reconhecimento[] = [
  * agora diz **"Senior Designer · Brazil"**. A contradição com o "based in
  * Brazil" do site (o Behance o listava na Alemanha em 25/07) deixou de existir.
  */
+/* ⚠ Remanescentes voltou para esta lista em 17/08/2026: ele mandou remover o
+   projeto da coleção, então a matéria do todays.design passou a apontar para um
+   case que não existe. */
 export const FALTAM_NO_SITE = ["Ginga", "Bentofolio®", "Bentofolio 2", "Remanescentes"] as const;
 
 /**

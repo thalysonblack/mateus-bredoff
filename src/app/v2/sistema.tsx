@@ -96,7 +96,7 @@ export function Prancha({
     >
       <div
         className="flex min-h-svh flex-col"
-        style={{ paddingInline: "var(--p-margem)", paddingBlock: "var(--p-margem)" }}
+        style={{ paddingInline: "var(--p-margem)", paddingBlock: "var(--p-margem-y)" }}
       >
         {/* cabeçalho da prancha: nome do arquivo à esquerda, navegação no
             centro, status à direita — a linha de topo do corentin */}

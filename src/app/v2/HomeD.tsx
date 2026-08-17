@@ -124,49 +124,118 @@ export default function HomeD() {
   }, []);
 
   /**
-   * A ENTRADA DO VISOR — o gesto do site é FOCAR.
+   * O VISOR: ABRE UMA VEZ, DEPOIS TROCA POR DENTRO.
    *
-   * Ele acompanha o cursor, mas o movimento de acompanhar é trivial: o que
-   * carrega a peça é a ENTRADA. Daí GSAP, e não uma transição de opacidade.
+   * ⚠ *"invés do frame de projeto fechar e abrir, deixar aberto e trocar por
+   * dentro"*. O quadro é um INSTRUMENTO, não um popup: enquanto o cursor
+   * estiver sobre a trama ele fica aberto e imóvel, e o que muda é a arte lá
+   * dentro. Reanimar o `clipPath` a cada nome fazia a moldura piscar — e
+   * percorrer a fita, que é o gesto natural aqui, virava uma sequência de
+   * aberturas e fechamentos.
    *
-   * O gesto é o mesmo que a V3 usa em toda revelação (`data-foca`): a peça
-   * chega desfocada e resolve. Aqui somam-se dois: a máscara abre de baixo para
-   * cima (`clipPath`) e a arte assenta de 1,08 para 1 — a imagem "entra em
-   * foco" em vez de aparecer. Trocar de nome com o visor aceso reanima do
-   * início, então percorrer a fita lê como girar um anel de foco.
+   * São três momentos distintos, e é por isso que o efeito não pode ter uma
+   * dependência só:
+   *   ABRIR   (nada aceso → uma peça)  máscara sobe + arte entra em foco
+   *   TROCAR  (peça → outra peça)      só a arte: refoca, a moldura não se mexe
+   *   FECHAR  (peça → nada)            a máscara desce
+   *
+   * O gesto em todos é o mesmo do site (`data-foca`): a arte chega desfocada e
+   * resolve. Trocar de nome com o visor aberto lê como girar o anel de foco de
+   * uma lente — a moldura parada é justamente o que dá essa leitura.
+   *
+   * ⚠ A peça continua RENDERIZADA depois que o cursor sai (`peca`, não `sob`):
+   * desmontar no mesmo frame não deixaria o fechamento acontecer.
    *
    * ⚠ O visor NÃO leva legenda. Teve uma, em `mix-blend-difference`, e sobre a
    * capa vermelha da Ginga o branco virava verde-limão. Véu por baixo do texto
    * ele já reprovou noutra peça ([[am_craft_texto_sobre_arte_se_decide_medindo]]),
    * e o nome do projeto já está aceso em acento na própria trama — a legenda
    * era o mesmo dado dito duas vezes, com um defeito de contraste de brinde.
-   *
-   * `useLayoutEffect` + `gsap.context` porque o alvo só existe quando `sob`
-   * deixa de ser nulo, e o context limpa os tweens no unmount da rota.
    */
+  const aberto = useRef(false);
+  /* as duas lâminas do visor e qual delas está na frente */
+  const lamina = useRef<HTMLImageElement[]>([]);
+  const ativo = useRef(-1);
   useLayoutEffect(() => {
     const el = visor.current;
-    if (!el || !sob) return;
-    if (prefersReducedMotion()) {
-      gsap.set(el, { autoAlpha: 1, clipPath: "inset(0% 0% 0% 0%)" });
+    const camadas = lamina.current;
+    if (!el || camadas.length < 2) return;
+    const reduzido = prefersReducedMotion();
+
+    /* FECHAR */
+    if (!sob) {
+      if (!aberto.current) return;
+      aberto.current = false;
+      if (reduzido) return void gsap.set(el, { autoAlpha: 0 });
+      gsap.to(el, {
+        autoAlpha: 0,
+        clipPath: "inset(100% 0% 0% 0%)",
+        duration: 0.34,
+        ease: "power2.in",
+        overwrite: "auto",
+      });
       return;
     }
-    const ctx = gsap.context(() => {
-      gsap
-        .timeline()
-        .fromTo(
-          el,
-          { autoAlpha: 0, clipPath: "inset(100% 0% 0% 0%)" },
-          { autoAlpha: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.62, ease: "expo.out" },
-        )
-        .fromTo(
-          el.querySelector("img"),
-          { scale: 1.08, filter: "blur(13px)" },
-          { scale: 1, filter: "blur(0px)", duration: 0.8, ease: "expo.out" },
-          0,
-        );
-    }, el);
-    return () => ctx.revert();
+
+    const entra = camadas[(ativo.current + 1) % 2];
+    const sai = ativo.current >= 0 ? camadas[ativo.current] : null;
+    ativo.current = camadas.indexOf(entra);
+    entra.src = sob.cover.src2x ?? sob.cover.src;
+
+    if (reduzido) {
+      gsap.set(el, { autoAlpha: 1, clipPath: "inset(0% 0% 0% 0%)" });
+      gsap.set(entra, { autoAlpha: 1, yPercent: 0, scale: 1, filter: "none", zIndex: 2 });
+      if (sai) gsap.set(sai, { autoAlpha: 0, zIndex: 1 });
+      aberto.current = true;
+      return;
+    }
+
+    /* ⚠ `decode()` antes de animar: sem isso a lâmina começa a subir vazia e a
+       arte aparece no meio do percurso. O `.catch` é obrigatório — trocar de
+       nome rápido cancela o decode anterior e a promise rejeita. */
+    void entra
+      .decode()
+      .catch(() => {})
+      .then(() => {
+        if (ativo.current !== camadas.indexOf(entra)) return; /* já veio outra */
+        gsap.set(entra, { zIndex: 2, autoAlpha: 1 });
+        if (sai) gsap.set(sai, { zIndex: 1 });
+
+        /* TROCA — a moldura não se mexe: nada de clipPath aqui. */
+        if (aberto.current) {
+          gsap
+            .timeline()
+            .fromTo(
+              entra,
+              { yPercent: 100, scale: 1.06, filter: "blur(9px)" },
+              { yPercent: 0, scale: 1, filter: "blur(0px)", duration: 0.72, ease: "expo.out" },
+              0,
+            )
+            .fromTo(
+              sai,
+              { yPercent: 0, scale: 1 },
+              { yPercent: -26, scale: 1.06, duration: 0.72, ease: "expo.out" },
+              0,
+            );
+          return;
+        }
+
+        /* ABERTURA */
+        aberto.current = true;
+        gsap
+          .timeline()
+          .fromTo(
+            el,
+            { autoAlpha: 0, clipPath: "inset(100% 0% 0% 0%)" },
+            { autoAlpha: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.62, ease: "expo.out" },
+          )
+          .fromTo(
+            entra,
+            { yPercent: 12, scale: 1.08, filter: "blur(13px)" },
+            { yPercent: 0, scale: 1, filter: "blur(0px)", duration: 0.8, ease: "expo.out" },
+            0,
+          );
+      });
   }, [sob]);
   const recentes = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano).slice(0, 2);
   /* a fita é duplicada no markup e o −50% do keyframe fecha o loop sem emenda */
@@ -184,7 +253,7 @@ export default function HomeD() {
             coleção para que duas linhas nunca mostrem o mesmo projeto lado a
             lado. O campo inteiro é o alvo do hover (`p-trama-campo`): pousar
             numa linha para as três e atenua tudo que não está sob o cursor. */}
-        <div ref={campo} className="p-trama-campo grid min-h-0 flex-1 gap-[var(--p-trama-gap)]">
+        <div ref={campo} className="p-trama-campo grid min-h-0 flex-1 gap-[var(--p-trama-gap)] pb-[7vh]">
           {[fita, [...fita].reverse(), [...WORK.slice(3), ...WORK.slice(0, 3), ...WORK.slice(3), ...WORK.slice(0, 3)]].map((linha, li) => (
             <div key={li} className="p-trama p-trama--peca -mx-[var(--p-margem)]">
               {/* o wrapper recebe o empurrão do SCROLL (transform escrito pelo
@@ -235,7 +304,10 @@ export default function HomeD() {
             built to last.
           </p>
 
-          <div className="col-span-4 col-start-6 max-lg:col-span-6 max-lg:col-start-1" data-atenua>
+          {/* ⚠ TRÊS COLUNAS, NÃO QUATRO. Com `col-span-4` o ano desta lista terminava
+              encostado no Recognition e lia como se fosse a data DELE — a coluna 9
+              fica vazia de propósito, é a calha que separa duas listas que têm ano. */}
+          <div className="col-span-3 col-start-6 max-lg:col-span-6 max-lg:col-start-1 max-md:col-span-12" data-atenua>
             <p className="p-rotulo pb-3">
               Selected work — {String(WORK.length).padStart(2, "0")}
             </p>
@@ -263,7 +335,7 @@ export default function HomeD() {
             </ul>
           </div>
 
-          <div className="col-span-3 col-start-10 grid gap-8 max-lg:col-span-6 max-lg:col-start-7">
+          <div className="col-span-3 col-start-10 grid gap-8 max-lg:col-span-6 max-lg:col-start-7 max-md:col-span-12 max-md:col-start-1">
             <Bloco rotulo="Recognition">
               <ul className="grid gap-[6px]">
                 {recentes.map((r) => (
@@ -301,18 +373,23 @@ export default function HomeD() {
           16:9 para todas: com a proporção nativa de cada capa (1400×1097,
           3840×2804, 1400×1663…) o visor mudava de formato a cada nome. */}
       <div ref={anel} className="p-visor-anel" aria-hidden="true">
-        {sob ? (
-          <div ref={visor} className="p-visor">
+        <div ref={visor} className="p-visor">
+          {/* ⚠ DUAS LÂMINAS FIXAS, e o `src` de cada uma é escrito pelo efeito,
+              não pelo React: a troca precisa das DUAS artes na tela ao mesmo
+              tempo — uma subindo para fora, a outra entrando por baixo. Com uma
+              tag só, "trocar por dentro" viraria um corte seco. */}
+          {[0, 1].map((i) => (
             <img
-              src={sob.cover.src2x ?? sob.cover.src}
+              key={i}
+              ref={(n) => {
+                if (n) lamina.current[i] = n;
+              }}
               alt=""
-              width={sob.cover.w}
-              height={sob.cover.h}
               decoding="async"
               draggable={false}
             />
-          </div>
-        ) : null}
+          ))}
+        </div>
       </div>
     </Prancha>
   );

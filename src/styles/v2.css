@@ -75,8 +75,16 @@
      Mesma ideia fluida, com piso. Sem isto, tudo o que a direção tem de rótulo
      de 8,5px vira 6,3px num notebook de 1200. */
 
-  /* margem da prancha = 5u = os mesmos 3,307% da referência */
-  --p-margem: calc(var(--p-u) * 5);
+  /* Margem da prancha. Nasceu em 5u = os 3,307% medidos na referência, e caiu
+     para 3,6u em 17/08 a pedido dele ("diminua os paddings globais"): com a
+     trama em corpo de cartaz sangrando de borda a borda, a calha da referência
+     — feita para colunas de texto de 13px — sobrava. */
+  --p-margem: calc(var(--p-u) * 3.6);
+  /* ⚠ O VERTICAL É MENOR QUE O LATERAL, e não é assimetria por descuido: "diminuir
+     o padding global … cima e embaixo" (17/08). A calha lateral protege a leitura
+     das colunas; em cima e embaixo ela só empurra o cabeçalho e o rodapé de
+     metadado para dentro, roubando altura da trama, que é quem precisa de tela. */
+  --p-margem-y: calc(var(--p-u) * 2.1);
   /* vão de n colunas, na fórmula medida lá: 11,85n − 1 */
   --p-col-4: calc(var(--p-u) * 46.4);
   --p-col-5: calc(var(--p-u) * 58.2);
@@ -143,9 +151,11 @@
   z-index: 30;
   pointer-events: none;
   /* 0,07 medido no artefakt.mov — aqui ele lia mais forte que lá porque o papel
-     é mais claro que o fundo de origem. "a textura no fundo da página tá forte,
-     diminuir um pouco" (17/08). */
-  opacity: 0.045;
+     é mais claro que o fundo de origem. Baixada duas vezes por ele no mesmo
+     dia — "tá forte, diminuir um pouco", depois "ainda forte" (17/08). 0,07 →
+     0,045 → 0,028: no papel #f4f4f2 a grade some como atmosfera em vez de ler
+     como trama impressa. */
+  opacity: 0.028;
   background:
     linear-gradient(currentColor 1px, transparent 1px) center / 5px 5px,
     linear-gradient(90deg, currentColor 1px, transparent 1px) center / 5px 5px;
@@ -425,9 +435,13 @@
      tela depois do cabeçalho, da ficha e do rodapé — é assim que a home cabe em
      100svh em qualquer janela sem inventar breakpoint. */
   grid-template-rows: repeat(3, minmax(0, 1fr));
-  /* corpo de cartaz, com teto pelos DOIS eixos: em vw puro, três linhas a
-     13,5vw não cabiam num notebook baixo. */
-  --p-trama-corpo: clamp(44px, min(13.5vw, 17vh), 190px);
+  /* ⚠ O CORPO CABE NA FAIXA, COM O DESCENDENTE INTEIRO. A fita tem
+     `overflow: hidden` (precisa dele no eixo X), e num eixo só não dá para
+     escapar — `overflow-y: visible` com `overflow-x: hidden` vira `auto`. Então
+     quem cede é o corpo: com `line-height` 1,16, um corpo de 17vh media 163,7px
+     numa faixa de 150,6px e o "g" de Stag e Ginga saía cortado embaixo. 13vh dá
+     a folga da descendente sem perder a escala de cartaz. */
+  --p-trama-corpo: clamp(40px, min(13.5vw, 13vh), 190px);
   --p-trama-gap: clamp(4px, 0.8vh, 12px);
 }
 /* a fita se centra na faixa que lhe coube */
@@ -437,7 +451,12 @@
   min-height: 0;
 }
 .p-trama--peca .p-trama-nome,
-.p-trama--peca .p-trama-ponto { font-size: var(--p-trama-corpo); }
+.p-trama--peca .p-trama-ponto {
+  font-size: var(--p-trama-corpo);
+  /* 0,92 é a entrelinha da fita base, boa para nome sem descendente; aqui a
+     caixa precisa segurar o "g" inteiro */
+  line-height: 1.16;
+}
 /* o hover é do CAMPO, não da linha: pousar numa fita para as três e apaga o
    resto, para o nome aceso ficar sozinho em cor.
    ⚠ o `:hover` do nome só assenta porque a fita PAROU no mesmo evento — em
@@ -720,7 +739,8 @@
    certo é centro da peça no ponto exato — `left/top: 0` no anel + margem
    negativa de meia caixa aqui.
 
-   Dele também: "16:9 mesmo", "2px de arredondamento", "sem sombra". A sombra
+   Dele também: "16:9 mesmo", arredondamento de 2px → **4px** (17/08, segundo
+   passe), "sem sombra". A sombra
    fingia um card flutuando; sem ela o visor é uma janela ABERTA na página, e o
    raio de 2px é o único canto arredondado do sistema — justamente na única
    peça que não é papel.
@@ -745,7 +765,7 @@
   /* meia caixa para cada lado: o CENTRO da peça cai onde o ponteiro está */
   margin: calc(var(--p-visor-l) / -3.555) 0 0 calc(var(--p-visor-l) / -2);
   position: relative;
-  border-radius: 2px;
+  border-radius: 4px;
   overflow: hidden;
   background: var(--p-fio);
   /* nasce invisível: quem acende é o GSAP (autoAlpha), e sem isto a peça
@@ -753,12 +773,18 @@
   visibility: hidden;
   opacity: 0;
 }
+/* as duas lâminas ocupam a mesma caixa: a máscara é o quadro, elas deslizam
+   por dentro dele */
 .p-visor img {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   will-change: transform, filter;
+  visibility: hidden;
+  opacity: 0;
 }
 /* ⓘ o visor não leva legenda — ver o comentário do gesto em `HomeD.tsx` */
 

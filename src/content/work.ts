@@ -110,10 +110,14 @@ import artBureauX from "../assets/optimized/art-bureau-2200.webp";
 import artNeox from "../assets/optimized/art-neox-1400.webp";
 import artGinga from "../assets/optimized/art-ginga-1400.webp";
 import artGinga2x from "../assets/optimized/art-ginga-2200.webp";
-import artRemanescentes from "../assets/optimized/art-remanescentes-1200.webp";
 
 export const WORK: WorkItem[] = [
-  /* ⚠ Ginga e Remanescentes entraram em 16/08/2026, e a lacuna que eles fecham
+  /* ⚠ REMANESCENTES SAIU DA COLEÇÃO em 17/08/2026, a pedido dele ("projeto
+     remanescentes remover"). A arte e a matéria do todays.design continuam no
+     disco e em `reconhecimento.ts` — se ele quiser de volta, é reinserir esta
+     entrada, não refazer nada.
+
+     ⚠ Ginga entrou em 16/08/2026, e a lacuna que ele fecha
      é a mais séria que este site tinha: o Behance dele publica NOVE projetos e a
      coleção tinha SETE. Faltava justamente o trabalho mais recente — e o mais
      reconhecido, com matéria na Abduzeedo. Um portfólio que não mostra o
@@ -137,17 +141,6 @@ export const WORK: WorkItem[] = [
     about: [],
     contentPending: true,
     cover: img(artGinga, 1400, 1097, "Ginga — sistema de marca para projeto cultural de capoeira", artGinga2x),
-    images: [],
-  },
-  {
-    slug: "remanescentes",
-    title: "Remanescentes",
-    year: 2026,
-    disciplines: ["Visual Identity", "Print"],
-    credits: [],
-    about: [],
-    contentPending: true,
-    cover: img(artRemanescentes, 1200, 720, "Remanescentes — identidade visual, peças impressas"),
     images: [],
   },
   {
