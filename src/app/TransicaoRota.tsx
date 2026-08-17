@@ -5,58 +5,42 @@ import { WORK } from "../content/work";
 import { scrollToTop } from "../lib/lenis";
 
 /**
- * A transição entre páginas — o OBTURADOR do visor.
+ * A transição entre páginas — A FOLHA QUE VIRA.
  *
- * ## Por que a primeira versão foi refeita
+ * ⚠ 17/08 — REFEITA. A anterior era o OBTURADOR: lâminas fechando, quatro
+ * marcas de canto convergindo, o nome do destino subindo em corpo de display.
+ * Era boa, e era de OUTRA DIREÇÃO — nasceu para "o portfólio como visor", cujo
+ * vocabulário é crop mark e marca de foco. Quando a Prancha virou o site, ela
+ * ficou: *"a transição vc não atualizou"*. Transição herdada de direção morta
+ * é fantasia da direção anterior.
  *
- * Ele apontou o demo `async-page-transitions` do Codrops e eu entreguei um
- * `blur + translateY` em 20 linhas de CSS com a View Transitions API, com um
- * argumento técnico para justificar o corte. O veredito foi **"pobre demais"**,
- * e estava certo: a referência tem COREOGRAFIA — uma barra atravessa o topo, o
- * numeral gigante sobe de baixo, os dados entram linha a linha — e eu devolvi um
- * fade sofisticado. Referência apontada é barra a superar, não teto a
- * justificar por que não alcancei.
+ * ## A língua desta direção
  *
- * ## O que este obturador faz, e por que é DELE
+ * A Prancha é feita de SUPERFÍCIE e FIO DE 1PX — cada rota tem a sua superfície
+ * (index em papel, work em branco, lab em tinta), e a régua de 1px separa tudo.
+ * A home já usa esse par no micro: no visor, a arte nova invade a anterior por
+ * uma frente lateral com o fio do acento na crista.
  *
- * O site inteiro se apresenta como um visor: crop marks fixas, marcas de foco
- * de quatro cantos, o rótulo que nomeia o que está enquadrado. Um visor tem uma
- * transição própria e é literalmente o obturador — o enquadramento FECHA,
- * reenquadra, e ABRE no assunto novo. Nenhum outro site pode usar esta
- * transição sem parecer emprestada, que é a diferença entre citar a mecânica de
- * uma referência e vestir a fantasia dela.
+ * Aqui é o MESMO gesto em escala de página: uma folha na superfície do DESTINO
+ * atravessa a tela pela lateral, com o fio de 1px na aresta de ataque, cobre,
+ * a rota troca por baixo, e a folha continua o percurso saindo pelo outro lado.
+ * Não é um wipe: é a prancha seguinte sendo posta sobre a mesa. E como a folha
+ * já vem na cor da rota que chega, a transição ANUNCIA o destino antes de ele
+ * existir.
  *
- * A coreografia, em quatro tempos:
+ * O único texto é o metadado — índice e nome em mono minúsculo, colados ao fio,
+ * que é como esta direção nomeia as coisas. Nome em corpo de display era da
+ * direção do visor, onde havia uma escala de display para carregar isso.
  *
- *   1. FECHA   duas lâminas de petróleo vindo de cima e de baixo, 0,42s,
- *              `power3.in` — acelerando, como lâmina mecânica
- *   2. TRAVA   as marcas de canto convergem e o rótulo do DESTINO é escrito no
- *              centro, junto de um traço que corre a largura
- *   3. TROCA   a rota muda com o quadro fechado (é o único instante em que o
- *              salto de scroll e a morte dos ScrollTriggers não aparecem)
- *   4. ABRE    as lâminas recuam em 0,62s `expo.out` e a página nova chega
- *              FOCANDO — o mesmo gesto que o resto do site usa para entrar
+ * ## O que ficou da versão anterior, porque é mecânica e não estilo
  *
- * ## Decisões que não são óbvias
- *
- * **Intercepta o clique globalmente, não Link por Link.** Um listener em fase de
- * captura pega qualquer `<a>` interno, inclusive os que nascerem em componentes
- * futuros. A alternativa seria marcar 25 Links à mão e esquecer o vigésimo
- * sexto.
- *
- * **A rota só troca com o quadro fechado.** É o que esconde as duas coisas feias
- * que toda navegação deste repo faz: o `scrollToTop` do Lenis e a matança de
- * ScrollTriggers do `RouteLifecycle`. Fazer a troca com o quadro aberto seria
- * ver o salto.
- *
- * ⚠ **A trava de reentrada é obrigatória.** Sem ela, dois cliques rápidos
- * empilham duas timelines, e a segunda abre o obturador que a primeira ainda
- * está fechando — a tela trava em petróleo e não volta.
- *
+ * A interceptação de clique em fase de captura, e as regras dela:
  * ⚠ **Modificador do teclado passa direto.** Cmd/Ctrl/Shift-clique e botão do
  * meio abrem em nova aba, e sequestrar isso quebra uma expectativa que o
  * navegador criou. Alvo externo, download e âncora na mesma página também
  * seguem o caminho normal.
+ * ⚠ E a troca de rota acontece com a tela COBERTA, que é o que esconde o salto
+ * de scroll.
  */
 
 /* nome legível da rota, para o rótulo do obturador. Sai do próprio pathname —
@@ -70,6 +54,22 @@ function nomeDaRota(p: string) {
   }
   const limpo = p.replace(/^\//, "").split("/")[0];
   return limpo.charAt(0).toUpperCase() + limpo.slice(1);
+}
+
+/* ⭐ A SUPERFÍCIE DE CADA ROTA — a mesma tabela que a `Prancha` usa para se
+   pintar. A folha da transição chega já nesta cor, então o destino se anuncia
+   antes de existir. Se uma rota nova entrar aqui e lá com valores diferentes, a
+   transição entrega a mentira: manter as duas juntas. */
+const SUPERFICIE: Record<string, "papel" | "branco" | "tinta"> = {
+  "/": "papel",
+  "/work": "branco",
+  "/about": "papel",
+  "/lab": "tinta",
+};
+function superficieDaRota(p: string) {
+  if (SUPERFICIE[p]) return SUPERFICIE[p];
+  if (p.startsWith("/work/")) return "branco";
+  return "papel";
 }
 
 /* o índice da rota dentro do site, no vernáculo de [01] que o resto usa */
@@ -92,20 +92,17 @@ export default function TransicaoRota() {
   /* a rota que estamos indo buscar — o efeito de "abrir" espera por ela */
   const indoPara = useRef<string | null>(null);
 
-  /* ── ABRE: dispara quando o pathname finalmente mudou ─────────────────── */
+  /* ── SAI: dispara quando o pathname finalmente mudou ─────────────────── */
   useEffect(() => {
     if (!indoPara.current) return;
+    const destino = indoPara.current;
     indoPara.current = null;
     const el = raiz.current;
     if (!el) return;
 
-    const lamina = el.querySelectorAll<HTMLElement>("[data-lamina]");
-    const marca = el.querySelectorAll<HTMLElement>("[data-marca]");
-    const rotulo = el.querySelector<HTMLElement>("[data-rotulo]");
-    const traco = el.querySelector<HTMLElement>("[data-traco]");
-
-    const titulo = el.querySelector<HTMLElement>("[data-titulo]");
-    const indice = el.querySelector<HTMLElement>("[data-indice]");
+    const folha = el.querySelector<HTMLElement>("[data-folha]");
+    const ficha = el.querySelector<HTMLElement>("[data-ficha]");
+    const lado = el.dataset.lado === "-1" ? -1 : 1;
 
     const tl = gsap.timeline({
       onComplete: () => {
@@ -113,38 +110,29 @@ export default function TransicaoRota() {
         el.style.pointerEvents = "none";
       },
     });
-    /* o título SAI por cima — completa o percurso que começou embaixo, em vez
-       de desaparecer no lugar. É o mesmo elemento atravessando o quadro. */
-    tl.to(titulo, { yPercent: -108, duration: 0.5, ease: "power3.in" })
-      .to([rotulo, traco, indice], { autoAlpha: 0, duration: 0.18, ease: "power2.in" }, "<+0.1")
-      .to(marca, { autoAlpha: 0, x: (i) => (i % 2 === 0 ? -20 : 20), y: (i) => (i < 2 ? -20 : 20), duration: 0.32 }, "<")
-      /* as lâminas recuam com `expo.out`: quase todo o percurso no começo, e o
-         fim quase parado — é o que faz o quadro "abrir" em vez de "deslizar" */
-      .to(lamina, { scaleY: 0, duration: 0.66, ease: "expo.out" }, "-=0.24")
-      /* ⚠ O conteúdo entra por BLOCO, com stagger — não a página inteira num
-         bloco só. Era o segundo buraco: as lâminas abriam sobre uma página já
-         pronta e parada, e a chegada não tinha peso nenhum. Na referência os
-         dados entram linha a linha; aqui entram seção a seção, focando. */
-      /* ⚠ `:not(.v3-obturador)` NÃO é preciosismo. O obturador também é um
-         `<div>` filho de `<main>`, então `main > div > *` pegava as lâminas, o
-         traço e as quatro marcas JUNTO com o conteúdo — a animação de entrada
-         estava mexendo nas peças da própria transição, e o que devia entrar
-         focando dividia o stagger com elementos que precisam ficar invisíveis.
-         Só apareceu porque a verificação listou nó a nó em vez de contar. */
+    /* a folha NÃO recua: ela completa o percurso e sai pelo outro lado. Recuar
+       seria desfazer o gesto; sair é pôr a prancha na mesa e tirar a mão. */
+    tl.to(ficha, { autoAlpha: 0, duration: 0.18, ease: "power2.in" })
+      .to(folha, { xPercent: 100 * lado, duration: 0.72, ease: "expo.inOut" }, "<")
+      /* ⚠ o conteúdo entra por BLOCO, com stagger — não a página inteira num
+         bloco só. E entra FOCANDO, que é o gesto do site: chega desfocado e
+         resolve. O `:not` protege as peças da própria transição, que também são
+         filhas de `main` em algumas rotas. */
       .fromTo(
-        "main > div:not(.v3-obturador) > *",
-        { filter: "blur(14px)", opacity: 0.3, y: 18 },
+        "main > section > *, main > div:not(.v3-obturador) > *",
+        { filter: "blur(12px)", opacity: 0.35, y: 14 },
         {
           filter: "blur(0px)",
           opacity: 1,
           y: 0,
-          duration: 0.72,
+          duration: 0.66,
           ease: "power3.out",
-          stagger: 0.055,
+          stagger: 0.05,
           clearProps: "filter,opacity,transform",
         },
-        "-=0.52",
+        "-=0.5",
       );
+    void destino;
   }, [pathname]);
 
   /* ── FECHA: intercepta o clique em qualquer link interno ──────────────── */
@@ -172,47 +160,39 @@ export default function TransicaoRota() {
       indoPara.current = url.pathname;
       el.style.pointerEvents = "auto";
 
-      const lamina = el.querySelectorAll<HTMLElement>("[data-lamina]");
-      const marca = el.querySelectorAll<HTMLElement>("[data-marca]");
+      const folha = el.querySelector<HTMLElement>("[data-folha]");
+      const ficha = el.querySelector<HTMLElement>("[data-ficha]");
       const rotulo = el.querySelector<HTMLElement>("[data-rotulo]");
-      const traco = el.querySelector<HTMLElement>("[data-traco]");
-      const titulo = el.querySelector<HTMLElement>("[data-titulo]");
       const indice = el.querySelector<HTMLElement>("[data-indice]");
-      if (rotulo) rotulo.textContent = "Now entering";
-      if (titulo) titulo.textContent = nomeDaRota(url.pathname);
+
+      /* a folha chega na superfície do DESTINO — a rota se anuncia antes de
+         existir */
+      if (folha) folha.className = `p-folha p-${superficieDaRota(url.pathname)}`;
+      if (rotulo) rotulo.textContent = nomeDaRota(url.pathname);
       if (indice) indice.textContent = indiceDaRota(url.pathname);
 
-      gsap.set(lamina, { scaleY: 0 });
-      gsap.set([rotulo, traco, indice, ...Array.from(marca)], { autoAlpha: 0 });
-      gsap.set(traco, { scaleX: 0 });
-      /* o título começa ABAIXO da própria máscara — sobe para dentro dela */
-      gsap.set(titulo, { yPercent: 108, autoAlpha: 1 });
-      /* as marcas nascem AFASTADAS e convergem: o quadro se fechando é o que
-         elas contam. Aparecer no lugar não conta nada. */
-      gsap.set(marca, { x: (i) => (i % 2 === 0 ? -26 : 26), y: (i) => (i < 2 ? -26 : 26) });
+      /* ⭐ o lado de entrada alterna a cada navegação: duas trocas seguidas
+         para o mesmo lado leem como slideshow; alternando, lê como folha sendo
+         posta e retirada. */
+      const lado = el.dataset.lado === "1" ? -1 : 1;
+      el.dataset.lado = String(lado);
+
+      gsap.set(folha, { xPercent: -100 * lado });
+      gsap.set(ficha, { autoAlpha: 0, x: 12 * lado });
 
       const tl = gsap.timeline();
-      /* 1. FECHA — `power3.in` acelera até o encontro: lâmina tem massa */
-      tl.to(lamina, { scaleY: 1, duration: 0.42, ease: "power3.in" })
-        /* 2. TRAVA — os cantos CONVERGEM para o enquadramento */
-        .to(marca, { autoAlpha: 1, x: 0, y: 0, duration: 0.5, ease: "expo.out" }, "-=0.10")
-        .to(traco, { autoAlpha: 1, scaleX: 1, duration: 0.55, ease: "expo.out" }, "<")
-        .to([rotulo, indice], { autoAlpha: 1, duration: 0.22 }, "<+0.06")
-        /* 3. O DESTINO SOBE — era isto que faltava. O quadro fechado é o único
-           momento em que o site tem a tela inteira, e ele estava vazio: um
-           rótulo de 10px e um traço. Agora o nome da página que vem entra em
-           corpo de display, subindo por baixo de uma máscara — a direção do
-           movimento é a da referência (o elemento grande vem de baixo) e o
-           corpo é o da lição de escala: uma escala de display, não duas. */
-        .to(titulo, { yPercent: 0, duration: 0.72, ease: "expo.out" }, "<-0.04")
-        /* 4. TROCA — com o quadro fechado, o salto de scroll não aparece */
+      /* 1. A FOLHA ENTRA — `expo.out`: quase todo o percurso no começo, e o
+         fim quase parado. É o que dá peso de matéria em vez de deslize. */
+      tl.to(folha, { xPercent: 0, duration: 0.62, ease: "expo.out" })
+        /* 2. O METADADO assenta no fio — o único texto desta transição */
+        .to(ficha, { autoAlpha: 1, x: 0, duration: 0.4, ease: "expo.out" }, "-=0.34")
+        /* 3. TROCA — com a tela coberta, o salto de scroll não aparece */
         .call(() => {
           scrollToTop(true);
           navigate(url.pathname);
         })
-        /* o quadro cheio SEGURA — sem este respiro o nome mal termina de subir
-           quando as lâminas já recuam, e o momento não se registra */
-        .to({}, { duration: 0.3 });
+        /* a folha SEGURA um instante: sem isso o nome mal assenta e já sai */
+        .to({}, { duration: 0.26 });
     };
 
     document.addEventListener("click", aoClicar, true);
@@ -220,26 +200,16 @@ export default function TransicaoRota() {
   }, [navigate]);
 
   return (
-    <div
-      ref={raiz}
-      aria-hidden="true"
-      className="v3-obturador"
-      style={{ pointerEvents: "none" }}
-    >
-      <i data-lamina className="lam topo" />
-      <i data-lamina className="lam base" />
-      <span data-traco className="traco" />
-      {/* o quadro fechado, agora com conteúdo: rótulo + índice na régua, e o
-          nome do destino subindo por dentro de uma máscara */}
-      <span data-rotulo className="rotulo v3-micro" />
-      <span data-indice className="indice v3-micro" />
-      <span className="mascara">
-        <span data-titulo className="titulo" />
-      </span>
-      <i data-marca className="m tl" />
-      <i data-marca className="m tr" />
-      <i data-marca className="m bl" />
-      <i data-marca className="m br" />
+    <div ref={raiz} aria-hidden="true" className="v3-obturador" style={{ pointerEvents: "none" }}>
+      {/* a folha: superfície inteira + o fio de 1px na aresta de ataque */}
+      <div data-folha className="p-folha p-papel">
+        <i className="p-folha-fio" />
+        {/* o metadado, colado ao fio — é assim que esta direção nomeia */}
+        <span data-ficha className="p-folha-ficha">
+          <span data-indice className="p-marca" />
+          <span data-rotulo className="p-rotulo" />
+        </span>
+      </div>
     </div>
   );
 }

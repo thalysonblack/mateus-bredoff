@@ -394,7 +394,11 @@
 }
 .p-trama-nome {
   font-family: 'Geist', ui-sans-serif, sans-serif;
-  font-weight: 500;
+  /* ⚠ 400, e não 500: "texto tá muito bold, não tá na vibe de nada". Em corpo
+     de 125px o 500 lê como bold — o peso ganha massa com o tamanho, e o que
+     era um médio discreto no texto de ficha vira manchete de jornal. Toda a
+     voz desta direção é Geist regular; a trama tinha de falar a mesma. */
+  font-weight: 400;
   font-size: clamp(72px, 13.5vw, 194px);
   line-height: 0.92;
   letter-spacing: -0.045em;
@@ -799,6 +803,36 @@
   transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .p-reel:hover .p-reel-play { transform: scale(1); }
+
+/* ── A TRANSIÇÃO DE ROTA: A FOLHA QUE VIRA ────────────────────────────────
+   Ver o cabeçalho de `app/TransicaoRota.tsx` para o partido. Aqui só a matéria:
+   uma folha de tela cheia na superfície do destino, com o fio de 1px do sistema
+   na aresta de ataque e o metadado colado nele.
+
+   ⚠ O `.v3-obturador` continua sendo a raiz por compatibilidade com o CSS da
+   direção anterior, que ainda monta em `/arquivo/visor/*`. */
+.p-folha {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  will-change: transform;
+}
+.p-folha-fio {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 1px;
+  background: var(--p-acento);
+}
+.p-folha-ficha {
+  position: absolute;
+  right: calc(var(--p-margem) + 1px);
+  bottom: var(--p-margem-y);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
 
 /* ── O PLAYER ─────────────────────────────────────────────────────────────
    A página inteira apaga e o filme ocupa a tela. Fundo na TINTA do sistema, não
