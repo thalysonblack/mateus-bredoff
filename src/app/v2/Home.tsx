@@ -5,174 +5,266 @@ import { TIERS } from "../sections/Pricing";
 import { CONTATO } from "../v3-system";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha, Bloco } from "./sistema";
+import { useRevelar } from "./useRevelar";
 
 /**
- * FOLHA 01 — INDEX.
+ * A HOME — completa, com scroll.
  *
- * ⚠ TERCEIRA versão desta página, e as duas correções que a formaram estão aqui
- * porque é nelas que a direção mora:
+ * ⚠ QUINTA versão, e cada correção dele está registrada porque juntas elas SÃO
+ * o partido:
  *
- *   1. **"era pra ser uma home mais elaborada"** — a primeira era uma tela de
- *      fichas, porque eu tinha minerado o `/about` da referência e construído a
- *      HOME com ele. Anatomia certa da página errada.
- *   2. **"vc ta copiando, nao, apenas conceito"** — a segunda trouxe a régua de
- *      artboard, um cubo 3D de miniaturas girando e a sigla sangrando pela
- *      base. Elaborada, e copiada: aquilo é a assinatura do corentin.
+ *   1. "era pra ser uma home mais elaborada" — a de fichas era o /about da
+ *      referência, não uma home.
+ *   2. "vc ta copiando, nao, apenas conceito" — fora a régua de artboard, o
+ *      cubo 3D e a sigla sangrando: assinatura do corentin.
+ *   3. "gostei mas nao da home" → seis partidos em rota, para escolher.
+ *   4. "horrivel os dois" (sala de projeção e alfabeto) — os dois eram
+ *      desenhos em UM PLANO. Chapados.
+ *   5. "quero profundidade" → "sem perspectiva Z, digo profundidade no sentido
+ *      craft, imersao, respiro".
+ *   6. "uma home mais completa, com scroll".
  *
- * O partido próprio é a FOLHA DE ESPÉCIMES. Ele desenha marcas, e as capas do
- * acervo são, na maioria, wordmark e lettering — ginga, BUREAU, FORTIS, ALEX
- * ARCHER. Então o índice não é grade de cards com o nome em 12px embaixo: é uma
- * folha de espécimes, onde **o nome vem no corpo em que uma marca merece ser
- * vista**, a ficha técnica fica miúda ao lado, e a arte entra quando o cursor
- * pousa na linha.
+ * Então profundidade aqui não é eixo — é ACABAMENTO, ATMOSFERA e AR:
  *
- * O que veio das referências é só o princípio: densidade pequena no texto de
- * leitura, muito vazio, uma ideia gráfica por página, e o trabalho como objeto
- * em vez de grade. Nenhum objeto emprestado compete com o trabalho do dono do
- * site — e é por isso que a peça central aqui é a marca dele, não um sólido.
+ *   RESPIRO   a página anda em passos de uma tela (`.p-capitulo`), e o vazio
+ *             ENTRE assuntos é maior que o vazio dentro deles. É o que faz uma
+ *             home longa ler como capítulos em vez de rolo.
+ *   IMERSÃO   a superfície troca por capítulo, sangrada de borda a borda —
+ *             quem rola muda de ambiente, não de seção.
+ *   CRAFT     nada aparece de repente: cada bloco sobe sob máscara com degrau
+ *             de 90ms entre irmãos, e a peça entra FORA DE FOCO e resolve.
+ *
+ * A trama viva abre a página (é a única coisa que ele aprovou de cara), e o
+ * resto do site desce dela: trabalho, prova, oferta, contato.
  */
 
 const MANIFESTO =
-  "Brand designer and art director working with companies that want a clear, relevant and memorable presence. Every identity starts from strategy and lands as a visual system built to last.";
+  "Brand designer and art director working with companies that want a clear, relevant and memorable presence.";
+
+const LEAD =
+  "Every identity starts from strategy — objectives, audience, competitors, market context — and lands as a visual system built with intention, made to connect emotionally and to last.";
 
 export default function HomeV2() {
   useMetaRota();
   const preco = (n: number | null) =>
     n === null ? "On request" : `from US$ ${n.toLocaleString("en-US")}`;
-  const recentes = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano).slice(0, 3);
+
+  const capAbertura = useRevelar<HTMLElement>();
+  const capSobre = useRevelar<HTMLElement>();
+  const capProva = useRevelar<HTMLElement>();
+  const capOferta = useRevelar<HTMLElement>();
+  const fita = [...WORK, ...WORK];
 
   return (
     <Prancha n="01" nome="Index" superficie="papel" status="Available for projects">
-      {/* ─ abertura: corpo de leitura, sem manchete ────────────────────── */}
-      <section className="grid grid-cols-12 gap-x-6 pt-14 max-md:pt-8">
-        <p className="p-corpo col-span-4 max-w-[42ch] max-lg:col-span-12">{MANIFESTO}</p>
-        <p className="p-marca col-span-2 col-start-11 text-right max-lg:hidden">
-          {String(WORK.length).padStart(2, "0")} works · 2026
-        </p>
+      {/* ═ 01 · ABERTURA — a trama viva ═══════════════════════════════════ */}
+      <section ref={capAbertura} className="p-capitulo p-visivel">
+        <div className="grid gap-2" aria-hidden="true">
+          {[fita, [...fita].reverse(), [...WORK.slice(3), ...WORK.slice(0, 3), ...WORK.slice(3), ...WORK.slice(0, 3)]].map(
+            (linha, li) => (
+              <div key={li} className="p-trama -mx-[var(--p-margem)]">
+                <div
+                  className={`p-trama-fita ${li === 1 ? "p-trama-fita--volta" : ""} ${li === 2 ? "p-trama-fita--terca" : ""}`}
+                >
+                  {linha.map((w, k) => (
+                    <span key={`${w.slug}-${k}`} className="flex items-baseline gap-[0.32em]">
+                      <span
+                        className="p-trama-nome"
+                        style={{ backgroundImage: `url(${w.cover.src2x ?? w.cover.src})` }}
+                      >
+                        {w.title}
+                      </span>
+                      <span className="p-trama-ponto">·</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ),
+          )}
+        </div>
+        <h1 className="sr-only">
+          Mateus Bredoff — brand designer and art director. Selected work:{" "}
+          {WORK.map((w) => w.title).join(", ")}.
+        </h1>
+
+        <div
+          className="grid grid-cols-12 pt-14"
+          style={{ columnGap: "var(--p-gap-x)" }}
+        >
+          <p className="p-sobe p-corpo col-span-4 max-w-[42ch] max-lg:col-span-12">{MANIFESTO}</p>
+          <p className="p-sobe p-marca col-span-2 col-start-11 text-right max-lg:hidden">
+            {String(WORK.length).padStart(2, "0")} works · 2026
+          </p>
+        </div>
       </section>
 
-      {/* ─ a folha de espécimes ────────────────────────────────────────── */}
-      <section className="pt-20 max-md:pt-12" data-atenua>
-        <p className="p-rotulo pb-4">Selected work</p>
-
-        <ul>
-          {WORK.map((w, i) => (
-            <li
-              key={w.slug}
-              className="p-especime-linha"
-              /* o corpo sai do COMPRIMENTO do nome: a palavra preenche a
-                 medida, como numa folha de espécime de fundição */
-              style={{ ["--n" as string]: w.title.length }}
-            >
-              <Link
-                data-alvo
-                to={`/v2/work/${w.slug}`}
-                className="grid grid-cols-12 items-center gap-x-6 py-5 max-md:py-4"
-              >
-                <span className="p-marca col-span-1 self-start pt-3 max-md:col-span-2">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-
-                {/* o nome É a peça: escala de espécime, não rótulo de card */}
-                <span className="p-especime col-span-6 max-md:col-span-10">{w.title}</span>
-
-                {/* a arte só quando o cursor pousa — a folha revela o espécime.
-                    Altura fixa e largura automática: as capas têm proporções
-                    diferentes, e alinhar pela ALTURA é o que faz nove marcas
-                    lerem como uma coluna. */}
-                <span className="p-especime-arte col-span-2 flex justify-end max-md:hidden">
-                  <img
-                    src={w.cover.src}
-                    srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
-                    sizes="220px"
-                    alt=""
-                    width={w.cover.w}
-                    height={w.cover.h}
-                    loading={i > 2 ? "lazy" : undefined}
-                    decoding="async"
-                    draggable={false}
-                    className="h-[104px] w-auto object-cover"
-                  />
-                </span>
-
-                <span className="p-marca col-span-3 self-start pt-3 text-right max-md:col-span-12 max-md:pt-2 max-md:text-left">
-                  {w.disciplines.join(", ")}
-                  <span className="block pt-1" style={{ opacity: 0.7 }}>
-                    {w.year}
-                  </span>
-                </span>
+      {/* ═ 02 · SOBRE — uma frase, e o vazio em volta dela ════════════════ */}
+      <section
+        ref={capSobre}
+        className="p-capitulo -mx-[var(--p-margem)] p-branco"
+        style={{ paddingInline: "var(--p-margem)" }}
+      >
+        <div className="grid grid-cols-12" style={{ columnGap: "var(--p-gap-x)" }}>
+          <p className="p-rotulo p-sobe col-span-2 max-lg:col-span-12">Approach</p>
+          <div className="col-span-6 col-start-4 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-6">
+            <p className="p-sobe p-corpo max-w-[56ch]">{LEAD}</p>
+            <p className="p-sobe pt-8">
+              <Link to="/v2/about" className="p-corpo p-link" style={{ color: "var(--p-quieto)" }}>
+                About the studio →
               </Link>
-            </li>
-          ))}
-          <li className="p-fio" />
-        </ul>
+            </p>
+          </div>
+        </div>
       </section>
 
-      {/* ─ as fichas ───────────────────────────────────────────────────── */}
-      <section className="grid grid-cols-12 pt-28 max-md:pt-16"
-        style={{ columnGap: "var(--p-gap-x)", rowGap: "var(--p-gap-y)" }}>
-        <Bloco
-          rotulo={`Recognition — ${String(RECONHECIMENTO.length).padStart(2, "0")}`}
-          className="col-span-4 max-lg:col-span-12"
-        >
-          <ul className="grid gap-[6px]">
-            {recentes.map((r) => (
-              <li
-                key={`${r.veiculo}-${r.projeto}`}
-                className="p-corpo grid grid-cols-[1fr_auto] items-baseline gap-3"
-              >
-                {r.href ? (
-                  <a href={r.href} target="_blank" rel="noopener noreferrer" className="p-link">
-                    {r.veiculo} <span style={{ color: "var(--p-quieto)" }}>— {r.projeto}</span>
-                  </a>
-                ) : (
-                  <span>
-                    {r.veiculo} <span style={{ color: "var(--p-quieto)" }}>— {r.projeto}</span>
+      {/* ═ 03 · O TRABALHO — um capítulo por peça, alternando o lado ══════
+          Cada projeto ocupa uma tela e entra fora de foco. É o oposto da grade:
+          a pessoa não escolhe entre nove miniaturas, ela ATRAVESSA nove peças —
+          e é isso que "imersão" quer dizer numa página que rola. */}
+      {WORK.map((w, k) => (
+        <CapituloPeca key={w.slug} w={w} k={k} />
+      ))}
+
+      {/* ═ 04 · A PROVA — reconhecimento, em tinta ════════════════════════ */}
+      <section
+        ref={capProva}
+        className="p-capitulo p-tinta -mx-[var(--p-margem)]"
+        style={{ paddingInline: "var(--p-margem)" }}
+      >
+        <div className="grid grid-cols-12" style={{ columnGap: "var(--p-gap-x)" }}>
+          <p className="p-rotulo p-sobe col-span-2 max-lg:col-span-12">
+            Recognition — {String(RECONHECIMENTO.length).padStart(2, "0")}
+          </p>
+          <ul className="col-span-8 col-start-4 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-6">
+            {RECONHECIMENTO.map((r) => (
+              <li key={`${r.veiculo}-${r.projeto}`} className="p-sobe p-fio py-5">
+                <div className="grid grid-cols-12 items-baseline" style={{ columnGap: "var(--p-gap-x)" }}>
+                  <span className="p-corpo col-span-3 max-md:col-span-12">
+                    {r.href ? (
+                      <a href={r.href} target="_blank" rel="noopener noreferrer" className="p-link">
+                        {r.veiculo}
+                      </a>
+                    ) : (
+                      r.veiculo
+                    )}
                   </span>
-                )}
-                <span style={{ color: "var(--p-quieto)" }}>{r.ano}</span>
+                  <span className="p-corpo col-span-6 max-md:col-span-12" style={{ color: "var(--p-quieto)" }}>
+                    {r.titulo}
+                  </span>
+                  <span className="p-marca col-span-3 text-right max-md:col-span-12 max-md:text-left">
+                    {r.projeto} · {r.ano}
+                  </span>
+                </div>
               </li>
             ))}
+            <li className="p-fio" />
           </ul>
-        </Bloco>
+        </div>
+      </section>
 
-        <Bloco
-          rotulo={`Services — ${String(TIERS.length).padStart(2, "0")}`}
-          className="col-span-4 max-lg:col-span-12"
-        >
-          <ul className="grid gap-[6px]">
+      {/* ═ 05 · A OFERTA + CONTATO ═══════════════════════════════════════ */}
+      <section ref={capOferta} className="p-capitulo">
+        <div className="grid grid-cols-12" style={{ columnGap: "var(--p-gap-x)" }}>
+          <p className="p-rotulo p-sobe col-span-2 max-lg:col-span-12">
+            Services — {String(TIERS.length).padStart(2, "0")}
+          </p>
+
+          <ul className="col-span-6 col-start-4 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-6">
             {TIERS.map((t) => (
-              <li key={t.name} className="p-corpo grid grid-cols-[1fr_auto] items-baseline gap-3">
-                <span>{t.name}</span>
-                <span style={{ color: "var(--p-quieto)" }}>{preco(t.priceFrom)}</span>
+              <li key={t.name} className="p-sobe p-fio py-6">
+                <div className="flex items-baseline justify-between gap-6">
+                  <span className="p-item">{t.name}</span>
+                  <span className="p-corpo" style={{ color: "var(--p-quieto)" }}>
+                    {preco(t.priceFrom)}
+                  </span>
+                </div>
+                <p className="p-corpo max-w-[54ch] pt-2" style={{ color: "var(--p-quieto)" }}>
+                  {t.description}
+                </p>
               </li>
             ))}
+            <li className="p-fio" />
           </ul>
-        </Bloco>
 
-        <Bloco rotulo="Contact &amp; inquiries" className="col-span-3 max-lg:col-span-12">
-          <ul className="grid gap-[6px]">
-            {CONTATO.map((c) => (
-              <li key={c.label} className="p-corpo">
-                {c.href ? (
-                  <a
-                    href={c.href}
-                    target={c.href.startsWith("mailto:") ? undefined : "_blank"}
-                    rel="noopener noreferrer"
-                    className="p-link"
-                  >
-                    {c.label === "Email" ? c.valor : c.label}
-                  </a>
-                ) : (
-                  /* sem destino no material do cliente → texto, não link que
-                     mente (a régua vale em toda direção deste site) */
-                  <span style={{ color: "var(--p-quieto)" }}>{c.label}</span>
-                )}
-              </li>
-            ))}
-          </ul>
-        </Bloco>
+          <div className="col-span-3 col-start-11 grid gap-8 self-start max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-12">
+            <Bloco rotulo="Contact &amp; inquiries" className="p-sobe">
+              <ul className="grid gap-[6px]">
+                {CONTATO.map((c) => (
+                  <li key={c.label} className="p-corpo">
+                    {c.href ? (
+                      <a
+                        href={c.href}
+                        target={c.href.startsWith("mailto:") ? undefined : "_blank"}
+                        rel="noopener noreferrer"
+                        className="p-link"
+                      >
+                        {c.label === "Email" ? c.valor : c.label}
+                      </a>
+                    ) : (
+                      <span style={{ color: "var(--p-quieto)" }}>{c.label}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </Bloco>
+          </div>
+        </div>
       </section>
     </Prancha>
+  );
+}
+
+/**
+ * Um capítulo de peça: a arte grande entrando fora de foco, com a ficha ao lado.
+ * O lado alterna a cada projeto — não por variedade decorativa, mas porque numa
+ * sequência longa o olho aprende a posição e para de olhar; alternar mantém a
+ * leitura acordada sem mudar a anatomia.
+ */
+function CapituloPeca({ w, k }: { w: (typeof WORK)[number]; k: number }) {
+  const ref = useRevelar<HTMLElement>();
+  const direita = k % 2 === 1;
+  return (
+    <section ref={ref} className="p-capitulo">
+      <div
+        className="grid grid-cols-12 items-center"
+        style={{ columnGap: "var(--p-gap-x)" }}
+      >
+        <Link
+          to={`/v2/work/${w.slug}`}
+          className={`col-span-7 ${direita ? "col-start-6" : "col-start-1"} max-lg:col-span-12 max-lg:col-start-1`}
+        >
+          <img
+            src={w.cover.src}
+            srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
+            sizes="(max-width: 1024px) 92vw, 56vw"
+            alt={w.cover.alt}
+            width={w.cover.w}
+            height={w.cover.h}
+            loading={k > 0 ? "lazy" : undefined}
+            decoding="async"
+            draggable={false}
+            className="p-foca w-full object-cover"
+            style={{ aspectRatio: `${w.cover.w} / ${w.cover.h}` }}
+          />
+        </Link>
+
+        <div
+          className={`col-span-4 ${direita ? "col-start-1 row-start-1" : "col-start-9"} max-lg:col-span-12 max-lg:col-start-1 max-lg:row-start-2 max-lg:pt-6`}
+        >
+          <p className="p-sobe p-marca">{String(k + 1).padStart(2, "0")}</p>
+          <p className="p-sobe p-especime pt-2" style={{ ["--n" as string]: w.title.length + 4 }}>
+            {w.title}
+          </p>
+          <p className="p-sobe p-corpo pt-4" style={{ color: "var(--p-quieto)" }}>
+            {w.disciplines.join(", ")} — {w.year}
+          </p>
+          <p className="p-sobe pt-6">
+            <Link to={`/v2/work/${w.slug}`} className="p-corpo p-link">
+              Open project →
+            </Link>
+          </p>
+        </div>
+      </div>
+    </section>
   );
 }
