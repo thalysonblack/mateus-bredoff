@@ -42,7 +42,11 @@ const CARD_SPACING = 1.81;   /* vão quase zero: os cards se encostam */
 const ACTIVE_SCALE = 1.0;
 const INACTIVE_SCALE = 0.95;
 const ACTIVE_OPACITY = 1.0;
-const INACTIVE_OPACITY = 0.35;
+/* ⚠ 0,5 e não os 0,35 do original: lá os cards são placeholders de cor CHAPADA
+   sobre #f2f2f0; aqui são artes claras (Votare, Neox, Stag) sobre papel quase
+   branco, e em 0,35 elas literalmente somem no fundo — "a imagem não aparece".
+   A hierarquia continua clara porque a peça enquadrada segue em 1,0. */
+const INACTIVE_OPACITY = 0.5;
 const SCALE_RANGE = 0.6;     /* quão perto (em índice) para estar cheio */
 const FBO_W = 1024;
 const FBO_H = 1440;
@@ -208,14 +212,31 @@ export function criarArquivoWebGL(alvo: HTMLElement, fontes: string[]): ArquivoW
   }).setParent(cenaTela);
 
   /* ── texturas ────────────────────────────────────────────────────────── */
+  const carregadas: string[] = [];
   fontes.forEach((src, i) => {
     const im = new Image();
     im.onload = () => {
       cards[i].tex.image = im;
       cards[i].tex.needsUpdate = true;
+      carregadas[i] = `${im.naturalWidth}x${im.naturalHeight}`;
+    };
+    im.onerror = () => {
+      carregadas[i] = "ERRO";
     };
     im.src = src;
   });
+  if (import.meta.env.DEV) {
+    (window as unknown as Record<string, unknown>).__arquivo = {
+      estado: () => ({
+        passos,
+        carregadas,
+        comTextura: cards.map((c) => !!c.tex.image),
+        opacidades: cards.map((c) => +(c.program.uniforms.uOpacity.value as number).toFixed(2)),
+        visiveis: cards.map((c) => c.mesh.visible),
+        y: cards.map((c) => +c.mesh.position.y.toFixed(2)),
+      }),
+    };
+  }
 
   const dimensionar = () => {
     const w = alvo.clientWidth || 1;
@@ -231,6 +252,7 @@ export function criarArquivoWebGL(alvo: HTMLElement, fontes: string[]): ArquivoW
   let sfAnterior = 0;
   let bend = BEND_MIN;
   let vivo = true;
+  let passos = 0;
 
   return {
     scroll(f) {
@@ -238,6 +260,7 @@ export function criarArquivoWebGL(alvo: HTMLElement, fontes: string[]): ArquivoW
     },
     passo(dt) {
       if (!vivo) return;
+      passos++;
       progTela.uniforms.uTime.value += dt;
 
       /* ⭐ BEND E DISTORÇÃO SAEM DA VELOCIDADE, não da posição: parado a tela é
