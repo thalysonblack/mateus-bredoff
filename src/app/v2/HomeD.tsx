@@ -431,18 +431,15 @@ export default function HomeD({
           style={{ columnGap: "var(--p-gap-x)", rowGap: "var(--p-gap-y)" }}
         >
           <div className="col-span-4 max-lg:col-span-12">
-            <p className="p-corpo max-w-[42ch]">
-              Brand designer and art director, based in Brazil, working worldwide.
-              Every identity starts from strategy and lands as a visual system
-              built to last.
-            </p>
-
             {/* A CAPA DO SHOWREEL — 16:9, e o vídeo abre no clique.
                 ⚠ Era uma tira de cinco frames ciclando, e ele corrigiu: o reel
                 é UM vídeo, então o que vive aqui é a THUMB dele. Frame único
                 diz "existe um filme"; tira de frames dizia "existe uma galeria".
                 Mesma proporção do visor, então a home tem uma razão só de
                 imagem — do frame da capa ao quadro que segue o cursor. */}
+            {/* ⚠ O VÍDEO VEM ANTES DO TEXTO ("video acima do texto"): a coluna
+                abre com a imagem e o parágrafo lê como legenda longa dela, e
+                não o contrário. */}
             {REEL.video ? (
               <button type="button" className="p-reel" onClick={() => setReelAberto(true)}>
                 <img src={REEL.capa.src} alt="" decoding="async" draggable={false} />
@@ -461,6 +458,12 @@ export default function HomeD({
               {REEL.titulo} — {REEL.ano}
               {REEL.duracao ? ` · ${REEL.duracao}` : ""}
               {REEL.video ? "" : " · em edição"}
+            </p>
+
+            <p className="p-corpo max-w-[42ch] pt-6">
+              Brand designer and art director, based in Brazil, working worldwide.
+              Every identity starts from strategy and lands as a visual system
+              built to last.
             </p>
           </div>
 

@@ -759,7 +759,8 @@
   display: block;
   width: min(100%, 268px);
   aspect-ratio: 16 / 9;
-  margin-top: 18px;
+  /* abre a coluna: nada acima dele */
+  margin-top: 0;
   overflow: hidden;
   background: var(--p-fio);
   padding: 0;
