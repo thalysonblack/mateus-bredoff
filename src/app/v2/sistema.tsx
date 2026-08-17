@@ -89,7 +89,7 @@ export function Prancha({
   const hora = useHora();
   return (
     <div
-      className={`p-${superficie} relative min-h-svh`}
+      className={`p-${superficie} p-tela relative min-h-svh`}
       style={{
         ["--p-acento" as string]: superficie === "tinta" ? "#ec7a47" : "#a53a0b",
       }}

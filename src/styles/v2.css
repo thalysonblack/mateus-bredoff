@@ -67,6 +67,13 @@
      coluna, deslocamento) sai dela; o que é medida de LEITURA (corpo de texto)
      continua em px, porque texto que escala com a janela quebra a leitura. */
   --p-u: calc(100vw / 1512 * 10);
+  /* ⚠️ A TRAVA. O vw puro tem um defeito medido: no corentin a nav cai para
+     8,7px em 1200 — o texto pequeno ENCOLHE junto com a janela e some. O
+     artefakt.mov resolve com duas bases de desenho: `1rem = 10px` em 1440 E em
+     1024, trocando de regime em 1280. Abaixo do breakpoint a régua rebaixa a
+     base, e o texto pequeno fica MAIOR, não menor.
+     Mesma ideia fluida, com piso. Sem isto, tudo o que a direção tem de rótulo
+     de 8,5px vira 6,3px num notebook de 1200. */
 
   /* margem da prancha = 5u = os mesmos 3,307% da referência */
   --p-margem: calc(var(--p-u) * 5);
@@ -111,6 +118,37 @@
      aumentar margem: o espaço vai para onde a leitura anda. */
   --p-gap-x: calc(var(--p-u) * 2);
   --p-gap-y: calc(var(--p-u) * 8);
+}
+
+@media (max-width: 1280px) {
+  :root { --p-u: calc(100vw / 1024 * 10); }
+}
+
+/* ── A TEXTURA DE TELA ─────────────────────────────────────────────────────
+   Medido no artefakt.mov, e é o achado mais barato do levantamento inteiro:
+   dois `linear-gradient` cruzados a **7% de opacidade**, passo de 5px, `fixed`.
+   Zero imagem, zero canvas, seis linhas.
+
+   ⭐ O detalhe que faz funcionar: o passo é fixo em PIXEL DE TELA e não escala
+   com nada — por isso lê como artefato de monitor, e não como um padrão do
+   layout. É o que dá atmosfera à página sem acrescentar um único elemento de
+   design. Foi o que respondeu ao "falta densidade" sem encher a tela de coisa.
+
+   Lá o passo cai para 3px abaixo do breakpoint; aqui também, porque em tela
+   menor o ponto de 5px começa a ler como listra. */
+.p-tela::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  opacity: 0.07;
+  background:
+    linear-gradient(currentColor 1px, transparent 1px) center / 5px 5px,
+    linear-gradient(90deg, currentColor 1px, transparent 1px) center / 5px 5px;
+}
+@media (max-width: 1280px) {
+  .p-tela::after { background-size: 3px 3px, 3px 3px; }
 }
 
 /* ── superfícies: cada PRANCHA tem a sua ───────────────────────────────── */
@@ -243,7 +281,12 @@
      conjunto dos nove nomes do acervo */
   font-size: min(calc(var(--p-especime-med) / (var(--n, 8) * 0.52)), var(--p-especime-teto));
   line-height: 0.94;
-  letter-spacing: -0.03em;
+  /* ⭐ TRACKING EM MEDIDA FIXA, não em `em` — medido no artefakt: −2px
+     constante do corpo 36 ao 84, o que dá −0,056em no menor e −0,024em no
+     maior. Quanto MAIOR o corpo, MENOS aperto relativo, e é isso que impede o
+     display gigante de fechar demais. Com `-0.03em` fixo (o caminho óbvio, e o
+     que o revelatio faz) o nome curto em 176px vinha estrangulado. */
+  letter-spacing: calc(var(--p-u) * -0.2);
   transition: color 0.3s ease-out;
 }
 .p-especime-linha {
