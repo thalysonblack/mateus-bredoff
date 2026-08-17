@@ -236,6 +236,7 @@ export default function App() {
           <Route path="/v2/d1" element={<HomeD fluidoModo={1} comparando />} />
           <Route path="/v2/d2" element={<HomeD fluidoModo={2} comparando />} />
           <Route path="/v2/d3" element={<HomeD fluidoModo={3} comparando />} />
+          <Route path="/v2/d4" element={<HomeD fluidoModo={4} comparando />} />
           <Route path="/v2/e" element={<HomeE />} />
           <Route path="/v2/f" element={<HomeF />} />
           <Route path="/v2/g" element={<HomeG />} />

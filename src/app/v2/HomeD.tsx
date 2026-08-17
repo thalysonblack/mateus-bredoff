@@ -46,12 +46,13 @@ export const FLUIDOS = [
   { modo: 1 as const, nome: "Maré", dita: "a nova invade pelo lado da fita" },
   { modo: 2 as const, nome: "Onda", dita: "um anel abre a partir do cursor" },
   { modo: 3 as const, nome: "Turbilhão", dita: "a imagem liquefaz e volta outra" },
+  { modo: 4 as const, nome: "Arco", dita: "estica boleando, e a frente incha no meio" },
 ];
 
 export default function HomeD({
   fluidoModo = 1,
   comparando = false,
-}: { fluidoModo?: 1 | 2 | 3; comparando?: boolean } = {}) {
+}: { fluidoModo?: 1 | 2 | 3 | 4; comparando?: boolean } = {}) {
   useMetaRota();
   /* a peça sob o cursor. `null` = nada aceso. */
   const [sob, setSob] = useState<(typeof WORK)[number] | null>(null);
@@ -163,6 +164,9 @@ export default function HomeD({
     const v = criarVisorFluido(tela, fluidoModo);
     fluido.current = v;
     if (!v) return;
+    /* só em desenvolvimento: o harness de verificação congela a transição por
+       aqui, porque screenshot é lento demais para pegar o meio de 1s */
+    if (import.meta.env.DEV) (window as unknown as Record<string, unknown>).__visor = v;
     let ultimo = performance.now();
     const desenha = () => {
       const agora = performance.now();

@@ -24,6 +24,12 @@
  *                warping e re-solidifica já sendo a outra. É o mais material e
  *                o menos direcional — a troca acontece na matéria, não no
  *                percurso.
+ *   4 ARCO       "estica boleando na lateral": a frente NÃO é reta — o centro
+ *                adianta e as pontas atrasam, então ela atravessa como um arco
+ *                de barriga cheia. E junto da frente a arte é ARRASTADA em x,
+ *                como pano elástico sendo puxado: o que sai estica no sentido
+ *                da saída, o que entra chega comprimido e relaxa. Tem lado,
+ *                como a Maré, mas com peso e elasticidade.
  *
  * Três MECÂNICAS distintas, não a mesma com números trocados: uma tem lado, uma
  * tem centro, uma não tem lugar nenhum.
@@ -45,6 +51,10 @@ void main() {
   gl_Position = vec4(position, 0.0, 1.0);
 }`;
 
+/* ⚠⚠ NENHUMA CRASE DAQUI PARA BAIXO, nem dentro de comentário: isto é uma
+   template literal, e a crase fecha a string. O erro sai como
+   `Expected ";" but found "object"` apontando para o meio do GLSL, o que não
+   ajuda em nada. Já quebrou o build duas vezes. */
 const FRAG = /* glsl */ `
 precision highp float;
 varying vec2 vUv;
@@ -128,7 +138,7 @@ void main() {
     dB = radial * crista * -0.09 + base * 0.004;
     frente = smoothstep(0.0, 0.22, raio - r + (n1 - 0.5) * 0.16);
 
-  } else {
+  } else if (uModo < 3.5) {
     /* ── 3 TURBILHÃO ────────────────────────────────────────────────────
        Domain warping: o ruído é amostrado num UV que já foi deslocado por
        outro ruído, o que produz filamento em vez de mancha. Sem frente
@@ -143,6 +153,26 @@ void main() {
     dA = giro * amp + vec2(uDir * 0.02 * uP, 0.0);
     dB = giro * amp * -0.85;
     frente = smoothstep(0.28, 0.72, uP + (n3 - 0.5) * 0.9 * sopro);
+
+  } else {
+    /* ── 4 ARCO ─────────────────────────────────────────────────────────
+       A frente bolea: uma parábola em y adianta o centro e atrasa as pontas,
+       e o bojo só existe DURANTE o percurso (4·p·(1−p) vale 0 nas duas
+       pontas e 1 no meio) — assim a arte chega e sai com a borda reta, e é no
+       meio do caminho que ela incha.
+
+       O estiramento mora numa gaussiana em volta da frente: só ali o UV é
+       arrastado em x, e o resto da imagem fica parado. É o que separa "pano
+       elástico sendo puxado" de "imagem inteira escorregando". A que sai é
+       puxada no sentido da saída, a que entra chega comprimida e relaxa. */
+    float x = uDir > 0.0 ? 1.0 - vUv.x : vUv.x;
+    float y = vUv.y - 0.5;
+    float bojo = 0.26 * (1.0 - 4.0 * y * y) * (4.0 * uP * (1.0 - uP));
+    float f = uP * 1.42 - x + bojo;
+    float perto = exp(-pow(f * 3.2, 2.0));          /* 1 na frente, 0 longe */
+    dA = vec2(uDir * (0.20 * perto + 0.045 * uP), 0.0) + base * 0.004;
+    dB = vec2(-uDir * 0.15 * perto * (1.0 - uP), 0.0) + base * 0.004;
+    frente = smoothstep(0.0, 0.13, f + (n1 - 0.5) * 0.09);
   }
 
   vec3 cor = mix(
@@ -157,13 +187,22 @@ export type VisorFluido = {
   preparar(src: string, dir: 1 | -1): Promise<void>;
   /** 0 → 1 durante a transição; quem anima é o GSAP, de fora */
   progresso(p: number): void;
+  /**
+   * TRINCO DE VERIFICAÇÃO: congela a transição num ponto do percurso.
+   *
+   * ⚠ Existe porque não dá para julgar um efeito de 1s por screenshot: cada
+   * captura do puppeteer custa 200–400ms, então "tire em 120ms" vira 500ms e o
+   * meio da transição nunca aparece. Com o trinco, mede-se o frame que se quer.
+   * `null` devolve o controle ao GSAP.
+   */
+  travar(p: number | null): void;
   /** conclui a troca: a nova vira a atual */
   concluir(): void;
   passo(dt: number): void;
   destruir(): void;
 };
 
-export function criarVisorFluido(alvo: HTMLElement, modo: 1 | 2 | 3 = 1): VisorFluido | null {
+export function criarVisorFluido(alvo: HTMLElement, modo: 1 | 2 | 3 | 4 = 1): VisorFluido | null {
   let renderer: Renderer;
   try {
     renderer = new Renderer({ alpha: false, antialias: false, dpr: Math.min(window.devicePixelRatio || 1, 2) });
@@ -217,6 +256,7 @@ export function criarVisorFluido(alvo: HTMLElement, modo: 1 | 2 | 3 = 1): VisorF
   dimensionar();
 
   let vivo = true;
+  let travado: number | null = null;
   const cache = new Map<string, HTMLImageElement>();
   const carregar = (src: string) =>
     new Promise<HTMLImageElement>((ok, falha) => {
@@ -242,9 +282,15 @@ export function criarVisorFluido(alvo: HTMLElement, modo: 1 | 2 | 3 = 1): VisorF
       program.uniforms.uP.value = 0;
     },
     progresso(v) {
+      if (travado !== null) return;
       program.uniforms.uP.value = v;
     },
+    travar(v) {
+      travado = v;
+      if (v !== null) program.uniforms.uP.value = v;
+    },
     concluir() {
+      if (travado !== null) return;
       /* a nova vira a atual: troca os ponteiros, sem reenviar pixel à GPU */
       const t = texA;
       texA = texB;
