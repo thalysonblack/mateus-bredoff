@@ -823,30 +823,21 @@
   height: 100%;
   overflow: hidden;
 }
-.p-arquivo-trilha {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  translate: -50% 0;
-  display: grid;
-  /* passo quase igual à altura: as peças se encostam, como na referência */
-  row-gap: 3px;
-  width: min(100%, 620px);
-  will-change: transform;
-}
-.p-arquivo-peca {
-  display: block;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  background: var(--p-fio);
-  transform-origin: center;
-  /* ⚠ NADA de transition aqui: escala e opacidade são escritas a cada frame
-     pelo ticker, e uma transição por cima brigaria com elas. */
-}
-.p-arquivo-peca img {
+/* a coluna é um canvas: a curva, a lente e o grão são do shader, não do CSS */
+.p-arquivo-visor canvas {
   display: block;
   width: 100%;
   height: 100%;
+}
+.p-arquivo-plano {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.p-arquivo-plano img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
   object-fit: cover;
 }
 .p-arquivo-ficha {

@@ -4,6 +4,7 @@ import { WORK } from "../../content/work";
 import { corDe } from "../../content/cores";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { gsap, prefersReducedMotion } from "../../lib/gsap";
+import { criarArquivoWebGL, type ArquivoWebGL } from "../../lib/arquivoWebGL";
 import { Prancha } from "./sistema";
 
 /**
@@ -59,74 +60,43 @@ export default function WorkV2() {
    * ⚠ TRÊS CÓPIAS no markup: a janela mostra mais de um item por vez, então uma
    * só cópia deixaria buraco na virada do ciclo.
    */
+  const gl = useRef<ArquivoWebGL | null>(null);
+  const [semGL, setSemGL] = useState(false);
+
+  /**
+   * A COLUNA É WEBGL — porte do `/archive` dele (ver `lib/arquivoWebGL.ts`).
+   *
+   * Aqui fica só o que é da PÁGINA: o gesto (wheel → alvo → lerp), a sincronia
+   * com a tabela e o relógio. A curva, a lente e o grão vivem no renderer, que
+   * recebe apenas o índice flutuante.
+   */
   useEffect(() => {
     const caixa = janela.current;
-    const trilha = pilha.current;
-    if (!caixa || !trilha) return;
-    if (prefersReducedMotion()) return;
-
-    /* ⚠ `offsetHeight`, não `getBoundingClientRect()`: o ticker escreve `scale`
-       nas peças, e o rect devolveria a altura JÁ ESCALADA — a medida do passo
-       ficaria oscilando com a própria animação. */
-    const medidas = () => {
-      const primeiro = trilha.firstElementChild as HTMLElement | null;
-      if (!primeiro) return { h: 1, H: 1 };
-      const h = primeiro.offsetHeight;
-      const gap = parseFloat(getComputedStyle(trilha).rowGap || "0") || 0;
-      return { h, H: h + gap };
-    };
+    if (!caixa) return;
+    const v = criarArquivoWebGL(caixa, WORK.map((w) => w.cover.src));
+    gl.current = v;
+    setSemGL(!v);
+    if (!v || prefersReducedMotion()) return;
 
     const roda = (e: WheelEvent) => {
       alvo.current += e.deltaY / 420;
     };
-
     const passo = () => {
       pos.current += (alvo.current - pos.current) * 0.1;
       if (Math.abs(alvo.current - pos.current) < 0.0005) pos.current = alvo.current;
-
-      const { h, H } = medidas();
+      v.scroll(pos.current);
+      v.passo(0.016);
       const n = WORK.length;
-      /* índice fracionário DENTRO do ciclo, sempre na cópia do meio: é o que
-         faz a coluna não ter começo nem fim */
-      const dentroDoCiclo = ((pos.current % n) + n) % n;
-      const idx = dentroDoCiclo + n;
-
-      /* ⚠ A TRILHA É ANCORADA EM `top: 50%` e o transform traz o item ativo
-         para o centro da janela. Uma versão anterior usava `align-items:
-         center` no visor E somava o deslocamento por cima — a trilha já vinha
-         centrada, os dois se somavam e a coluna saía inteira da janela. Um
-         dono de posição só. */
-      trilha.style.transform = `translate3d(0, ${-(idx * H + h / 2)}px, 0)`;
-
-      /* ⭐ ESCALA E OPACIDADE POR PROXIMIDADE — medido no código da referência:
-         `proximity = 1 - min(|dist| / 0.6, 1)`, escala 1,00 → 0,95 e opacidade
-         1,00 → 0,35. A queda de OPACIDADE é o que faz uma peça mandar e as
-         outras assistirem; sem ela a coluna é só uma pilha rolando, que foi o
-         "não tá igual". */
-      const pecas = trilha.children;
-      for (let k = 0; k < pecas.length; k++) {
-        const e = pecas[k] as HTMLElement;
-        const dist = Math.abs(k - idx);
-        if (dist > 3.2) {
-          e.style.visibility = "hidden";
-          continue;
-        }
-        const prox = 1 - Math.min(dist / 0.6, 1);
-        e.style.visibility = "visible";
-        e.style.transform = `scale(${(0.95 + 0.05 * prox).toFixed(4)})`;
-        e.style.opacity = (0.35 + 0.65 * prox).toFixed(3);
-      }
-
-      const i = Math.round(dentroDoCiclo) % n;
+      const i = ((Math.round(pos.current) % n) + n) % n;
       setAtivo((antes) => (antes === i ? antes : i));
     };
-    caixa.addEventListener("wheel", roda, { passive: true });
     window.addEventListener("wheel", roda, { passive: true });
     gsap.ticker.add(passo);
     return () => {
-      caixa.removeEventListener("wheel", roda);
       window.removeEventListener("wheel", roda);
       gsap.ticker.remove(passo);
+      v.destruir();
+      gl.current = null;
     };
   }, []);
 
@@ -141,9 +111,6 @@ export default function WorkV2() {
     if (delta < -n / 2) delta += n;
     alvo.current = atual + delta;
   };
-
-  /* três cópias: a janela mostra mais de um item por vez */
-  const trilha = [0, 1, 2].flatMap(() => WORK);
 
   return (
     <Prancha n="02" nome="Work" superficie="branco" tela status={`${WORK.length} projects`}>
@@ -201,20 +168,13 @@ export default function WorkV2() {
             uma peça mandar e as outras assistirem. Espaçamento quase zero
             (card 1,80, passo 1,81), então as peças quase se encostam. */}
         <div ref={janela} className="p-arquivo-visor">
-          <div ref={pilha} className="p-arquivo-trilha">
-            {trilha.map((w, k) => (
-              <span key={k} className="p-arquivo-peca" data-k={k}>
-                <img
-                  src={w.cover.src}
-                  srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
-                  sizes="42vw"
-                  alt={w.cover.alt}
-                  decoding="async"
-                  draggable={false}
-                />
-              </span>
-            ))}
-          </div>
+          {/* ⚠ sem WebGL a coluna não some: a peça enquadrada entra como imagem
+              simples. Sem curva, com a peça. */}
+          {semGL ? (
+            <span className="p-arquivo-plano">
+              <img src={peca.cover.src} alt={peca.cover.alt} decoding="async" draggable={false} />
+            </span>
+          ) : null}
           <p className="p-marca p-arquivo-ficha">
             <span>FIG. {String(ativo + 1).padStart(2, "0")}</span>
             <span>
