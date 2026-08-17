@@ -1365,6 +1365,108 @@
    O que a original não tinha e ele pediu: os SERVIÇOS COM FOTO.
 
    Mesma grade de 12 do resto do site — a lateral ocupa 1–3, o conteúdo 5–12. */
+/* ── A HERO: UM ELEMENTO SÓ ───────────────────────────────────────────────
+   "a hero tá muito cheia, precisa de elemento UAU e depois os textos".
+   Sangria total, altura de tela, e o nome NA FAIXA LIVRE da foto — o retrato
+   tem o rosto à esquerda e gradiente à direita, e é por isso que o texto cabe
+   ali sem véu e sem cobrir a pessoa. */
+.p-hero {
+  position: relative;
+  margin-inline: calc(var(--p-margem) * -1);
+  height: min(78vh, 720px);
+  overflow: hidden;
+}
+.p-hero-foto,
+.p-hero-foto img { margin: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; display: block; }
+/* a linha de metadado da original: nome | ofício, em mono, sobre o alto da
+   foto — que é onde o gradiente dela é escuro */
+.p-hero-meta {
+  position: absolute;
+  top: 18px;
+  left: var(--p-margem);
+  right: var(--p-margem);
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  font-family: 'Martian Mono', ui-monospace, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(236, 234, 229, 0.92);
+}
+@media (max-width: 720px) {
+  .p-hero { height: 62vh; }
+  .p-hero-meta { flex-direction: column; gap: 4px; }
+}
+
+/* ── o texto, depois do impacto ──────────────────────────────────────── */
+.p-catalogo-intro {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--p-gap-x);
+  padding: 72px 0 84px;
+}
+.p-catalogo-intro > div { grid-column: 5 / span 8; display: grid; gap: 22px; }
+
+/* ── serviços: o que ele FAZ, em grade de quatro ─────────────────────── */
+.p-servicos-grade {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--p-gap-x);
+  row-gap: 44px;
+  padding-top: 8px;
+}
+.p-servico-card { display: grid; gap: 12px; align-content: start; }
+.p-servico-foto { margin: 0; }
+.p-servico-foto img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.p-servico-cap { padding-top: 8px; }
+.p-servico-titulo {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: clamp(19px, 1.7vw, 26px);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+
+/* ── valores: seção PRÓPRIA, porque contrato não é repertório ────────── */
+.p-valores {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--p-gap-x);
+  padding: 72px 0 40px;
+  border-top: 1px solid var(--p-fio);
+  margin-top: 72px;
+}
+.p-valores-lista { grid-column: 1 / -1; display: grid; }
+.p-valor-item {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 6fr) minmax(0, 4fr);
+  column-gap: var(--p-gap-x);
+  align-items: start;
+  padding: 30px 0;
+  border-top: 1px solid var(--p-fio);
+}
+.p-valores-lista > :first-child { border-top: 0; }
+.p-valor-n { color: var(--p-quieto); padding-top: 6px; }
+.p-valor-corpo { display: grid; gap: 10px; }
+.p-valor-nome {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: clamp(24px, 2.6vw, 40px);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+}
+.p-valor-inclui { color: var(--p-quieto); }
+.p-valor-preco { display: grid; gap: 6px; justify-items: end; text-align: right; }
+.p-valor-preco .p-marca { color: var(--p-quieto); }
+@media (max-width: 1024px) {
+  .p-servicos-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .p-catalogo-intro > div { grid-column: 1 / -1; }
+  .p-valor-item { grid-template-columns: 2.4rem 1fr; }
+  .p-valor-preco { grid-column: 2; justify-items: start; text-align: left; padding-top: 12px; }
+}
+
 .p-catalogo-capa,
 .p-catalogo-numeros,
 .p-catalogo,
@@ -1395,11 +1497,11 @@
   color: var(--p-quieto);
 }
 
-.p-catalogo-numeros { padding: 44px 0 84px; border-top: 1px solid var(--p-fio); }
+.p-catalogo-numeros { padding: 40px 0 64px; border-top: 1px solid var(--p-fio); }
 .p-catalogo-numeros > * { grid-column: span 3; }
 
 /* ── as fichas de catálogo ─────────────────────────────────────────────── */
-.p-catalogo { padding-bottom: 40px; border-top: 1px solid var(--p-fio); padding-top: 44px; }
+.p-catalogo { padding: 56px 0 8px; border-top: 1px solid var(--p-fio); }
 .p-catalogo-lista { grid-column: 1 / -1; display: grid; gap: 0; }
 .p-catalogo-item {
   display: grid;
@@ -1448,7 +1550,7 @@
 .p-catalogo-sob { font-size: 15px; color: var(--p-quieto); }
 
 /* ── o método ──────────────────────────────────────────────────────────── */
-.p-catalogo-metodo { padding: 56px 0 24px; border-top: 1px solid var(--p-fio); }
+.p-catalogo-metodo { padding: 64px 0 24px; border-top: 1px solid var(--p-fio); }
 .p-catalogo-metodo > div { grid-column: 5 / span 8; }
 .p-catalogo-etapas { display: grid; padding-top: 40px; }
 .p-catalogo-etapa {

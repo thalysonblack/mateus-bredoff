@@ -1,6 +1,6 @@
 import retrato from "../../assets/optimized/hero-portrait-1600.webp";
 import retrato2x from "../../assets/optimized/hero-portrait-3200.webp";
-import { TIERS } from "../sections/Pricing";
+import { SERVICOS, MODALIDADES } from "../../content/servicos";
 import { WORK } from "../../content/work";
 import { corDe } from "../../content/cores";
 import { LEAD, NUMEROS, PROCESSO_MANCHETE, PROCESSO } from "../../content/about";
@@ -38,32 +38,32 @@ import { Prancha } from "./sistema";
  * imagem PROVA o que a linha de texto promete.
  */
 
-/* a peça que exemplifica cada pacote — escolha editorial, não decorativa */
-const PECA_DO_PACOTE: Record<string, string> = {
-  Essential: "ginga",
-  Complete: "votare",
-  "Brand System": "alex-archer",
-};
-
 export default function AboutC() {
   useMetaRota();
   const revIntro = useRevelar<HTMLElement>();
   const revNumeros = useRevelar<HTMLElement>();
   const revServicos = useRevelar<HTMLElement>();
+  const revValores = useRevelar<HTMLElement>();
   const revMetodo = useRevelar<HTMLElement>();
 
   return (
     <Prancha n="03" nome="About" superficie="tinta" status="Available for projects">
-      {/* ─ A CAPA, sobre a superfície escura ─────────────────────────────
-          O retrato tem fundo petróleo: na prancha de TINTA ele deixa de ter
-          moldura e passa a se fundir com a página — a mesma foto que na
-          proposta A precisava de recorte, aqui só encaixa. */}
-      <section className="p-catalogo-capa">
-        <figure className="p-catalogo-retrato">
+      {/* ─ A HERO: UM ELEMENTO SÓ ───────────────────────────────────────
+          ⚠ "a hero tá muito cheia, precisa de elemento UAU e depois os textos".
+          Ela tinha retrato + manifesto + approach + legenda dividindo a mesma
+          tela: quatro coisas competindo, nenhuma ganhando. Agora é UMA — o
+          rosto em sangria total, com o nome na faixa livre à direita, onde o
+          fundo da foto já é liso.
+
+          ⚠ O nome se põe MEDINDO a faixa livre, não escolhendo um canto: o
+          retrato tem o rosto à esquerda e gradiente à direita, e é por isso que
+          o texto cabe ali sem véu, sem sombra e sem cobrir a pessoa. */}
+      <section className="p-hero">
+        <figure className="p-hero-foto">
           <img
             src={retrato}
             srcSet={`${retrato} 1600w, ${retrato2x} 3200w`}
-            sizes="(max-width: 1024px) 100vw, 42vw"
+            sizes="100vw"
             alt="Mateus Bredoff"
             width={1600}
             height={850}
@@ -71,10 +71,26 @@ export default function AboutC() {
             draggable={false}
           />
         </figure>
-        <div className="p-catalogo-lead">
-          <p className="p-rotulo p-catalogo-rotulo">About me</p>
-          <p className="p-manifesto">{LEAD[0]}</p>
-          <p className="p-catalogo-corpo">{LEAD[1]}</p>
+        {/* ⭐ A LINHA DE METADADO SOBRE A FOTO — como na original dele:
+            nome de um lado, ofício do outro, em mono miúdo. "que tal a hero ser
+            como a original? com Mateus Bredoff e do outro lado brand designer".
+            É o oposto de um título: a foto é que fala, e o texto só identifica.
+            ⚠ Ela vive no TOPO porque é ali que a foto é escura (o gradiente do
+            fundo dela vai de petróleo a claro) — texto claro sobre a metade
+            clara precisaria de véu, e véu sobre a arte ele já reprovou. */}
+        <div className="p-hero-meta">
+          <span>Mateus Bredoff®</span>
+          <span>Brand designer — visual identity practice</span>
+        </div>
+      </section>
+
+      {/* ─ E SÓ ENTÃO O TEXTO ────────────────────────────────────────────
+          O manifesto sozinho numa faixa, depois do impacto. */}
+      <section ref={revIntro} className="p-catalogo-intro">
+        <p className="p-rotulo p-catalogo-rotulo">About me</p>
+        <div>
+          <p className="p-manifesto p-sobe">{LEAD[0]}</p>
+          <p className="p-catalogo-corpo p-sobe">{LEAD[1]}</p>
         </div>
       </section>
 
@@ -90,60 +106,63 @@ export default function AboutC() {
         ))}
       </section>
 
-      {/* ─ OS SERVIÇOS, COM FOTO ─────────────────────────────────────────
-          ⭐ É o que a original não tinha. Cada pacote é uma ficha de catálogo:
-          a peça que o prova, o escopo, o prazo e o preço. */}
+      {/* ─ O QUE ELE FAZ ────────────────────────────────────────────────
+          Serviço é REPERTÓRIO. Cada um com a peça que o prova — obra dele, não
+          ilustração genérica. */}
       <section ref={revServicos} className="p-catalogo">
-        <p className="p-rotulo p-catalogo-rotulo">Services — {String(TIERS.length).padStart(2, "0")}</p>
-
-        <ul className="p-catalogo-lista">
-          {TIERS.map((t, i) => {
-            const slug = PECA_DO_PACOTE[t.name];
-            const peca = WORK.find((w) => w.slug === slug);
+        <p className="p-rotulo p-catalogo-rotulo">Services — {String(SERVICOS.length).padStart(2, "0")}</p>
+        <ul className="p-servicos-grade">
+          {SERVICOS.map((sv) => {
+            const peca = WORK.find((w) => w.slug === sv.peca);
             return (
-              <li key={t.name} className="p-catalogo-item p-sobe">
-                <figure className="p-catalogo-peca">
-                  {peca ? (
+              <li key={sv.nome} className="p-servico-card p-sobe">
+                {peca ? (
+                  <figure className="p-servico-foto">
                     <img
                       src={peca.cover.src}
-                      srcSet={peca.cover.src2x ? `${peca.cover.src} 1400w, ${peca.cover.src2x} 2200w` : undefined}
-                      sizes="(max-width: 1024px) 100vw, 38vw"
+                      sizes="(max-width: 1024px) 50vw, 24vw"
                       alt={peca.cover.alt}
                       decoding="async"
                       draggable={false}
                     />
-                  ) : null}
-                  {peca ? (
-                    <figcaption className="p-marca p-catalogo-cap">
-                      <span style={{ color: corDe(peca.slug, "tinta") }}>{peca.title}</span>
-                      <span>{peca.year}</span>
+                    <figcaption className="p-marca p-servico-cap" style={{ color: corDe(peca.slug, "tinta") }}>
+                      {peca.title}
                     </figcaption>
-                  ) : null}
-                </figure>
-
-                <div className="p-catalogo-ficha">
-                  <p className="p-catalogo-n">{String(i + 1).padStart(2, "0")}</p>
-                  <h2 className="p-catalogo-nome">{t.name}</h2>
-                  <p className="p-catalogo-corpo">{t.description}</p>
-
-                  <ul className="p-catalogo-escopo">
-                    {t.scope.map((e) => (
-                      <li key={e} className="p-fio p-corpo">
-                        {e}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <p className="p-catalogo-preco">
-                    <span className="p-marca">{t.timeline}</span>
-                    <span className={t.priceFrom === null ? "p-catalogo-sob" : "p-catalogo-valor"}>
-                      {t.priceFrom === null ? "On request" : `from $${t.priceFrom.toLocaleString("en-US")}`}
-                    </span>
-                  </p>
-                </div>
+                  </figure>
+                ) : null}
+                <h2 className="p-servico-titulo">{sv.nome}</h2>
+                <p className="p-catalogo-corpo">{sv.entrega}</p>
               </li>
             );
           })}
+        </ul>
+      </section>
+
+      {/* ─ QUANTO CUSTA ──────────────────────────────────────────────────
+          ⚠ SEÇÃO PRÓPRIA, a pedido dele. Serviço é repertório; modalidade é
+          CONTRATO — como se contrata e quanto custa. Misturados, a pessoa
+          procura preço no meio da descrição de ofício.
+          As três são as que ele ditou: marca completa, direção de arte e o slot
+          mensal, que no mercado internacional se chama RETAINER. */}
+      <section ref={revValores} className="p-valores">
+        <p className="p-rotulo p-catalogo-rotulo">Working together — {String(MODALIDADES.length).padStart(2, "0")}</p>
+        <ul className="p-valores-lista">
+          {MODALIDADES.map((m, i) => (
+            <li key={m.nome} className="p-valor-item p-sobe">
+              <p className="p-marca p-valor-n">{String(i + 1).padStart(2, "0")}</p>
+              <div className="p-valor-corpo">
+                <h2 className="p-valor-nome">{m.nome}</h2>
+                <p className="p-catalogo-corpo">{m.para}</p>
+                <p className="p-marca p-valor-inclui">{m.inclui.join(" · ")}</p>
+              </div>
+              <p className="p-valor-preco">
+                <span className="p-marca">{m.prazo}</span>
+                <span className={m.precoDe === null ? "p-catalogo-sob" : "p-catalogo-valor"}>
+                  {m.precoDe === null ? "On request" : `from $${m.precoDe.toLocaleString("en-US")}`}
+                </span>
+              </p>
+            </li>
+          ))}
         </ul>
       </section>
 
@@ -168,7 +187,6 @@ export default function AboutC() {
         </div>
       </section>
 
-      <span ref={revIntro} aria-hidden="true" />
     </Prancha>
   );
 }
