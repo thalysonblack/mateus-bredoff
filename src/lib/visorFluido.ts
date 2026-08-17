@@ -12,6 +12,22 @@
  * daquele nome — o eixo da troca é o eixo da peça
  * ([[craft-trocar-por-dentro-de-uma-mascara]]).
  *
+ * ## TRÊS RECEITAS, para ele escolher (17/08)
+ *
+ *   1 MARÉ       uma frente de onda atravessa lateralmente e a borda dela é
+ *                comida pelo ruído. A nova arte INVADE a anterior. É a mais
+ *                próxima do gesto da trama: tem lado, tem direção, tem avanço.
+ *   2 ONDA       um anel nasce no centro (que é onde o cursor está) e se abre.
+ *                A crista do anel distorce forte e a arte troca ATRÁS dela —
+ *                lê como toque na superfície de um líquido parado.
+ *   3 TURBILHÃO  sem frente nenhuma: a imagem inteira se liquefaz por domain
+ *                warping e re-solidifica já sendo a outra. É o mais material e
+ *                o menos direcional — a troca acontece na matéria, não no
+ *                percurso.
+ *
+ * Três MECÂNICAS distintas, não a mesma com números trocados: uma tem lado, uma
+ * tem centro, uma não tem lugar nenhum.
+ *
  * OGL e não three: são ~50KB para Renderer + Program + Texture, que é
  * exatamente o que este efeito usa. O relógio continua sendo de fora —
  * `passo(dt)` é chamado pelo ticker do GSAP em `HomeD`, nunca por um
@@ -40,6 +56,7 @@ uniform float uDir;    /* +1 a nova vem da direita, -1 da esquerda */
 uniform float uCaixa;  /* razão da caixa (16/9) */
 uniform float uArteA;  /* razão nativa de cada arte, para o cover */
 uniform float uArteB;
+uniform float uModo;   /* 1 maré · 2 onda · 3 turbilhão */
 
 /* value noise: hash + interpolação suave. Quatro oitavas bastam para a borda
    ler como líquido, e custam menos que carregar uma textura de ruído. */
@@ -78,20 +95,60 @@ void main() {
   float n1 = fbm(q * 2.6 + vec2(uT * 0.13, uT * 0.09));
   float n2 = fbm(q * 5.1 - vec2(uT * 0.11, uT * 0.07));
 
-  /* pico no meio do percurso; o 0,004 de piso é a respiração de repouso */
-  float amp = 0.13 * sin(3.14159265 * uP) + 0.004;
-  vec2 desloca = vec2(n1 - 0.5, n2 - 0.5) * amp;
+  /* o piso de 0,004 é a respiração de repouso: a arte parada nunca fica
+     perfeitamente morta, e isso custa nada */
+  vec2 base = vec2(n1 - 0.5, n2 - 0.5);
+  vec2 dA;
+  vec2 dB;
+  float frente;
 
-  /* a frente de onda entra pelo lado de onde a fita vem, e o ruído come a
-     borda dela — sem isso a transição seria um wipe reto */
-  float x = uDir > 0.0 ? 1.0 - vUv.x : vUv.x;
-  float frente = smoothstep(0.0, 0.5, uP * 1.5 - x - (n1 - 0.5) * 0.62);
+  if (uModo < 1.5) {
+    /* ── 1 MARÉ ─────────────────────────────────────────────────────────
+       Frente lateral com a borda comida pelo ruído. Amplitude com pico no
+       meio do percurso: começar e terminar nítido é o que faz parecer
+       material em vez de filtro ligado. */
+    float amp = 0.13 * sin(3.14159265 * uP) + 0.004;
+    dA = base * amp * (0.6 + 0.5 * uP) + vec2(uDir * 0.05 * uP, 0.0);
+    dB = base * amp * (1.1 - 0.6 * uP) - vec2(uDir * 0.05 * (1.0 - uP), 0.0);
+    float x = uDir > 0.0 ? 1.0 - vUv.x : vUv.x;
+    frente = smoothstep(0.0, 0.5, uP * 1.5 - x - (n1 - 0.5) * 0.62);
 
-  /* a que sai é empurrada para fora, a que entra chega do lado oposto */
-  vec2 uvA = cover(vUv + desloca * (0.6 + 0.5 * uP) + vec2(uDir * 0.05 * uP, 0.0), uArteA);
-  vec2 uvB = cover(vUv + desloca * (1.1 - 0.6 * uP) - vec2(uDir * 0.05 * (1.0 - uP), 0.0), uArteB);
+  } else if (uModo < 2.5) {
+    /* ── 2 ONDA ─────────────────────────────────────────────────────────
+       Um anel que nasce no centro (onde o cursor está, já que o visor é o
+       cursor) e se abre. A distorção é MÁXIMA NA CRISTA e zero longe dela —
+       por isso a arte à frente e atrás do anel fica limpa, e o olho lê um
+       toque na superfície de um líquido, não a tela inteira tremendo. */
+    vec2 c = (vUv - 0.5) * vec2(uCaixa, 1.0);
+    float r = length(c) / (0.5 * sqrt(uCaixa * uCaixa + 1.0));
+    float raio = uP * 1.35;
+    float crista = exp(-pow((r - raio) * 5.2, 2.0));       /* gaussiana no anel */
+    vec2 radial = normalize(c + 1e-5);
+    dA = radial * crista * 0.14 + base * 0.02 * crista + base * 0.004;
+    dB = radial * crista * -0.09 + base * 0.004;
+    frente = smoothstep(0.0, 0.22, raio - r + (n1 - 0.5) * 0.16);
 
-  vec3 cor = mix(texture2D(uA, uvA).rgb, texture2D(uB, uvB).rgb, frente);
+  } else {
+    /* ── 3 TURBILHÃO ────────────────────────────────────────────────────
+       Domain warping: o ruído é amostrado num UV que já foi deslocado por
+       outro ruído, o que produz filamento em vez de mancha. Sem frente
+       nenhuma — a imagem toda se liquefaz e volta já sendo a outra, e a
+       mistura acontece no MESMO campo que distorce, não numa máscara à
+       parte. */
+    float sopro = sin(3.14159265 * uP);
+    vec2 w = vec2(fbm(q * 1.7 + vec2(uT * 0.10, 0.0)), fbm(q * 1.7 + vec2(0.0, uT * 0.12)));
+    float n3 = fbm(q * 3.1 + w * 2.4 + vec2(uT * 0.06, -uT * 0.05));
+    vec2 giro = vec2(n3 - 0.5, fbm(q * 3.1 + w * 2.4 + 7.3) - 0.5);
+    float amp = 0.30 * sopro * sopro + 0.004;
+    dA = giro * amp + vec2(uDir * 0.02 * uP, 0.0);
+    dB = giro * amp * -0.85;
+    frente = smoothstep(0.28, 0.72, uP + (n3 - 0.5) * 0.9 * sopro);
+  }
+
+  vec3 cor = mix(
+    texture2D(uA, cover(vUv + dA, uArteA)).rgb,
+    texture2D(uB, cover(vUv + dB, uArteB)).rgb,
+    frente);
   gl_FragColor = vec4(cor, 1.0);
 }`;
 
@@ -106,7 +163,7 @@ export type VisorFluido = {
   destruir(): void;
 };
 
-export function criarVisorFluido(alvo: HTMLElement): VisorFluido | null {
+export function criarVisorFluido(alvo: HTMLElement, modo: 1 | 2 | 3 = 1): VisorFluido | null {
   let renderer: Renderer;
   try {
     renderer = new Renderer({ alpha: false, antialias: false, dpr: Math.min(window.devicePixelRatio || 1, 2) });
@@ -144,6 +201,7 @@ export function criarVisorFluido(alvo: HTMLElement): VisorFluido | null {
       uCaixa: { value: 16 / 9 },
       uArteA: { value: 16 / 9 },
       uArteB: { value: 16 / 9 },
+      uModo: { value: modo },
     },
   });
   const mesh = new Mesh(gl, { geometry: new Triangle(gl), program });

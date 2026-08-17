@@ -231,6 +231,11 @@ export default function App() {
           <Route path="/v2/b" element={<HomeB />} />
           <Route path="/v2/c" element={<HomeC />} />
           <Route path="/v2/d" element={<HomeD />} />
+          {/* as três receitas do visor fluido, lado a lado para ele escolher —
+              mesma home, só troca a mecânica da transição */}
+          <Route path="/v2/d1" element={<HomeD fluidoModo={1} comparando />} />
+          <Route path="/v2/d2" element={<HomeD fluidoModo={2} comparando />} />
+          <Route path="/v2/d3" element={<HomeD fluidoModo={3} comparando />} />
           <Route path="/v2/e" element={<HomeE />} />
           <Route path="/v2/f" element={<HomeF />} />
           <Route path="/v2/g" element={<HomeG />} />

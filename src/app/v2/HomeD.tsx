@@ -41,7 +41,17 @@ import { Prancha, Bloco } from "./sistema";
  * documento — *"tudo no viewport"*. A fita é de NOMES, a peça é o visor, e a
  * página não rola.
  */
-export default function HomeD() {
+/** as três receitas, para ele comparar em `/v2/d1` `/v2/d2` `/v2/d3` */
+export const FLUIDOS = [
+  { modo: 1 as const, nome: "Maré", dita: "a nova invade pelo lado da fita" },
+  { modo: 2 as const, nome: "Onda", dita: "um anel abre a partir do cursor" },
+  { modo: 3 as const, nome: "Turbilhão", dita: "a imagem liquefaz e volta outra" },
+];
+
+export default function HomeD({
+  fluidoModo = 1,
+  comparando = false,
+}: { fluidoModo?: 1 | 2 | 3; comparando?: boolean } = {}) {
   useMetaRota();
   /* a peça sob o cursor. `null` = nada aceso. */
   const [sob, setSob] = useState<(typeof WORK)[number] | null>(null);
@@ -150,7 +160,7 @@ export default function HomeD() {
   useEffect(() => {
     const tela = quadro.current;
     if (!tela) return;
-    const v = criarVisorFluido(tela);
+    const v = criarVisorFluido(tela, fluidoModo);
     fluido.current = v;
     if (!v) return;
     let ultimo = performance.now();
@@ -166,7 +176,7 @@ export default function HomeD() {
       v.destruir();
       fluido.current = null;
     };
-  }, []);
+  }, [fluidoModo]);
 
   /**
    * O VISOR: ABRE UMA VEZ, DEPOIS TROCA POR DENTRO.
@@ -286,7 +296,12 @@ export default function HomeD() {
   const fita = [...WORK, ...WORK];
 
   return (
-    <Prancha n="01" nome="Index" superficie="papel" status="Available for projects">
+    <Prancha
+      n="01"
+      nome={comparando ? `Index — ${FLUIDOS[fluidoModo - 1].nome}` : "Index"}
+      superficie="papel"
+      status="Available for projects"
+    >
       {/* ⚠ UMA TELA SÓ, e é isso que a `h-full` + `min-h-0` garantem: a trama
           ocupa o que sobra depois do cabeçalho, da ficha e do rodapé, e as três
           fitas dividem esse resto em `1fr` cada. Sem isso a página cresce e
