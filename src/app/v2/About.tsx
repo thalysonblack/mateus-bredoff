@@ -82,21 +82,42 @@ export default function AboutV2() {
 
   return (
     <Prancha n="03" nome="About" superficie="papel" status="Available for projects">
-      {/* ─ 1. QUEM É ────────────────────────────────────────────────────
-          O manifesto manda, a ficha acompanha. A primeira montagem punha os
-          quatro números em corpo de espécime e eles comiam quatro telas —
-          "62+ clients" em 190px é um dado genérico ocupando o lugar do
-          argumento. Aqui o argumento é a FRASE, e os números viram régua. */}
-      <section className="grid grid-cols-12 pt-12 max-md:pt-8" style={{ columnGap: "var(--p-gap-x)" }}>
-        {/* ⭐ O RETRATO. Faltava a pessoa numa página que fala na primeira
-            pessoa — e num estúdio de uma pessoa só, o rosto é o que separa
-            "designer" de "este designer". Sangra pela esquerda, na largura da
-            margem da prancha, para não virar avatar de perfil. */}
-        <figure className="p-retrato col-span-4 max-lg:col-span-6 max-md:col-span-12">
+      {/* ⭐⭐ AS SEÇÕES SÃO FOLHAS QUE SE SOBREPÕEM.
+          Veio dos salvos dele: o post do Obys sobre o Laxer descreve a mecânica
+          inteira — *"sheets of paper. The entire website is a collection of
+          interconnected sheets. Every new section becomes another layer,
+          overlapping, moving, and flipping over the previous one. This logic
+          shaped not only the layouts, but the motion and the way the whole
+          experience flows."*
+
+          Não é coincidência ele ter salvo isso: a direção daqui se chama A
+          PRANCHA e já era folha — só que as folhas estavam EMPILHADAS em fila,
+          sem gesto. Agora cada seção fica `sticky` e a seguinte SOBE POR CIMA
+          dela, com o fio do sistema na aresta de ataque. A página deixa de ser
+          uma lista de blocos e passa a ser um maço sendo virado.
+
+          ⚠ Da referência vem o PRINCÍPIO (camada que cobre camada), não a
+          assinatura: lá as folhas giram em 3D e têm textura de papel; aqui elas
+          deslizam retas, porque este sistema é de fio de 1px e raio zero.
+          E o outro salvo dele — seb astian, sobre um slider feito para a Blink,
+          o estúdio do Mateus — dá a régua da escala: *"Make it big. Make it
+          bold."* */}
+      {/* ─ 1. A CAPA ────────────────────────────────────────────────────
+          ⚠ A montagem anterior punha o retrato num bloco de 4 colunas e a
+          ficha empilhada ao lado: sobravam ~450px de vazio MORTO embaixo da
+          foto e a leitura virava um poço à esquerda. Agora o retrato SANGRA na
+          altura da primeira tela — ele é a capa, não uma ilustração do texto —
+          e a ficha desce para uma faixa de três colunas, onde ela se lê em
+          paralelo em vez de empilhada.
+
+          O manifesto fica no alto, ancorado no topo da foto: as duas coisas que
+          apresentam a pessoa começam na mesma linha. */}
+      <section className="p-folha-sec p-papel p-capa">
+        <figure className="p-retrato">
           <img
             src={retrato}
             srcSet={`${retrato} 1600w, ${retrato2x} 3200w`}
-            sizes="(max-width: 1024px) 50vw, 30vw"
+            sizes="(max-width: 1024px) 100vw, 40vw"
             alt="Mateus Bredoff"
             width={1600}
             height={850}
@@ -105,19 +126,33 @@ export default function AboutV2() {
           />
         </figure>
 
-        <p className="p-manifesto col-span-7 col-start-6 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-10">
-          {LEAD[0]}
-        </p>
+        <div className="p-capa-texto">
+          <p className="p-manifesto">{LEAD[0]}</p>
+          <p className="p-marca p-capa-pe">
+            <span>Mateus Bredoff</span>
+            <span>Brand designer &amp; art director · Brazil</span>
+          </p>
+        </div>
+      </section>
 
-        <div className="col-span-5 col-start-6 grid gap-9 pt-12 max-lg:col-span-12 max-lg:col-start-1">
+      {/* ─ 2. A FICHA, EM TRÊS COLUNAS ───────────────────────────────────
+          Approach, Tools e Contact lado a lado: empilhados numa coluna só eles
+          viravam uma tira estreita de 400px de altura, com o resto da página
+          vazio ao lado. */}
+      <section className="p-folha-sec p-papel grid grid-cols-12 pt-10" style={{ columnGap: "var(--p-gap-x)" }}>
+        <div className="col-span-5 pt-8 max-lg:col-span-12">
           <Bloco rotulo="Approach">
-            <p className="p-corpo max-w-[46ch]">{LEAD[1]}</p>
+            <p className="p-corpo max-w-[52ch]">{LEAD[1]}</p>
           </Bloco>
+        </div>
+        <div className="col-span-3 col-start-7 pt-8 max-lg:col-span-6 max-lg:col-start-1">
           <Bloco rotulo="Tools">
             <p className="p-corpo" style={{ color: "var(--p-quieto)" }}>
               {FERRAMENTAS.join(", ")}
             </p>
           </Bloco>
+        </div>
+        <div className="col-span-3 col-start-10 pt-8 max-lg:col-span-6 max-lg:col-start-7">
           <Bloco rotulo="Contact & inquiries">
             <ul className="grid gap-[6px]">
               {CONTATO.map((c) => (
@@ -141,11 +176,11 @@ export default function AboutV2() {
         </div>
       </section>
 
-      {/* ─ 2. A RÉGUA DA TRAJETÓRIA ──────────────────────────────────────
+      {/* ─ 3. A RÉGUA DA TRAJETÓRIA ──────────────────────────────────────
           Os quatro números numa linha só, com fio: é a tabela de registros do
           sistema, não quatro manchetes. Dado se lê comparando — em coluna, cada
           um vira um cartaz isolado e a comparação se perde. */}
-      <section className="p-fio mt-14 grid grid-cols-4 max-md:grid-cols-2" style={{ columnGap: "var(--p-gap-x)" }}>
+      <section className="p-folha-sec p-branco grid grid-cols-4 max-md:grid-cols-2" style={{ columnGap: "var(--p-gap-x)" }}>
         {NUMEROS.map((n) => (
           <div key={n.rotulo} className="pt-4">
             <p className="p-numero">{n.valor}</p>
@@ -156,7 +191,7 @@ export default function AboutV2() {
         ))}
       </section>
 
-      {/* ─ 3. OS SERVIÇOS, EM TINTA ─────────────────────────────────────
+      {/* ─ 4. OS SERVIÇOS, EM TINTA ─────────────────────────────────────
           ⭐ "essa section tem que brilhar os olhos" — e o que brilha nesta
           direção é SUPERFÍCIE, não efeito: o bloco de serviços sangra de borda
           a borda em tinta, e é a única troca de superfície DENTRO de uma
@@ -169,7 +204,7 @@ export default function AboutV2() {
           ⚠ Só o Essential tem preço — é o que ele publica no Behance (US$
           2.500). Os outros dois seguem "On request" porque preço é fato do
           cliente e não se inventa. */}
-      <section className="p-tinta p-servicos -mx-[var(--p-margem)] my-16">
+      <section className="p-folha-sec p-tinta p-servicos">
         <div style={{ paddingInline: "var(--p-margem)" }}>
           <p className="p-rotulo pb-10">Services — {String(TIERS.length).padStart(2, "0")}</p>
           <ul>
@@ -201,11 +236,11 @@ export default function AboutV2() {
         </div>
       </section>
 
-      {/* ─ 4. O MÉTODO ───────────────────────────────────────────────────
+      {/* ─ 5. O MÉTODO ───────────────────────────────────────────────────
           As cinco etapas na anatomia da tabela da /work: índice, título, corpo.
           É a mesma régua aplicada a outro conteúdo, que é o que faz um sistema
           em vez de uma coleção de páginas. */}
-      <section className="grid grid-cols-12 pb-4" style={{ columnGap: "var(--p-gap-x)" }}>
+      <section className="p-folha-sec p-papel grid grid-cols-12 pb-8" style={{ columnGap: "var(--p-gap-x)" }}>
         <p className="p-rotulo col-span-12 pb-4">Method — {String(PROCESSO.length).padStart(2, "0")}</p>
         <p className="p-corpo col-span-5 max-w-[46ch] pb-10 max-lg:col-span-12">{PROCESSO_MANCHETE}</p>
 

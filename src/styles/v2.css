@@ -974,7 +974,7 @@
   font-size: clamp(26px, 3.1vw, 46px);
   line-height: 1.16;
   letter-spacing: -0.028em;
-  max-width: 26ch;
+  max-width: 30ch;
 }
 .p-numero {
   font-family: 'Geist', ui-sans-serif, sans-serif;
@@ -990,16 +990,76 @@
    e enquadrado numa caixinha ele vira avatar de perfil. A foto tem fundo
    petróleo, que é a tinta do sistema — ela combina com a página por
    construção, não por tratamento. */
+/* ── AS FOLHAS QUE SE SOBREPÕEM ──────────────────────────────────────────
+   Mecânica dos salvos dele (Obys / Laxer): cada seção é uma camada que sobe
+   por cima da anterior. Aqui, `sticky` + fundo próprio + o fio do sistema na
+   aresta de ataque — a folha que chega tapa a que estava, e o fio marca a
+   emenda.
+
+   ⚠ SANGRIA TOTAL e padding de volta: a folha precisa cobrir de borda a borda
+   (senão as bordas mostram a folha de baixo e a leitura de camada se perde),
+   mas o conteúdo continua na coluna da prancha. */
+.p-folha-sec {
+  position: sticky;
+  top: 0;
+  margin-inline: calc(var(--p-margem) * -1);
+  padding-inline: var(--p-margem);
+  border-top: 1px solid var(--p-fio);
+}
+/* a primeira folha não tem emenda acima dela */
+.p-folha-sec:first-of-type { border-top: 0; }
+/* ⚠ a ÚLTIMA não pode ser sticky: ela seria "colada" no topo enquanto o rodapé
+   sobe, e o rodapé passaria por cima do conteúdo dela */
+.p-folha-sec:last-of-type { position: relative; }
+@media (prefers-reduced-motion: reduce) {
+  .p-folha-sec { position: relative; }
+}
+
+/* ⭐ A CAPA: o retrato SANGRA na altura da primeira tela e o texto se ancora
+   no topo dele. Antes a foto era um bloco de 4 colunas com ~450px de vazio
+   morto embaixo — foto que ilustra texto fica pequena e deixa poço; foto que é
+   CAPA ocupa a tela e o texto se alinha a ela. */
+.p-capa {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  column-gap: var(--p-gap-x);
+  align-items: start;
+  padding-top: 22px;
+}
 .p-retrato {
   margin: 0 0 0 calc(var(--p-margem) * -1);
   overflow: hidden;
+  /* a altura é a da primeira tela, descontados cabeçalho e a régua de baixo */
+  height: min(72vh, 660px);
 }
 .p-retrato img {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: 100%;
   object-fit: cover;
-  object-position: 58% 30%;
+  object-position: 56% 28%;
+}
+.p-capa-texto {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: min(72vh, 660px);
+  padding-block: 6px 4px;
+}
+/* o nome e o papel na base do bloco de texto, alinhados com a base da foto:
+   é a legenda do retrato, no vernáculo de metadado da prancha */
+.p-capa-pe {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--p-quieto);
+  border-top: 1px solid var(--p-fio);
+  padding-top: 10px;
+}
+@media (max-width: 1024px) {
+  .p-capa { grid-template-columns: 1fr; row-gap: 24px; }
+  .p-retrato { height: 48vh; margin-right: calc(var(--p-margem) * -1); }
+  .p-capa-texto { height: auto; }
 }
 
 /* ── OS SERVIÇOS, EM TINTA ────────────────────────────────────────────────
