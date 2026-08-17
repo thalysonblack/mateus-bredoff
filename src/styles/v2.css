@@ -532,3 +532,23 @@
   .p-mural { display: grid; gap: 14svh; }
   .p-mural-peca { position: relative !important; left: auto !important; top: auto !important; width: 100% !important; }
 }
+
+/* ── A SESSÃO ──────────────────────────────────────────────────────────────
+   Os projetos como cards que se SOBREPÕEM conforme a página rola — cada um
+   gruda no topo e o próximo sobe por cima dele, cobrindo.
+
+   ⭐ A mecânica veio medida do artefakt.mov, e a medição derrubou a hipótese
+   óbvia: aquilo parece carrossel e NÃO é. São sete cards com `position: sticky;
+   top: 0`, o pai com `margin-top: -1×vh`, e a troca é por SCROLL — 24 segundos
+   com a página parada não mudam nada. Nenhum estado, nenhum timer, nenhum
+   ScrollTrigger: é `sticky` puro, que é mais robusto que pin e não briga com o
+   Lenis.
+
+   O card seguinte precisa de fundo opaco, senão a sobreposição vira mistura. */
+.p-sessao-card {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--fr-petroleo, #14201f);
+}

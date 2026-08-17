@@ -22,6 +22,7 @@ import HomeE from "./v2/HomeE";
 import HomeF from "./v2/HomeF";
 import HomeG from "./v2/HomeG";
 import HomeH from "./v2/HomeH";
+import HomeI from "./v2/HomeI";
 import HomeV3 from "./pages/HomeV3";
 import AboutV3 from "./pages/AboutV3";
 import WorkIndexV3 from "./pages/WorkIndexV3";
@@ -234,6 +235,7 @@ export default function App() {
           <Route path="/v2/f" element={<HomeF />} />
           <Route path="/v2/g" element={<HomeG />} />
           <Route path="/v2/h" element={<HomeH />} />
+          <Route path="/v2/i" element={<HomeI />} />
 
           {/* Slug inexistente cai no próprio case, que trata o 404 com a
               linguagem do site em vez de tela branca. */}
