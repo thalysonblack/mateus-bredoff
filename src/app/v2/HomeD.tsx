@@ -155,6 +155,26 @@ export default function HomeD({
     const el = campo.current;
     if (!el || prefersReducedMotion()) return;
     const linhas = [...el.querySelectorAll<HTMLElement>(".p-trama-scroll")];
+    const fitas = linhas.map((l) => l.querySelector<HTMLElement>(".p-trama-fita"));
+
+    /* ⚠⚠ O EMPURRÃO É MODULAR — sem isso a fita ACABA.
+       Cada fita tem o conteúdo DUPLICADO e o keyframe desloca −50%, o que fecha
+       o loop sem emenda. Mas o empurrão do scroll era um transform somado por
+       cima, sem limite: rolando o bastante, o wrapper saía do range do conteúdo
+       e aparecia tela vazia depois do último nome.
+       Dobrando o deslocamento pelo comprimento de UM CICLO (metade da largura
+       da fita, já que ela é duplicada), o empurrão volta a zero exatamente onde
+       o conteúdo se repete — e a volta é invisível, porque naquele ponto a
+       imagem é idêntica. É o mesmo princípio do loop da fita, aplicado à
+       camada de cima. */
+    /* ⚠ /3 porque o markup tem TRÊS cópias — o ciclo é um terço da fita */
+    let ciclo = linhas.map((_, k) => (fitas[k]?.scrollWidth ?? 0) / 3);
+    const remedir = () => {
+      ciclo = linhas.map((_, k) => (fitas[k]?.scrollWidth ?? 0) / 3);
+    };
+    const ro = new ResizeObserver(remedir);
+    fitas.forEach((f) => f && ro.observe(f));
+
     let alvo = 0;
     let atual = 0;
     const roda = (e: WheelEvent) => {
@@ -164,7 +184,12 @@ export default function HomeD({
       atual += (alvo - atual) * 0.09;
       if (Math.abs(alvo - atual) < 0.05) atual = alvo;
       linhas.forEach((l, i) => {
-        l.style.transform = `translate3d(${i % 2 === 1 ? atual : -atual}px, 0, 0)`;
+        const bruto = i % 2 === 1 ? atual : -atual;
+        const L = ciclo[i];
+        /* `((x % L) + L) % L` porque `%` em JS devolve negativo para entrada
+           negativa, e um salto de −L para 0 seria visível */
+        const x = L > 0 ? ((bruto % L) + L) % L : bruto;
+        l.style.transform = `translate3d(${x - (L || 0)}px, 0, 0)`;
       });
     };
     window.addEventListener("wheel", roda, { passive: true });
@@ -172,6 +197,7 @@ export default function HomeD({
     return () => {
       window.removeEventListener("wheel", roda);
       gsap.ticker.remove(passo);
+      ro.disconnect();
     };
   }, []);
 
@@ -381,8 +407,13 @@ export default function HomeD({
     window.addEventListener("keydown", fecha);
     return () => window.removeEventListener("keydown", fecha);
   }, [reelAberto]);
-  /* a fita é duplicada no markup e o −50% do keyframe fecha o loop sem emenda */
-  const fita = [...WORK, ...WORK];
+  /* ⚠ TRÊS CÓPIAS, não duas. O loop da fita sozinho fecha com duas (o keyframe
+     desloca −50% e o conteúdo se repete ali). Mas aqui há DOIS deslocamentos
+     somados — o loop próprio e o empurrão do scroll —, e com duas cópias a soma
+     dos dois podia levar a fita inteira para fora da tela: a linha do meio
+     abria um buraco depois de rolar bastante. Com três cópias há sempre um
+     ciclo de folga, e o keyframe desta trama fecha em −33,333%. */
+  const fita = [...WORK, ...WORK, ...WORK];
 
   return (
     <Prancha

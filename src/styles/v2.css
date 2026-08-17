@@ -473,6 +473,18 @@
   align-items: center;
   min-height: 0;
 }
+/* ⚠ ESTA TRAMA TEM TRÊS CÓPIAS no markup (ver `HomeD.tsx`), então o loop dela
+   fecha em −33,333%, não em −50% como o das outras homes. Keyframes próprios —
+   os de cima seguem servindo a H, a I e o índice, que têm duas cópias. */
+.p-trama--peca .p-trama-fita { animation-name: p-desfila-3; }
+.p-trama--peca .p-trama-fita--volta { animation-name: p-desfila-3-volta; }
+@keyframes p-desfila-3 {
+  to { transform: translateX(-33.3333%); }
+}
+@keyframes p-desfila-3-volta {
+  from { transform: translateX(-33.3333%); }
+  to { transform: translateX(0); }
+}
 .p-trama--peca .p-trama-nome,
 .p-trama--peca .p-trama-ponto {
   font-size: var(--p-trama-corpo);
