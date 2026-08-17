@@ -14,6 +14,10 @@ import PranchaAbout from "./v2/About";
 import PranchaWork from "./v2/Work";
 import PranchaCase from "./v2/Case";
 import PranchaLab from "./v2/Lab";
+import HomeA from "./v2/HomeA";
+import HomeB from "./v2/HomeB";
+import HomeC from "./v2/HomeC";
+import HomeD from "./v2/HomeD";
 import HomeV3 from "./pages/HomeV3";
 import AboutV3 from "./pages/AboutV3";
 import WorkIndexV3 from "./pages/WorkIndexV3";
@@ -210,6 +214,18 @@ export default function App() {
           <Route path="/v2/work/:slug" element={<PranchaCase />} />
           <Route path="/v2/about" element={<PranchaAbout />} />
           <Route path="/v2/lab" element={<PranchaLab />} />
+
+          {/* ── AS TRÊS HOMES DE PARTIDO ─────────────────────────────────
+              "gostei mas nao da home" (17/08) — as subpáginas ficaram e a home
+              está na quarta tentativa. Em vez de chutar a quinta, três partidos
+              DIFERENTES em rota, para fechar por eliminação lado a lado, que é
+              como este projeto já resolveu isso uma vez (as homes /arquivo/a,
+              /b e /c de agosto, apagadas depois da escolha).
+              A quarta em comparação é a própria `/v2` (a folha de espécimes). */}
+          <Route path="/v2/a" element={<HomeA />} />
+          <Route path="/v2/b" element={<HomeB />} />
+          <Route path="/v2/c" element={<HomeC />} />
+          <Route path="/v2/d" element={<HomeD />} />
 
           {/* Slug inexistente cai no próprio case, que trata o 404 com a
               linguagem do site em vez de tela branca. */}

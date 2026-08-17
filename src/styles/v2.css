@@ -265,3 +265,84 @@
 @media (prefers-reduced-motion: reduce) {
   .p-especime-arte { transition: none; }
 }
+
+/* ── A TRAMA VIVA ──────────────────────────────────────────────────────────
+   O gesto da primeira tela. Ele pediu "mais viva, tipo revelatio ou aquela
+   primeira" — no revelatio a home é uma TV em WebGL que converte o vídeo da
+   equipe em ASCII colorido; no corentin é um sólido 3D girando com as capas
+   como textura. O que os dois têm em comum não é a técnica: é a **matéria do
+   estúdio sendo processada em tempo real** em vez de exibida parada.
+
+   Aqui a matéria é a marca, então o processo é tipográfico: os nomes atravessam
+   a tela em corpo de cartaz e **cada nome é recortado na própria arte** —
+   `background-clip: text` com a capa do projeto dentro das letras. A marca é
+   literalmente feita do trabalho que ela nomeia, e isso se move.
+
+   Custo: zero JS, zero WebGL, zero dependência. Duas propriedades e um
+   keyframe. O dither de lá custa um shader e um mp4 de 15 pessoas.
+
+   ⚠ `background-clip: text` exige `color: transparent`, e com isso o texto
+   some para quem tiver a imagem bloqueada — por isso o nome real vai num
+   `sr-only` fora da trama, e a faixa inteira é `aria-hidden`. */
+.p-trama {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.p-trama-fita {
+  display: flex;
+  width: max-content;
+  align-items: baseline;
+  gap: 0.32em;
+  animation: p-desfila 64s linear infinite;
+  will-change: transform;
+}
+.p-trama:hover .p-trama-fita { animation-play-state: paused; }
+@keyframes p-desfila {
+  to { transform: translateX(-50%); }
+}
+/* ⭐ A SEGUNDA FITA, em sentido contrário e mais devagar.
+   Uma fita só lê como banner de promoção — o olho acompanha e o gesto acaba.
+   Duas em sentidos opostos criam um plano: nenhuma das duas pode ser
+   "acompanhada", e a tela vira campo em vez de faixa. O revelatio faz a mesma
+   coisa com dois traços que desenham em direções opostas ao mesmo tempo; aqui
+   a ideia é a mesma, a matéria é outra.
+   Velocidades primas entre si (64s e 83s) para o par não repetir cadência. */
+.p-trama-fita--volta {
+  animation-name: p-desfila-volta;
+  animation-duration: 83s;
+}
+/* a terceira linha volta ao sentido da primeira, em terceira velocidade: com
+   duas linhas sobrava meia tela de vazio entre a trama e a ficha, e três
+   fecham o campo sem encher a página */
+.p-trama-fita--terca { animation-duration: 97s; }
+@keyframes p-desfila-volta {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+.p-trama-nome {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 500;
+  font-size: clamp(72px, 13.5vw, 194px);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+  /* a arte dentro das letras */
+  background-size: cover;
+  background-position: center;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: opacity 0.4s ease-out;
+}
+/* o separador entre marcas: um ponto na tinta da página, para a fita não virar
+   uma palavra só quando dois nomes se encostam */
+.p-trama-ponto {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-size: clamp(72px, 13.5vw, 194px);
+  line-height: 0.92;
+  color: var(--p-quieto);
+  opacity: 0.35;
+}
+@media (prefers-reduced-motion: reduce) {
+  .p-trama-fita { animation: none; }
+}
