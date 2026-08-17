@@ -12,6 +12,7 @@ import HomeAutoral from "./pages/HomeV2";
 import PranchaIndex from "./v2/Home";
 import PranchaAbout from "./v2/About";
 import AboutB from "./v2/AboutB";
+import AboutC from "./v2/AboutC";
 import PranchaWork from "./v2/Work";
 import PranchaCase from "./v2/Case";
 import PranchaLab from "./v2/Lab";
@@ -238,6 +239,9 @@ export default function App() {
           {/* a segunda proposta da about, da capa para baixo — "outra proposta
               da segunda section pra baixo". A capa é a mesma nas duas. */}
           <Route path="/v2/about-b" element={<AboutB />} />
+          {/* a terceira: catálogo de serviços COM FOTO, no espírito da about
+              original do Framer (superfície escura, rótulo lateral) */}
+          <Route path="/v2/about-c" element={<AboutC />} />
           <Route path="/v2/lab" element={<PranchaLab />} />
 
           {/* ── AS TRÊS HOMES DE PARTIDO ─────────────────────────────────

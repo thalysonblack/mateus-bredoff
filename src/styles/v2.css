@@ -1358,6 +1358,117 @@
   .p-precos-escopo { display: none; }
 }
 
+/* ── ABOUT C: "O CATÁLOGO" ───────────────────────────────────────────────
+   Espírito da original do Framer, medida em `/arquivo/framer/about`: a página
+   inteira em superfície ESCURA, o rótulo da seção na lateral esquerda, o
+   conteúdo numa coluna larga à direita, números gigantes.
+   O que a original não tinha e ele pediu: os SERVIÇOS COM FOTO.
+
+   Mesma grade de 12 do resto do site — a lateral ocupa 1–3, o conteúdo 5–12. */
+.p-catalogo-capa,
+.p-catalogo-numeros,
+.p-catalogo,
+.p-catalogo-metodo {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--p-gap-x);
+}
+.p-catalogo-rotulo {
+  grid-column: 1 / span 3;
+  color: var(--p-quieto);
+}
+
+.p-catalogo-capa { padding: 28px 0 72px; align-items: start; }
+.p-catalogo-retrato {
+  grid-column: 1 / span 5;
+  margin: 0 0 0 calc(var(--p-margem) * -1);
+  overflow: hidden;
+  height: min(66vh, 600px);
+}
+.p-catalogo-retrato img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 56% 28%; }
+.p-catalogo-lead { grid-column: 7 / span 6; display: grid; gap: 22px; }
+.p-catalogo-lead .p-catalogo-rotulo { grid-column: auto; }
+.p-catalogo-corpo {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-size: clamp(15px, 1.15vw, 17px);
+  line-height: 1.5;
+  color: var(--p-quieto);
+}
+
+.p-catalogo-numeros { padding: 44px 0 84px; border-top: 1px solid var(--p-fio); }
+.p-catalogo-numeros > * { grid-column: span 3; }
+
+/* ── as fichas de catálogo ─────────────────────────────────────────────── */
+.p-catalogo { padding-bottom: 40px; border-top: 1px solid var(--p-fio); padding-top: 44px; }
+.p-catalogo-lista { grid-column: 1 / -1; display: grid; gap: 0; }
+.p-catalogo-item {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--p-gap-x);
+  align-items: start;
+  padding: 56px 0;
+  border-top: 1px solid var(--p-fio);
+}
+.p-catalogo-lista > :first-child { border-top: 0; padding-top: 24px; }
+.p-catalogo-peca { grid-column: 1 / span 5; margin: 0; }
+.p-catalogo-peca img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+.p-catalogo-cap { display: flex; justify-content: space-between; padding-top: 8px; color: var(--p-quieto); }
+.p-catalogo-ficha { grid-column: 7 / span 6; display: grid; gap: 14px; }
+.p-catalogo-n { color: var(--p-quieto); font-family: 'Martian Mono', ui-monospace, monospace; font-size: 9.5px; }
+.p-catalogo-nome {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: clamp(28px, 3vw, 46px);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+}
+.p-catalogo-escopo { display: grid; padding-top: 6px; }
+.p-catalogo-escopo li { padding: 9px 0; color: var(--p-quieto); }
+.p-catalogo-preco {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding-top: 10px;
+  border-top: 1px solid var(--p-fio);
+}
+.p-catalogo-preco .p-marca { color: var(--p-quieto); }
+.p-catalogo-valor {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-size: clamp(22px, 2.2vw, 34px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--p-acento);
+}
+.p-catalogo-sob { font-size: 15px; color: var(--p-quieto); }
+
+/* ── o método ──────────────────────────────────────────────────────────── */
+.p-catalogo-metodo { padding: 56px 0 24px; border-top: 1px solid var(--p-fio); }
+.p-catalogo-metodo > div { grid-column: 5 / span 8; }
+.p-catalogo-etapas { display: grid; padding-top: 40px; }
+.p-catalogo-etapa {
+  display: grid;
+  grid-template-columns: 3.4rem 1fr;
+  gap: 16px;
+  padding: 22px 0;
+}
+@media (max-width: 1024px) {
+  .p-catalogo-retrato,
+  .p-catalogo-lead,
+  .p-catalogo-peca,
+  .p-catalogo-ficha,
+  .p-catalogo-metodo > div,
+  .p-catalogo-rotulo { grid-column: 1 / -1; }
+  .p-catalogo-retrato { height: 46vh; margin-right: calc(var(--p-margem) * -1); }
+  .p-catalogo-numeros > * { grid-column: span 6; }
+  .p-catalogo-ficha { padding-top: 22px; }
+}
+
 /* ── O OBTURADOR (transição de rota) ─────────────────────────────────────
    A coreografia é a da direção anterior — ele pediu de volta ("a transição pode
    ser aquela de antes, melhorada visualmente"). O que muda é o acabamento:
