@@ -1398,16 +1398,17 @@
   overflow: hidden;
 }
 /* o que vem depois da hero sobe POR CIMA dela */
-/* ⚠ A FOLHA QUE COBRE A HERO precisa de fundo OPACO e sangria total (senão a
-   foto vaza pelas laterais e a leitura de camada se perde). O padding lateral
-   vive na regra de layout, mais abaixo — declarar `padding-inline` aqui não
-   adianta: lá existe um `padding` SHORTHAND, e shorthand zera o longhand
-   declarado antes. Foi assim que o rótulo "About me" saiu da margem. */
-.p-catalogo-intro {
+/* ⚠⚠ A FOLHA QUE COBRE A HERO É O CONTEÚDO INTEIRO, não a primeira seção.
+   A hero é `sticky` e permanece na tela; qualquer bloco sem fundo deixa o rosto
+   e os nomes gigantes aparecerem POR TRÁS. Aconteceu: da segunda tela em diante
+   a página ficou ilegível, com os serviços por cima da imagem.
+   Fundo opaco, sangria total (senão a foto vaza pelas laterais) e `z-index: 1`. */
+.p-catalogo-corpo-folha {
   position: relative;
   z-index: 1;
   background: #14201f;
   margin-inline: calc(var(--p-margem) * -1);
+  padding-inline: var(--p-margem);
 }
 /* ⚠ `scroll(root block)` e NÃO `view()`: a hero é STICKY, então ela nunca sai
    da viewport — e `view()` mede exatamente a passagem do elemento por ela, de
@@ -1504,7 +1505,7 @@
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: var(--p-gap-x);
-  padding: 72px var(--p-margem) 84px;
+  padding: 72px 0 84px;
 }
 .p-catalogo-intro > div { grid-column: 5 / span 8; display: grid; gap: 22px; }
 

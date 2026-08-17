@@ -105,109 +105,117 @@ export default function AboutC() {
         </p>
       </section>
 
-      {/* ─ E SÓ ENTÃO O TEXTO ────────────────────────────────────────────
-          O manifesto sozinho numa faixa, depois do impacto. */}
-      <section ref={revIntro} className="p-catalogo-intro">
-        <p className="p-rotulo p-catalogo-rotulo">About me</p>
-        <div>
-          <p className="p-manifesto p-sobe">{LEAD[0]}</p>
-          <p className="p-catalogo-corpo p-sobe">{LEAD[1]}</p>
-        </div>
-      </section>
-
-      {/* ─ OS NÚMEROS, como na original: gigantes e lado a lado ─────────── */}
-      <section ref={revNumeros} className="p-catalogo-numeros">
-        {NUMEROS.map((n) => (
-          <div key={n.rotulo} className="p-sobe">
-            <p className="p-numero-big">{n.valor}</p>
-            <p className="p-marca" style={{ color: "var(--p-quieto)" }}>
-              {n.rotulo}
-            </p>
+      {/* ⚠⚠ TUDO O QUE VEM DEPOIS DA HERO É UMA FOLHA SÓ, COM FUNDO OPACO.
+          A hero é `sticky` e fica na tela o tempo todo — se cada seção seguinte
+          não cobrir, ela aparece POR TRÁS delas. E foi o que aconteceu: eu tinha
+          dado fundo só ao primeiro bloco, e da segunda tela em diante o rosto e
+          os nomes gigantes apareciam atrás dos serviços e dos preços, com o
+          texto ilegível por cima da imagem.
+          Uma folha só, um fundo só — e o `z-index: 1` que a põe acima da capa. */}
+      <div className="p-catalogo-corpo-folha">
+        {/* ─ E SÓ ENTÃO O TEXTO ────────────────────────────────────────────
+            O manifesto sozinho numa faixa, depois do impacto. */}
+        <section ref={revIntro} className="p-catalogo-intro">
+          <p className="p-rotulo p-catalogo-rotulo">About me</p>
+          <div>
+            <p className="p-manifesto p-sobe">{LEAD[0]}</p>
+            <p className="p-catalogo-corpo p-sobe">{LEAD[1]}</p>
           </div>
-        ))}
-      </section>
+        </section>
 
-      {/* ─ O QUE ELE FAZ ────────────────────────────────────────────────
-          Serviço é REPERTÓRIO. Cada um com a peça que o prova — obra dele, não
-          ilustração genérica. */}
-      <section ref={revServicos} className="p-catalogo">
-        <p className="p-rotulo p-catalogo-rotulo">Services — {String(SERVICOS.length).padStart(2, "0")}</p>
-        <ul className="p-servicos-grade">
-          {SERVICOS.map((sv) => {
-            const peca = WORK.find((w) => w.slug === sv.peca);
-            return (
-              <li key={sv.nome} className="p-servico-card p-sobe">
-                {peca ? (
-                  <figure className="p-servico-foto">
-                    <img
-                      src={peca.cover.src}
-                      sizes="(max-width: 1024px) 50vw, 24vw"
-                      alt={peca.cover.alt}
-                      decoding="async"
-                      draggable={false}
-                    />
-                    <figcaption className="p-marca p-servico-cap" style={{ color: corDe(peca.slug, "tinta") }}>
-                      {peca.title}
-                    </figcaption>
-                  </figure>
-                ) : null}
-                <h2 className="p-servico-titulo">{sv.nome}</h2>
-                <p className="p-catalogo-corpo">{sv.entrega}</p>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
-
-      {/* ─ QUANTO CUSTA ──────────────────────────────────────────────────
-          ⚠ SEÇÃO PRÓPRIA, a pedido dele. Serviço é repertório; modalidade é
-          CONTRATO — como se contrata e quanto custa. Misturados, a pessoa
-          procura preço no meio da descrição de ofício.
-          As três são as que ele ditou: marca completa, direção de arte e o slot
-          mensal, que no mercado internacional se chama RETAINER. */}
-      <section ref={revValores} className="p-valores">
-        <p className="p-rotulo p-catalogo-rotulo">Working together — {String(MODALIDADES.length).padStart(2, "0")}</p>
-        <ul className="p-valores-lista">
-          {MODALIDADES.map((m, i) => (
-            <li key={m.nome} className="p-valor-item p-sobe">
-              <p className="p-marca p-valor-n">{String(i + 1).padStart(2, "0")}</p>
-              <div className="p-valor-corpo">
-                <h2 className="p-valor-nome">{m.nome}</h2>
-                <p className="p-catalogo-corpo">{m.para}</p>
-                <p className="p-marca p-valor-inclui">{m.inclui.join(" · ")}</p>
-              </div>
-              <p className="p-valor-preco">
-                <span className="p-marca">{m.prazo}</span>
-                <span className={m.precoDe === null ? "p-catalogo-sob" : "p-catalogo-valor"}>
-                  {m.precoDe === null ? "On request" : `from $${m.precoDe.toLocaleString("en-US")}`}
-                </span>
+        {/* ─ OS NÚMEROS, como na original: gigantes e lado a lado ─────────── */}
+        <section ref={revNumeros} className="p-catalogo-numeros">
+          {NUMEROS.map((n) => (
+            <div key={n.rotulo} className="p-sobe">
+              <p className="p-numero-big">{n.valor}</p>
+              <p className="p-marca" style={{ color: "var(--p-quieto)" }}>
+                {n.rotulo}
               </p>
-            </li>
+            </div>
           ))}
-        </ul>
-      </section>
+        </section>
 
-      {/* ─ O MÉTODO, na anatomia da original ─────────────────────────────
-          Rótulo na lateral, manchete grande, etapas numeradas com o corpo em
-          cinza sobre o escuro. */}
-      <section ref={revMetodo} className="p-catalogo-metodo">
-        <p className="p-rotulo p-catalogo-rotulo">Method — {String(PROCESSO.length).padStart(2, "0")}</p>
-        <div>
-          <p className="p-manifesto p-sobe">{PROCESSO_MANCHETE}</p>
-          <ol className="p-catalogo-etapas">
-            {PROCESSO.map((e, i) => (
-              <li key={e.titulo} className="p-fio p-catalogo-etapa p-sobe">
-                <span className="p-marca">{String(i + 1).padStart(2, "0")}</span>
-                <div>
-                  <p className="p-item">{e.titulo}</p>
-                  <p className="p-catalogo-corpo">{e.corpo}</p>
+        {/* ─ O QUE ELE FAZ ────────────────────────────────────────────────
+            Serviço é REPERTÓRIO. Cada um com a peça que o prova — obra dele, não
+            ilustração genérica. */}
+        <section ref={revServicos} className="p-catalogo">
+          <p className="p-rotulo p-catalogo-rotulo">Services — {String(SERVICOS.length).padStart(2, "0")}</p>
+          <ul className="p-servicos-grade">
+            {SERVICOS.map((sv) => {
+              const peca = WORK.find((w) => w.slug === sv.peca);
+              return (
+                <li key={sv.nome} className="p-servico-card p-sobe">
+                  {peca ? (
+                    <figure className="p-servico-foto">
+                      <img
+                        src={peca.cover.src}
+                        sizes="(max-width: 1024px) 50vw, 24vw"
+                        alt={peca.cover.alt}
+                        decoding="async"
+                        draggable={false}
+                      />
+                      <figcaption className="p-marca p-servico-cap" style={{ color: corDe(peca.slug, "tinta") }}>
+                        {peca.title}
+                      </figcaption>
+                    </figure>
+                  ) : null}
+                  <h2 className="p-servico-titulo">{sv.nome}</h2>
+                  <p className="p-catalogo-corpo">{sv.entrega}</p>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+
+        {/* ─ QUANTO CUSTA ──────────────────────────────────────────────────
+            ⚠ SEÇÃO PRÓPRIA, a pedido dele. Serviço é repertório; modalidade é
+            CONTRATO — como se contrata e quanto custa. Misturados, a pessoa
+            procura preço no meio da descrição de ofício.
+            As três são as que ele ditou: marca completa, direção de arte e o slot
+            mensal, que no mercado internacional se chama RETAINER. */}
+        <section ref={revValores} className="p-valores">
+          <p className="p-rotulo p-catalogo-rotulo">Working together — {String(MODALIDADES.length).padStart(2, "0")}</p>
+          <ul className="p-valores-lista">
+            {MODALIDADES.map((m, i) => (
+              <li key={m.nome} className="p-valor-item p-sobe">
+                <p className="p-marca p-valor-n">{String(i + 1).padStart(2, "0")}</p>
+                <div className="p-valor-corpo">
+                  <h2 className="p-valor-nome">{m.nome}</h2>
+                  <p className="p-catalogo-corpo">{m.para}</p>
+                  <p className="p-marca p-valor-inclui">{m.inclui.join(" · ")}</p>
                 </div>
+                <p className="p-valor-preco">
+                  <span className="p-marca">{m.prazo}</span>
+                  <span className={m.precoDe === null ? "p-catalogo-sob" : "p-catalogo-valor"}>
+                    {m.precoDe === null ? "On request" : `from $${m.precoDe.toLocaleString("en-US")}`}
+                  </span>
+                </p>
               </li>
             ))}
-          </ol>
-        </div>
-      </section>
+          </ul>
+        </section>
 
+        {/* ─ O MÉTODO, na anatomia da original ─────────────────────────────
+            Rótulo na lateral, manchete grande, etapas numeradas com o corpo em
+            cinza sobre o escuro. */}
+        <section ref={revMetodo} className="p-catalogo-metodo">
+          <p className="p-rotulo p-catalogo-rotulo">Method — {String(PROCESSO.length).padStart(2, "0")}</p>
+          <div>
+            <p className="p-manifesto p-sobe">{PROCESSO_MANCHETE}</p>
+            <ol className="p-catalogo-etapas">
+              {PROCESSO.map((e, i) => (
+                <li key={e.titulo} className="p-fio p-catalogo-etapa p-sobe">
+                  <span className="p-marca">{String(i + 1).padStart(2, "0")}</span>
+                  <div>
+                    <p className="p-item">{e.titulo}</p>
+                    <p className="p-catalogo-corpo">{e.corpo}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+      </div>
     </Prancha>
   );
 }
