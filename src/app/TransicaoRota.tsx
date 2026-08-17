@@ -54,6 +54,10 @@ function nomeDaRota(p: string) {
    pintar. A lâmina chega nesta cor, então o destino se anuncia antes de
    existir. Se uma rota nova entrar aqui e lá com valores diferentes, a
    transição entrega a mentira: manter as duas juntas. */
+/* a cor de cada superfície, para a lâmina — o mesmo valor que `v2.css` pinta
+   nas pranchas. ⚠ Não usar as CLASSES aqui: elas trazem `background`. */
+const COR_SUPERFICIE = { papel: "#f4f4f2", branco: "#ffffff", tinta: "#14201f" } as const;
+
 const SUPERFICIE: Record<string, "papel" | "branco" | "tinta"> = {
   "/": "papel",
   "/work": "branco",
@@ -175,8 +179,15 @@ export default function TransicaoRota() {
       if (titulo) titulo.textContent = nomeDaRota(url.pathname);
       if (indice) indice.textContent = indiceDaRota(url.pathname);
 
-      /* a lâmina chega na superfície da rota de DESTINO */
-      el.className = `v3-obturador p-obt p-${superficieDaRota(url.pathname)}`;
+      /* ⚠⚠ A COR DA LÂMINA VAI NO `style`, NUNCA COMO CLASSE DE SUPERFÍCIE.
+         Eu tinha posto `p-branco`/`p-papel`/`p-tinta` na raiz do obturador para
+         herdar a cor — e essas classes trazem `background` junto. A raiz é
+         `fixed inset:0`, então ela virou uma PAREDE opaca cobrindo a página
+         depois da transição: a rota trocava, o DOM montava (medido: 479
+         caracteres, canvas de pé, lâminas em scaleY 0) e a tela ficava branca.
+         "a transição ocorre mas a página não carrega" era isto.
+         Só a cor, e só nas lâminas. */
+      el.style.color = COR_SUPERFICIE[superficieDaRota(url.pathname)];
       gsap.set(lamina, { scaleY: 0 });
       gsap.set([rotulo, indice, fio], { autoAlpha: 0 });
       gsap.set(fio, { scaleX: 0 });

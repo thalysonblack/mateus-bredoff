@@ -538,6 +538,7 @@ export default function HomeD({
                     data-alvo
                     to={`/work/${w.slug}`}
                     className="p-corpo grid grid-cols-[2.2rem_1fr_auto] items-baseline gap-3"
+                    style={{ ["--cor" as string]: corDe(w.slug) }}
                   >
                     <span style={{ color: "var(--p-quieto)" }}>
                       {String(i + 1).padStart(2, "0")}

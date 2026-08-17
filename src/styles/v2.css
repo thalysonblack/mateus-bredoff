@@ -276,8 +276,15 @@
 
    `:has()` faz isso sem uma linha de JS. O escopo é a prancha inteira, que é
    justamente o ponto — atenuar só a lista não seria o mesmo gesto. */
+/* ⚠⚠ ATENUAR NÃO É APAGAR. Isto já esteve em 0,1 — os irmãos ficavam
+   praticamente invisíveis, e ele cortou: *"gostei do efeito mas não pode ficar
+   invisível"*. O DESTAQUE vem da COR (o alvo acende no acento ou na cor do
+   projeto); o recuo dos outros é só um degrau, não um sumiço.
+   0,62 é o piso medido: com a tinta #14201f sobre papel, é a opacidade em que
+   o texto ainda mede 4,5:1. Abaixo disso a lista deixa de ser legível — e uma
+   lista ilegível não é hierarquia, é defeito. */
 [data-atenua]:has([data-alvo]:hover) > * {
-  opacity: 0.1;
+  opacity: 0.62;
   transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 [data-atenua] > * { transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
@@ -286,14 +293,17 @@
    tempo nos dois, o gesto lê como transição lenta em vez de reação. */
 [data-atenua]:has([data-alvo]:hover) [data-alvo]:hover {
   opacity: 1;
-  color: var(--p-acento);
+  /* ⭐ a cor do PROJETO quando o item carrega uma (`--cor`), o acento do
+     sistema quando não — é o mesmo conceito da trama e da tabela da /work,
+     agora valendo em qualquer lista atenuada do site */
+  color: var(--cor, var(--p-acento));
   transition: color 0.1s linear, opacity 0.1s linear;
 }
 /* o ancestral do item hovered também precisa ficar de pé, senão o item some
    junto com a coluna que o contém */
 [data-atenua]:has([data-alvo]:hover) > *:has([data-alvo]:hover) { opacity: 1; }
 [data-atenua]:has([data-alvo]:hover) > *:has([data-alvo]:hover) [data-alvo]:not(:hover) {
-  opacity: 0.25;
+  opacity: 0.62;
 }
 @media (prefers-reduced-motion: reduce) {
   [data-atenua] > *, [data-atenua]:has([data-alvo]:hover) > * { transition: none; }
@@ -509,7 +519,7 @@
 /* 0,32 e não 0,24: com o visor aberto os nomes de fora ainda precisam ser
    LIDOS — é a coleção que dá contexto à peça enquadrada */
 .p-trama-campo:hover .p-trama-nome,
-.p-trama-campo:focus-within .p-trama-nome { opacity: 0.32; }
+.p-trama-campo:focus-within .p-trama-nome { opacity: 0.46; }
 .p-trama--peca .p-trama-nome { cursor: none; }
 /* ⚠ `:focus-visible` junto do `:hover`: o nome é um LINK, e quem navega por
    teclado tem de ver o mesmo destaque que o cursor produz. */
@@ -966,12 +976,10 @@
 .p-obt .lam {
   background: currentColor;
 }
-.p-obt {
-  color: #f4f4f2;                    /* fallback: papel */
-}
-.p-obt.p-papel { color: #f4f4f2; }
-.p-obt.p-branco { color: #ffffff; }
-.p-obt.p-tinta { color: #14201f; }
+/* ⚠ A raiz NÃO recebe classe de superfície — `.p-papel`/`.p-branco`/`.p-tinta`
+   trazem `background`, e num `fixed inset:0` isso vira parede. A cor entra por
+   `style` no JS e chega às lâminas por `currentColor`. */
+.p-obt { color: #f4f4f2; }
 /* o fio na costura, no acento — a régua do sistema aparecendo onde as duas
    lâminas se encontram */
 .p-obt-fio {
@@ -996,7 +1004,7 @@
   letter-spacing: -0.03em;
   color: var(--p-ink, #14201f);
 }
-.p-obt.p-tinta .titulo { color: #eceae5; }
+
 .p-obt .rotulo,
 .p-obt .indice {
   font-family: 'Martian Mono', ui-monospace, monospace;

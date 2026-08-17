@@ -157,9 +157,6 @@ export default function WorkV2() {
             ))}
           </ul>
 
-          <p className="p-marca pt-6">
-            Complete index — {String(WORK.length).padStart(2, "0")} projects, 2025–2026
-          </p>
         </div>
 
         {/* ─ a coluna, À DIREITA, com a peça ativa CENTRADA ───────────────
