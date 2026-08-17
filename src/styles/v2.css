@@ -772,6 +772,53 @@
    ao scroll". */
 .p-trama-scroll { will-change: transform; }
 
+/* ── O CARROSSEL VERTICAL (rota Work) ────────────────────────────────────
+   O scroll move a coluna de peças e a tabela acompanha. Referência dele:
+   `framer-assets-five.vercel.app/archive`, do próprio acervo — de lá vem a
+   ANATOMIA (coluna que rola + lista sincronizada), não a implementação: lá o
+   percurso é clamped e trava no último item; aqui é infinito, como a trama da
+   home, para o site ter UMA mecânica de rolagem e não duas.
+
+   ⚠ A janela corta com `overflow: hidden` e a peça seguinte aparece pela base:
+   é o que diz que existe mais coisa embaixo sem precisar de seta nem de barra. */
+.p-carrossel {
+  position: relative;
+  overflow: hidden;
+  /* a janela mostra uma peça inteira e o começo da próxima */
+  height: min(58vh, 520px);
+}
+.p-carrossel-trilha {
+  display: grid;
+  row-gap: 14px;
+  will-change: transform;
+}
+.p-carrossel-peca {
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--p-fio);
+}
+.p-carrossel-peca img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* ⚠ a legenda vive FORA de `.p-carrossel` (ver `Work.tsx`): dentro do
+   `overflow: hidden` ela era cortada pela peça que descrevia. */
+
+/* ── A TABELA que acompanha ───────────────────────────────────────────────
+   Só a linha enquadrada está acesa; o resto apaga. É a mesma gramática da
+   trama da home (campo inteiro atenuado, um item em cor), aqui em corpo de
+   ficha — e a cor é a DO PROJETO, como lá. */
+.p-tabela-linha { transition: opacity 0.35s ease-out; }
+.p-tabela:hover .p-tabela-linha { opacity: 0.42; }
+.p-tabela .p-tabela-linha.aceso,
+.p-tabela:hover .p-tabela-linha:hover { opacity: 1; }
+.p-tabela-n,
+.p-tabela-meta { color: var(--p-quieto); }
+.p-tabela-linha.aceso .p-item { color: var(--cor, inherit); }
+
 /* ── O SHOWREEL ───────────────────────────────────────────────────────────
    A capa do reel, 16:9, que abre o vídeo no clique. Raio ZERO, sem sombra: o
    único canto arredondado do sistema é o do visor (4px), porque ele é a única

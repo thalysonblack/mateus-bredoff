@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { WORK } from "../../content/work";
+import { corDe } from "../../content/cores";
 import { useMetaRota } from "../../hooks/useMetaRota";
+import { gsap, prefersReducedMotion } from "../../lib/gsap";
 import { Prancha } from "./sistema";
 
 /**
@@ -22,61 +24,129 @@ import { Prancha } from "./sistema";
  * medida no archive do corentin — `.5fr 1.5fr 1fr .5fr` —, que é a distribuição
  * que faz o título mandar sem espremer o metadado.
  *
- * A prévia é UMA imagem que troca conforme a linha percorrida, em vez de nove
- * miniaturas na tabela: o índice fica legível como texto e a peça aparece
- * grande, que é o inverso do card pequeno que não serve para nenhum dos dois.
+ * ## O CARROSSEL VERTICAL (17/08)
+ *
+ * A prévia deixou de ser uma imagem que troca no hover e virou uma COLUNA que
+ * rola: o scroll move a pilha de peças na janela à esquerda, e a tabela
+ * acompanha — a linha da peça enquadrada acende, as outras apagam. Referência
+ * dele: `framer-assets-five.vercel.app/archive`, do próprio acervo dele.
+ *
+ * ⚠ E aqui vai ALÉM da referência de propósito: lá a coluna é `clamped`
+ * (`Math.min(scroll, totalScroll)` no código, e medido no site: trava em 08/08
+ * e não volta). Aqui ela é INFINITA, como a trama da home — o mesmo empurrão
+ * dobrado pelo comprimento de um ciclo. Duas mecânicas diferentes de rolagem no
+ * mesmo site seriam dois sistemas; uma só, repetida em escalas diferentes, é um.
+ *
+ * A página não rola: o gesto é todo da coluna, como na home.
  */
 export default function WorkV2() {
   useMetaRota();
   const [ativo, setAtivo] = useState(0);
   const peca = WORK[ativo];
+  const janela = useRef<HTMLDivElement | null>(null);
+  const pilha = useRef<HTMLDivElement | null>(null);
+  /* posição em UNIDADES DE ITEM: 2,4 = entre o terceiro e o quarto */
+  const pos = useRef(0);
+  const alvo = useRef(0);
+
+  /**
+   * O SCROLL MOVE A COLUNA, e ela não acaba.
+   *
+   * Mesma mecânica da trama da home: `wheel` alimenta um alvo, o ticker do GSAP
+   * persegue com lerp, e o deslocamento é dobrado pelo comprimento de um ciclo.
+   * ⚠ `((x % L) + L) % L` porque o `%` do JS devolve negativo para entrada
+   * negativa, e o salto de −L para 0 apareceria.
+   * ⚠ TRÊS CÓPIAS no markup: a janela mostra mais de um item por vez, então uma
+   * só cópia deixaria buraco na virada do ciclo.
+   */
+  useEffect(() => {
+    const caixa = janela.current;
+    const trilha = pilha.current;
+    if (!caixa || !trilha) return;
+    if (prefersReducedMotion()) return;
+
+    const passoDoItem = () => {
+      const primeiro = trilha.firstElementChild as HTMLElement | null;
+      if (!primeiro) return 1;
+      const h = primeiro.getBoundingClientRect().height;
+      const gap = parseFloat(getComputedStyle(trilha).rowGap || "0") || 0;
+      return h + gap;
+    };
+
+    const roda = (e: WheelEvent) => {
+      alvo.current += e.deltaY / 420;
+    };
+    const passo = () => {
+      pos.current += (alvo.current - pos.current) * 0.1;
+      if (Math.abs(alvo.current - pos.current) < 0.0005) pos.current = alvo.current;
+      const H = passoDoItem();
+      const ciclo = H * WORK.length;
+      const bruto = pos.current * H;
+      const y = ciclo > 0 ? ((bruto % ciclo) + ciclo) % ciclo : bruto;
+      trilha.style.transform = `translate3d(0, ${-y - ciclo}px, 0)`;
+      const i = ((Math.round(pos.current) % WORK.length) + WORK.length) % WORK.length;
+      setAtivo((antes) => (antes === i ? antes : i));
+    };
+    caixa.addEventListener("wheel", roda, { passive: true });
+    window.addEventListener("wheel", roda, { passive: true });
+    gsap.ticker.add(passo);
+    return () => {
+      caixa.removeEventListener("wheel", roda);
+      window.removeEventListener("wheel", roda);
+      gsap.ticker.remove(passo);
+    };
+  }, []);
+
+  /* percorrer a tabela leva a coluna até a peça — pelo caminho MAIS CURTO, que
+     numa lista circular nem sempre é a diferença bruta de índices */
+  const irPara = (i: number) => {
+    const n = WORK.length;
+    const atual = alvo.current;
+    const resto = ((atual % n) + n) % n;
+    let delta = i - resto;
+    if (delta > n / 2) delta -= n;
+    if (delta < -n / 2) delta += n;
+    alvo.current = atual + delta;
+  };
+
+  /* três cópias: a janela mostra mais de um item por vez */
+  const trilha = [0, 1, 2].flatMap(() => WORK);
 
   return (
     <Prancha n="02" nome="Work" superficie="branco" status={`${WORK.length} projects`}>
-      <div
-        className="grid grid-cols-12 pt-14 max-md:pt-8"
-        style={{ columnGap: "var(--p-gap-x)" }}
-      >
-        {/* ─ a prévia: uma só, grande, sticky ────────────────────────────
-            Fica à ESQUERDA de propósito. O olho varre a lista pela esquerda,
-            e com a prévia do mesmo lado o percurso do cursor cruza a imagem a
-            cada linha; à direita, ela vira ilustração de canto. */}
+      <section className="grid min-h-0 flex-1 grid-cols-12 pt-10 max-md:pt-6" style={{ columnGap: "var(--p-gap-x)" }}>
+        {/* ─ a coluna que rola ───────────────────────────────────────────
+            À ESQUERDA de propósito: o olho varre a lista pela esquerda, e com a
+            peça do mesmo lado o percurso cruza a imagem a cada linha. */}
         <div className="col-span-4 max-lg:hidden">
-          <div className="sticky top-16">
-            <span className="relative block overflow-hidden">
-              {WORK.map((w, i) => (
-                <img
-                  key={w.slug}
-                  src={w.cover.src}
-                  srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
-                  sizes="33vw"
-                  alt={w.cover.alt}
-                  width={w.cover.w}
-                  height={w.cover.h}
-                  loading={i > 0 ? "lazy" : undefined}
-                  decoding="async"
-                  draggable={false}
-                  className="w-full object-cover transition-opacity duration-300"
-                  style={{
-                    aspectRatio: "16 / 9",
-                    opacity: ativo === i ? 1 : 0,
-                    position: i === 0 ? "relative" : "absolute",
-                    inset: i === 0 ? undefined : 0,
-                  }}
-                />
+          {/* ⚠ a legenda fica FORA da janela: dentro do `overflow: hidden` ela
+              era cortada pela própria peça que descrevia */}
+          <div ref={janela} className="p-carrossel">
+            <div ref={pilha} className="p-carrossel-trilha">
+              {trilha.map((w, k) => (
+                <span key={k} className="p-carrossel-peca">
+                  <img
+                    src={w.cover.src}
+                    srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
+                    sizes="33vw"
+                    alt={w.cover.alt}
+                    decoding="async"
+                    draggable={false}
+                  />
+                </span>
               ))}
-            </span>
-            <p className="p-marca flex items-baseline justify-between pt-2">
-              <span>FIG. {String(ativo + 1).padStart(2, "0")}</span>
-              <span>
-                {peca.title} — {peca.year}
-              </span>
-            </p>
+            </div>
           </div>
+          <p className="p-marca flex items-baseline justify-between pt-2">
+            <span>FIG. {String(ativo + 1).padStart(2, "0")}</span>
+            <span>
+              {peca.title} — {peca.year}
+            </span>
+          </p>
         </div>
 
         {/* ─ a tabela ────────────────────────────────────────────────────── */}
-        <div className="col-span-7 col-start-6 max-lg:col-span-12 max-lg:col-start-1" data-atenua>
+        <div className="col-span-7 col-start-6 max-lg:col-span-12 max-lg:col-start-1">
           <div
             className="p-rotulo grid pb-3"
             style={{ gridTemplateColumns: ".5fr 1.5fr 1fr .5fr", columnGap: "var(--p-gap-x)" }}
@@ -87,27 +157,25 @@ export default function WorkV2() {
             <span className="text-right">Year</span>
           </div>
 
-          <ul>
+          <ul className="p-tabela">
             {WORK.map((w, i) => (
               <li key={w.slug} className="p-fio">
                 <Link
-                  data-alvo
                   to={`/work/${w.slug}`}
-                  onMouseEnter={() => setAtivo(i)}
-                  onFocus={() => setAtivo(i)}
-                  className="p-corpo grid items-baseline py-4"
-                  style={{ gridTemplateColumns: ".5fr 1.5fr 1fr .5fr", columnGap: "var(--p-gap-x)" }}
+                  onMouseEnter={() => irPara(i)}
+                  onFocus={() => irPara(i)}
+                  aria-current={ativo === i ? "true" : undefined}
+                  className={`p-corpo p-tabela-linha grid items-baseline py-4 ${ativo === i ? "aceso" : ""}`}
+                  style={{
+                    gridTemplateColumns: ".5fr 1.5fr 1fr .5fr",
+                    columnGap: "var(--p-gap-x)",
+                    ["--cor" as string]: corDe(w.slug),
+                  }}
                 >
-                  <span style={{ color: "var(--p-quieto)" }}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
+                  <span className="p-tabela-n">{String(i + 1).padStart(2, "0")}</span>
                   <span className="p-item">{w.title}</span>
-                  <span className="max-md:hidden" style={{ color: "var(--p-quieto)" }}>
-                    {w.disciplines.join(", ")}
-                  </span>
-                  <span className="text-right" style={{ color: "var(--p-quieto)" }}>
-                    {w.year}
-                  </span>
+                  <span className="p-tabela-meta max-md:hidden">{w.disciplines.join(", ")}</span>
+                  <span className="p-tabela-meta text-right">{w.year}</span>
                 </Link>
               </li>
             ))}
@@ -118,7 +186,7 @@ export default function WorkV2() {
             Complete index — {String(WORK.length).padStart(2, "0")} projects, 2025–2026
           </p>
         </div>
-      </div>
+      </section>
     </Prancha>
   );
 }
