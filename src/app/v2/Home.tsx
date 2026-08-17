@@ -109,7 +109,8 @@ export default function HomeV2() {
       </section>
 
       {/* ─ as fichas ───────────────────────────────────────────────────── */}
-      <section className="grid grid-cols-12 gap-x-6 gap-y-12 pt-28 max-md:pt-16">
+      <section className="grid grid-cols-12 pt-28 max-md:pt-16"
+        style={{ columnGap: "var(--p-gap-x)", rowGap: "var(--p-gap-y)" }}>
         <Bloco
           rotulo={`Recognition — ${String(RECONHECIMENTO.length).padStart(2, "0")}`}
           className="col-span-4 max-lg:col-span-12"

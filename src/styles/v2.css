@@ -90,7 +90,7 @@
   --p-corpo-lh: 1.42;
   --p-item: 14.5px;   /* item de lista de obra — o maior texto do site */
   --p-rotulo: 8.5px;  /* rótulo de ficha, caixa alta */
-  --p-rotulo-ls: 0.12em;
+  --p-rotulo-ls: 0.06em; /* medido: tracking ZERO no rótulo da ref; 0,06 compensa a caixa alta da Geist */
   --p-marca: 9.5px;   /* metadado, tick de régua, legenda */
 
   /* a escala do ESPÉCIME. Numa folha de espécime de fundição a palavra PREENCHE
@@ -104,6 +104,13 @@
      escala 1 sobrava — cadência decorativa ignora a matéria, que é a palavra. */
   --p-especime-teto: clamp(58px, 11.4vw, 176px);
   --p-especime-med: 46vw;
+
+  /* ⭐ O AR É VERTICAL. Medido no artemshcherban: `column-gap 2em` contra
+     `row-gap 8em` — QUATRO VEZES mais respiro entre linhas do que entre
+     colunas. É o que faz uma página densa não parecer apertada sem precisar
+     aumentar margem: o espaço vai para onde a leitura anda. */
+  --p-gap-x: calc(var(--p-u) * 2);
+  --p-gap-y: calc(var(--p-u) * 8);
 }
 
 /* ── superfícies: cada PRANCHA tem a sua ───────────────────────────────── */
@@ -132,9 +139,18 @@
   line-height: var(--p-corpo-lh);
   letter-spacing: -0.004em;
 }
+/* ⚠ O RÓTULO NÃO É MONO — correção que veio da medição, não do gosto.
+   Eu tinha posto Martian Mono aqui achando que o ar técnico dos rótulos da
+   referência vinha de uma segunda família. Não vem: o site inteiro dele usa UMA
+   fonte, e o rótulo é a mesma família em `wght 700` + `opsz 20` + caixa alta +
+   **tracking 0**. O que dá cara de ficha técnica é a combinação, não a mono.
+
+   Aqui isso vira Geist 700 em caixa alta. E o ganho é de sistema: a V2 passa a
+   ter UMA voz tipográfica, contra o dueto da V3 — direção diferente, economia
+   diferente. */
 .p-rotulo {
-  font-family: 'Martian Mono', ui-monospace, monospace;
-  font-weight: 500;
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 700;
   font-size: var(--p-rotulo);
   line-height: 1.4;
   letter-spacing: var(--p-rotulo-ls);
@@ -142,8 +158,8 @@
   color: var(--p-quieto);
 }
 .p-marca {
-  font-family: 'Martian Mono', ui-monospace, monospace;
-  font-weight: 400;
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 500;
   font-size: var(--p-marca);
   line-height: 1;
   letter-spacing: 0.06em;
@@ -194,7 +210,14 @@
   transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 [data-atenua] > * { transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
-[data-atenua]:has([data-alvo]:hover) [data-alvo]:hover { opacity: 1; }
+/* ⭐ ASSIMETRIA MEDIDA: os irmãos apagam em 0,3s e o alvo acende em 0,1s — três
+   vezes mais rápido. É isso que dá sensação de resposta imediata; com o mesmo
+   tempo nos dois, o gesto lê como transição lenta em vez de reação. */
+[data-atenua]:has([data-alvo]:hover) [data-alvo]:hover {
+  opacity: 1;
+  color: var(--p-acento);
+  transition: color 0.1s linear, opacity 0.1s linear;
+}
 /* o ancestral do item hovered também precisa ficar de pé, senão o item some
    junto com a coluna que o contém */
 [data-atenua]:has([data-alvo]:hover) > *:has([data-alvo]:hover) { opacity: 1; }

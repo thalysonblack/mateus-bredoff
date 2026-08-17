@@ -11,6 +11,9 @@ import About from "./pages/About";
 import HomeAutoral from "./pages/HomeV2";
 import PranchaIndex from "./v2/Home";
 import PranchaAbout from "./v2/About";
+import PranchaWork from "./v2/Work";
+import PranchaCase from "./v2/Case";
+import PranchaLab from "./v2/Lab";
 import HomeV3 from "./pages/HomeV3";
 import AboutV3 from "./pages/AboutV3";
 import WorkIndexV3 from "./pages/WorkIndexV3";
@@ -203,7 +206,10 @@ export default function App() {
               partido só se julga com o site inteiro de pé, não com uma home
               solta. Ver `styles/v2.css` para o que foi medido em cada uma. */}
           <Route path="/v2" element={<PranchaIndex />} />
+          <Route path="/v2/work" element={<PranchaWork />} />
+          <Route path="/v2/work/:slug" element={<PranchaCase />} />
           <Route path="/v2/about" element={<PranchaAbout />} />
+          <Route path="/v2/lab" element={<PranchaLab />} />
 
           {/* Slug inexistente cai no próprio case, que trata o 404 com a
               linguagem do site em vez de tela branca. */}
