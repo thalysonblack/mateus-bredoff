@@ -83,10 +83,24 @@ function HeroV3() {
         className="v3-hero-foto absolute inset-0 h-full w-full select-none object-cover"
       />
 
-      {/* véu de leitura na base — o retrato varia de tom, o texto não */}
+      {/* ⚠ O VÉU FOI REFEITO em 17/08 ("melhora a hero"), e a melhora saiu de
+          uma MEDIÇÃO, não de gosto: `scripts/audit-contrast.mjs` reprovava três
+          textos desta tela — o rótulo em 2,13:1, o manifesto em 2,31:1 e o card
+          do case. A base do retrato é a parte CLARA da foto (fundo de estúdio +
+          ombro), e o véu de 288px em 78% morria antes de chegar ao texto.
+
+          Agora são 420px começando mais cedo e fechando em 88%: o pé da tela
+          vira uma faixa de leitura de verdade. E não é só legibilidade — é o
+          véu que devolve o NOME. Em `mix-blend-mode: exclusion` sobre fundo
+          claro o "MATEUS BREDOFF" saía cinza-sobre-cinza; sobre a faixa escura
+          ele volta a inverter para claro, que era a intenção do gesto desde o
+          início. Um ajuste, três defeitos. */}
       <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-72"
-        style={{ background: "linear-gradient(0deg, rgba(13,21,24,0.78), transparent)" }}
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[420px]"
+        style={{
+          background:
+            "linear-gradient(0deg, rgba(13,21,24,0.94) 0%, rgba(13,21,24,0.86) 22%, rgba(13,21,24,0.62) 46%, rgba(13,21,24,0.26) 74%, transparent 100%)",
+        }}
         aria-hidden="true"
       />
 
@@ -99,26 +113,31 @@ function HeroV3() {
           <p className="v3-leitura max-w-[46ch]">{MANIFESTO}</p>
         </div>
 
+        {/* O card do último case perdeu a CAIXA. Ele era um retângulo de vidro
+            fosco (borda branca a 20% + `backdrop-filter: blur(20px)` sobre um
+            petróleo translúcido) — o único elemento com aparência de widget num
+            site que não usa card em lugar nenhum, e sobre a foto ele lia como
+            uma janela de sistema operacional. Agora é o que já era por baixo:
+            a peça, um fio, e três linhas de metadado. */}
         <div className="flex shrink-0 flex-col items-end gap-3 max-md:items-start">
           <Link
             to={`/work/${ultimo.slug}`}
-            className="group flex items-center gap-4 border border-white/20 p-3"
-            style={{ backdropFilter: "blur(20px)", background: "rgba(13,21,24,0.35)" }}
+            className="group flex items-center gap-4 border-l border-white/25 pl-4"
           >
+            <span className="v3-rotulo text-right max-md:text-left">
+              <span className="block opacity-60">Latest case</span>
+              <span className="block pt-1">{ultimo.title}</span>
+              <span className="block opacity-60">{ultimo.year}</span>
+            </span>
             <span className="relative block">
               <img
                 src={ultimo.cover.src}
                 alt=""
                 width={ultimo.cover.w}
                 height={ultimo.cover.h}
-                className="h-14 w-20 object-cover"
+                className="h-16 w-24 object-cover"
               />
               <i className="v3-foco" aria-hidden="true"><b /><b /><b /><b /></i>
-            </span>
-            <span className="v3-rotulo">
-              <span className="block opacity-60">Latest case</span>
-              <span className="block pt-1">{ultimo.title}</span>
-              <span className="block opacity-60">{ultimo.year}</span>
             </span>
           </Link>
         </div>
@@ -161,7 +180,7 @@ function HeroV3() {
 /* ── about: manifesto justificado + lead mono + números ─────────────────── */
 function AboutV3() {
   return (
-    <section data-secao="About" className="relative py-28 max-md:py-14" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+    <section data-secao="About" className="v3-papel relative py-40 max-md:py-20">
       <LinhaSecao rotulo="About" acao={{ texto: "More about me", to: "/about" }} />
       {/* ⚠ DIAGRAMAÇÃO virada em 16/08 — "não gostei da diagramação do site",
           com o nightjar.co como régua. Era manchete à esquerda e texto na
@@ -192,7 +211,7 @@ function WorkV3() {
     el.scrollBy({ left: dir * passo, behavior: "smooth" });
   };
   return (
-    <section data-secao="Selected Work" className="relative py-28 max-md:py-14" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+    <section data-secao="Selected Work" className="v3-branco relative py-40 max-md:py-20">
       <LinhaSecao
         rotulo="Selected work"
         extra={`[${String(WORK.length).padStart(2, "0")}]`}
@@ -307,8 +326,7 @@ function GloboV3() {
 
   return (
     <section data-secao="Around the World"
-      className="relative overflow-clip py-28 max-md:py-14"
-      style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}
+      className="v3-tinta relative overflow-clip py-40 max-md:py-20"
     >
       <LinhaSecao rotulo="Around the world" />
 
@@ -329,7 +347,7 @@ function GloboV3() {
 
         {/* os dois relógios: o dele e o de quem está lendo */}
         <div className="col-span-4 col-start-9 self-start pt-6 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-10">
-          <div className="grid grid-cols-2 gap-x-6 border-t border-black/12 pt-4" data-foca>
+          <div className="grid grid-cols-2 gap-x-6 border-t border-[color:var(--v3-fio)] pt-4" data-foca>
             <div>
               <p className="v3-micro" style={{ color: "var(--v3-quieto)" }}>
                 His time
@@ -468,7 +486,7 @@ function TileLab({ e, i }: { e: (typeof ENSAIOS)[number]; i: number }) {
 
 function LabV3() {
   return (
-    <section data-secao="AI Lab" className="relative py-28 max-md:py-14" style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}>
+    <section data-secao="AI Lab" className="v3-branco relative py-40 max-md:py-20">
       <LinhaSecao
         rotulo="AI Lab"
         extra={`[${String(ENSAIOS.length).padStart(2, "0")}]`}
@@ -532,8 +550,7 @@ function ServicosV3() {
   return (
     <section data-secao="Services"
       id="services"
-      className="relative py-28 max-md:py-14"
-      style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}
+      className="v3-tinta relative py-40 max-md:py-20"
     >
       <LinhaSecao rotulo="Services" extra={`[0${TIERS.length}]`} />
 
@@ -551,7 +568,7 @@ function ServicosV3() {
               )}`}
               onMouseEnter={() => setAtivo(i)}
               onFocus={() => setAtivo(i)}
-              className="v3-faixa group grid grid-cols-8 gap-6 border-t border-black/12 py-7 max-md:grid-cols-4 max-md:gap-3 max-md:py-6"
+              className="v3-faixa group grid grid-cols-8 gap-6 border-t border-[color:var(--v3-fio)] py-7 max-md:grid-cols-4 max-md:gap-3 max-md:py-6"
               style={{ borderTopColor: ativo === i ? "var(--v3-acento)" : undefined }}
             >
               <span className="v3-micro col-span-1 pt-3" style={{ color: "var(--v3-acento)" }}>
@@ -587,7 +604,7 @@ function ServicosV3() {
               </span>
             </a>
           ))}
-          <div className="border-t border-black/12" />
+          <div className="border-t border-[color:var(--v3-fio)]" />
         </div>
 
         {/* o painel: a peça do serviço percorrido, grande e sticky */}
@@ -631,107 +648,172 @@ function ServicosV3() {
 }
 
 
-/* ── reconhecimento: a única TABELA da página ─────────────────────────────
-   Pedido de 16/08 — "a home ainda é curta, mais respiro, mais coisas pela
-   grandiosidade dele; um projeto dele estava na Abduzeedo". É a seção que diz o
-   que o portfólio não pode dizer sobre si mesmo: que outra gente escolheu
-   mostrar aquele trabalho.
+/* ── reconhecimento: a ANATOMIA do nightjar.co ────────────────────────────
+   Pedido de 17/08 — "vamos copiar o footer e o recognitions daqui". Esta é a
+   quarta forma da seção, e as três anteriores erraram na mesma direção: peça
+   grande demais (cards de meia largura), depois linha com miniatura e fios,
+   sempre sobre fundo de tinta. Cheio, escuro, tabelado.
 
-   Estrutura de REGISTRO, com cabeçalho de coluna — e é a única da página. Hero
-   em tela cheia, about em duas colunas, work em tira, globo no centro, lab em
-   esteira, services em faixa: a régua de nunca repetir a estrutura da vizinha
-   ainda vale, e uma lista de publicações é literalmente uma tabela de
-   ocorrências. Ano à esquerda porque é por ele que se lê uma trajetória.
+   Medido lá (fatias 6 e 7 de `scripts/fatias-wheel.mjs`, 1600×1000):
+
+     "Recognition" em display de 64px, sozinho na coluna da esquerda
+     rótulo mono + parágrafo de 14px na coluna do meio, ~46ch
+     abaixo, UMA COLUNA POR ANO: "2025" em 40px com "(04)" em 20px ao lado
+     item = três linhas de 14px — veículo (cinza, indentado), o que foi, projeto
+     sem fio, sem caixa, sem miniatura, sem fundo. O ar é o que ocupa a tela.
+
+   E o que a referência NÃO faz: mostrar a peça publicada. Ele pediu a peça em
+   16/08 e ela não cabe na linha sem virar o anúncio que já foi reprovado — então
+   a peça vai para o QUADRANTE VAZIO da esquerda, num painel que troca conforme
+   a lista é percorrida. A lista fica limpa como a de lá; a obra aparece grande,
+   que é o que um portfólio deve fazer com ela.
 
    ⚠ Item sem `href` vira RÓTULO, não link morto — ver a régua em
-   `content/reconhecimento.ts`. O World Brand Design fechou atrás de senha e a
-   matéria continua sendo fato; o que não pode é o site prometer um clique que
-   entrega uma tela de login. */
+   `content/reconhecimento.ts`. */
 function ReconhecimentoV3() {
+  const [ativo, setAtivo] = useState(0);
+
+  /* agrupado por ano, do mais recente para o mais antigo — colunas de tamanhos
+     diferentes são o normal aqui (lá 2025 tem 4 itens e 2024 tem 18) */
+  const anos = [...new Set(RECONHECIMENTO.map((r) => r.ano))].sort((a, b) => b - a);
+  const peca = RECONHECIMENTO[ativo];
+
   return (
     <section
       data-secao="Recognition"
-      className="relative py-28 max-md:py-14"
-      style={{ background: "var(--fr-petroleo)", color: "var(--fr-creme)" }}
+      className="v3-papel relative py-40 max-md:py-20"
     >
       <LinhaSecao rotulo="Recognition" extra={`[${String(RECONHECIMENTO.length).padStart(2, "0")}]`} />
 
-      <div style={{ paddingInline: "var(--v3-margem)" }}>
-        {/* ⚠ Terceira forma desta seção, e a régua veio do nightjar: "os cards
-            estão muito grandes". Estavam — a peça em 4:3 ocupando meia largura
-            transformava cada reconhecimento num anúncio, e quatro anúncios
-            seguidos gritam em vez de convencer.
-
-            A diagramação de lá é o oposto: tudo alinhado à esquerda numa coluna
-            estreita, texto pequeno, e a maior parte da tela vazia. Aqui isso
-            vira LINHA com miniatura — a foto continua (ele pediu), mas em
-            88px, do tamanho de um dado e não de um cartaz. O que ocupa a tela
-            passa a ser o ar entre as linhas. */}
-        <div className="max-w-[44vw] pb-24 max-md:max-w-none max-md:pb-12">
+      <div className="grid grid-cols-12 gap-6" style={{ paddingInline: "var(--v3-margem)" }}>
+        <div className="col-span-5 max-lg:col-span-12">
           <Display>Published by people who had no reason to</Display>
         </div>
 
-        <ul data-foca className="grid max-w-[104ch]">
-          {RECONHECIMENTO.map((r, i) => {
-            const miolo = (
-              <>
+        <p className="v3-leitura col-span-5 col-start-7 max-w-[46ch] self-end max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-8">
+          Every feature below was opened and verified. The two behind a paywall
+          today stay as record — not as link.
+        </p>
+
+        {/* o painel da peça: o quadrante que a referência deixa vazio */}
+        <div className="col-span-3 col-start-1 row-start-2 pt-24 max-lg:hidden">
+          <div className="sticky top-28">
+            <span className="relative block overflow-clip">
+              {RECONHECIMENTO.map((r, i) => (
                 <img
+                  key={`${r.veiculo}-${r.projeto}`}
                   src={r.foto.src}
+                  srcSet={r.foto.src2x ? `${r.foto.src} 1400w, ${r.foto.src2x} 2200w` : undefined}
+                  sizes="25vw"
                   alt={r.foto.alt}
                   width={r.foto.w}
                   height={r.foto.h}
-                  loading={i > 1 ? "lazy" : undefined}
+                  loading={i > 0 ? "lazy" : undefined}
                   decoding="async"
                   draggable={false}
-                  className="h-10 w-14 shrink-0 object-cover max-md:h-9 max-md:w-12"
+                  className="aspect-[4/3] w-full object-cover transition-opacity duration-500"
+                  style={{ opacity: ativo === i ? 1 : 0, position: i === 0 ? "relative" : "absolute", inset: i === 0 ? undefined : 0 }}
                 />
-                <span className="min-w-0 flex-1">
-                  {/* logo quando existe arquivo utilizável, wordmark quando
-                      não — ver a auditoria em `content/reconhecimento.ts` */}
-                  {r.logo ? (
-                    <img
-                      src={r.logo.src}
-                      alt={r.veiculo}
-                      width={r.logo.w}
-                      height={r.logo.h}
-                      loading="lazy"
-                      decoding="async"
-                      className="block h-[26px] w-auto opacity-95"
-                      style={{ filter: "invert(1) brightness(1.6) grayscale(1)" }}
-                    />
-                  ) : (
-                    <span className="v3-recon-veiculo block">{r.veiculo}</span>
-                  )}
-                  <span className="v3-leitura mt-1 block truncate" style={{ color: "var(--v3-quieto-tinta)" }}>
-                    {r.titulo}
-                  </span>
-                </span>
-                <span className="v3-micro w-28 shrink-0 text-right max-md:hidden" style={{ color: "var(--v3-quieto-tinta)" }}>
-                  {r.projeto}
-                </span>
-                <span className="v3-micro w-16 shrink-0 text-right tabular-nums" style={{ color: "var(--v3-acento-tinta)" }}>
-                  {r.ano}
-                  {r.href ? <span className="v3-seta pl-2">↳</span> : null}
-                </span>
-              </>
-            );
-            const classe =
-              "v3-recon flex items-center gap-6 border-t py-6 max-md:gap-4 max-md:py-5";
-            const estilo = { borderColor: "rgba(237,230,225,0.18)" };
+              ))}
+            </span>
+            <p className="v3-micro pt-3" style={{ color: "var(--v3-quieto)" }}>
+              {peca.projeto} — {peca.veiculo}
+            </p>
+          </div>
+        </div>
+
+        {/* uma coluna por ano */}
+        <div className="col-span-8 col-start-5 row-start-2 grid grid-cols-2 gap-x-6 gap-y-16 pt-24 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-14 max-md:grid-cols-1" data-foca>
+          {anos.map((ano) => {
+            const doAno = RECONHECIMENTO.filter((r) => r.ano === ano);
             return (
-              <li key={`${r.veiculo}-${r.projeto}`}>
-                {r.href ? (
-                  <a href={r.href} target="_blank" rel="noopener noreferrer" className={`group ${classe}`} style={estilo}>
-                    {miolo}
-                  </a>
-                ) : (
-                  <span className={classe} style={estilo}>{miolo}</span>
-                )}
-              </li>
+              <div key={ano}>
+                <p className="v3-ano">
+                  {ano}
+                  <span className="v3-ano-n">({String(doAno.length).padStart(2, "0")})</span>
+                </p>
+
+                {/* ⚠ 38ch, e não a largura da coluna: com o item ocupando os
+                    630px inteiros, o título de matéria (que às vezes tem doze
+                    palavras) vira uma linha esticada de ponta a ponta e a
+                    coluna deixa de ler como coluna. Lá elas medem ~330px. */}
+                <ul className="grid max-w-[38ch] gap-9 pt-10">
+                  {doAno.map((r) => {
+                    const i = RECONHECIMENTO.indexOf(r);
+                    const miolo = (
+                      <>
+                        {/* ⚠ A peça no TELEFONE. No desktop ela vive no painel
+                            da esquerda e troca no cursor; no telefone não há
+                            cursor, e sem isto a lista ficaria sem uma única
+                            imagem — que é justamente o que ele pediu para não
+                            acontecer em 16/08. Miniatura de 64px: dado, não
+                            cartaz. */}
+                        <img
+                          src={r.foto.src}
+                          alt=""
+                          width={r.foto.w}
+                          height={r.foto.h}
+                          loading="lazy"
+                          decoding="async"
+                          draggable={false}
+                          className="mb-3 hidden h-12 w-16 object-cover max-lg:block"
+                        />
+                        {/* O VEÍCULO: marca quando existe arquivo utilizável,
+                            wordmark quando não — a auditoria de cada logo está
+                            em `content/reconhecimento.ts`. O selo do Behance
+                            entra ao lado, porque ali a curadoria é o fato e a
+                            fita é como ela se apresenta na plataforma. */}
+                        <span className="flex items-center gap-3 pl-6">
+                          {r.selo === "behance-gr" ? (
+                            <i className="v3-selo shrink-0" aria-hidden="true">Gr</i>
+                          ) : null}
+                          {r.logo ? (
+                            <img
+                              src={r.logo.src}
+                              alt={r.veiculo}
+                              width={r.logo.w}
+                              height={r.logo.h}
+                              loading="lazy"
+                              decoding="async"
+                              className="v3-logo-veiculo"
+                              style={r.logo.alturaPx ? { height: r.logo.alturaPx } : undefined}
+                            />
+                          ) : (
+                            <span className="v3-nota block" style={{ color: "var(--v3-quieto)" }}>
+                              {r.veiculo}
+                            </span>
+                          )}
+                        </span>
+                        <span className="v3-nota v3-item-titulo block">
+                          {r.titulo}
+                          {r.href ? <span className="v3-seta pl-2">↳</span> : null}
+                        </span>
+                        <span className="v3-nota block" style={{ color: "var(--v3-quieto)" }}>
+                          {r.projeto}
+                        </span>
+                      </>
+                    );
+                    return (
+                      <li
+                        key={`${r.veiculo}-${r.projeto}`}
+                        onMouseEnter={() => setAtivo(i)}
+                        onFocus={() => setAtivo(i)}
+                      >
+                        {r.href ? (
+                          <a href={r.href} target="_blank" rel="noopener noreferrer" className="v3-item block">
+                            {miolo}
+                          </a>
+                        ) : (
+                          <span className="v3-item block">{miolo}</span>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
             );
           })}
-          <li className="border-t" style={{ borderColor: "rgba(237,230,225,0.18)" }} />
-        </ul>
+        </div>
       </div>
     </section>
   );

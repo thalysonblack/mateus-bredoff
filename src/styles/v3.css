@@ -60,9 +60,55 @@
   /* quieto sobre papel: a Martian em 11px é FINA e o antialiasing come o
      contraste aparente — preto@50% (4,8:1 nominal) lê abaixo disso. Petróleo
      a 72% mede ~7,5:1 de verdade e mantém o papel de estado quieto. */
-  --v3-quieto: rgba(20, 33, 38, 0.72);
+  --v3-quieto: rgba(20, 33, 38, 0.82);
   /* quieto sobre tinta: cinza-petróleo da direção autoral, ~5,9:1 real */
   --v3-quieto-tinta: #8fa0a6;
+
+  /* o FIO do sistema — um token, e não mais `border-black/12` espalhado: as
+     seções agora trocam de superfície e um fio preto sobre a tinta some. */
+  --v3-fio: rgba(20, 33, 38, 0.14);
+  --v3-toque: rgba(20, 33, 38, 0.03);
+  /* a cor do desenho do globo — acompanha a superfície da seção */
+  --v3-globo: #142126;
+}
+
+/* ── SUPERFÍCIES ──────────────────────────────────────────────────────────
+   Pedido de 17/08: "gostaria de mais diferenciação entre section, tá muito
+   apertado, diferenciação contraste também, talvez o fundo".
+
+   Ele estava certo e o diagnóstico é meu: quando o Recognition deixou de ser o
+   único bloco de tinta e virou papel, a home ficou com OITO blocos na mesma
+   superfície — e uma página sem troca de fundo lê como um documento só, por
+   mais ar que tenha entre os títulos. A régua da casa já dizia isso ("os blocos
+   alternam .on-ink e .on-paper de sangria a sangria; o contraste é o ritmo da
+   página") e eu tinha acabado de apagar o ritmo.
+
+   Três superfícies, agrupadas por CAPÍTULO em vez de alternadas uma a uma —
+   zebra de fundo é tão monótona quanto fundo único:
+
+     quem ele é      About · Work            papel  (#f6f6f6, frio)
+     alcance/prova   Around the world · Recognition   creme (#ede6e1, quente)
+     o que ele faz   Lab                     papel
+     a oferta        Services                TINTA  (petróleo)
+     o fecho         rodapé                  papel
+
+   `.v3-tinta` não pinta só o fundo: ele REDEFINE os tokens de estado no
+   escopo da seção (quieto, acento, fio, toque). É por isso que o Services
+   inteiro migrou para o escuro sem uma linha de exceção — todo componente lá
+   dentro já lia essas variáveis. */
+.v3-papel { background: var(--fr-papel); color: var(--fr-petroleo); }
+.v3-branco { background: #ffffff; color: var(--fr-petroleo); }
+.v3-tinta {
+  background: var(--fr-petroleo);
+  color: var(--fr-creme);
+  --v3-quieto: var(--v3-quieto-tinta);
+  --v3-acento: var(--v3-acento-tinta);
+  --v3-fio: rgba(237, 230, 225, 0.20);
+  --v3-toque: rgba(237, 230, 225, 0.05);
+  /* ⚠ o globo NÃO usa o creme cheio sobre a tinta: os relógios ficam por cima
+     dele e ponto claro atrás de texto claro é ruído. O cinza-petróleo mantém o
+     planeta legível e devolve o primeiro plano ao texto. */
+  --v3-globo: #8fa0a6;
 }
 
 /* ── vozes ─────────────────────────────────────────────────────────────── */
@@ -112,6 +158,21 @@
   font-size: var(--v3-mono-rotulo);
   line-height: var(--v3-mono-rotulo-lh);
   text-transform: uppercase;
+}
+
+/* A NOTA — a terceira medida da voz de leitura, e a que faz o rodapé e a lista
+   de reconhecimento respirarem. Medido no nightjar: o corpo dele NÃO é um só —
+   14px para o parágrafo que argumenta e 12px para a nota de rodapé, a linha de
+   crédito, o item de lista. Aqui a `.v3-leitura` cobria os dois papéis, e usar
+   17px numa coluna de rodapé é o que fazia o bloco parecer conteúdo em vez de
+   registro. */
+.v3-nota {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: -0.004em;
+  text-transform: none;
 }
 
 .v3-micro {
@@ -213,7 +274,7 @@
   height: 1px;
   width: 100%;
   margin-top: 12px;
-  background: rgba(20, 33, 38, 0.14);
+  background: var(--v3-fio);
 }
 
 /* O rótulo do visor: o nome da seção enquadrada.
@@ -249,6 +310,42 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .v3-visor { opacity: 1; }
+}
+
+/* ── rodapé: o wordmark que sangra e é cortado ────────────────────────────
+   O fecho do nightjar.co, medido: o nome do estúdio ocupa a largura inteira,
+   sem margem, e a linha de base sai da tela. Aqui o corpo é dado em `vw` (não
+   em `calc` com a razão do glifo — a régua do repo: métrica de fallback estoura
+   a linha no dia em que a webfont falhar) e o corte vem do `margin-bottom`
+   negativo somado ao `overflow-clip` do rodapé.
+
+   O vazio acima é parte da peça, não sobra: lá são ~590px numa tela de 1000. */
+.v3-marca {
+  margin-top: clamp(120px, 42vh, 460px);
+  margin-bottom: -0.155em;
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 700;
+  font-size: 12.2vw;
+  line-height: 0.8;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-align: center;
+  user-select: none;
+}
+@media (max-width: 767px) {
+  /* em retrato o nome inteiro numa linha vira um fio de 34px de altura: duas
+     palavras, duas linhas, e o corte continua valendo na última.
+     ⚠ Sem margem lateral: 22vw com o padding da página fazia "BREDOFF" (a
+     palavra mais longa) sair pela direita, e corte lateral não é o gesto —
+     o wordmark só se corta pela BASE. 21vw encosta nas duas bordas. */
+  .v3-marca {
+    white-space: normal;
+    font-size: 21vw;
+    line-height: 0.86;
+    text-align: left;
+    padding-inline: 0;
+  }
 }
 
 /* ── carrossel de cases ──────────────────────────────────────────────────
@@ -417,7 +514,7 @@ button:hover .v3-prox { transform: translateX(3px); }
    em JS, porque depende de qual está ativa) e a seta avança — o mesmo
    vocabulário de "↳ que avança" do resto do sistema, sem inventar um botão. */
 .v3-faixa { transition: background 0.25s ease-out; }
-.v3-faixa:hover { background: rgba(20, 33, 38, 0.03); }
+.v3-faixa:hover { background: var(--v3-toque); }
 .v3-seta-cta {
   color: var(--v3-acento);
   opacity: 0;
@@ -546,56 +643,79 @@ button:hover .v3-prox { transform: translateX(3px); }
   .v3-hero-foto { animation: none; will-change: auto; }
 }
 
-/* O nome do veículo, agora SOBRE a peça publicada. Corpo de display: quem
-   publicou é o argumento da seção, e argumento não se sussurra em 12px. Cai
-   sobre um véu porque as artes vão de preto a papel claro — sem ele o wordmark
-   sumiria justamente nas peças mais claras. */
-/* o veículo na LINHA compacta — corpo de leitura, peso leve, caixa mista:
-   o suficiente para ancorar a linha sem virar manchete */
-.v3-recon-veiculo {
+/* ── reconhecimento: o ano como cabeça de coluna ──────────────────────────
+   Medido no nightjar: ano em 40px/50 peso 400 e a contagem em 20px, entre
+   parênteses, alinhada ao ALTO do numeral — não é um subtítulo, é o expoente
+   do ano. As três classes abaixo substituíram `.v3-recon*` e `.v3-registro`,
+   que morreram com a tabela sobre fundo de tinta. */
+.v3-ano {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
   font-family: 'Geist', ui-sans-serif, sans-serif;
   font-weight: 400;
-  font-size: clamp(17px, 1.35vw, 21px);
-  line-height: 1.1;
-  letter-spacing: -0.012em;
-  color: var(--fr-creme);
-}
-
-.v3-veiculo {
-  font-family: 'Geist', ui-sans-serif, sans-serif;
-  font-weight: 400;
-  font-size: clamp(24px, 2.6vw, 42px);
+  font-size: clamp(30px, 2.6vw, 42px);
   line-height: 1;
   letter-spacing: -0.016em;
-  color: var(--fr-creme);
+  font-variant-numeric: tabular-nums;
+}
+.v3-ano-n {
+  font-size: 0.5em;
+  line-height: 1.2;
+  color: var(--v3-quieto);
 }
 
-/* O card inteiro reage quando LEVA a algum lugar. Item sem `href` (matéria
-   fechada atrás de senha) fica inerte de propósito: prometer hover e não
-   entregar clique é o mesmo defeito do link que mente. */
-.v3-recon { transition: padding-left 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
-a.v3-recon:hover { padding-left: 10px; }
-.v3-recon img { transition: opacity 0.3s ease-out; }
-a.v3-recon:hover img { opacity: 0.82; }
-a.v3-recon .v3-seta { display: inline-block; transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
-a.v3-recon:hover .v3-seta { transform: translateX(4px); }
-@media (prefers-reduced-motion: reduce) {
-  .v3-recon img, a.v3-recon .v3-seta { transition: none; }
+/* O veículo como MARCA. Altura fixa e largura automática: logos vêm em
+   proporções diferentes e alinhar pela altura é o que faz cinco marcas
+   diferentes lerem como uma coluna. 75% de opacidade porque marca de terceiro
+   é crédito, não manchete — e no hover ela acende. */
+.v3-logo-veiculo {
+  display: block;
+  height: 22px;
+  width: auto;
+  max-width: 190px;
+  object-fit: contain;
+  object-position: left center;
+  opacity: 0.72;
+  transition: opacity 0.2s ease-out;
+}
+a.v3-item:hover .v3-logo-veiculo { opacity: 1; }
+
+/* ⭐ O SELO "Gr" DO BEHANCE, desenhado — não baixado.
+   A fita que o Behance põe no perfil de quem foi curado numa galeria de
+   Graphic Design. Medido no pixel do perfil dele: dourado #AD9058, razão
+   largura/altura ~0,6, entalhe em V na base, "Gr" branco em peso alto.
+   `clip-path` faz o entalhe; a tipografia é a do site, então ele escala sem
+   raster e sem trazer webfont de terceiro. */
+.v3-selo {
+  display: grid;
+  place-items: start center;
+  width: 20px;
+  height: 31px;
+  padding-top: 5px;
+  /* ⚠ o dourado do Behance é #AD9058 e o branco em cima dele mede 2,6:1 — o
+     selo original REPROVA em contraste. Escurecido para #8c7137, o mesmo
+     dourado com −18% de luminância: continua lendo como a fita deles e o "Gr"
+     passa. Fidelidade a marca de terceiro não vale texto ilegível. */
+  background: #8c7137;
+  color: #fff;
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
 }
 
-/* A linha inteira responde ao cursor quando LEVA a algum lugar. O `:where` mantém
-   a especificidade baixa, e o seletor só pega a variante `<a>` — a linha que é
-   `<span>` (matéria fechada atrás de senha) fica inerte de propósito, porque
-   prometer hover e não entregar clique é o mesmo defeito do link que mente. */
-.v3-registro { transition: background 0.25s ease-out, padding-left 0.25s ease-out; }
-a.v3-registro:hover {
-  background: rgba(237, 230, 225, 0.05);
-  padding-left: 10px;
-}
-a.v3-registro .v3-seta { transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); display: inline-block; }
-a.v3-registro:hover .v3-seta { transform: translateX(4px); }
+/* Item da lista. Sem fio, sem fundo, sem deslocamento: o que responde ao
+   cursor é o TÍTULO (sublinha) e a peça no painel (troca). Item sem `href`
+   fica inerte de propósito — matéria fechada atrás de senha é fato, não link. */
+.v3-item-titulo { transition: opacity 0.2s ease-out; }
+a.v3-item:hover .v3-item-titulo { text-decoration: underline; text-underline-offset: 4px; }
+a.v3-item .v3-seta { display: inline-block; transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+a.v3-item:hover .v3-seta { transform: translateX(4px); }
 @media (prefers-reduced-motion: reduce) {
-  .v3-registro, a.v3-registro .v3-seta { transition: none; }
+  a.v3-item .v3-seta { transition: none; }
 }
 
 /* Peça do enxame de Selected Work (ver `sections/WorkEnxame.tsx`).

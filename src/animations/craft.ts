@@ -172,8 +172,14 @@ export function ligarCraft(raiz: HTMLElement | Document = document): CraftHandle
       /* ⚠ A capa não se nomeia. Na primeira tela o visor escrevia "INDEX"
          bem no meio do nome que sangra pela base — duas tipografias disputando
          o mesmo eixo. E o argumento não é só de colisão: o visor existe para
-         dizer o que está enquadrado, e na capa o enquadramento JÁ É o nome. */
-      const nome = sec.dataset.secao === "Index" ? "" : sec.dataset.secao || "";
+         dizer o que está enquadrado, e na capa o enquadramento JÁ É o nome.
+
+         O RODAPÉ entrou na mesma exceção em 17/08, pelo mesmo motivo literal:
+         desde que ele ganhou a anatomia do nightjar, o fecho da página também é
+         o nome sangrando pela base, e "CONTACT" caía em cima do "S" de MATEUS.
+         Onde o nome ocupa a base, o visor cala. */
+      const capa = sec.dataset.secao === "Index" || sec.dataset.secao === "Contact";
+      const nome = capa ? "" : sec.dataset.secao || "";
       const st = ScrollTrigger.create({
         trigger: sec,
         start: "top center",

@@ -164,119 +164,106 @@ export function LinhaSecao({
   );
 }
 
-/* ── rodapé em caixa, rótulos em [colchetes], só link real ──────────────── */
+/* ── rodapé: a ANATOMIA do nightjar.co ───────────────────────────────────
+   Pedido de 17/08 — "vamos copiar o footer e o recognitions daqui". O rodapé
+   anterior era uma CAIXA de 12 colunas com moldura de 1px, quatro títulos em
+   [colchetes] e um mapa do site inteiro repetido embaixo dele (Home, Work,
+   About, Lab, Services + quatro cases + all work). Ou seja: o lugar onde a
+   página termina era o lugar mais cheio dela.
+
+   Medido lá (1600×1000, fatia 14 de `scripts/fatias-wheel.mjs`):
+
+     fio hairline no topo, e nada mais de moldura
+     quatro colunas iguais, x = 16 · 412 · 808 · 1204, texto de 12px
+     col 1  o que o estúdio é, em três linhas + "Get In Touch"
+     col 2  o relógio da cidade, em mono de 10px
+     col 3  os canais, um por linha (entrelinha de 20,5px)
+     col 4  uma nota institucional
+     ~590px de VAZIO
+     o wordmark sangrando de borda a borda, cortado pela base da tela
+
+   Duas decisões de tradução, e as duas são de conteúdo, não de forma:
+   - **A lista de páginas sai.** A nav deste site é fixa e vive em blend no
+     topo de todas as rotas — repetir as mesmas cinco rotas no rodapé é eco.
+   - **A barra viva de ontem não morre, ela vira coluna.** O relógio ocupa a
+     col 2 (o mesmo lugar do `SYD 07:01:24` de lá) e o reconhecimento mais
+     recente fica logo abaixo dele, no mesmo corpo de mono. */
 export function RodapeV3() {
   return (
     <footer
       id="contact"
-      className="py-10 max-md:py-6"
-      style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)", paddingInline: "var(--v3-margem)" }}
+      data-secao="Contact"
+      className="relative overflow-clip pt-8"
+      style={{ background: "var(--fr-papel)", color: "var(--fr-petroleo)" }}
     >
-      <div className="grid grid-cols-12 gap-6 border border-black/20 p-8 max-md:p-5">
-        <div className="col-span-4 flex flex-col justify-between border-r border-black/20 pr-8 max-lg:col-span-12 max-lg:border-r-0 max-lg:pr-0">
-          <p
-            className="uppercase"
-            style={{
-              fontFamily: "'Geist', ui-sans-serif, sans-serif",
-              fontWeight: 700,
-              fontSize: "clamp(24px, 2.2vw, 36px)",
-              letterSpacing: "-0.02em",
-              lineHeight: 1,
-            }}
-          >
-            Mateus Bredoff
+      <div
+        className="grid grid-cols-12 gap-6 border-t pt-7 max-md:gap-y-8"
+        style={{ paddingInline: "var(--v3-margem)", borderColor: "rgba(20,33,38,0.14)" }}
+      >
+        <div className="col-span-3 max-lg:col-span-6 max-md:col-span-12">
+          <p className="v3-nota max-w-[30ch]">
+            Brand designer and art director. Visual identities for companies that
+            want a clear, relevant and memorable presence.
           </p>
-          <p className="v3-rotulo pt-10" style={{ color: "var(--v3-quieto)" }}>
-            Brand Designer © 2026
-          </p>
+          <a href="mailto:hello@mateusbredoff.com" className="v3-nota mt-6 inline-block hover:underline">
+            Get in touch <span className="v3-seta">↳</span>
+          </a>
         </div>
 
-        {/* quatro colunas de rótulo em colchete — a anatomia do rodapé da
-            referência ([experience]/[company]/[support]/[contact]/[follow]) */}
-        <nav className="col-span-2 col-start-5 max-lg:col-span-6 max-lg:col-start-1 max-lg:pt-8">
-          <p className="v3-rotulo" style={{ color: "var(--v3-quieto)" }}>
-            [Pages]
-          </p>
-          <ul className="v3-rotulo grid gap-2 pt-5">
-            <li><Link to="/" className="hover:underline">Home</Link></li>
-            <li><Link to="/work" className="hover:underline">Work</Link></li>
-            <li><Link to="/about" className="hover:underline">About</Link></li>
-            <li><Link to="/lab" className="hover:underline">Lab</Link></li>
-            <li><Link to="/v3#services" className="hover:underline">Services</Link></li>
-          </ul>
-        </nav>
-
-        <nav className="col-span-2 col-start-7 max-lg:col-span-6 max-lg:pt-8">
-          <p className="v3-rotulo" style={{ color: "var(--v3-quieto)" }}>
-            [Work]
-          </p>
-          <ul className="v3-rotulo grid gap-2 pt-5">
-            {WORK.slice(0, 4).map((w) => (
-              <li key={w.slug}>
-                <Link to={`/work/${w.slug}`} className="hover:underline">
-                  {w.title}
-                </Link>
-              </li>
-            ))}
-            <li>
-              <Link to="/work" className="hover:underline" style={{ color: "var(--v3-quieto)" }}>
-                All work ↳
-              </Link>
-            </li>
-          </ul>
-        </nav>
-
-        <div className="col-span-2 col-start-9 max-lg:col-span-6 max-lg:pt-8">
-          <p className="v3-rotulo" style={{ color: "var(--v3-quieto)" }}>
-            [Contact]
-          </p>
-          <ul className="v3-rotulo grid gap-2 pt-5">
-            <li>
-              <a href="mailto:hello@mateusbredoff.com" className="hover:underline">
-                <span className="v3-seta">↳</span> hello@mateusbredoff.com
-              </a>
-            </li>
-          </ul>
+        <div className="col-span-3 max-lg:col-span-6 max-md:col-span-12">
+          <Relogio />
         </div>
 
-        <div className="col-span-2 col-start-11 max-lg:col-span-6 max-lg:pt-8">
-          <p className="v3-rotulo" style={{ color: "var(--v3-quieto)" }}>
-            [Follow]
-          </p>
-          <ul className="v3-rotulo grid gap-2 pt-5">
+        <nav className="col-span-3 max-lg:col-span-6 max-md:col-span-12">
+          <ul className="v3-nota grid gap-[6px]">
+            {/* o e-mail já é o "Get in touch" da coluna 1 — repetir aqui era o
+                mesmo endereço duas vezes no mesmo bloco */}
             {CONTATO.filter((c) => c.label !== "Email").map((c) => (
               <li key={c.label}>
                 {c.href ? (
-                  <a href={c.href} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                    <span className="v3-seta">↳</span> {c.label}
+                  <a
+                    href={c.href}
+                    target={c.href.startsWith("mailto:") ? undefined : "_blank"}
+                    rel="noopener noreferrer"
+                    className="hover:underline"
+                  >
+                    {c.label}
                   </a>
                 ) : (
+                  /* link que não leva a lugar nenhum vira texto — a régua do
+                     projeto para o X.com, que não tem destino no material */
                   <span style={{ color: "var(--v3-quieto)" }}>{c.label}</span>
                 )}
               </li>
             ))}
           </ul>
-        </div>
+        </nav>
+
+        <p className="v3-nota col-span-3 max-w-[34ch] max-lg:col-span-6 max-md:col-span-12">
+          Every project runs remotely, across time zones. The distance never
+          reaches the work.
+        </p>
       </div>
 
-      {/* ── a BARRA VIVA da base ────────────────────────────────────────────
-          Gesto tirado do nightjar.co, que ele apontou: o rodapé de lá não é um
-          mapa do site, é uma barra com o relógio da cidade (`SYD 05:54:25`) e a
-          última conquista rolando (`ALNF WINS GOLD AT GOOD DESIGN AWARDS
-          2025`). O rodapé vira o lugar onde o estúdio está VIVO, não onde o
-          site se repete.
+      {/* ⚠ O NOME SANGRA E É CORTADO PELA BASE — é assim que ele fecha lá, e o
+          corte é metade do gesto: o wordmark não "cabe" no rodapé, ele
+          atravessa a borda inferior da página.
 
-          A caixa de quatro colunas acima continua — ela é navegação real e o
-          sistema é de visor, não de página em branco. O que entra é a linha
-          embaixo, com os dois fatos que este site já apura: a hora dele e o
-          reconhecimento mais recente, lido de `content/reconhecimento.ts`. Fato
-          que já existe na página, num lugar onde ninguém precisa procurar. */}
-      <BarraViva />
+          `12.6vw` para quatorze caracteres é a conta que enche a largura sem
+          `calc` afinado no glifo — a régua deste repo diz que largura/corpo
+          embutida estoura no dia em que a webfont não carrega. O
+          `margin-bottom` negativo é o corte; o `overflow-clip` do `<footer>` é
+          quem executa. */}
+      <p className="v3-marca" aria-hidden="true">Mateus Bredoff</p>
+      {/* o mesmo texto, legível para leitor de tela e para busca, fora da tela */}
+      <span className="sr-only">Mateus Bredoff — Brand Designer, © 2026</span>
     </footer>
   );
 }
 
-function BarraViva() {
+/** O relógio dele + o reconhecimento mais recente. Os dois fatos que este site
+ *  apura sozinho, no corpo de metadado. */
+function Relogio() {
   const [hora, setHora] = useState("--:--:--");
   useEffect(() => {
     const f = new Intl.DateTimeFormat("en-GB", {
@@ -289,23 +276,20 @@ function BarraViva() {
     return () => clearInterval(id);
   }, []);
 
-  /* o mais recente da lista — se um reconhecimento novo entrar, aparece aqui
-     sem ninguém editar duas coisas */
+  /* o mais recente da lista — reconhecimento novo aparece aqui sem ninguém
+     editar duas coisas */
   const ultimo = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano)[0];
 
   return (
-    <div
-      className="mt-8 flex items-center justify-between gap-6 border-t border-black/12 pt-5 max-md:flex-col max-md:items-start max-md:gap-2"
-    >
-      <span className="v3-micro tabular-nums" style={{ color: "var(--v3-quieto)" }}>
+    <>
+      <p className="v3-micro tabular-nums" style={{ color: "var(--v3-quieto)" }}>
         BRA {hora}
-      </span>
+      </p>
       {ultimo ? (
-        <span className="v3-micro text-right max-md:text-left" style={{ color: "var(--v3-quieto)" }}>
-          <span style={{ color: "var(--v3-acento)" }}>■</span>{" "}
+        <p className="v3-micro mt-4 max-w-[26ch]" style={{ color: "var(--v3-quieto)" }}>
           {ultimo.projeto} featured on {ultimo.veiculo} — {ultimo.ano}
-        </span>
+        </p>
       ) : null}
-    </div>
+    </>
   );
 }

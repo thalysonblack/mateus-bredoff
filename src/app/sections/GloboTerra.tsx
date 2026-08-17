@@ -94,9 +94,14 @@ export default function GloboTerra({ className = "" }: { className?: string }) {
     const ro = new ResizeObserver(medir);
     ro.observe(cv);
 
-    /* o petróleo e o acento vêm dos tokens: seção nova não inventa cor */
-    const css = getComputedStyle(document.documentElement);
-    const tinta = css.getPropertyValue("--fr-petroleo").trim() || "#142126";
+    /* ⚠ Os tokens são lidos do PRÓPRIO canvas, não do `:root`.
+       Desde que as seções passaram a trocar de superfície (17/08), esta vive
+       sobre a TINTA — e lendo do `:root` o globo continuava sendo desenhado em
+       petróleo sobre petróleo, ou seja, invisível. `getComputedStyle(cv)`
+       enxerga o que a seção redefiniu (`.v3-tinta` troca `--v3-globo` e
+       `--v3-acento`), então o desenho acompanha o fundo sem uma prop nova. */
+    const css = getComputedStyle(cv);
+    const tinta = css.getPropertyValue("--v3-globo").trim() || "#142126";
     const acento = css.getPropertyValue("--v3-acento").trim() || "#a53a0b";
 
     const desenhar = () => {
