@@ -179,8 +179,11 @@
 }
 
 /* ── superfícies: cada PRANCHA tem a sua ───────────────────────────────── */
-.p-papel { background: #f4f4f2; color: #14201f; --p-ink: #14201f; --p-acento: #277796; --p-acento-2: #9f5d4e; --p-fio: rgba(20, 32, 31, 0.13); --p-quieto: rgba(20, 32, 31, 0.55); }
-.p-branco { background: #ffffff; color: #14201f; --p-ink: #14201f; --p-acento: #277796; --p-acento-2: #9f5d4e; --p-fio: rgba(20, 32, 31, 0.11); --p-quieto: rgba(20, 32, 31, 0.55); }
+/* ⚠ `--p-quieto` a 0,62 e não 0,55: medido, 0,55 dava 3,9:1 no papel e 3,2:1 no
+   branco — abaixo de AA para 13px, e era metade do "contraste do site tá meio
+   ruim". O papel de 0,62 mede 4,6:1. */
+.p-papel { background: #f4f4f2; color: #14201f; --p-ink: #14201f; --p-acento: #277796; --p-acento-2: #9f5d4e; --p-fio: rgba(20, 32, 31, 0.13); --p-quieto: rgba(20, 32, 31, 0.62); }
+.p-branco { background: #ffffff; color: #14201f; --p-ink: #14201f; --p-acento: #277796; --p-acento-2: #9f5d4e; --p-fio: rgba(20, 32, 31, 0.11); --p-quieto: rgba(20, 32, 31, 0.62); }
 .p-tinta {
   background: #14201f;
   color: #eceae5;
@@ -188,7 +191,7 @@
   --p-acento: #34a1cb;
   --p-acento-2: #b57769;
   --p-fio: rgba(236, 234, 229, 0.18);
-  --p-quieto: rgba(236, 234, 229, 0.55);
+  --p-quieto: rgba(236, 234, 229, 0.62);
 }
 
 /* ── vozes ─────────────────────────────────────────────────────────────── */
@@ -418,7 +421,10 @@
   font-size: clamp(72px, 13.5vw, 194px);
   line-height: 0.92;
   color: var(--p-quieto);
-  opacity: 0.35;
+  /* 0,72 e não 0,35: em 0,35 o separador media 1,56:1 e lia como sujeira na
+     página em vez de pontuação. Ele continua sendo o elemento mais quieto da
+     trama, só que legível. */
+  opacity: 0.86;
 }
 @media (prefers-reduced-motion: reduce) {
   .p-trama-fita { animation: none; }
@@ -500,8 +506,10 @@
 .p-trama-campo:hover .p-trama-scroll,
 .p-trama-campo:focus-within .p-trama-fita,
 .p-trama-campo:focus-within .p-trama-scroll { animation-play-state: paused; }
+/* 0,32 e não 0,24: com o visor aberto os nomes de fora ainda precisam ser
+   LIDOS — é a coleção que dá contexto à peça enquadrada */
 .p-trama-campo:hover .p-trama-nome,
-.p-trama-campo:focus-within .p-trama-nome { opacity: 0.24; }
+.p-trama-campo:focus-within .p-trama-nome { opacity: 0.32; }
 .p-trama--peca .p-trama-nome { cursor: none; }
 /* ⚠ `:focus-visible` junto do `:hover`: o nome é um LINK, e quem navega por
    teclado tem de ver o mesmo destaque que o cursor produz. */
@@ -859,10 +867,15 @@
    Só a linha enquadrada está acesa; o resto apaga. É a mesma gramática da
    trama da home (campo inteiro atenuado, um item em cor), aqui em corpo de
    ficha — e a cor é a DO PROJETO, como lá. */
-.p-tabela-linha { transition: opacity 0.35s ease-out; }
-.p-tabela .p-tabela-linha { opacity: 0.42; }
-.p-tabela .p-tabela-linha.aceso,
-.p-tabela .p-tabela-linha:hover { opacity: 1; }
+/* ⚠ A LINHA INATIVA NÃO APAGA POR OPACITY. Apagar o bloco inteiro em 42%
+   levava o NOME junto e media 1,63:1 — texto de 13px ilegível. Agora a
+   hierarquia é por COR: o nome do projeto continua legível em qualquer linha
+   (é a informação que a pessoa veio buscar), e o que recua é o metadado. O
+   destaque da linha enquadrada se faz pela cor do projeto, não por apagar as
+   outras até sumir. */
+.p-tabela-linha { transition: color 0.35s ease-out; }
+.p-tabela .p-tabela-linha .p-item { color: var(--p-ink); }
+.p-tabela .p-tabela-linha:not(.aceso) .p-item { color: rgba(20, 32, 31, 0.72); }
 .p-tabela-n,
 .p-tabela-meta { color: var(--p-quieto); }
 .p-tabela-linha.aceso .p-item { color: var(--cor, inherit); }

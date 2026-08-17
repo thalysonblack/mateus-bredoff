@@ -177,7 +177,14 @@ export default function TransicaoRota() {
       const lado = el.dataset.lado === "1" ? -1 : 1;
       el.dataset.lado = String(lado);
 
-      gsap.set(folha, { xPercent: -100 * lado });
+      /* ⚠⚠ `x: 0` JUNTO com o xPercent, e isto não é redundância. O CSS declara
+         o repouso como `translate3d(-101%, 0, 0)` (senão a folha nasce cobrindo
+         a página e o site abre em branco). O GSAP LÊ esse transform e guarda os
+         −1697px como `x`, passando a somar o `xPercent` por cima: a folha
+         "coberta" ficava em −1697 (nunca cobria) e o repouso final em −17
+         (quase cobrindo). Zerando o `x` aqui, o percentual volta a ser a única
+         coordenada — o CSS protege o primeiro paint, o GSAP manda depois. */
+      gsap.set(folha, { x: 0, xPercent: -100 * lado });
       gsap.set(ficha, { autoAlpha: 0, x: 12 * lado });
 
       const tl = gsap.timeline();

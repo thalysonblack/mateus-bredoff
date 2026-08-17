@@ -165,7 +165,7 @@ export function Prancha({
         >
           <span className="col-span-4">Brazil</span>
           <span className="col-span-4 col-start-6">
-            {hora} <span style={{ opacity: 0.6 }}>(UTC−3)</span>
+            {hora} <span>(UTC−3)</span>
           </span>
           <span className="col-span-3 col-start-10 text-right">
             {n} / {nome.toUpperCase()}

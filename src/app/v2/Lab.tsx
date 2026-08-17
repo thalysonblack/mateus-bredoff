@@ -65,7 +65,7 @@ export default function LabV2() {
 
                   <span className="p-marca col-span-3 self-start pt-3 text-right max-md:col-span-12 max-md:pt-2 max-md:text-left">
                     {e.discipline}
-                    <span className="block pt-1" style={{ opacity: 0.7 }}>
+                    <span className="block pt-1" style={{ opacity: 0.88 }}>
                       {e.medium}
                     </span>
                   </span>
