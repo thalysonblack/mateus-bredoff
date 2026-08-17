@@ -2,6 +2,7 @@ import retrato from "../../assets/optimized/hero-portrait-1600.webp";
 import retrato2x from "../../assets/optimized/hero-portrait-3200.webp";
 import { TIERS } from "../sections/Pricing";
 import { useMetaRota } from "../../hooks/useMetaRota";
+import { useRevelar } from "./useRevelar";
 import { Prancha, Bloco } from "./sistema";
 import { CONTATO } from "../v3-system";
 
@@ -79,6 +80,14 @@ const FERRAMENTAS = [
 
 export default function AboutV2() {
   useMetaRota();
+  /* ⚠ UM OBSERVER POR FOLHA, não um para a página: com as seções sobrepostas,
+     a folha que chega precisa revelar o SEU conteúdo no momento em que cobre a
+     anterior. Um gatilho único revelaria tudo na primeira rolagem, e as folhas
+     de baixo chegariam já prontas — o gesto some. */
+  const folhaFicha = useRevelar<HTMLElement>();
+  const folhaNumeros = useRevelar<HTMLElement>();
+  const folhaServicos = useRevelar<HTMLElement>();
+  const folhaMetodo = useRevelar<HTMLElement>();
 
   return (
     <Prancha n="03" nome="About" superficie="papel" status="Available for projects">
@@ -139,20 +148,20 @@ export default function AboutV2() {
           Approach, Tools e Contact lado a lado: empilhados numa coluna só eles
           viravam uma tira estreita de 400px de altura, com o resto da página
           vazio ao lado. */}
-      <section className="p-folha-sec p-papel grid grid-cols-12 pt-10" style={{ columnGap: "var(--p-gap-x)" }}>
-        <div className="col-span-5 pt-8 max-lg:col-span-12">
+      <section ref={folhaFicha} className="p-folha-sec p-papel grid grid-cols-12 pt-10" style={{ columnGap: "var(--p-gap-x)" }}>
+        <div className="p-sobe col-span-5 pt-8 max-lg:col-span-12">
           <Bloco rotulo="Approach">
             <p className="p-corpo max-w-[52ch]">{LEAD[1]}</p>
           </Bloco>
         </div>
-        <div className="col-span-3 col-start-7 pt-8 max-lg:col-span-6 max-lg:col-start-1">
+        <div className="p-sobe col-span-3 col-start-7 pt-8 max-lg:col-span-6 max-lg:col-start-1">
           <Bloco rotulo="Tools">
             <p className="p-corpo" style={{ color: "var(--p-quieto)" }}>
               {FERRAMENTAS.join(", ")}
             </p>
           </Bloco>
         </div>
-        <div className="col-span-3 col-start-10 pt-8 max-lg:col-span-6 max-lg:col-start-7">
+        <div className="p-sobe col-span-3 col-start-10 pt-8 max-lg:col-span-6 max-lg:col-start-7">
           <Bloco rotulo="Contact & inquiries">
             <ul className="grid gap-[6px]">
               {CONTATO.map((c) => (
@@ -180,9 +189,9 @@ export default function AboutV2() {
           Os quatro números numa linha só, com fio: é a tabela de registros do
           sistema, não quatro manchetes. Dado se lê comparando — em coluna, cada
           um vira um cartaz isolado e a comparação se perde. */}
-      <section className="p-folha-sec p-branco grid grid-cols-4 max-md:grid-cols-2" style={{ columnGap: "var(--p-gap-x)" }}>
+      <section ref={folhaNumeros} className="p-folha-sec p-branco grid grid-cols-4 max-md:grid-cols-2" style={{ columnGap: "var(--p-gap-x)" }}>
         {NUMEROS.map((n) => (
-          <div key={n.rotulo} className="pt-4">
+          <div key={n.rotulo} className="p-sobe pt-4">
             <p className="p-numero">{n.valor}</p>
             <p className="p-marca pt-1" style={{ color: "var(--p-quieto)" }}>
               {n.rotulo}
@@ -204,12 +213,15 @@ export default function AboutV2() {
           ⚠ Só o Essential tem preço — é o que ele publica no Behance (US$
           2.500). Os outros dois seguem "On request" porque preço é fato do
           cliente e não se inventa. */}
-      <section className="p-folha-sec p-tinta p-servicos">
+      <section ref={folhaServicos} className="p-folha-sec p-tinta p-servicos">
         <div style={{ paddingInline: "var(--p-margem)" }}>
-          <p className="p-rotulo pb-10">Services — {String(TIERS.length).padStart(2, "0")}</p>
+          <p className="p-secao-indice p-sobe">
+            <span>03</span>
+            <span className="p-rotulo">Services — {String(TIERS.length).padStart(2, "0")}</span>
+          </p>
           <ul>
             {TIERS.map((t, i) => (
-              <li key={t.name} className="p-fio p-servico">
+              <li key={t.name} className="p-fio p-servico p-sobe">
                 <div className="p-servico-linha">
                   <span className="p-marca p-servico-n">{String(i + 1).padStart(2, "0")}</span>
                   <span className="p-servico-nome">{t.name}</span>
@@ -240,15 +252,18 @@ export default function AboutV2() {
           As cinco etapas na anatomia da tabela da /work: índice, título, corpo.
           É a mesma régua aplicada a outro conteúdo, que é o que faz um sistema
           em vez de uma coleção de páginas. */}
-      <section className="p-folha-sec p-papel grid grid-cols-12 pb-8" style={{ columnGap: "var(--p-gap-x)" }}>
-        <p className="p-rotulo col-span-12 pb-4">Method — {String(PROCESSO.length).padStart(2, "0")}</p>
+      <section ref={folhaMetodo} className="p-folha-sec p-papel grid grid-cols-12 pb-8" style={{ columnGap: "var(--p-gap-x)" }}>
+        <p className="p-secao-indice p-sobe col-span-12">
+          <span>04</span>
+          <span className="p-rotulo">Method — {String(PROCESSO.length).padStart(2, "0")}</span>
+        </p>
         <p className="p-corpo col-span-5 max-w-[46ch] pb-10 max-lg:col-span-12">{PROCESSO_MANCHETE}</p>
 
         <ul className="col-span-12">
           {PROCESSO.map((e, i) => (
             <li
               key={e.titulo}
-              className="p-fio grid items-baseline py-5 max-md:grid-cols-1"
+              className="p-fio p-sobe grid items-baseline py-5 max-md:grid-cols-1"
               style={{ gridTemplateColumns: ".4fr 1.2fr 2.4fr", columnGap: "var(--p-gap-x)" }}
             >
               <span className="p-marca" style={{ color: "var(--p-quieto)" }}>

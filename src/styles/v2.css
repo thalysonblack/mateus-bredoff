@@ -608,6 +608,12 @@
 }
 
 /* o reveal: a linha nasce sob uma máscara e sobe para dentro dela */
+/* ⚠ `.p-sobe` traz `display: block` (nasceu para `<span>`), e isso ATROPELA o
+   layout de quem já é grid: a tabela do método virou uma pilha de linhas
+   coladas no instante em que ganhou reveal. Quando a classe encontra um grid,
+   o display do grid manda. */
+.p-sobe.grid { display: grid; }
+.p-sobe.flex { display: flex; }
 .p-sobe {
   display: block;
   opacity: 0;
@@ -1005,6 +1011,10 @@
   margin-inline: calc(var(--p-margem) * -1);
   padding-inline: var(--p-margem);
   border-top: 1px solid var(--p-fio);
+  /* ⚠ RESPIRO NA BASE DE CADA FOLHA. Sem ele o conteúdo da folha encosta na
+     aresta da folha seguinte e as duas leem como um bloco só — o corte precisa
+     acontecer no VAZIO para o olho registrar a camada. */
+  padding-bottom: 84px;
 }
 /* a primeira folha não tem emenda acima dela */
 .p-folha-sec:first-of-type { border-top: 0; }
@@ -1025,6 +1035,7 @@
   column-gap: var(--p-gap-x);
   align-items: start;
   padding-top: 22px;
+  padding-bottom: 56px;
 }
 .p-retrato {
   margin: 0 0 0 calc(var(--p-margem) * -1);
@@ -1070,7 +1081,27 @@
    miúdo embaixo. Preço é o que a pessoa veio buscar; em corpo de rodapé, ele
    dizia que não importava. */
 .p-servicos {
-  padding-block: 72px;
+  /* respiro de folha: o bloco em tinta precisa de ar em cima e embaixo, senão
+     a troca de superfície lê como faixa e não como camada */
+  padding-block: 96px 104px;
+}
+
+/* ⭐ O ÍNDICE DE SEÇÃO, no vernáculo do Obys: o numeral grande ao lado do
+   rótulo miúdo. É o que dá ESCALA ao começo de cada folha — "make it big, make
+   it bold" (o outro salvo dele, sobre o slider da Blink). */
+.p-secao-indice {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding-bottom: 40px;
+}
+.p-secao-indice > :first-child {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: clamp(30px, 3.2vw, 50px);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--p-quieto);
 }
 .p-servico {
   padding-block: 26px;
