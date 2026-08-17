@@ -1,3 +1,5 @@
+import { WORK } from "../../content/work";
+import { corDe } from "../../content/cores";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha, Bloco } from "./sistema";
 import { CONTATO } from "../v3-system";
@@ -76,109 +78,112 @@ const FERRAMENTAS = [
 
 export default function AboutV2() {
   useMetaRota();
+  /* a faixa das marcas: duas cópias fecham o loop do keyframe base (−50%) */
+  const fita = [...WORK, ...WORK];
 
   return (
     <Prancha n="03" nome="About" superficie="papel" status="Available for projects">
-      <div className="relative grid grid-cols-12 gap-x-6 gap-y-16 pt-16 max-md:pt-10">
-        {/* ─ os números como espécimes ──────────────────────────────────
-            Quatro linhas na mesma anatomia da folha de trabalhos: o dado no
-            corpo grande, o rótulo miúdo ao lado. É a régua da casa aplicada a
-            outro conteúdo — e é isso que faz um sistema, em vez de uma coleção
-            de efeitos. */}
-        <ul className="col-span-6 self-end max-lg:col-span-12">
-          {NUMEROS.map((n, i) => (
-            <li
-              key={n.rotulo}
-              className="p-especime-linha"
-              style={{ ["--n" as string]: n.valor.length + 2 }}
-            >
-              <div className="flex items-baseline justify-between gap-6 py-4">
-                <span className="p-especime">{n.valor}</span>
-                <span className="p-marca pb-2 text-right">{n.rotulo}</span>
-              </div>
-            </li>
-          ))}
-          <li className="p-fio" />
-        </ul>
+      {/* ─ 1. QUEM É ────────────────────────────────────────────────────
+          O manifesto manda, a ficha acompanha. A primeira montagem punha os
+          quatro números em corpo de espécime e eles comiam quatro telas —
+          "62+ clients" em 190px é um dado genérico ocupando o lugar do
+          argumento. Aqui o argumento é a FRASE, e os números viram régua. */}
+      <section className="grid grid-cols-12 pt-12 max-md:pt-8" style={{ columnGap: "var(--p-gap-x)" }}>
+        <p className="p-manifesto col-span-7 max-lg:col-span-12">{LEAD[0]}</p>
 
-        {/* ─ as fichas ──────────────────────────────────────────────────── */}
-        <div className="col-span-5 col-start-8 grid gap-12 max-lg:col-span-12 max-lg:col-start-1">
-          <Bloco rotulo="Biography">
-            <div className="grid gap-4">
-              {LEAD.map((p) => (
-                <p key={p.slice(0, 24)} className="p-corpo max-w-[54ch]">
-                  {p}
-                </p>
-              ))}
-            </div>
+        <div className="col-span-4 col-start-9 grid gap-9 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-10">
+          <Bloco rotulo="Approach">
+            <p className="p-corpo max-w-[46ch]">{LEAD[1]}</p>
           </Bloco>
-
           <Bloco rotulo="Tools">
-            {/* lista corrida separada por vírgula, e não chips: chip é
-                componente de interface, e aqui isto é uma FICHA — a mesma razão
-                pela qual a nav também anda em vírgulas */}
-            <p className="p-corpo max-w-[46ch]" style={{ color: "var(--p-quieto)" }}>
+            <p className="p-corpo" style={{ color: "var(--p-quieto)" }}>
               {FERRAMENTAS.join(", ")}
             </p>
           </Bloco>
-
-          <Bloco rotulo="Contact &amp; inquiries">
+          <Bloco rotulo="Contact & inquiries">
             <ul className="grid gap-[6px]">
               {CONTATO.map((c) => (
-                <li key={c.label} className="p-corpo">
+                <li key={c.label}>
                   {c.href ? (
                     <a
                       href={c.href}
-                      target={c.href.startsWith("mailto:") ? undefined : "_blank"}
+                      target={c.href.startsWith("http") ? "_blank" : undefined}
                       rel="noopener noreferrer"
-                      className="p-link"
+                      className="p-corpo p-link"
                     >
-                      {c.label === "Email" ? c.valor : c.label}
+                      {c.valor}
                     </a>
                   ) : (
-                    <span style={{ color: "var(--p-quieto)" }}>{c.label}</span>
+                    <span className="p-corpo">{c.valor}</span>
                   )}
                 </li>
               ))}
             </ul>
           </Bloco>
         </div>
-      </div>
+      </section>
 
-      {/* ─ o método: a segunda tela da mesma prancha ─────────────────────
-          Cinco etapas em fio, com índice — o formato de ficha técnica. Não é
-          seção nova com fundo próprio: é a MESMA prancha continuando, que é o
-          que diferencia rolar dentro de um documento de trocar de página. */}
-      <section className="pt-32 max-md:pt-20">
-        <div className="grid grid-cols-12 gap-x-6">
-          <p className="p-rotulo col-span-2 max-lg:col-span-12">Method — 05</p>
-          {/* mesma régua da home: sem manchete grande. O texto do método é
-              leitura, e leitura aqui é 13px — o glifo é quem tem escala. */}
-          <p className="p-corpo col-span-6 col-start-4 max-w-[54ch] max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-4">
-            {PROCESSO_MANCHETE}
-          </p>
+      {/* ─ 2. A RÉGUA DA TRAJETÓRIA ──────────────────────────────────────
+          Os quatro números numa linha só, com fio: é a tabela de registros do
+          sistema, não quatro manchetes. Dado se lê comparando — em coluna, cada
+          um vira um cartaz isolado e a comparação se perde. */}
+      <section className="p-fio mt-14 grid grid-cols-4 max-md:grid-cols-2" style={{ columnGap: "var(--p-gap-x)" }}>
+        {NUMEROS.map((n) => (
+          <div key={n.rotulo} className="pt-4">
+            <p className="p-numero">{n.valor}</p>
+            <p className="p-marca pt-1" style={{ color: "var(--p-quieto)" }}>
+              {n.rotulo}
+            </p>
+          </div>
+        ))}
+      </section>
+
+      {/* ─ 3. AS MARCAS, EM SANGRIA ──────────────────────────────────────
+          ⭐ Faltava O TRABALHO. Uma about de brand designer sem uma marca dele
+          na tela é um currículo — e a peça mais forte deste projeto são os
+          nomes que ele desenhou. A faixa é a trama da home em escala de
+          passagem, cada nome na SUA cor: amarra as duas páginas pelo mesmo
+          gesto e transforma o vão entre "quem é" e "como trabalha" em matéria.
+          Sem hover aqui: conteúdo que se move sob cursor parado erra o
+          hit-test, e esta faixa é passagem, não índice. */}
+      <section aria-hidden="true" className="p-trama p-faixa -mx-[var(--p-margem)] my-16">
+        <div className="p-trama-fita p-faixa-fita">
+          {fita.map((w, k) => (
+            <span key={`${w.slug}-${k}`} className="flex items-baseline gap-[0.3em]">
+              <span className="p-faixa-nome" style={{ color: corDe(w.slug) }}>
+                {w.title}
+              </span>
+              <span className="p-faixa-ponto">·</span>
+            </span>
+          ))}
         </div>
+      </section>
 
-        <ol className="pt-20 max-md:pt-12">
+      {/* ─ 4. O MÉTODO ───────────────────────────────────────────────────
+          As cinco etapas na anatomia da tabela da /work: índice, título, corpo.
+          É a mesma régua aplicada a outro conteúdo, que é o que faz um sistema
+          em vez de uma coleção de páginas. */}
+      <section className="grid grid-cols-12 pb-4" style={{ columnGap: "var(--p-gap-x)" }}>
+        <p className="p-rotulo col-span-12 pb-4">Method — {String(PROCESSO.length).padStart(2, "0")}</p>
+        <p className="p-corpo col-span-5 max-w-[46ch] pb-10 max-lg:col-span-12">{PROCESSO_MANCHETE}</p>
+
+        <ul className="col-span-12">
           {PROCESSO.map((e, i) => (
             <li
               key={e.titulo}
-              className="p-fio grid grid-cols-12 gap-x-6 gap-y-3 py-8 max-md:py-6"
+              className="p-fio grid items-baseline py-5 max-md:grid-cols-1"
+              style={{ gridTemplateColumns: ".4fr 1.2fr 2.4fr", columnGap: "var(--p-gap-x)" }}
             >
-              <span className="p-marca col-span-1 pt-1 max-md:col-span-2">
+              <span className="p-marca" style={{ color: "var(--p-quieto)" }}>
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <h3 className="p-corpo col-span-3 max-md:col-span-10">{e.titulo}</h3>
-              <p
-                className="p-corpo col-span-7 col-start-6 max-w-[68ch] max-md:col-span-12 max-md:col-start-1"
-                style={{ color: "var(--p-quieto)" }}
-              >
+              <span className="p-item">{e.titulo}</span>
+              <p className="p-corpo max-w-[64ch]" style={{ color: "var(--p-quieto)" }}>
                 {e.corpo}
               </p>
             </li>
           ))}
-          <li className="p-fio" />
-        </ol>
+        </ul>
       </section>
     </Prancha>
   );

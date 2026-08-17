@@ -957,6 +957,51 @@
   gap: 10px;
 }
 
+/* ── A ABOUT ─────────────────────────────────────────────────────────────
+   "bora melhorar a about, falta taste". O diagnóstico foi de BASE, não de
+   acabamento ([[feedback-falta-taste-diagnostico]]): a página não tinha UMA
+   marca dele na tela, e os quatro números da trajetória ocupavam quatro telas
+   em corpo de espécime — "62+ clients" em 190px é dado genérico no lugar do
+   argumento.
+
+   O manifesto passa a mandar, os números viram régua, e entra a faixa das
+   marcas como passagem. */
+.p-manifesto {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  /* UMA escala de display no site: a mesma família da trama, um degrau abaixo —
+     duas escalas de display fazem a página desandar depois da primeira tela */
+  font-size: clamp(26px, 3.1vw, 46px);
+  line-height: 1.16;
+  letter-spacing: -0.028em;
+  max-width: 26ch;
+}
+.p-numero {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: clamp(30px, 3.4vw, 52px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+/* a faixa das marcas: a trama da home em escala de PASSAGEM */
+.p-faixa { padding: 4px 0; }
+.p-faixa-fita { animation-duration: 78s; }
+.p-faixa-nome {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: clamp(38px, 5.4vw, 82px);
+  line-height: 1.16;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+.p-faixa-ponto {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-size: clamp(38px, 5.4vw, 82px);
+  line-height: 1.16;
+  color: var(--p-quieto);
+}
+
 /* ── O OBTURADOR (transição de rota) ─────────────────────────────────────
    A coreografia é a da direção anterior — ele pediu de volta ("a transição pode
    ser aquela de antes, melhorada visualmente"). O que muda é o acabamento:
