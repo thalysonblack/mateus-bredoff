@@ -6,7 +6,7 @@ import { corDe } from "../../content/cores";
 import { LEAD, NUMEROS, PROCESSO_MANCHETE, PROCESSO } from "../../content/about";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { useRevelar } from "./useRevelar";
-import { Prancha } from "./sistema";
+import { Prancha, useHora } from "./sistema";
 
 /**
  * ABOUT — PROPOSTA C: "O CATÁLOGO".
@@ -40,6 +40,7 @@ import { Prancha } from "./sistema";
 
 export default function AboutC() {
   useMetaRota();
+  const hora = useHora();
   const revIntro = useRevelar<HTMLElement>();
   const revNumeros = useRevelar<HTMLElement>();
   const revServicos = useRevelar<HTMLElement>();
@@ -78,10 +79,43 @@ export default function AboutC() {
             ⚠ Ela vive no TOPO porque é ali que a foto é escura (o gradiente do
             fundo dela vai de petróleo a claro) — texto claro sobre a metade
             clara precisaria de véu, e véu sobre a arte ele já reprovou. */}
-        <div className="p-hero-meta">
-          <span>Mateus Bredoff®</span>
-          <span>Brand designer — visual identity practice</span>
+        {/* ⭐ A BARRA DO TOPO, medida no print da home dele: marca, relógio com
+            data, disponibilidade e menu — quatro blocos em mono miúdo. */}
+        <div className="p-hero-barra">
+          <span>Bredoff®</span>
+          <span>
+            {hora}:00 BRT
+            <br />
+            {new Date().toLocaleDateString("pt-BR")}
+          </span>
+          <span>
+            Currently
+            <br />
+            Available for work
+          </span>
+          <span className="p-hero-barra-fim">Menu</span>
         </div>
+
+        {/* ⭐⭐ O NOME E O OFÍCIO NOS CANTOS DE BAIXO, em caixa alta gigante,
+            CORTADOS PELA FOTO — é a hero da home dele, e "faz igual uai" é
+            isto: `MATEUS BREDOFF` na base à esquerda, `BRAND DESIGNER` na base
+            à direita, os dois sangrando para fora e o corpo dele passando no
+            meio.
+            ⚠ `mix-blend-mode: difference` em vez de duas cores fixas: a foto
+            vai de petróleo escuro no alto a quase branco embaixo, e passa pelo
+            marrom da camisa no meio — qualquer cor fixa perde contraste em
+            algum trecho. O blend resolve pixel a pixel, que é o que a original
+            faz. */}
+        <p className="p-hero-marca p-hero-marca--esq">
+          Mateus
+          <br />
+          Bredoff
+        </p>
+        <p className="p-hero-marca p-hero-marca--dir">
+          Brand
+          <br />
+          Designer
+        </p>
       </section>
 
       {/* ─ E SÓ ENTÃO O TEXTO ────────────────────────────────────────────
