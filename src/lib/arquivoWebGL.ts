@@ -42,11 +42,13 @@ const CARD_SPACING = 1.81;   /* vão quase zero: os cards se encostam */
 const ACTIVE_SCALE = 1.0;
 const INACTIVE_SCALE = 0.95;
 const ACTIVE_OPACITY = 1.0;
-/* ⚠ 0,5 e não os 0,35 do original: lá os cards são placeholders de cor CHAPADA
-   sobre #f2f2f0; aqui são artes claras (Votare, Neox, Stag) sobre papel quase
-   branco, e em 0,35 elas literalmente somem no fundo — "a imagem não aparece".
-   A hierarquia continua clara porque a peça enquadrada segue em 1,0. */
-const INACTIVE_OPACITY = 0.5;
+/* ⚠⚠ SEM FADE — "em work o projeto não deve ter esse fade" (17/08).
+   O original apaga as peças fora do foco (0,35), e eu tinha subido para 0,5
+   porque as artes DELE são claras e sumiam. Ele cortou a ideia inteira: peça de
+   portfólio não se mostra pela metade. A hierarquia fica com a POSIÇÃO (a
+   enquadrada está no centro) e com a ESCALA — que é o bastante, porque a
+   coluna já diz qual é a peça da vez pela própria geometria. */
+const INACTIVE_OPACITY = 1.0;
 const SCALE_RANGE = 0.6;     /* quão perto (em índice) para estar cheio */
 const FBO_W = 1024;
 const FBO_H = 1440;
