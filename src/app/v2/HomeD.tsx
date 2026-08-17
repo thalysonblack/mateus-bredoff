@@ -74,36 +74,46 @@ export default function HomeD({
      re-renderiza a trama (nove nomes × três fitas) a 60fps. */
   useEffect(() => {
     let ultimo: string | null = null;
-    const mover = (e: PointerEvent) => {
-      /* ⚠ A PEÇA É O CURSOR — "o mouse no hover vira o projeto". Por isso o
-         translate vai no ponto EXATO, sem offset: o anel tem margem negativa de
-         meia caixa no CSS, então o centro da peça cai onde o ponteiro está. Uma
-         versão anterior descolava 26px para baixo e ficava com cara de tooltip;
-         outra ancorou no centro da tela e perdeu o vínculo com o gesto. */
-      const el = anel.current;
-      if (el) el.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+    let px = -1;
+    let py = -1;
+    let pendente = false;
 
-      /* ⚠ QUEM FECHA O VISOR É SAIR DA TRAMA — não sair de um nome.
-         *"o 16:9 não pode fechar, a thumb muda interno tipo máscara"*: entre uma
-         palavra e a seguinte existe um VÃO (o espaço da fita, o ponto
-         separador), e ali `[data-peca]` não acha nada. Zerando a peça nesse vão,
-         o quadro fechava e reabria a cada nome — que é exatamente o piscar que
-         ele mandou tirar, e não some ajustando a animação, porque a causa é
-         o alvo do teste.
-         Dentro do campo e fora de uma palavra, a peça anterior FICA. */
-      const noPonto = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
+    /* ⚠ O HIT-TEST RODA UMA VEZ POR FRAME, NÃO POR EVENTO. `pointermove` chega
+       muito mais que 60×/s num trackpad, e `elementFromPoint` sobre uma fita em
+       animação obriga o Chrome a resolver hit-test contra camadas em movimento.
+       Guardar a posição e resolver no próximo frame dá o mesmo resultado — o
+       alvo é o que está sob o cursor AGORA — pela fração do custo. */
+    const resolver = () => {
+      pendente = false;
+      const noPonto = document.elementFromPoint(px, py) as HTMLElement | null;
       const alvo = noPonto?.closest<HTMLElement>("[data-peca]");
+
       /* ⭐ de que lado a arte deve entrar: o MESMO de onde vem a fita desta
-         linha. Linhas pares desfilam para a esquerda (o conteúdo chega pela
-         direita), ímpares ao contrário. Ler isso do DOM evita duplicar em JS a
-         regra que já está no CSS. */
+         linha. Ler isso do DOM evita duplicar em JS a regra que já está no CSS. */
       const linha = noPonto?.closest<HTMLElement>("[data-linha]");
       if (linha) lado.current = Number(linha.dataset.linha) % 2 === 1 ? -1 : 1;
+
+      /* ⚠ QUEM FECHA O VISOR É SAIR DA TRAMA — não sair de um nome. Entre uma
+         palavra e a seguinte existe um vão onde `[data-peca]` não acha nada;
+         zerando a peça ali, a máscara fechava e reabria a cada nome. */
       const naTrama = !!noPonto && !!campo.current?.contains(noPonto);
       const slug = alvo?.dataset.peca ?? (naTrama ? ultimo : null);
       if (slug === ultimo) return;
       ultimo = slug;
       setSob(slug ? WORK.find((w) => w.slug === slug) ?? null : null);
+    };
+
+    const mover = (e: PointerEvent) => {
+      /* ⚠ A PEÇA É O CURSOR — "o mouse no hover vira o projeto". O translate vai
+         no ponto EXATO e continua fora do React: é o único trabalho que precisa
+         acontecer a cada evento, e ele é uma escrita de string. */
+      const el = anel.current;
+      if (el) el.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+      px = e.clientX;
+      py = e.clientY;
+      if (pendente) return;
+      pendente = true;
+      requestAnimationFrame(resolver);
     };
     window.addEventListener("pointermove", mover, { passive: true });
     return () => window.removeEventListener("pointermove", mover);
@@ -167,6 +177,13 @@ export default function HomeD({
     /* só em desenvolvimento: o harness de verificação congela a transição por
        aqui, porque screenshot é lento demais para pegar o meio de 1s */
     if (import.meta.env.DEV) (window as unknown as Record<string, unknown>).__visor = v;
+    /* sobe as oito artes para a GPU antes do primeiro hover: o upload de uma
+       textura no meio do frame é o que fazia a varredura engasgar */
+    const ocioso = (cb: () => void) =>
+      "requestIdleCallback" in window
+        ? (window as unknown as { requestIdleCallback: (c: () => void) => number }).requestIdleCallback(cb)
+        : window.setTimeout(cb, 400);
+    ocioso(() => void v.aquecer(WORK.map((w) => w.cover.src2x ?? w.cover.src)));
     let ultimo = performance.now();
     const desenha = () => {
       const agora = performance.now();

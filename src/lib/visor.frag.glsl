@@ -44,8 +44,14 @@ vec2 cover(vec2 uv, float arte) {
 
 void main() {
   vec2 q = vUv * vec2(uCaixa, 1.0);
-  float n1 = fbm(q * 2.6 + vec2(uT * 0.13, uT * 0.09));
-  float n2 = fbm(q * 5.1 - vec2(uT * 0.11, uT * 0.07));
+  /* ⭐ O CAMPO DE RUÍDO ESCORRE DURANTE A TRANSIÇÃO. Em repouso ele anda devagar
+     (é só a respiração); somando o próprio progresso à fase, ele CORRE enquanto
+     a onda passa e desacelera junto com ela. Sem isso o ruído é uma textura
+     fixa sendo empurrada, e o olho lê uma máscara recortada em movimento em vez
+     de líquido. Ganha fluidez sem tirar solidez, porque a amplitude não muda. */
+  float fase = uT * 0.13 + uP * 0.62;
+  float n1 = fbm(q * 2.6 + vec2(fase, uT * 0.09 + uP * 0.34));
+  float n2 = fbm(q * 5.1 - vec2(uT * 0.11 + uP * 0.5, uT * 0.07));
 
   /* o piso de 0,004 é a respiração de repouso: a arte parada nunca fica
      perfeitamente morta, e isso custa nada */
@@ -97,8 +103,8 @@ void main() {
        nenhuma — a imagem toda se liquefaz e volta já sendo a outra, e a
        mistura acontece no MESMO campo que distorce, não numa máscara à
        parte. */
-    vec2 w = vec2(fbm(q * 1.7 + vec2(uT * 0.10, 0.0)), fbm(q * 1.7 + vec2(0.0, uT * 0.12)));
-    float n3 = fbm(q * 3.1 + w * 2.4 + vec2(uT * 0.06, -uT * 0.05));
+    vec2 w = vec2(fbm(q * 1.7 + vec2(uT * 0.10 + uP * 0.4, 0.0)), fbm(q * 1.7 + vec2(0.0, uT * 0.12 + uP * 0.4)));
+    float n3 = fbm(q * 3.1 + w * 2.4 + vec2(uT * 0.06 + uP * 0.3, -uT * 0.05));
     vec2 giro = vec2(n3 - 0.5, fbm(q * 3.1 + w * 2.4 + 7.3) - 0.5);
     float amp = 0.30 * sopro * sopro + 0.004;
     dA = giro * amp + vec2(uDir * 0.02 * sopro, 0.0);

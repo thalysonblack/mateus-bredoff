@@ -52,6 +52,8 @@ import FRAG from "./visor.frag.glsl?raw";
 export type VisorFluido = {
   /** carrega a arte na lâmina de trás; resolve quando ela está pronta na GPU */
   preparar(src: string, dir: 1 | -1): Promise<void>;
+  /** sobe todas as artes para a GPU antes do primeiro hover */
+  aquecer(fontes: string[]): Promise<void>;
   /** 0 → 1 durante a transição; quem anima é o GSAP, de fora */
   progresso(p: number): void;
   /**
@@ -101,8 +103,21 @@ export function criarVisorFluido(alvo: HTMLElement, modo: 1 | 2 | 3 | 4 = 1): Vi
       flipY: true,
     });
 
-  let texA = textura();
-  let texB = textura();
+  /* ⚠ UMA TEXTURA POR ARTE, CACHEADA. Antes o `preparar` reenviava a arte para
+     a GPU a cada hover (`texImage2D` de um WebP de 2200px), e o upload
+     acontecia no meio do frame: medido, 8 frames acima de 32ms numa varredura
+     de 278. Varrer a trama é o gesto natural da peça, então isso era engasgo
+     em uso normal, não em caso extremo.
+
+     Agora cada arte vira textura UMA vez, já reduzida à largura de exibição —
+     e trocar de peça passa a ser trocar um ponteiro de uniform, que custa
+     zero. */
+  const texturas = new Map<string, Texture>();
+  const vazia = textura();
+  let texA = vazia;
+  let texB = vazia;
+  let razaoA = 16 / 9;
+  let razaoB = 16 / 9;
 
   const program = new Program(gl, {
     vertex: VERT,
@@ -147,15 +162,49 @@ export function criarVisorFluido(alvo: HTMLElement, modo: 1 | 2 | 3 | 4 = 1): Vi
       im.src = src;
     });
 
+  /* reduz a arte à largura em que ela é EXIBIDA antes de subir para a GPU:
+     enviar 2200px para desenhar 760 é pagar 8× de banda e de VRAM por pixel
+     que ninguém vê */
+  const encolher = (im: HTMLImageElement) => {
+    const largura = Math.min(im.naturalWidth, Math.ceil((alvo.clientWidth || 380) * 2));
+    if (largura >= im.naturalWidth) return im;
+    const c = document.createElement("canvas");
+    c.width = largura;
+    c.height = Math.round((largura / im.naturalWidth) * im.naturalHeight);
+    c.getContext("2d")!.drawImage(im, 0, 0, c.width, c.height);
+    return c;
+  };
+
+  const daTextura = async (src: string) => {
+    const guardada = texturas.get(src);
+    if (guardada) return guardada;
+    const im = await carregar(src);
+    const t = textura();
+    t.image = encolher(im) as TexImageSource;
+    t.needsUpdate = true;
+    (t as unknown as { razao: number }).razao = im.naturalWidth / im.naturalHeight;
+    texturas.set(src, t);
+    return t;
+  };
+
   return {
     async preparar(src, dir) {
-      const im = await carregar(src);
+      const t = await daTextura(src);
       if (!vivo) return;
-      texB.image = im;
-      texB.needsUpdate = true;
-      program.uniforms.uArteB.value = im.naturalWidth / im.naturalHeight;
+      texB = t;
+      razaoB = (t as unknown as { razao: number }).razao;
+      program.uniforms.uB.value = texB;
+      program.uniforms.uArteB.value = razaoB;
       program.uniforms.uDir.value = dir;
       program.uniforms.uP.value = 0;
+    },
+    /** sobe as artes para a GPU antes do primeiro hover, fora do caminho crítico */
+    async aquecer(fontes) {
+      for (const src of fontes) {
+        if (!vivo) return;
+        await daTextura(src);
+        await new Promise((r) => setTimeout(r, 0)); /* uma por vez, sem prender o frame */
+      }
     },
     progresso(v) {
       if (travado !== null) return;
@@ -184,13 +233,11 @@ export function criarVisorFluido(alvo: HTMLElement, modo: 1 | 2 | 3 | 4 = 1): Vi
     },
     concluir() {
       if (travado !== null) return;
-      /* a nova vira a atual: troca os ponteiros, sem reenviar pixel à GPU */
-      const t = texA;
+      /* a nova vira a atual: só ponteiro, nenhum pixel sobe para a GPU */
       texA = texB;
-      texB = t;
+      razaoA = razaoB;
       program.uniforms.uA.value = texA;
-      program.uniforms.uB.value = texB;
-      program.uniforms.uArteA.value = program.uniforms.uArteB.value;
+      program.uniforms.uArteA.value = razaoA;
       program.uniforms.uP.value = 0;
     },
     passo(dt) {
@@ -201,6 +248,7 @@ export function criarVisorFluido(alvo: HTMLElement, modo: 1 | 2 | 3 | 4 = 1): Vi
     destruir() {
       vivo = false;
       ro.disconnect();
+      texturas.clear();
       gl.canvas.remove();
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     },
