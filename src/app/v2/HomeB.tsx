@@ -75,7 +75,7 @@ export default function HomeB() {
             {WORK.map((w, k) => (
               <Link
                 key={w.slug}
-                to={`/v2/work/${w.slug}`}
+                to={`/work/${w.slug}`}
                 onMouseEnter={() => setI(k)}
                 onFocus={() => setI(k)}
                 className="p-marca"

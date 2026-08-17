@@ -47,7 +47,7 @@ export default function HomeA() {
           {colunas.map((col, ci) => (
             <div key={ci} className="grid content-start" style={{ rowGap: "var(--p-gap-x)" }}>
               {col.map((w, k) => (
-                <Link key={w.slug} data-alvo to={`/v2/work/${w.slug}`} className="block">
+                <Link key={w.slug} data-alvo to={`/work/${w.slug}`} className="block">
                   <img
                     src={w.cover.src}
                     srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}

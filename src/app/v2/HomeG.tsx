@@ -75,7 +75,7 @@ export default function HomeG() {
               return (
                 <Link
                   key={w.slug}
-                  to={`/v2/work/${w.slug}`}
+                  to={`/work/${w.slug}`}
                   className="p-prancheta"
                   aria-hidden={oculta}
                   tabIndex={oculta ? -1 : 0}
@@ -132,7 +132,7 @@ export default function HomeG() {
                 {String(k + 1).padStart(2, "0")}
               </button>
             ))}
-            <Link to="/v2/work" className="p-marca p-link pl-3">
+            <Link to="/work" className="p-marca p-link pl-3">
               All work →
             </Link>
           </nav>

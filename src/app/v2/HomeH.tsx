@@ -162,7 +162,7 @@ export default function HomeH() {
       <div className="-mx-[var(--p-margem)] p-tinta" style={{ paddingInline: "var(--p-margem)" }}>
         <div className="flex items-baseline justify-between gap-6 pt-[16svh]">
           <p className="p-rotulo">Selected work — {String(WORK.length).padStart(2, "0")}</p>
-          <Link to="/v2/work" className="p-marca p-link">
+          <Link to="/work" className="p-marca p-link">
             Index →
           </Link>
         </div>
@@ -181,7 +181,7 @@ export default function HomeH() {
                   sem motivo. O rótulo continua, porque affordance não se
                   adivinha. */}
               <Link
-                to={`/v2/work/${w.slug}`}
+                to={`/work/${w.slug}`}
                 className="absolute inset-0 z-10"
                 aria-label={`Open ${w.title}`}
               />

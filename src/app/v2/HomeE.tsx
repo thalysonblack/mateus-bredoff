@@ -42,7 +42,7 @@ export default function HomeE() {
         onMouseLeave={() => setPreso(false)}
       >
         {/* a peça, sangrando */}
-        <Link to={`/v2/work/${w.slug}`} className="relative block flex-1 overflow-hidden">
+        <Link to={`/work/${w.slug}`} className="relative block flex-1 overflow-hidden">
           {WORK.map((x, k) => (
             <img
               key={x.slug}
@@ -95,7 +95,7 @@ export default function HomeE() {
           </div>
           <div className="col-span-2 text-right max-md:col-span-3 max-md:text-left">
             <p className="p-rotulo">Index</p>
-            <Link to="/v2/work" className="p-corpo p-link pt-1">
+            <Link to="/work" className="p-corpo p-link pt-1">
               All work →
             </Link>
           </div>

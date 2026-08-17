@@ -36,7 +36,7 @@ export default function HomeF() {
             <Link
               key={x.slug}
               data-alvo
-              to={`/v2/work/${x.slug}`}
+              to={`/work/${x.slug}`}
               onMouseEnter={() => setAtivo(k)}
               onMouseLeave={() => setAtivo(null)}
               onFocus={() => setAtivo(k)}
@@ -74,7 +74,7 @@ export default function HomeF() {
               </span>
             )}
           </p>
-          <Link to="/v2/work" className="p-corpo p-link" style={{ color: "var(--p-quieto)" }}>
+          <Link to="/work" className="p-corpo p-link" style={{ color: "var(--p-quieto)" }}>
             All work →
           </Link>
         </div>

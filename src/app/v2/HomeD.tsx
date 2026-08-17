@@ -177,6 +177,9 @@ export default function HomeD({
     /* só em desenvolvimento: o harness de verificação congela a transição por
        aqui, porque screenshot é lento demais para pegar o meio de 1s */
     if (import.meta.env.DEV) (window as unknown as Record<string, unknown>).__visor = v;
+    /* o fio da crista usa o MESMO token de acento da superfície — a cor não é
+       repetida em JS, é lida de onde ela já vive */
+    v.acento(getComputedStyle(tela).getPropertyValue("--p-acento"));
     /* sobe as oito artes para a GPU antes do primeiro hover: o upload de uma
        textura no meio do frame é o que fazia a varredura engasgar */
     const ocioso = (cb: () => void) =>
@@ -236,8 +239,9 @@ export default function HomeD({
   const lado = useRef(1);
   /* a caixa onde o canvas do WebGL é pendurado */
   const quadro = useRef<HTMLDivElement | null>(null);
-  /* qual arte já está na textura da frente — evita redissolver a mesma peça */
-  const ultimoSrc = useRef<string | null>(null);
+  /* só a última troca pedida vale: descarta carregamentos que resolvem fora de
+     ordem quando o cursor varre a trama */
+  const geracao = useRef(0);
   /* ⚠⚠ UM ALVO SÓ, E O TWEEN GUARDADO. Cada troca criava `const passar = {p:0}`
      novo, e `overwrite: "auto"` só mata tweens do MESMO alvo — então duas
      transições rodavam juntas, cada uma chamando `concluir()` no fim. Duas
@@ -269,7 +273,6 @@ export default function HomeD({
     }
 
     const src = sob.cover.src2x ?? sob.cover.src;
-    const meu = src;
 
     /* sem WebGL: a máscara ainda abre e fecha, só não há fluido */
     if (!v) {
@@ -278,15 +281,30 @@ export default function HomeD({
       return;
     }
 
-    /* ⚠ A ARTE VAI PARA A GPU ANTES DE QUALQUER TWEEN. Sem esperar, o primeiro
-       frame da transição mistura com uma textura vazia e o quadro pisca preto —
-       e trocar de nome rápido resolve fora de ordem, daí a trava do `meu`. */
-    void v.preparar(src, lado.current as 1 | -1).then(() => {
-      if (ultimoSrc.current === meu && aberto.current) return;
-      ultimoSrc.current = meu;
+    /**
+     * ⚠⚠ "ÀS VEZES A TROCA ACONTECE SEM O EFEITO" — era uma corrida, e a
+     * sequência é esta:
+     *   1. troca para X começa; o tween de X está animando;
+     *   2. o cursor passa para Y e o carregamento de Y instala a lâmina de trás;
+     *   3. o tween de X TERMINA e chama `concluir()`, que promove a lâmina de
+     *      trás — que já é Y. A arte de Y aparece de uma vez, sem animação;
+     *   4. quando o tween de Y roda, as duas texturas já são Y: anima de Y para
+     *      Y, e não se vê efeito nenhum.
+     *
+     * Duas travas resolvem: o carregamento não toca mais no que está na tela
+     * (`garantir` é separado de `iniciar`), e o tween anterior é MORTO antes de
+     * instalar a nova lâmina. A geração descarta resoluções fora de ordem —
+     * cursor varrendo a trama dispara cargas que podem resolver em qualquer
+     * ordem, e só a última pedida vale.
+     */
+    const meuTurno = ++geracao.current;
+    void v.garantir(src).then(() => {
+      if (geracao.current !== meuTurno || !visor.current) return;
+      tween.current?.kill();
+      tween.current = null;
+      v.iniciar(src, lado.current as 1 | -1);
 
       const dissolve = () => {
-        tween.current?.kill();
         passo.current.p = 0;
         tween.current = gsap.to(passo.current, {
           p: 1,
@@ -347,7 +365,7 @@ export default function HomeD({
             coleção para que duas linhas nunca mostrem o mesmo projeto lado a
             lado. O campo inteiro é o alvo do hover (`p-trama-campo`): pousar
             numa linha para as três e atenua tudo que não está sob o cursor. */}
-        <div ref={campo} className="p-trama-campo grid min-h-0 flex-1 gap-[var(--p-trama-gap)] pb-[7vh]">
+        <div ref={campo} className="p-trama-campo grid min-h-0 flex-1 gap-[var(--p-trama-gap)] pb-[4vh]">
           {[fita, [...fita].reverse(), [...WORK.slice(3), ...WORK.slice(0, 3), ...WORK.slice(3), ...WORK.slice(0, 3)]].map((linha, li) => (
             <div key={li} data-linha={li} className="p-trama p-trama--peca -mx-[var(--p-margem)]">
               {/* o wrapper recebe o empurrão do SCROLL (transform escrito pelo
@@ -362,7 +380,7 @@ export default function HomeD({
                   {linha.map((w, k) => (
                     <span key={`${w.slug}-${k}`} className="flex items-baseline gap-[0.32em]">
                       <Link
-                        to={`/v2/work/${w.slug}`}
+                        to={`/work/${w.slug}`}
                         data-peca={w.slug}
                         onFocus={() => setSob(w)}
                         onBlur={() => setSob(null)}
@@ -389,7 +407,7 @@ export default function HomeD({
             tela. Uma tentativa de pôr isto numa segunda tela deu percurso de
             scroll, e ele cortou: "tudo no viewport". */}
         <div
-          className="grid grid-cols-12 pt-12 max-md:pt-8"
+          className="grid grid-cols-12 pt-9 max-md:pt-6"
           style={{ columnGap: "var(--p-gap-x)", rowGap: "var(--p-gap-y)" }}
         >
           <p className="p-corpo col-span-4 max-w-[42ch] max-lg:col-span-12">
@@ -410,7 +428,7 @@ export default function HomeD({
                 <li key={w.slug}>
                   <Link
                     data-alvo
-                    to={`/v2/work/${w.slug}`}
+                    to={`/work/${w.slug}`}
                     className="p-corpo grid grid-cols-[2.2rem_1fr_auto] items-baseline gap-3"
                   >
                     <span style={{ color: "var(--p-quieto)" }}>
@@ -422,7 +440,7 @@ export default function HomeD({
                 </li>
               ))}
               <li className="pt-2">
-                <Link to="/v2/work" className="p-corpo p-link" style={{ color: "var(--p-quieto)" }}>
+                <Link to="/work" className="p-corpo p-link" style={{ color: "var(--p-quieto)" }}>
                   All work →
                 </Link>
               </li>

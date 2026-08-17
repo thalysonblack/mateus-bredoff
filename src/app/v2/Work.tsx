@@ -92,7 +92,7 @@ export default function WorkV2() {
               <li key={w.slug} className="p-fio">
                 <Link
                   data-alvo
-                  to={`/v2/work/${w.slug}`}
+                  to={`/work/${w.slug}`}
                   onMouseEnter={() => setAtivo(i)}
                   onFocus={() => setAtivo(i)}
                   className="p-corpo grid items-baseline py-4"

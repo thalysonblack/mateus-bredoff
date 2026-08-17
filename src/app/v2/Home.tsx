@@ -109,7 +109,7 @@ export default function HomeV2() {
           <div className="col-span-6 col-start-4 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-6">
             <p className="p-sobe p-corpo max-w-[56ch]">{LEAD}</p>
             <p className="p-sobe pt-8">
-              <Link to="/v2/about" className="p-corpo p-link" style={{ color: "var(--p-quieto)" }}>
+              <Link to="/about" className="p-corpo p-link" style={{ color: "var(--p-quieto)" }}>
                 About the studio →
               </Link>
             </p>
@@ -230,7 +230,7 @@ function CapituloPeca({ w, k }: { w: (typeof WORK)[number]; k: number }) {
         style={{ columnGap: "var(--p-gap-x)" }}
       >
         <Link
-          to={`/v2/work/${w.slug}`}
+          to={`/work/${w.slug}`}
           className={`col-span-7 ${direita ? "col-start-6" : "col-start-1"} max-lg:col-span-12 max-lg:col-start-1`}
         >
           <img
@@ -259,7 +259,7 @@ function CapituloPeca({ w, k }: { w: (typeof WORK)[number]; k: number }) {
             {w.disciplines.join(", ")} — {w.year}
           </p>
           <p className="p-sobe pt-6">
-            <Link to={`/v2/work/${w.slug}`} className="p-corpo p-link">
+            <Link to={`/work/${w.slug}`} className="p-corpo p-link">
               Open project →
             </Link>
           </p>

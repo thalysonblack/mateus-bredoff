@@ -52,7 +52,21 @@
  * de card, sombra ou moldura.
  *
  * A matéria é toda do Mateus: Geist + Martian Mono self-hosted, papel/petróleo
- * medidos da réplica, e o laranja queimado da direção autoral como único acento.
+ * medidos da réplica, e — desde 17/08 — o AZUL e o MARROM dele nos destaques.
+ *
+ * ⚠ O laranja queimado saiu ("não vamos usar o laranja, use o azul dele"). O
+ * par novo não foi escolhido: foi DERIVADO do que já é dele. O site publicado
+ * usa `--fr-petroleo: #142126` e `--fr-marrom: #260f0a`, medidos da réplica —
+ * os dois são cores de FUNDO, escuras demais para destacar (o petróleo é quase
+ * a tinta desta direção). Então mantém-se o MATIZ exato de cada um (h197 e h11)
+ * e sobe-se a luminância até passar contraste no papel:
+ *
+ *   azul    #142126 → #277796  (4,58:1 no papel · #34a1cb na tinta, 5,66:1)
+ *   marrom  #260f0a → #9f5d4e  (4,60:1 no papel · #b57769 na tinta, 4,62:1)
+ *
+ * ⚠ A saturação do marrom NÃO se infla: dobrá-la levava a #d32f0b, que é
+ * vermelho, não marrom. Matiz preservado, saturação preservada, só o valor
+ * muda — [[craft-paleta-se-amostra-da-peca-nao-se-deriva]].
  */
 
 :root {
@@ -165,12 +179,14 @@
 }
 
 /* ── superfícies: cada PRANCHA tem a sua ───────────────────────────────── */
-.p-papel { background: #f4f4f2; color: #14201f; --p-ink: #14201f; --p-fio: rgba(20, 32, 31, 0.13); --p-quieto: rgba(20, 32, 31, 0.55); }
-.p-branco { background: #ffffff; color: #14201f; --p-ink: #14201f; --p-fio: rgba(20, 32, 31, 0.11); --p-quieto: rgba(20, 32, 31, 0.55); }
+.p-papel { background: #f4f4f2; color: #14201f; --p-ink: #14201f; --p-acento: #277796; --p-acento-2: #9f5d4e; --p-fio: rgba(20, 32, 31, 0.13); --p-quieto: rgba(20, 32, 31, 0.55); }
+.p-branco { background: #ffffff; color: #14201f; --p-ink: #14201f; --p-acento: #277796; --p-acento-2: #9f5d4e; --p-fio: rgba(20, 32, 31, 0.11); --p-quieto: rgba(20, 32, 31, 0.55); }
 .p-tinta {
   background: #14201f;
   color: #eceae5;
   --p-ink: #eceae5;
+  --p-acento: #34a1cb;
+  --p-acento-2: #b57769;
   --p-fio: rgba(236, 234, 229, 0.18);
   --p-quieto: rgba(236, 234, 229, 0.55);
 }

@@ -42,7 +42,7 @@ export default function HomeC() {
 
         {/* a peça: uma só, a mais recente */}
         <Link
-          to={`/v2/work/${ultimo.slug}`}
+          to={`/work/${ultimo.slug}`}
           className="col-span-4 col-start-7 max-lg:col-span-12 max-lg:col-start-1"
         >
           <img
@@ -67,7 +67,7 @@ export default function HomeC() {
 
         <div className="col-span-2 col-start-11 grid gap-8 self-end max-lg:col-span-12 max-lg:col-start-1">
           <Bloco rotulo="Index">
-            <Link to="/v2/work" className="p-corpo p-link">
+            <Link to="/work" className="p-corpo p-link">
               {String(WORK.length).padStart(2, "0")} projects →
             </Link>
           </Bloco>

@@ -171,11 +171,19 @@ export default function App() {
               `/work`, `/work/:slug` são as mesmas do CMS dele e do original,
               o que muda é qual componente as monta — por isso `meta.ts` e o
               pré-render seguem valendo sem uma linha de mudança. */}
-          <Route path="/" element={<HomeV3 />} />
-          <Route path="/about" element={<AboutV3 />} />
-          <Route path="/work" element={<WorkIndexV3 />} />
-          <Route path="/work/:slug" element={<CaseV3 />} />
-          <Route path="/lab" element={<LabV3 />} />
+          {/* ⭐ 17/08 — A PRANCHA (V2) VIROU O SITE: "pode tornar a página
+              inicial". A home é a TRAMA com o visor fluido no modo Arco, que é
+              o que ele aprovou depois de quatro receitas comparadas em rota.
+              De novo o mesmo princípio da promoção anterior: aprovado que não é
+              alcançável não conta, e as rotas canônicas não mudam de NOME —
+              `/`, `/about`, `/work`, `/work/:slug`, `/lab` são as do CMS dele e
+              do original, muda só quem as monta. Por isso `content/meta.ts` e o
+              pré-render seguem valendo sem uma linha alterada. */}
+          <Route path="/" element={<HomeD fluidoModo={4} />} />
+          <Route path="/about" element={<PranchaAbout />} />
+          <Route path="/work" element={<PranchaWork />} />
+          <Route path="/work/:slug" element={<PranchaCase />} />
+          <Route path="/lab" element={<PranchaLab />} />
 
           {/* ── ARQUIVO ───────────────────────────────────────────────────
               O que sobra aqui tem função ATIVA, não sentimental.
@@ -197,6 +205,14 @@ export default function App() {
           {/* A alternativa de Selected Work: a mesma home com a seção em
               ENXAME em vez da tira com snap. Rota, e não branch, porque é assim
               que se compara aqui — duas abas lado a lado. */}
+          {/* ⚠ A direção "o portfólio como visor" (a V3) foi a canônica entre
+              15 e 17/08 e agora é arquivo. Continua montável inteira — é a
+              única alternativa de partido com subpáginas prontas. */}
+          <Route path="/arquivo/visor" element={<HomeV3 />} />
+          <Route path="/arquivo/visor/about" element={<AboutV3 />} />
+          <Route path="/arquivo/visor/work" element={<WorkIndexV3 />} />
+          <Route path="/arquivo/visor/work/:slug" element={<CaseV3 />} />
+          <Route path="/arquivo/visor/lab" element={<LabV3 />} />
           <Route path="/arquivo/enxame" element={<HomeV3 work="enxame" />} />
           <Route path="/arquivo/framer" element={<Home />} />
           {/* ⚠ A direção autoral trocou de endereço: era `/arquivo/v2` e virou
@@ -245,7 +261,7 @@ export default function App() {
 
           {/* Slug inexistente cai no próprio case, que trata o 404 com a
               linguagem do site em vez de tela branca. */}
-          <Route path="*" element={<CaseV3 />} />
+          <Route path="*" element={<PranchaCase />} />
         </Routes>
       </Layout>
     </BrowserRouter>

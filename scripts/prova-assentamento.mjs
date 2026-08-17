@@ -26,7 +26,8 @@ const p = await b.newPage();
 const erros = [];
 p.on('console', e => e.type() === 'error' && erros.push(e.text()));
 await p.setViewport({ width: 1680, height: 963 });
-await p.goto(`http://localhost:5173/v2/d${modo}`, { waitUntil: 'networkidle0' });
+/* a home canônica é a raiz desde 17/08; /v2/d1..d4 seguem para comparar receitas */
+await p.goto(modo === '0' ? 'http://localhost:5173/' : `http://localhost:5173/v2/d${modo}`, { waitUntil: 'networkidle0' });
 await new Promise(r => setTimeout(r, 1800));
 
 /* o anel só se posiciona no pointermove; daí em diante quem troca a peça é o

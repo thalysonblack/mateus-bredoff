@@ -8,7 +8,8 @@ uniform float uDir;    /* +1 a nova vem da direita, -1 da esquerda */
 uniform float uCaixa;  /* razão da caixa (16/9) */
 uniform float uArteA;  /* razão nativa de cada arte, para o cover */
 uniform float uArteB;
-uniform float uModo;   /* 1 maré · 2 onda · 3 turbilhão */
+uniform float uModo;   /* 1 maré · 2 onda · 3 turbilhão · 4 arco */
+uniform vec3  uAcento; /* o azul dele — a cor do fio da crista */
 
 /* value noise: hash + interpolação suave. Quatro oitavas bastam para a borda
    ler como líquido, e custam menos que carregar uma textura de ruído. */
@@ -69,6 +70,8 @@ void main() {
   vec2 dA;
   vec2 dB;
   float frente;
+  /* distância assinada até a frente de onda — quem define onde mora o fio */
+  float aresta = 0.0;
 
   if (uModo < 1.5) {
     /* ── 1 MARÉ ─────────────────────────────────────────────────────────
@@ -79,7 +82,9 @@ void main() {
     dA = base * amp * (0.6 + 0.5 * uP) + vec2(uDir * 0.05 * sopro, 0.0);
     dB = base * amp * (1.1 - 0.6 * uP) - vec2(uDir * 0.05 * sopro, 0.0);
     float x = uDir > 0.0 ? 1.0 - vUv.x : vUv.x;
-    frente = smoothstep(0.0, 0.5, uP * 1.5 - x - (n1 - 0.5) * 0.62);
+    float f1 = uP * 1.5 - x - (n1 - 0.5) * 0.62;
+    frente = smoothstep(0.0, 0.5, f1);
+    aresta = f1;
 
   } else if (uModo < 2.5) {
     /* ── 2 ONDA ─────────────────────────────────────────────────────────
@@ -94,7 +99,9 @@ void main() {
     vec2 radial = normalize(c + 1e-5);
     dA = radial * crista * 0.14 * sopro + base * 0.02 * crista + base * 0.004;
     dB = radial * crista * -0.09 * sopro + base * 0.004;
-    frente = smoothstep(0.0, 0.22, raio - r + (n1 - 0.5) * 0.16);
+    float f2 = raio - r + (n1 - 0.5) * 0.16;
+    frente = smoothstep(0.0, 0.22, f2);
+    aresta = f2;
 
   } else if (uModo < 3.5) {
     /* ── 3 TURBILHÃO ────────────────────────────────────────────────────
@@ -109,7 +116,9 @@ void main() {
     float amp = 0.30 * sopro * sopro + 0.004;
     dA = giro * amp + vec2(uDir * 0.02 * sopro, 0.0);
     dB = giro * amp * -0.85;
-    frente = smoothstep(0.28, 0.72, uP + (n3 - 0.5) * 0.9 * sopro);
+    float f3 = uP + (n3 - 0.5) * 0.9 * sopro - 0.5;
+    frente = smoothstep(-0.22, 0.22, f3);
+    aresta = f3;
 
   } else {
     /* ── 4 ARCO ─────────────────────────────────────────────────────────
@@ -136,12 +145,26 @@ void main() {
     float perto = exp(-pow(f * 4.1, 2.0)) * sopro;  /* 1 na frente, 0 longe e nas pontas */
     dA = vec2(uDir * (0.26 * perto + 0.045 * sopro), 0.0) + base * 0.004;
     dB = vec2(-uDir * 0.17 * perto, 0.0) + base * 0.004;
-    frente = smoothstep(0.0, 0.085, f + (n1 - 0.5) * 0.045);
+    float f4 = f + (n1 - 0.5) * 0.045;
+    frente = smoothstep(0.0, 0.085, f4);
+    aresta = f4;
   }
 
   vec3 cor = mix(
     texture2D(uA, cover(vUv + dA, uArteA)).rgb,
     texture2D(uB, cover(vUv + dB, uArteB)).rgb,
     frente);
+
+  /* ⭐ O FIO NA CRISTA — a transição falando a língua da identidade.
+     Esta direção é feita de FIOS DE 1PX: raio zero, sem sombra, sem pílula, e
+     a régua separando cada bloco. A onda que troca a arte passa a carregar o
+     mesmo fio, no acento dele, exatamente sobre a linha em que uma arte vira a
+     outra. Não é brilho decorativo: é a régua do sistema aparecendo onde o
+     sistema está trabalhando.
+     Estreito de propósito (gaussiana apertada) e proporcional ao sopro, para
+     nascer e morrer com a transição — em repouso ele não existe. */
+  float fio = exp(-pow(aresta * 46.0, 2.0)) * sopro;
+  cor = mix(cor, uAcento, clamp(fio, 0.0, 1.0) * 0.82);
+
   gl_FragColor = vec4(cor, 1.0);
 }

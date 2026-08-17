@@ -18,11 +18,14 @@ import "../../styles/v2.css";
 
 /* as folhas do acervo, na ordem — a nav é isto, e o número de cada rota
    também sai daqui: uma lista, não dois lugares para editar */
+/* ⚠ AS ROTAS SÃO AS CANÔNICAS desde a promoção de 17/08 — `/`, `/work`,
+   `/about`, `/lab`, as mesmas do CMS dele. Não voltar para `/v2/*`: o `/v2`
+   segue existindo só como material de estúdio. */
 export const PRANCHAS = [
-  { n: "01", nome: "Index", to: "/v2" },
-  { n: "02", nome: "Work", to: "/v2/work" },
-  { n: "03", nome: "About", to: "/v2/about" },
-  { n: "04", nome: "Lab", to: "/v2/lab" },
+  { n: "01", nome: "Index", to: "/" },
+  { n: "02", nome: "Work", to: "/work" },
+  { n: "03", nome: "About", to: "/about" },
+  { n: "04", nome: "Lab", to: "/lab" },
 ] as const;
 
 /** hora dele, viva — o mesmo fato que o corentin põe na base ("05:16 (UTC+1)") */
@@ -46,7 +49,7 @@ function Navegacao() {
   return (
     <nav className="p-corpo flex flex-wrap items-baseline gap-x-1">
       {PRANCHAS.map((p, i) => {
-        const atual = pathname === p.to || (p.to !== "/v2" && pathname.startsWith(p.to));
+        const atual = pathname === p.to || (p.to !== "/" && pathname.startsWith(p.to));
         return (
           <span key={p.to}>
             <Link
@@ -89,10 +92,10 @@ export function Prancha({
   const hora = useHora();
   return (
     <div
+      /* ⚠ o acento não vem mais daqui: cada superfície declara o SEU par (azul
+         e marrom dele) em `v2.css`, porque a mesma cor não serve aos dois
+         fundos ([[craft-token-de-cor-nao-serve-aos-dois-fundos]]) */
       className={`p-${superficie} p-tela relative min-h-svh`}
-      style={{
-        ["--p-acento" as string]: superficie === "tinta" ? "#ec7a47" : "#a53a0b",
-      }}
     >
       <div
         className="flex min-h-svh flex-col"
@@ -138,7 +141,7 @@ export function Prancha({
             está, que horas são lá, e o ano do arquivo. Mesma grade do
             cabeçalho, pela mesma razão. */}
         <footer
-          className="p-marca grid grid-cols-12 items-baseline pt-10"
+          className="p-marca grid grid-cols-12 items-baseline pt-5"
           style={{ columnGap: "var(--p-gap-x)" }}
         >
           <span className="col-span-4">Brazil</span>

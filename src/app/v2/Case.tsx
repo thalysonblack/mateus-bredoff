@@ -4,7 +4,7 @@ import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha, Bloco } from "./sistema";
 
 /**
- * O CASE — `/v2/work/:slug`. Um componente para os nove.
+ * O CASE — `/work/:slug`. Um componente para os nove.
  *
  * A anatomia veio medida do revelatio (`/tmp/ref-revelatio.md`), e o número que
  * decide tudo é a divisão da coluna: **galeria 1119px à esquerda (~73%) e ficha
@@ -42,7 +42,7 @@ export default function CaseV2() {
             404
           </p>
           <p className="p-item pt-4">This project is not in the index.</p>
-          <Link to="/v2/work" className="p-corpo p-link pt-8">
+          <Link to="/work" className="p-corpo p-link pt-8">
             Back to the index →
           </Link>
         </div>
@@ -170,7 +170,7 @@ export default function CaseV2() {
             </Bloco>
 
             <Bloco rotulo="Next">
-              <Link to={`/v2/work/${proximo.slug}`} className="p-corpo p-link">
+              <Link to={`/work/${proximo.slug}`} className="p-corpo p-link">
                 {proximo.title} →
               </Link>
             </Bloco>

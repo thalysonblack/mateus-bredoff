@@ -10,6 +10,7 @@
  * só em DEV) segura o progresso no ponto que se quer medir.
  */
 import puppeteer from 'puppeteer-core';
+import { execFileSync } from 'node:child_process';
 const b=await puppeteer.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
   headless:'new',args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const modo = process.argv[2] || '4';
@@ -27,9 +28,14 @@ await p.mouse.move(xs[1],y); await new Promise(r=>setTimeout(r,600));
 for (const q of [0.25,0.5,0.75]) {
   await p.evaluate((v)=>window.__visor.travar(v), q);
   await new Promise(r=>setTimeout(r,120));
-  const caixa=await p.evaluate(()=>{const r=document.querySelector('.p-visor').getBoundingClientRect();
+  const k=await p.evaluate(()=>{const r=document.querySelector('.p-visor').getBoundingClientRect();
     return {x:Math.round(r.x),y:Math.round(r.y),width:Math.round(r.width),height:Math.round(r.height)};});
-  await p.screenshot({path:`/tmp/m${modo}-${String(q).replace('0.','')}.png`, clip:caixa});
+  /* ⚠ NADA DE `clip`: sem preserveDrawingBuffer o canvas WebGL não sobrevive à
+     recomposição que o recorte força e sai PRETO. Página inteira + ffmpeg. */
+  const cheio=`/tmp/m${modo}-${String(q).replace('0.','')}-full.png`;
+  await p.screenshot({path:cheio});
+  execFileSync('ffmpeg',['-v','quiet','-y','-i',cheio,'-vf',`crop=${k.width}:${k.height}:${k.x}:${k.y}`,
+    `/tmp/m${modo}-${String(q).replace('0.','')}.png`]);
 }
 console.log(`modo ${modo} — ${await p.evaluate(()=>document.querySelector('footer span.col-start-10')?.textContent?.trim())} | erros: ${erros.length}`);
 await b.close();

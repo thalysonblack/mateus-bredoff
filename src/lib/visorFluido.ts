@@ -50,8 +50,19 @@ import VERT from "./visor.vert.glsl?raw";
 import FRAG from "./visor.frag.glsl?raw";
 
 export type VisorFluido = {
-  /** carrega a arte na lâmina de trás; resolve quando ela está pronta na GPU */
-  preparar(src: string, dir: 1 | -1): Promise<void>;
+  /**
+   * Garante a arte na GPU. NÃO toca em nada do que está na tela.
+   *
+   * ⚠ A separação entre isto e `iniciar` é o que mata uma corrida real: se o
+   * carregamento já instalasse a lâmina de trás, o `concluir()` de uma
+   * transição AINDA EM CURSO poderia promover a arte nova sem animação nenhuma
+   * — e a troca seguinte animaria de X para X, ou seja, sem efeito.
+   */
+  garantir(src: string): Promise<void>;
+  /** instala a arte como lâmina de trás e zera o progresso. Síncrono, de propósito. */
+  iniciar(src: string, dir: 1 | -1): void;
+  /** a cor do fio da crista — vem do token `--p-acento` da superfície */
+  acento(css: string): void;
   /** sobe todas as artes para a GPU antes do primeiro hover */
   aquecer(fontes: string[]): Promise<void>;
   /** 0 → 1 durante a transição; quem anima é o GSAP, de fora */
@@ -132,6 +143,7 @@ export function criarVisorFluido(alvo: HTMLElement, modo: 1 | 2 | 3 | 4 = 1): Vi
       uArteA: { value: 16 / 9 },
       uArteB: { value: 16 / 9 },
       uModo: { value: modo },
+      uAcento: { value: [0.15, 0.47, 0.59] },
     },
   });
   const mesh = new Mesh(gl, { geometry: new Triangle(gl), program });
@@ -188,9 +200,12 @@ export function criarVisorFluido(alvo: HTMLElement, modo: 1 | 2 | 3 | 4 = 1): Vi
   };
 
   return {
-    async preparar(src, dir) {
-      const t = await daTextura(src);
-      if (!vivo) return;
+    async garantir(src) {
+      await daTextura(src);
+    },
+    iniciar(src, dir) {
+      const t = texturas.get(src);
+      if (!t || !vivo) return;
       texB = t;
       razaoB = (t as unknown as { razao: number }).razao;
       program.uniforms.uB.value = texB;
@@ -205,6 +220,18 @@ export function criarVisorFluido(alvo: HTMLElement, modo: 1 | 2 | 3 | 4 = 1): Vi
         await daTextura(src);
         await new Promise((r) => setTimeout(r, 0)); /* uma por vez, sem prender o frame */
       }
+    },
+    acento(css) {
+      const m = css.trim().match(/^#?([0-9a-f]{6})$/i);
+      if (!m) return;
+      const n = parseInt(m[1], 16);
+      /* sRGB → linear: o shader mistura em linear, e jogar o valor cru deixa o
+         fio claro demais */
+      const canal = (v: number) => {
+        const c = v / 255;
+        return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+      };
+      program.uniforms.uAcento.value = [canal((n >> 16) & 255), canal((n >> 8) & 255), canal(n & 255)];
     },
     progresso(v) {
       if (travado !== null) return;
