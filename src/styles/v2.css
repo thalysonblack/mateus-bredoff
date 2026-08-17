@@ -1376,12 +1376,71 @@
    e do cabeçalho, e "tela cheia" ficava sendo 88% dela.
    O cabeçalho continua legível porque o alto da foto é o trecho escuro do
    gradiente dela. */
+/* ⭐ A HERO É DIRIGIDA PELO SCROLL — "mais scroll based".
+   Três movimentos, todos amarrados ao percurso e nenhum a um timer:
+     1. a hero FICA (sticky) e o conteúdo sobe por cima dela — é a mecânica das
+        folhas do Laxer, dos salvos dele, aplicada à capa;
+     2. a foto recua (`scale` 1 → 1,08 com o quadro descendo), então o rosto
+        parece afundar enquanto a página avança;
+     3. o nome e o ofício se AFASTAM para os lados opostos, cada um saindo pela
+        sua borda — o gesto que os cantos já sugerem, completado pelo gesto.
+
+   ⚠ CSS puro (`animation-timeline: view()`), não JS: roda no compositor e não
+   sabe que o Lenis existe. Sem suporte, a hero simplesmente fica parada — o
+   conteúdo continua legível e nada quebra. */
 .p-hero {
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 0;
   margin-inline: calc(var(--p-margem) * -1);
   margin-top: calc((var(--p-margem-y) + 1.22rem) * -1);
   height: 100svh;
   overflow: hidden;
+}
+/* o que vem depois da hero sobe POR CIMA dela */
+/* ⚠ A FOLHA QUE COBRE A HERO precisa de fundo OPACO e sangria total (senão a
+   foto vaza pelas laterais e a leitura de camada se perde). O padding lateral
+   vive na regra de layout, mais abaixo — declarar `padding-inline` aqui não
+   adianta: lá existe um `padding` SHORTHAND, e shorthand zera o longhand
+   declarado antes. Foi assim que o rótulo "About me" saiu da margem. */
+.p-catalogo-intro {
+  position: relative;
+  z-index: 1;
+  background: #14201f;
+  margin-inline: calc(var(--p-margem) * -1);
+}
+/* ⚠ `scroll(root block)` e NÃO `view()`: a hero é STICKY, então ela nunca sai
+   da viewport — e `view()` mede exatamente a passagem do elemento por ela, de
+   modo que o progresso ficava travado em zero (medido: escala 1,013 e
+   deslocamento 0 em todas as paradas, com a página rolando 1040px). Com a
+   timeline do documento e o range preso à primeira tela, o percurso é o que se
+   espera: começa no topo e termina quando a hero foi coberta. */
+@supports (animation-timeline: scroll()) {
+  .p-hero-foto img,
+  .p-hero-marca--esq,
+  .p-hero-marca--dir {
+    animation-timeline: scroll(root block);
+    animation-range: 0 100vh;
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+  }
+  .p-hero-foto img { animation-name: p-hero-recua; }
+  .p-hero-marca--esq { animation-name: p-hero-sai-esq; }
+  .p-hero-marca--dir { animation-name: p-hero-sai-dir; }
+}
+@keyframes p-hero-recua {
+  to { transform: scale(1.08) translateY(3%); }
+}
+@keyframes p-hero-sai-esq {
+  to { transform: translateX(-42%); }
+}
+@keyframes p-hero-sai-dir {
+  to { transform: translateX(42%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .p-hero-foto img,
+  .p-hero-marca--esq,
+  .p-hero-marca--dir { animation: none; }
 }
 .p-hero-foto,
 .p-hero-foto img { margin: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; display: block; }
@@ -1445,7 +1504,7 @@
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: var(--p-gap-x);
-  padding: 72px 0 84px;
+  padding: 72px var(--p-margem) 84px;
 }
 .p-catalogo-intro > div { grid-column: 5 / span 8; display: grid; gap: 22px; }
 
