@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { WORK } from "../../content/work";
 import { RECONHECIMENTO } from "../../content/reconhecimento";
@@ -25,6 +26,36 @@ import { Prancha, Bloco } from "./sistema";
  */
 export default function HomeD() {
   useMetaRota();
+  /* a peça sob o cursor. `null` = nada aceso. */
+  const [sob, setSob] = useState<(typeof WORK)[number] | null>(null);
+  const thumb = useRef<HTMLDivElement | null>(null);
+
+  /* ⚠ o transform vai DIRETO no nó, fora do React: são dois updates por
+     movimento de mouse, e passar isso por estado re-renderiza a trama inteira
+     (nove nomes × três fitas) a 60fps. Só o "quem está sob o cursor" é estado,
+     porque muda raramente. */
+  useEffect(() => {
+    let ultimo: string | null = null;
+    const mover = (e: PointerEvent) => {
+      const el = thumb.current;
+      if (el) el.style.transform = `translate3d(${e.clientX}px, ${e.clientY + 26}px, 0)`;
+
+      /* ⚠ QUEM ESTÁ SOB O CURSOR SE DESCOBRE POR `elementFromPoint`, não por
+         onMouseEnter. Medido: com `mouseenter` no nome, a thumb NUNCA acendia —
+         os nomes estão dentro de uma fita em movimento contínuo, então o
+         elemento sai debaixo do cursor antes de o evento assentar, e enter/leave
+         se cancelam. Lendo o ponto a cada movimento, o alvo é sempre o que está
+         ali AGORA. O estado só muda quando muda a peça, então não há
+         re-render por pixel. */
+      const alvo = (document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null)?.closest<HTMLElement>("[data-peca]");
+      const slug = alvo?.dataset.peca ?? null;
+      if (slug === ultimo) return;
+      ultimo = slug;
+      setSob(slug ? WORK.find((w) => w.slug === slug) ?? null : null);
+    };
+    window.addEventListener("pointermove", mover, { passive: true });
+    return () => window.removeEventListener("pointermove", mover);
+  }, []);
   const recentes = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano).slice(0, 2);
   /* a fita é duplicada no markup e o −50% do keyframe fecha o loop sem emenda */
   const fita = [...WORK, ...WORK];
@@ -35,23 +66,34 @@ export default function HomeD() {
         {/* a trama — o nome de cada marca recortado na sua própria peça.
             Duas fitas em sentidos opostos: a segunda começa pelo fim da coleção
             para que as duas linhas nunca mostrem o mesmo projeto lado a lado. */}
-        <div className="grid gap-2" aria-hidden="true">
+        <div className="grid gap-2">
           {[fita, [...fita].reverse(), [...WORK.slice(3), ...WORK.slice(0, 3), ...WORK.slice(3), ...WORK.slice(0, 3)]].map((linha, li) => (
             <div key={li} className="p-trama -mx-[var(--p-margem)]">
-              <div
-                className={`p-trama-fita ${li === 1 ? "p-trama-fita--volta" : ""} ${li === 2 ? "p-trama-fita--terca" : ""}`}
-              >
-                {linha.map((w, k) => (
-                  <span key={`${w.slug}-${k}`} className="flex items-baseline gap-[0.32em]">
-                    <span
-                      className="p-trama-nome"
-                      style={{ backgroundImage: `url(${w.cover.src2x ?? w.cover.src})` }}
-                    >
-                      {w.title}
+              {/* o wrapper anda com o SCROLL; a fita de dentro segue no loop
+                  próprio. Ímpares vão para o outro lado. Duas camadas porque com
+                  uma só seria preciso escolher entre "vive parada" e "reage ao
+                  scroll" — e ele quer as duas. */}
+              <div className={`p-trama-scroll ${li % 2 === 1 ? "p-trama-scroll--volta" : ""}`}>
+                <div
+                  className={`p-trama-fita ${li === 1 ? "p-trama-fita--volta" : ""} ${li === 2 ? "p-trama-fita--terca" : ""}`}
+                >
+                  {linha.map((w, k) => (
+                    <span key={`${w.slug}-${k}`} className="flex items-baseline gap-[0.32em]">
+                      <Link
+                        to={`/v2/work/${w.slug}`}
+                        data-peca={w.slug}
+                        onFocus={() => setSob(w)}
+                        onBlur={() => setSob(null)}
+                        className="p-trama-nome"
+                        style={{ backgroundImage: `url(${w.cover.src2x ?? w.cover.src})` }}
+                        aria-label={`Open ${w.title}`}
+                      >
+                        {w.title}
+                      </Link>
+                      <span className="p-trama-ponto">·</span>
                     </span>
-                    <span className="p-trama-ponto">·</span>
-                  </span>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           ))}
@@ -130,6 +172,27 @@ export default function HomeD() {
           </div>
         </div>
       </section>
+      {/* a thumb que segue o cursor — a prova de que o nome é uma peça */}
+      <div ref={thumb} className={`p-thumb ${sob ? "aceso" : ""}`} aria-hidden="true">
+        {sob ? (
+          <>
+            <img
+              src={sob.cover.src}
+              srcSet={sob.cover.src2x ? `${sob.cover.src} 1400w, ${sob.cover.src2x} 2200w` : undefined}
+              sizes="260px"
+              alt=""
+              width={sob.cover.w}
+              height={sob.cover.h}
+              decoding="async"
+              draggable={false}
+            />
+            <span className="p-marca cap">
+              <span>{sob.title}</span>
+              <span style={{ opacity: 0.7 }}>{sob.year}</span>
+            </span>
+          </>
+        ) : null}
+      </div>
     </Prancha>
   );
 }
