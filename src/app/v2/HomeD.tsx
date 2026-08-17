@@ -221,6 +221,14 @@ export default function HomeD({
   const quadro = useRef<HTMLDivElement | null>(null);
   /* qual arte já está na textura da frente — evita redissolver a mesma peça */
   const ultimoSrc = useRef<string | null>(null);
+  /* ⚠⚠ UM ALVO SÓ, E O TWEEN GUARDADO. Cada troca criava `const passar = {p:0}`
+     novo, e `overwrite: "auto"` só mata tweens do MESMO alvo — então duas
+     transições rodavam juntas, cada uma chamando `concluir()` no fim. Duas
+     conclusões trocam as texturas duas vezes: a arte volta para a lâmina de
+     trás e, na primeira troca dupla, o quadro exibe a textura VAZIA (preto).
+     Era isso o "ele se reajeita no final". */
+  const passo = useRef({ p: 0 });
+  const tween = useRef<gsap.core.Tween | null>(null);
   useLayoutEffect(() => {
     const el = visor.current;
     const v = fluido.current;
@@ -260,16 +268,22 @@ export default function HomeD({
       if (ultimoSrc.current === meu && aberto.current) return;
       ultimoSrc.current = meu;
 
-      const passar = { p: 0 };
-      const dissolve = () =>
-        gsap.to(passar, {
+      const dissolve = () => {
+        tween.current?.kill();
+        passo.current.p = 0;
+        tween.current = gsap.to(passo.current, {
           p: 1,
-          duration: reduzido ? 0 : 1.05,
-          ease: "power2.inOut",
-          overwrite: "auto",
-          onUpdate: () => v.progresso(passar.p),
-          onComplete: () => v.concluir(),
+          /* 1,05s com power2 lia mole; sólido pede percurso mais curto e saída
+             mais firme, sem virar corte seco */
+          duration: reduzido ? 0 : 0.92,
+          ease: "power3.inOut",
+          onUpdate: () => v.progresso(passo.current.p),
+          onComplete: () => {
+            v.concluir();
+            tween.current = null;
+          },
         });
+      };
 
       /* TROCA — a moldura não se mexe: o fluido acontece INTEIRO por dentro. */
       if (aberto.current) {
