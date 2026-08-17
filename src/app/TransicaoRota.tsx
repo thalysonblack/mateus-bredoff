@@ -5,33 +5,36 @@ import { WORK } from "../content/work";
 import { scrollToTop } from "../lib/lenis";
 
 /**
- * A transição entre páginas — O OBTURADOR.
+ * A transição entre páginas — A CORTINA DE GRADE.
  *
- * ⚠ ELE VOLTOU, e a volta é decisão dele. Quando a Prancha virou o site, refiz
- * a transição como "a folha" (uma superfície atravessando com o fio na aresta),
- * porque o obturador tinha nascido para a direção anterior. Ele testou e cortou:
- * *"essa transição ficou ruim"* → **"a transição pode ser aquela de antes,
- * melhorada visualmente"**. Coreografia que funciona não se troca por
- * coerência de vocabulário — se a antiga era melhor, a nova precisa ser MELHOR,
- * não só mais coerente.
+ * ⭐ Mecânica dos salvos dele no LinkedIn — Nischint Singh (Creative Developer,
+ * GSAP, Awwwards Young Jury '26), Project 08:
  *
- * O que fica da versão original (é ela que funcionava):
- *   1. FECHA   duas lâminas se encontram no meio, com massa (`power3.in`)
- *   2. TRAVA   o quadro fechado se afirma
- *   3. SOBE    o NOME do destino entra por baixo de uma máscara
- *   4. TROCA   a rota muda com a tela coberta (é o que esconde o salto)
- *   5. ABRE    as lâminas recuam e o conteúdo entra focando, seção a seção
+ *   "This experiment explores a LAYERED GRID SYSTEM where ALTERNATING ROWS
+ *    REVEAL FROM OPPOSING DIRECTIONS, creating a dynamic curtain effect that
+ *    transforms navigation into a more cinematic experience."
  *
- * O que muda no acabamento, para ela falar a língua da Prancha:
- *   · a lâmina chega na SUPERFÍCIE DA ROTA DE DESTINO, não no petróleo fixo —
- *     a transição anuncia para onde se vai antes de chegar;
- *   · saem as quatro marcas de canto (crop marks são assinatura da direção do
- *     visor) e entra o FIO DE 1PX no acento, que é a régua deste sistema;
- *   · o nome do destino vem em Geist regular, não no display da direção antiga,
- *     e o índice o acompanha em mono minúsculo.
+ * É o que ele pediu por "quero algo fino fino, gsap, awwwards, veja minhas refs
+ * do LinkedIn" — e explica a pergunta anterior dele, "tá usando barba?": o post
+ * é feito com Barba.js + GSAP. ⚠ Barba NÃO entra aqui: ele é um sistema de
+ * navegação, e este projeto já tem o do `react-router` com o ciclo de vida em
+ * `App.tsx`. O que se leva do post é a COREOGRAFIA, não a dependência.
  *
- * ⚠ Mecânica preservada da versão original, porque é mecânica e não estilo: a
- * interceptação de clique em fase de captura, com modificador de teclado
+ * ## A coreografia
+ *
+ *   FECHA  seis faixas horizontais entram alternando o lado — ímpares pela
+ *          esquerda, pares pela direita — com stagger. O quadro fecha como uma
+ *          cortina tecida, não como uma cortina lisa.
+ *   TROCA  a rota muda com a tela coberta (é o que esconde o salto de scroll).
+ *   ABRE   cada faixa continua o percurso e sai pelo lado OPOSTO ao que entrou.
+ *          Recuar desfaria o gesto; atravessar completa.
+ *
+ * As faixas chegam na SUPERFÍCIE DA ROTA DE DESTINO, então a transição anuncia
+ * para onde se vai. E o nome do destino sobe no meio do quadro fechado, que é o
+ * único instante em que o site tem a tela inteira.
+ *
+ * ⚠ Mecânica preservada das versões anteriores, porque é mecânica e não estilo:
+ * a interceptação de clique em fase de captura, com modificador de teclado
  * passando direto (Cmd/Ctrl/Shift-clique e botão do meio abrem em nova aba, e
  * sequestrar isso quebra expectativa do navegador), alvo externo e download
  * seguindo o caminho normal, e a troca de rota com a tela coberta.
@@ -97,51 +100,52 @@ export default function TransicaoRota() {
     const el = raiz.current;
     if (!el) return;
 
-    const lamina = el.querySelectorAll<HTMLElement>("[data-lamina]");
-    const fio = el.querySelector<HTMLElement>("[data-fio]");
+    const faixa = el.querySelectorAll<HTMLElement>("[data-faixa]");
     const rotulo = el.querySelector<HTMLElement>("[data-rotulo]");
-    const traco = el.querySelector<HTMLElement>("[data-traco]");
-
-    const titulo = el.querySelector<HTMLElement>("[data-titulo]");
     const indice = el.querySelector<HTMLElement>("[data-indice]");
+    const titulo = el.querySelector<HTMLElement>("[data-titulo]");
 
-    const tl = gsap.timeline({
-      onComplete: () => {
-        ocupado.current = false;
-        el.style.pointerEvents = "none";
-      },
-    });
-    /* o título SAI por cima — completa o percurso que começou embaixo, em vez
-       de desaparecer no lugar. É o mesmo elemento atravessando o quadro. */
-    tl.to(titulo, { yPercent: -108, duration: 0.5, ease: "power3.in" })
-      .to([rotulo, indice], { autoAlpha: 0, duration: 0.18, ease: "power2.in" }, "<+0.1")
-      .to(fio, { autoAlpha: 0, scaleX: 0, duration: 0.3, ease: "power2.in" }, "<")
-      /* as lâminas recuam com `expo.out`: quase todo o percurso no começo, e o
-         fim quase parado — é o que faz o quadro "abrir" em vez de "deslizar" */
-      .to(lamina, { scaleY: 0, duration: 0.66, ease: "expo.out" }, "-=0.24")
-      /* ⚠ O conteúdo entra por BLOCO, com stagger — não a página inteira num
-         bloco só. Era o segundo buraco: as lâminas abriam sobre uma página já
-         pronta e parada, e a chegada não tinha peso nenhum. Na referência os
-         dados entram linha a linha; aqui entram seção a seção, focando. */
-      /* ⚠ `:not(.v3-obturador)` NÃO é preciosismo. O obturador também é um
-         `<div>` filho de `<main>`, então `main > div > *` pegava as lâminas, o
-         traço e o fio JUNTO com o conteúdo — a animação de entrada
-         estava mexendo nas peças da própria transição, e o que devia entrar
-         focando dividia o stagger com elementos que precisam ficar invisíveis.
-         Só apareceu porque a verificação listou nó a nó em vez de contar. */
+    gsap
+      .timeline({
+        onComplete: () => {
+          ocupado.current = false;
+          el.style.pointerEvents = "none";
+        },
+      })
+      /* o título SAI por cima — completa o percurso que começou embaixo, em vez
+         de desaparecer no lugar. É o mesmo elemento atravessando o quadro. */
+      .to(titulo, { yPercent: -108, duration: 0.42, ease: "power3.in" })
+      .to([rotulo, indice], { autoAlpha: 0, duration: 0.16 }, "<+0.06")
+      /* ⭐ cada faixa CONTINUA para o lado OPOSTO ao que entrou — atravessar
+         completa o gesto; recuar o desfaria. O stagger vem do fim para o
+         começo, então a cortina se desfaz na ordem inversa da que fechou. */
+      .to(
+        faixa,
+        {
+          xPercent: (i) => (i % 2 === 0 ? 100 : -100),
+          duration: 0.72,
+          ease: "expo.inOut",
+          stagger: { each: 0.055, from: "end" },
+        },
+        "-=0.2",
+      )
+      /* ⚠ O conteúdo entra por BLOCO, com stagger, e FOCANDO — que é o gesto do
+         site. O `:not(.v3-obturador)` não é preciosismo: a própria transição é
+         um `<div>` filho de `<main>` em algumas rotas, e sem o filtro a
+         animação de entrada mexia nas peças dela. */
       .fromTo(
-        "main > div:not(.v3-obturador) > *",
-        { filter: "blur(14px)", opacity: 0.3, y: 18 },
+        "main > section > *, main > div:not(.v3-obturador) > *",
+        { filter: "blur(12px)", opacity: 0.35, y: 14 },
         {
           filter: "blur(0px)",
           opacity: 1,
           y: 0,
-          duration: 0.72,
+          duration: 0.66,
           ease: "power3.out",
-          stagger: 0.055,
+          stagger: 0.05,
           clearProps: "filter,opacity,transform",
         },
-        "-=0.52",
+        "-=0.45",
       );
   }, [pathname]);
 
@@ -170,53 +174,45 @@ export default function TransicaoRota() {
       indoPara.current = url.pathname;
       el.style.pointerEvents = "auto";
 
-      const lamina = el.querySelectorAll<HTMLElement>("[data-lamina]");
-      const fio = el.querySelector<HTMLElement>("[data-fio]");
+      const faixa = el.querySelectorAll<HTMLElement>("[data-faixa]");
       const rotulo = el.querySelector<HTMLElement>("[data-rotulo]");
-      const titulo = el.querySelector<HTMLElement>("[data-titulo]");
       const indice = el.querySelector<HTMLElement>("[data-indice]");
+      const titulo = el.querySelector<HTMLElement>("[data-titulo]");
+
+      /* ⚠ a cor vai no `style`, NUNCA como classe de superfície: as classes do
+         sistema trazem `background` junto, e num `fixed inset:0` isso já virou
+         parede opaca cobrindo a página uma vez hoje. */
+      const cor = COR_SUPERFICIE[superficieDaRota(url.pathname)];
+      faixa.forEach((f) => (f.style.background = cor));
       if (rotulo) rotulo.textContent = "Now entering";
       if (titulo) titulo.textContent = nomeDaRota(url.pathname);
       if (indice) indice.textContent = indiceDaRota(url.pathname);
 
-      /* ⚠⚠ A COR DA LÂMINA VAI NO `style`, NUNCA COMO CLASSE DE SUPERFÍCIE.
-         Eu tinha posto `p-branco`/`p-papel`/`p-tinta` na raiz do obturador para
-         herdar a cor — e essas classes trazem `background` junto. A raiz é
-         `fixed inset:0`, então ela virou uma PAREDE opaca cobrindo a página
-         depois da transição: a rota trocava, o DOM montava (medido: 479
-         caracteres, canvas de pé, lâminas em scaleY 0) e a tela ficava branca.
-         "a transição ocorre mas a página não carrega" era isto.
-         Só a cor, e só nas lâminas. */
-      el.style.color = COR_SUPERFICIE[superficieDaRota(url.pathname)];
-      gsap.set(lamina, { scaleY: 0 });
-      gsap.set([rotulo, indice, fio], { autoAlpha: 0 });
-      gsap.set(fio, { scaleX: 0 });
-      /* o título começa ABAIXO da própria máscara — sobe para dentro dela */
+      /* ⭐ ALTERNANDO O LADO: pares entram pela esquerda, ímpares pela direita.
+         É isso que faz a cortina parecer TECIDA em vez de lisa — e é a
+         mecânica do post do Nischint Singh, dos salvos dele. */
+      gsap.set(faixa, { xPercent: (i) => (i % 2 === 0 ? -100 : 100) });
+      gsap.set([rotulo, indice], { autoAlpha: 0 });
       gsap.set(titulo, { yPercent: 108, autoAlpha: 1 });
 
-      const tl = gsap.timeline();
-      /* 1. FECHA — `power3.in` acelera até o encontro: lâmina tem massa */
-      tl.to(lamina, { scaleY: 1, duration: 0.42, ease: "power3.in" })
-        /* 2. TRAVA — os cantos CONVERGEM para o enquadramento */
-        /* o FIO corre a largura no instante em que as lâminas se encontram —
-           é a régua do sistema aparecendo na costura */
-        .to(fio, { autoAlpha: 1, scaleX: 1, duration: 0.55, ease: "expo.out" }, "-=0.10")
-        .to([rotulo, indice], { autoAlpha: 1, duration: 0.22 }, "<+0.06")
-        /* 3. O DESTINO SOBE — era isto que faltava. O quadro fechado é o único
-           momento em que o site tem a tela inteira, e ele estava vazio: um
-           rótulo de 10px e um traço. Agora o nome da página que vem entra em
-           corpo de display, subindo por baixo de uma máscara — a direção do
-           movimento é a da referência (o elemento grande vem de baixo) e o
-           corpo é o da lição de escala: uma escala de display, não duas. */
-        .to(titulo, { yPercent: 0, duration: 0.72, ease: "expo.out" }, "<-0.04")
-        /* 4. TROCA — com o quadro fechado, o salto de scroll não aparece */
+      gsap
+        .timeline()
+        .to(faixa, {
+          xPercent: 0,
+          duration: 0.66,
+          ease: "expo.out",
+          stagger: { each: 0.055, from: "start" },
+        })
+        /* o nome do destino sobe no quadro fechado — o único instante em que o
+           site tem a tela inteira */
+        .to(titulo, { yPercent: 0, duration: 0.62, ease: "expo.out" }, "-=0.34")
+        .to([rotulo, indice], { autoAlpha: 1, duration: 0.22 }, "<+0.08")
+        /* TROCA com a tela coberta: é o que esconde o salto de scroll */
         .call(() => {
           scrollToTop(true);
           navigate(url.pathname);
         })
-        /* o quadro cheio SEGURA — sem este respiro o nome mal termina de subir
-           quando as lâminas já recuam, e o momento não se registra */
-        .to({}, { duration: 0.3 });
+        .to({}, { duration: 0.26 });
     };
 
     document.addEventListener("click", aoClicar, true);
@@ -224,23 +220,23 @@ export default function TransicaoRota() {
   }, [navigate]);
 
   return (
-    <div
-      ref={raiz}
-      aria-hidden="true"
-      className="v3-obturador p-obt"
-      style={{ pointerEvents: "none" }}
-    >
-      <i data-lamina className="lam topo" />
-      <i data-lamina className="lam base" />
-      {/* o fio de 1px do sistema, na costura onde as lâminas se encontram */}
-      <i data-fio className="p-obt-fio" />
-      {/* o quadro fechado, agora com conteúdo: rótulo + índice na régua, e o
-          nome do destino subindo por dentro de uma máscara */}
-      <span data-rotulo className="rotulo v3-micro" />
-      <span data-indice className="indice v3-micro" />
-      <span className="mascara">
-        <span data-titulo className="titulo" />
+    <div ref={raiz} aria-hidden="true" className="v3-obturador p-cortina" style={{ pointerEvents: "none" }}>
+      {/* seis faixas: ímpares entram pela esquerda, pares pela direita */}
+      {[0, 1, 2, 3, 4, 5].map((i) => (
+        <i key={i} data-faixa className="p-cortina-faixa" style={{ top: `${(i * 100) / 6}%` }} />
+      ))}
+      {/* o quadro fechado é o único instante em que o site tem a tela inteira */}
+      {/* ⚠ CLASSES PRÓPRIAS, sem as da direção anterior. Reusar `.rotulo`,
+          `.indice`, `.mascara` e `.titulo` da V3 trouxe junto o `line-height: 0`
+          da máscara (que zerava a altura e escondia o nome) e o LARANJA do
+          acento antigo no índice. Herança de CSS de direção morta é o mesmo
+          erro da transição herdada, uma camada abaixo. */}
+      <span data-rotulo className="p-cortina-rotulo" />
+      <span data-indice className="p-cortina-indice" />
+      <span className="p-cortina-mascara">
+        <span data-titulo className="p-cortina-titulo" />
       </span>
     </div>
   );
 }
+
