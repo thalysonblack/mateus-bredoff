@@ -25,21 +25,32 @@ import { Prancha, Bloco } from "./sistema";
  *      sai é a foto: *"ao invés de ser preenchido com o projeto, ser com a
  *      cor"*. Letra grande com fotografia por dentro vira ruído — a mesma
  *      palavra em cor chapada lê como marca.
- *   2. *"o overlay ao passar o mouse ficou ruim"* + *"deixa todas com proporção
- *      5:4"* — o visor mantinha a proporção nativa de cada capa, então ele
- *      mudava de formato a cada nome. Uma proporção só para as nove.
- *   3. *"no scroll a página não move, apenas os projetos"* — ver o comentário
- *      da segunda tela, mais abaixo.
+ *   2. *"o overlay ao passar o mouse ficou ruim"* → *"o mouse no hover vira o
+ *      projeto"*: o ponteiro SOME e a peça toma o lugar dele. Mais: *"16:9
+ *      mesmo, borda com 2px de arredondamento, sem sombra, efeito legal
+ *      GSAP"*. Com a proporção nativa de cada capa o visor trocava de formato
+ *      a cada nome — daí a proporção única.
+ *   3. *"tudo no viewport, não vai ter esse scroll pra baixo, o scroll move os
+ *      projetos"* — a home é UMA TELA e o gesto de rolar dirige a trama. Ver o
+ *      efeito do ticker, abaixo.
  *
- * ⚠ A montagem intermediária pôs a peça inteira DENTRO da fita, em cards 5:4 ao
- * lado de cada nome, e ele cortou: *"não era assim, era pra manter como
- * estava"*. A fita é de NOMES. A peça é o visor.
+ * ⚠ DUAS MONTAGENS QUE ELE CORTOU, para não voltarem: (a) a peça inteira dentro
+ * da fita, em cards ao lado de cada nome — *"não era assim, era pra manter como
+ * estava"*; (b) a ficha numa segunda tela, para dar percurso de scroll ao
+ * documento — *"tudo no viewport"*. A fita é de NOMES, a peça é o visor, e a
+ * página não rola.
  */
 export default function HomeD() {
   useMetaRota();
   /* a peça sob o cursor. `null` = nada aceso. */
   const [sob, setSob] = useState<(typeof WORK)[number] | null>(null);
   const visor = useRef<HTMLDivElement | null>(null);
+  /* ⚠ DUAS CAMADAS, uma dona cada: o anel externo recebe o translate do mouse
+     (escrito fora do React), o visor interno é do GSAP (scale/clip da entrada).
+     Numa camada só, o tween e o pointermove disputam a mesma matriz e a peça
+     salta a cada frame. */
+  const anel = useRef<HTMLDivElement | null>(null);
+  const campo = useRef<HTMLDivElement | null>(null);
 
   /* ⚠ QUEM ESTÁ SOB O CURSOR SE DESCOBRE POR `elementFromPoint`, não por
      onMouseEnter. Medido: com `mouseenter` no nome, o visor NUNCA acendia — os
@@ -52,6 +63,14 @@ export default function HomeD() {
   useEffect(() => {
     let ultimo: string | null = null;
     const mover = (e: PointerEvent) => {
+      /* ⚠ A PEÇA É O CURSOR — "o mouse no hover vira o projeto". Por isso o
+         translate vai no ponto EXATO, sem offset: o anel tem margem negativa de
+         meia caixa no CSS, então o centro da peça cai onde o ponteiro está. Uma
+         versão anterior descolava 26px para baixo e ficava com cara de tooltip;
+         outra ancorou no centro da tela e perdeu o vínculo com o gesto. */
+      const el = anel.current;
+      if (el) el.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+
       const alvo = (document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null)?.closest<HTMLElement>("[data-peca]");
       const slug = alvo?.dataset.peca ?? null;
       if (slug === ultimo) return;
@@ -63,17 +82,64 @@ export default function HomeD() {
   }, []);
 
   /**
+   * O SCROLL EMPURRA AS FITAS — e a página não sai do lugar.
+   *
+   * ⚠ "tudo no viewport, não vai ter esse scroll pra baixo, deixa como antes, o
+   * scroll move os projetos". A home é UMA TELA: o documento cabe em 100svh, e
+   * o gesto de rolar é reaproveitado para dirigir a trama.
+   *
+   * Isso não dá para fazer com `animation-timeline: scroll()`, que era como
+   * estava: sem curso de scroll a timeline não avança. (E o que existia antes
+   * eram 26px de sobra acidental — a trama voava com um gesto mínimo, porque
+   * 16% de deslocamento cabia em 26px de curso.) Aqui o `wheel` vira alvo, o
+   * ticker persegue o alvo com lerp, e cada linha recebe o empurrão em sentido
+   * alternado, por cima do loop próprio dela.
+   *
+   * ⚠ Um relógio só: o lerp roda no ticker do GSAP, como manda o CLAUDE.md
+   * deste repo — nunca num `rAF` próprio. E a referência da função é guardada,
+   * senão `gsap.ticker.remove` não a encontra.
+   */
+  useEffect(() => {
+    const el = campo.current;
+    if (!el || prefersReducedMotion()) return;
+    const linhas = [...el.querySelectorAll<HTMLElement>(".p-trama-scroll")];
+    let alvo = 0;
+    let atual = 0;
+    const roda = (e: WheelEvent) => {
+      alvo += e.deltaY * 0.55;
+    };
+    const passo = () => {
+      atual += (alvo - atual) * 0.09;
+      if (Math.abs(alvo - atual) < 0.05) atual = alvo;
+      linhas.forEach((l, i) => {
+        l.style.transform = `translate3d(${i % 2 === 1 ? atual : -atual}px, 0, 0)`;
+      });
+    };
+    window.addEventListener("wheel", roda, { passive: true });
+    gsap.ticker.add(passo);
+    return () => {
+      window.removeEventListener("wheel", roda);
+      gsap.ticker.remove(passo);
+    };
+  }, []);
+
+  /**
    * A ENTRADA DO VISOR — o gesto do site é FOCAR.
    *
-   * ⚠ O visor NÃO segue mais o cursor ("sem deslocamento do mouse"). Ele fica
-   * ancorado no centro da tela, e como não se move, é a ENTRADA que precisa
-   * carregar o movimento — daí o GSAP em vez de uma transição de opacidade.
+   * Ele acompanha o cursor, mas o movimento de acompanhar é trivial: o que
+   * carrega a peça é a ENTRADA. Daí GSAP, e não uma transição de opacidade.
    *
    * O gesto é o mesmo que a V3 usa em toda revelação (`data-foca`): a peça
    * chega desfocada e resolve. Aqui somam-se dois: a máscara abre de baixo para
    * cima (`clipPath`) e a arte assenta de 1,08 para 1 — a imagem "entra em
    * foco" em vez de aparecer. Trocar de nome com o visor aceso reanima do
    * início, então percorrer a fita lê como girar um anel de foco.
+   *
+   * ⚠ O visor NÃO leva legenda. Teve uma, em `mix-blend-difference`, e sobre a
+   * capa vermelha da Ginga o branco virava verde-limão. Véu por baixo do texto
+   * ele já reprovou noutra peça ([[am_craft_texto_sobre_arte_se_decide_medindo]]),
+   * e o nome do projeto já está aceso em acento na própria trama — a legenda
+   * era o mesmo dado dito duas vezes, com um defeito de contraste de brinde.
    *
    * `useLayoutEffect` + `gsap.context` porque o alvo só existe quando `sob`
    * deixa de ser nulo, e o context limpa os tweens no unmount da rota.
@@ -98,38 +164,34 @@ export default function HomeD() {
           { scale: 1.08, filter: "blur(13px)" },
           { scale: 1, filter: "blur(0px)", duration: 0.8, ease: "expo.out" },
           0,
-        )
-        .fromTo(
-          el.querySelector("[data-cap]"),
-          { yPercent: 60, autoAlpha: 0 },
-          { yPercent: 0, autoAlpha: 1, duration: 0.5 },
-          0.1,
         );
     }, el);
     return () => ctx.revert();
   }, [sob]);
-  const recentes = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano).slice(0, 3);
+  const recentes = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano).slice(0, 2);
   /* a fita é duplicada no markup e o −50% do keyframe fecha o loop sem emenda */
   const fita = [...WORK, ...WORK];
 
   return (
     <Prancha n="01" nome="Index" superficie="papel" status="Available for projects">
-      <section className="flex min-h-[calc(100svh-11rem)] flex-col justify-between pt-6">
-        {/* a trama — a peça e o nome dela, em par, atravessando a tela.
-            Três fitas em sentidos alternados: a segunda começa pelo fim da
+      {/* ⚠ UMA TELA SÓ, e é isso que a `h-full` + `min-h-0` garantem: a trama
+          ocupa o que sobra depois do cabeçalho, da ficha e do rodapé, e as três
+          fitas dividem esse resto em `1fr` cada. Sem isso a página cresce e
+          reaparece o scroll de documento que ele cortou. */}
+      <section className="flex h-full min-h-0 flex-col justify-between pt-6">
+        {/* a trama — o nome de cada marca, em corpo de cartaz, atravessando a
+            tela. Três fitas em sentidos alternados: a segunda começa pelo fim da
             coleção para que duas linhas nunca mostrem o mesmo projeto lado a
             lado. O campo inteiro é o alvo do hover (`p-trama-campo`): pousar
             numa linha para as três e atenua tudo que não está sob o cursor. */}
-        {/* `my-auto`: a trama flutua no centro do que sobra entre o cabeçalho e
-            o rótulo da dobra. Ancorada no topo (justify-between), o vazio se
-            acumulava todo embaixo — 600px de nada no mobile. */}
-        <div className="p-trama-campo my-auto grid gap-[var(--p-trama-gap)]">
+        <div ref={campo} className="p-trama-campo grid min-h-0 flex-1 gap-[var(--p-trama-gap)]">
           {[fita, [...fita].reverse(), [...WORK.slice(3), ...WORK.slice(0, 3), ...WORK.slice(3), ...WORK.slice(0, 3)]].map((linha, li) => (
             <div key={li} className="p-trama p-trama--peca -mx-[var(--p-margem)]">
-              {/* o wrapper anda com o SCROLL; a fita de dentro segue no loop
-                  próprio. Ímpares vão para o outro lado. Duas camadas porque com
-                  uma só seria preciso escolher entre "vive parada" e "reage ao
-                  scroll" — e ele quer as duas. */}
+              {/* o wrapper recebe o empurrão do SCROLL (transform escrito pelo
+                  ticker); a fita de dentro segue no loop próprio. Ímpares vão
+                  para o outro lado. Duas camadas porque com uma só seria preciso
+                  escolher entre "vive parada" e "reage ao scroll" — e ele quer
+                  as duas. */}
               <div className={`p-trama-scroll ${li % 2 === 1 ? "p-trama-scroll--volta" : ""}`}>
                 <div
                   className={`p-trama-fita ${li === 1 ? "p-trama-fita--volta" : ""} ${li === 2 ? "p-trama-fita--terca" : ""}`}
@@ -160,22 +222,11 @@ export default function HomeD() {
           {WORK.map((w) => w.title).join(", ")}.
         </h1>
 
-        {/* a linha da dobra: o que a trama não diz, dito uma vez */}
-        <p className="p-rotulo pt-10" style={{ color: "var(--p-quieto)" }}>
-          Índice — {String(WORK.length).padStart(2, "0")} projects, 2021—2026 ↓
-        </p>
-      </section>
-
-      {/* ⚠ A BASE É UMA SEGUNDA TELA, e isso é o conserto de um defeito medido:
-          a página tinha 989px contra 963px de viewport — 26px de curso. Rolar
-          não movia a página, mas os 26px alimentavam o `scroll()` das fitas em
-          16% de deslocamento. O sintoma que ele relatou ("no scroll a página
-          não move, apenas os projetos") era isto: o percurso existia só para a
-          animação. Com duas telas o scroll tem para onde ir, e o arrasto das
-          fitas passa a acompanhar a página em vez de substituí-la. */}
-      <section className="flex min-h-svh flex-col justify-center">
+        {/* a base: quem é, o índice, e a prova — em corpo de ficha, na MESMA
+            tela. Uma tentativa de pôr isto numa segunda tela deu percurso de
+            scroll, e ele cortou: "tudo no viewport". */}
         <div
-          className="grid grid-cols-12"
+          className="grid grid-cols-12 pt-12 max-md:pt-8"
           style={{ columnGap: "var(--p-gap-x)", rowGap: "var(--p-gap-y)" }}
         >
           <p className="p-corpo col-span-4 max-w-[42ch] max-lg:col-span-12">
@@ -189,7 +240,7 @@ export default function HomeD() {
               Selected work — {String(WORK.length).padStart(2, "0")}
             </p>
             <ul className="grid gap-[6px]">
-              {WORK.map((w, i) => (
+              {WORK.slice(0, 5).map((w, i) => (
                 <li key={w.slug}>
                   <Link
                     data-alvo
@@ -243,27 +294,26 @@ export default function HomeD() {
       </section>
 
       {/* O VISOR — a peça, já que ela saiu de dentro da letra.
-          ⚠ ANCORADO NO CENTRO, não colado no cursor ("sem deslocamento do
-          mouse"). E 16:9 para todas: com a proporção nativa de cada capa
-          (1400×1097, 3840×2804, 1400×1663…) ele mudava de formato a cada nome,
-          e era isso que fazia o overlay parecer solto. Uma proporção só, `cover`
-          recortando — vira instrumento, não imagem colada. */}
-      {sob ? (
-        <div ref={visor} className="p-visor" aria-hidden="true">
-          <img
-            src={sob.cover.src2x ?? sob.cover.src}
-            alt=""
-            width={sob.cover.w}
-            height={sob.cover.h}
-            decoding="async"
-            draggable={false}
-          />
-          <span className="p-marca p-visor-cap" data-cap>
-            <span>{sob.title}</span>
-            <span style={{ opacity: 0.7 }}>{sob.year}</span>
-          </span>
-        </div>
-      ) : null}
+          ⚠ ELE É O CURSOR: *"o que eu quis dizer era pra que o mouse no hover
+          virasse o projeto"*. O ponteiro some (`cursor: none` no nome) e a peça
+          ocupa o lugar dele, centrada no ponto exato — sem offset, que é o que
+          fazia parecer tooltip.
+          16:9 para todas: com a proporção nativa de cada capa (1400×1097,
+          3840×2804, 1400×1663…) o visor mudava de formato a cada nome. */}
+      <div ref={anel} className="p-visor-anel" aria-hidden="true">
+        {sob ? (
+          <div ref={visor} className="p-visor">
+            <img
+              src={sob.cover.src2x ?? sob.cover.src}
+              alt=""
+              width={sob.cover.w}
+              height={sob.cover.h}
+              decoding="async"
+              draggable={false}
+            />
+          </div>
+        ) : null}
+      </div>
     </Prancha>
   );
 }

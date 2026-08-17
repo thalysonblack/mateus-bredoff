@@ -421,10 +421,20 @@
   transition: opacity 0.35s ease-out;
 }
 .p-trama-campo {
+  /* ⭐ TRÊS LINHAS IGUAIS NO QUE SOBRA. A altura não é escolhida, é o resto da
+     tela depois do cabeçalho, da ficha e do rodapé — é assim que a home cabe em
+     100svh em qualquer janela sem inventar breakpoint. */
+  grid-template-rows: repeat(3, minmax(0, 1fr));
   /* corpo de cartaz, com teto pelos DOIS eixos: em vw puro, três linhas a
-     13,5vw não cabiam na primeira tela de um notebook baixo. */
-  --p-trama-corpo: clamp(56px, min(13.5vw, 19vh), 190px);
-  --p-trama-gap: clamp(6px, 1vh, 14px);
+     13,5vw não cabiam num notebook baixo. */
+  --p-trama-corpo: clamp(44px, min(13.5vw, 17vh), 190px);
+  --p-trama-gap: clamp(4px, 0.8vh, 12px);
+}
+/* a fita se centra na faixa que lhe coube */
+.p-trama--peca {
+  display: flex;
+  align-items: center;
+  min-height: 0;
 }
 .p-trama--peca .p-trama-nome,
 .p-trama--peca .p-trama-ponto { font-size: var(--p-trama-corpo); }
@@ -435,6 +445,7 @@
 .p-trama-campo:hover .p-trama-fita,
 .p-trama-campo:hover .p-trama-scroll { animation-play-state: paused; }
 .p-trama-campo:hover .p-trama-nome { opacity: 0.24; }
+.p-trama--peca .p-trama-nome { cursor: none; }
 .p-trama-campo .p-trama-nome:hover {
   opacity: 1;
   --p-trama-cor: var(--p-acento);
@@ -681,65 +692,59 @@
   .p-regua-sessao > i { animation: none; transform: scaleX(1); opacity: 0.4; }
 }
 
-/* ── A TRAMA, dirigida pelo SCROLL ─────────────────────────────────────────
-   "no scroll o projeto as linhas se movem" — a fita continua andando sozinha
-   (é o que a mantém viva com a página parada), mas agora o SCROLL soma
-   deslocamento por cima: rolar empurra as linhas, e empurra cada uma em
-   direção contrária à vizinha.
+/* ── A TRAMA, EMPURRADA PELO SCROLL ────────────────────────────────────────
+   "o scroll move os projetos" — e a página não sai do lugar ("tudo no
+   viewport"). A fita continua andando sozinha (é o que a mantém viva com a
+   página parada) e o gesto de rolar SOMA deslocamento por cima, em sentido
+   contrário de uma linha para a vizinha.
 
-   São duas camadas de animação, e é isso que faz funcionar: o wrapper anda com
-   `animation-timeline: scroll()` e a fita de dentro anda no seu próprio loop.
-   Uma camada só obrigaria a escolher entre "vive parada" e "reage ao scroll".
+   ⚠ JÁ FOI `animation-timeline: scroll()` e não pode voltar a ser: sem curso de
+   scroll no documento, a timeline não avança. O que fazia parecer que
+   funcionava eram 26px de sobra acidental na página — a trama voava com um
+   gesto mínimo, porque os 16% de deslocamento cabiam nesses 26px. Hoje o
+   `wheel` alimenta um alvo e o ticker do GSAP persegue com lerp (ver
+   `HomeD.tsx`), então o transform vem inline e o CSS aqui só reserva a camada.
 
-   ⚠ CSS puro de propósito: com o Lenis no comando, ler `scrollY` num listener
-   e escrever transform a 60fps é o caminho que este repo já viu virar defeito
-   (o marquee da V3 nasceu assim). `scroll()` roda no compositor e não sabe que
-   o Lenis existe. Sem suporte, as fitas só não reagem ao scroll — e continuam
-   andando. */
+   Duas camadas seguem valendo: este wrapper leva o empurrão, a fita de dentro
+   leva o loop. Com uma só, seria preciso escolher entre "vive parada" e "reage
+   ao scroll". */
 .p-trama-scroll { will-change: transform; }
-@supports (animation-timeline: scroll()) {
-  .p-trama-scroll {
-    animation: p-arrasta linear both;
-    animation-timeline: scroll(root block);
-  }
-  .p-trama-scroll--volta { animation-name: p-arrasta-volta; }
-}
-@keyframes p-arrasta {
-  to { transform: translate3d(-16%, 0, 0); }
-}
-@keyframes p-arrasta-volta {
-  to { transform: translate3d(16%, 0, 0); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .p-trama-scroll { animation: none; }
-}
 
-/* ── O VISOR ───────────────────────────────────────────────────────────────
-   O nome já é a marca; a peça é a prova de que ela existe como objeto.
+/* ── O VISOR: A PEÇA VIRA O CURSOR ─────────────────────────────────────────
+   *"o que eu quis dizer era pra que o mouse no hover virasse o projeto"* —
+   o ponteiro não ganha um acompanhante, ele É SUBSTITUÍDO pela peça.
 
-   ⚠ TRÊS CORREÇÕES DELE em 17/08, e cada uma tira algo:
-     · "sem deslocamento do mouse" — ele NÃO segue mais o cursor. Ancorado no
-       centro, a peça fica onde o olho já está, e a fita passa por trás dela.
-       (Colado no cursor, a imagem competia com o próprio movimento do mouse.)
-     · "16:9 mesmo" — proporção única para as nove capas. Com a nativa de cada
-       uma o visor trocava de formato a cada nome.
-     · "2px de arredondamento" e "sem sombra" — a sombra fingia um card
-       flutuando; sem ela o visor é uma janela ABERTA na página, e o raio de 2px
-       é o único canto arredondado do sistema, justamente por ser a única peça
-       que não é papel.
+   ⚠ Foram três leituras até acertar, e as duas erradas ficam registradas para
+   não voltarem: (1) thumb deslocada 26px abaixo do cursor, que lê como tooltip;
+   (2) visor ancorado no centro da tela, que perde o vínculo com o gesto. O
+   certo é centro da peça no ponto exato — `left/top: 0` no anel + margem
+   negativa de meia caixa aqui.
 
-   Sem posição por JS, o movimento inteiro é da ENTRADA, e ela é GSAP — ver o
-   `useLayoutEffect` do HomeD. Aqui só o repouso. */
-.p-visor {
+   Dele também: "16:9 mesmo", "2px de arredondamento", "sem sombra". A sombra
+   fingia um card flutuando; sem ela o visor é uma janela ABERTA na página, e o
+   raio de 2px é o único canto arredondado do sistema — justamente na única
+   peça que não é papel.
+
+   Duas camadas com donos distintos: o ANEL recebe o translate do mouse (escrito
+   fora do React), o VISOR é do GSAP (scale + clip da entrada). Numa só, o tween
+   e o pointermove disputam a mesma matriz. */
+.p-visor-anel {
   position: fixed;
-  inset: 0;
-  /* centro sem `transform`: o GSAP precisa de scale/clip livres no nó */
-  margin: auto;
-  width: min(38vw, 520px);
-  height: auto;
-  aspect-ratio: 16 / 9;
+  left: 0;
+  top: 0;
   z-index: 60;
   pointer-events: none;
+  /* fora da tela até o primeiro pointermove, senão pisca no canto */
+  transform: translate3d(-9999px, -9999px, 0);
+  will-change: transform;
+}
+.p-visor {
+  --p-visor-l: min(26vw, 380px);
+  width: var(--p-visor-l);
+  aspect-ratio: 16 / 9;
+  /* meia caixa para cada lado: o CENTRO da peça cai onde o ponteiro está */
+  margin: calc(var(--p-visor-l) / -3.555) 0 0 calc(var(--p-visor-l) / -2);
+  position: relative;
   border-radius: 2px;
   overflow: hidden;
   background: var(--p-fio);
@@ -755,16 +760,5 @@
   object-fit: cover;
   will-change: transform, filter;
 }
-/* a legenda vive DENTRO do visor, na base: fora dele voltaria a ser um rótulo
-   solto no meio da tela */
-.p-visor-cap {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  bottom: 8px;
-  display: flex;
-  justify-content: space-between;
-  color: #eceae5;
-  mix-blend-mode: difference;
-}
+/* ⓘ o visor não leva legenda — ver o comentário do gesto em `HomeD.tsx` */
 
