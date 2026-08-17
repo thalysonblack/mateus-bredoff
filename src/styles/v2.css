@@ -1166,6 +1166,126 @@
   color: var(--p-quieto);
 }
 
+/* ── ABOUT B: "O DOSSIÊ" ─────────────────────────────────────────────────
+   A alternativa à about de camadas: uma superfície só, do começo ao fim, com
+   sumário fixo na lateral. O contraste é todo TIPOGRÁFICO — nunca de fundo.
+   Ver o cabeçalho de `AboutB.tsx` para a diferença entre as duas propostas. */
+.p-dossie {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+  column-gap: var(--p-gap-x);
+  padding-top: 56px;
+  border-top: 1px solid var(--p-fio);
+}
+.p-sumario {
+  position: sticky;
+  top: 24px;
+  align-self: start;
+  display: grid;
+  gap: 40px;
+  padding-bottom: 40px;
+}
+.p-sumario-lista { display: grid; gap: 2px; }
+.p-sumario-item {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 0;
+  color: var(--p-quieto);
+  transition: color 0.3s ease-out;
+}
+.p-sumario-item:hover,
+.p-sumario-item.aceso { color: var(--p-ink); }
+.p-sumario-ficha { display: grid; gap: 14px; }
+.p-sumario-ficha dt { color: var(--p-quieto); }
+.p-sumario-valor {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-size: clamp(20px, 1.7vw, 28px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.p-documento { display: grid; }
+.p-parte {
+  padding-block: 64px 72px;
+  border-top: 1px solid var(--p-fio);
+}
+.p-parte:first-child { border-top: 0; padding-top: 0; }
+/* o cabeçalho de parte: numeral grande + rótulo miúdo, a mesma anatomia do
+   índice de seção da proposta A */
+.p-parte-cabeca {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding-bottom: 28px;
+}
+.p-parte-cabeca > :first-child {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-size: clamp(26px, 2.6vw, 40px);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--p-quieto);
+}
+.p-parte-lead {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-size: clamp(17px, 1.5vw, 23px);
+  line-height: 1.42;
+  letter-spacing: -0.012em;
+  max-width: 62ch;
+}
+.p-parte-pe { padding-top: 20px; color: var(--p-quieto); }
+
+/* a tabela de preço: três linhas comparáveis de relance */
+.p-precos { width: 100%; border-collapse: collapse; }
+.p-precos th,
+.p-precos td { text-align: left; padding: 18px 0; vertical-align: baseline; }
+.p-precos thead th { padding-bottom: 10px; border-bottom: 1px solid var(--p-fio); }
+.p-precos tbody tr { border-bottom: 1px solid var(--p-fio); }
+.p-precos-escopo { color: var(--p-quieto); padding-right: 24px; }
+.p-precos-valor {
+  text-align: right;
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-size: clamp(22px, 2.2vw, 34px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+.p-precos-sob { font-size: 15px; letter-spacing: 0; color: var(--p-quieto); }
+
+.p-etapas { display: grid; gap: 2px; padding-top: 8px; }
+.p-etapa {
+  display: grid;
+  grid-template-columns: 3.4rem 1fr;
+  gap: 16px;
+  padding: 20px 0;
+  border-top: 1px solid var(--p-fio);
+}
+.p-etapa-n {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-size: clamp(22px, 2vw, 30px);
+  line-height: 1;
+  color: var(--p-quieto);
+}
+.p-contatos { display: grid; }
+.p-contatos li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 0;
+}
+.p-contato-valor {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-size: clamp(17px, 1.5vw, 22px);
+  letter-spacing: -0.015em;
+}
+@media (max-width: 1024px) {
+  .p-dossie { grid-template-columns: 1fr; row-gap: 32px; }
+  .p-sumario { position: relative; top: 0; }
+  .p-precos-escopo { display: none; }
+}
+
 /* ── O OBTURADOR (transição de rota) ─────────────────────────────────────
    A coreografia é a da direção anterior — ele pediu de volta ("a transição pode
    ser aquela de antes, melhorada visualmente"). O que muda é o acabamento:
