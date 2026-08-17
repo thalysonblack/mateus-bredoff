@@ -79,21 +79,34 @@ export default function AboutC() {
             ⚠ Ela vive no TOPO porque é ali que a foto é escura (o gradiente do
             fundo dela vai de petróleo a claro) — texto claro sobre a metade
             clara precisaria de véu, e véu sobre a arte ele já reprovou. */}
-        {/* ⭐ A BARRA DO TOPO, medida no print da home dele: marca, relógio com
-            data, disponibilidade e menu — quatro blocos em mono miúdo. */}
+        {/* ⚠ ADAPTADA AO LUGAR. A barra da home dele traz marca e "Menu" — aqui
+            os dois JÁ existem no cabeçalho da prancha, três centímetros acima, e
+            repetir marca e navegação sobre a foto é dizer duas vezes a mesma
+            coisa em duas tipografias diferentes.
+            O que sobra é o que só ESTA página tem: o índice da folha, o dado
+            vivo (hora e data) e a disponibilidade. Mesmo gesto, conteúdo do
+            lugar — a hero é emprestada da home, a informação não. */}
         <div className="p-hero-barra">
-          <span>Bredoff®</span>
           <span>
-            {hora}:00 BRT
+            03 / About
             <br />
-            {new Date().toLocaleDateString("pt-BR")}
+            Visual identity practice
+          </span>
+          <span>
+            {hora} BRT
+            <br />
+            {new Date().toLocaleDateString("en-GB")}
           </span>
           <span>
             Currently
             <br />
             Available for work
           </span>
-          <span className="p-hero-barra-fim">Menu</span>
+          <span className="p-hero-barra-fim">
+            Since 2021
+            <br />
+            {WORK.length} projects
+          </span>
         </div>
 
         {/* ⭐⭐ O NOME E O OFÍCIO NOS CANTOS DE BAIXO, em caixa alta gigante,
