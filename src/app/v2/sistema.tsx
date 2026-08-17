@@ -98,14 +98,25 @@ export function Prancha({
         className="flex min-h-svh flex-col"
         style={{ paddingInline: "var(--p-margem)", paddingBlock: "var(--p-margem-y)" }}
       >
-        {/* cabeçalho da prancha: nome do arquivo à esquerda, navegação no
-            centro, status à direita — a linha de topo do corentin */}
-        <header className="flex items-baseline justify-between gap-6 max-md:flex-col max-md:gap-2">
-          <Link to="/v2" className="p-corpo p-link">
+        {/* Cabeçalho da prancha: nome do arquivo, navegação, status.
+            ⚠ NA MESMA GRADE DE 12 DO CONTEÚDO, e não em `justify-between`: a nav
+            caía a ~30px da coluna onde começa a ficha, e ele marcou o
+            desalinhamento com uma linha vertical na tela. Numa prancha, uma
+            coluna que não fecha do topo à base entrega a página inteira. */}
+        <header
+          className="grid grid-cols-12 items-baseline max-md:flex max-md:flex-col max-md:gap-2"
+          style={{ columnGap: "var(--p-gap-x)" }}
+        >
+          <Link to="/v2" className="p-corpo p-link col-span-4">
             Mateus Bredoff
           </Link>
-          <Navegacao />
-          <p className="p-corpo flex items-center gap-2" style={{ color: "var(--p-quieto)" }}>
+          <div className="col-span-4 col-start-6 max-md:col-span-12">
+            <Navegacao />
+          </div>
+          <p
+            className="p-corpo col-span-3 col-start-10 flex items-center justify-end gap-2"
+            style={{ color: "var(--p-quieto)" }}
+          >
             {status ? (
               <>
                 <i
@@ -123,12 +134,18 @@ export function Prancha({
 
         {/* rodapé da prancha: os três metadados que o corentin ancora na base —
             onde ele está, que horas são lá, e o ano do arquivo */}
-        <footer className="p-marca flex items-baseline justify-between gap-6 pt-10">
-          <span>Brazil</span>
-          <span>
+        {/* rodapé: os três metadados que o corentin ancora na base — onde ele
+            está, que horas são lá, e o ano do arquivo. Mesma grade do
+            cabeçalho, pela mesma razão. */}
+        <footer
+          className="p-marca grid grid-cols-12 items-baseline pt-10"
+          style={{ columnGap: "var(--p-gap-x)" }}
+        >
+          <span className="col-span-4">Brazil</span>
+          <span className="col-span-4 col-start-6">
             {hora} <span style={{ opacity: 0.6 }}>(UTC−3)</span>
           </span>
-          <span>
+          <span className="col-span-3 col-start-10 text-right">
             {n} / {nome.toUpperCase()}
           </span>
         </footer>

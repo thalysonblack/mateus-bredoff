@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { gsap, prefersReducedMotion } from "../../lib/gsap";
+import { criarVisorFluido, type VisorFluido } from "../../lib/visorFluido";
 import { WORK } from "../../content/work";
 import { RECONHECIMENTO } from "../../content/reconhecimento";
 import { useMetaRota } from "../../hooks/useMetaRota";
@@ -140,6 +141,34 @@ export default function HomeD() {
   }, []);
 
   /**
+   * O renderer do visor vive enquanto a rota vive, e desenha no ticker do GSAP.
+   *
+   * ⚠ Ele NÃO é montado/desmontado junto com o hover: criar contexto WebGL custa
+   * caro e a trama dispara troca a cada palavra. Fica de pé, e quem aparece e
+   * some é a máscara (o `.p-visor`, por GSAP).
+   */
+  useEffect(() => {
+    const tela = quadro.current;
+    if (!tela) return;
+    const v = criarVisorFluido(tela);
+    fluido.current = v;
+    if (!v) return;
+    let ultimo = performance.now();
+    const desenha = () => {
+      const agora = performance.now();
+      const dt = Math.min((agora - ultimo) / 1000, 0.05);
+      ultimo = agora;
+      v.passo(dt);
+    };
+    gsap.ticker.add(desenha);
+    return () => {
+      gsap.ticker.remove(desenha);
+      v.destruir();
+      fluido.current = null;
+    };
+  }, []);
+
+  /**
    * O VISOR: ABRE UMA VEZ, DEPOIS TROCA POR DENTRO.
    *
    * ⚠ *"invés do frame de projeto fechar e abrir, deixar aberto e trocar por
@@ -169,18 +198,23 @@ export default function HomeD() {
    * era o mesmo dado dito duas vezes, com um defeito de contraste de brinde.
    */
   const aberto = useRef(false);
-  /* as duas lâminas do visor e qual delas está na frente */
-  const lamina = useRef<HTMLImageElement[]>([]);
-  const ativo = useRef(-1);
+  /* o renderer do visor (WebGL). `null` = sem WebGL: o visor abre e fecha, e a
+     troca acontece sem o fluido — a peça continua legível. */
+  const fluido = useRef<VisorFluido | null>(null);
   /* de que lado a próxima arte entra: +1 pela direita, −1 pela esquerda */
   const lado = useRef(1);
+  /* a caixa onde o canvas do WebGL é pendurado */
+  const quadro = useRef<HTMLDivElement | null>(null);
+  /* qual arte já está na textura da frente — evita redissolver a mesma peça */
+  const ultimoSrc = useRef<string | null>(null);
   useLayoutEffect(() => {
     const el = visor.current;
-    const camadas = lamina.current;
-    if (!el || camadas.length < 2) return;
+    const v = fluido.current;
+    if (!el) return;
     const reduzido = prefersReducedMotion();
 
-    /* FECHAR */
+    /* FECHAR — a máscara desce; a arte fica onde está, para a próxima abertura
+       já entrar sobre ela. */
     if (!sob) {
       if (!aberto.current) return;
       aberto.current = false;
@@ -195,71 +229,57 @@ export default function HomeD() {
       return;
     }
 
-    const entra = camadas[(ativo.current + 1) % 2];
-    const sai = ativo.current >= 0 ? camadas[ativo.current] : null;
-    ativo.current = camadas.indexOf(entra);
-    entra.src = sob.cover.src2x ?? sob.cover.src;
+    const src = sob.cover.src2x ?? sob.cover.src;
+    const meu = src;
 
-    if (reduzido) {
+    /* sem WebGL: a máscara ainda abre e fecha, só não há fluido */
+    if (!v) {
       gsap.set(el, { autoAlpha: 1, clipPath: "inset(0% 0% 0% 0%)" });
-      gsap.set(entra, { autoAlpha: 1, xPercent: 0, yPercent: 0, scale: 1, filter: "none", zIndex: 2 });
-      if (sai) gsap.set(sai, { autoAlpha: 0, zIndex: 1 });
       aberto.current = true;
       return;
     }
 
-    /* ⚠ `decode()` antes de animar: sem isso a lâmina começa a subir vazia e a
-       arte aparece no meio do percurso. O `.catch` é obrigatório — trocar de
-       nome rápido cancela o decode anterior e a promise rejeita. */
-    void entra
-      .decode()
-      .catch(() => {})
-      .then(() => {
-        if (ativo.current !== camadas.indexOf(entra)) return; /* já veio outra */
-        gsap.set(entra, { zIndex: 2, autoAlpha: 1 });
-        if (sai) gsap.set(sai, { zIndex: 1 });
+    /* ⚠ A ARTE VAI PARA A GPU ANTES DE QUALQUER TWEEN. Sem esperar, o primeiro
+       frame da transição mistura com uma textura vazia e o quadro pisca preto —
+       e trocar de nome rápido resolve fora de ordem, daí a trava do `meu`. */
+    void v.preparar(src, lado.current as 1 | -1).then(() => {
+      if (ultimoSrc.current === meu && aberto.current) return;
+      ultimoSrc.current = meu;
 
-        /* TROCA — a moldura não se mexe: nada de clipPath aqui.
-           ⚠ O DESLIZE É LATERAL, e no sentido da linha: a arte entra pelo mesmo
-           lado de onde a fita vem, e a anterior sai pelo oposto, mais devagar
-           (parallax). Já foi vertical, e o eixo brigava com a trama — aqui tudo
-           anda na horizontal, então a troca ler no mesmo eixo faz o visor
-           parecer uma JANELA sobre a fita em vez de um slot separado. */
-        if (aberto.current) {
-          const d = lado.current;
-          gsap
-            .timeline()
-            .fromTo(
-              entra,
-              { xPercent: 100 * d, scale: 1.04, filter: "blur(8px)" },
-              { xPercent: 0, scale: 1, filter: "blur(0px)", duration: 0.78, ease: "expo.out" },
-              0,
-            )
-            .fromTo(
-              sai,
-              { xPercent: 0, scale: 1 },
-              { xPercent: -32 * d, scale: 1.04, duration: 0.78, ease: "expo.out" },
-              0,
-            );
-          return;
-        }
+      const passar = { p: 0 };
+      const dissolve = () =>
+        gsap.to(passar, {
+          p: 1,
+          duration: reduzido ? 0 : 1.05,
+          ease: "power2.inOut",
+          overwrite: "auto",
+          onUpdate: () => v.progresso(passar.p),
+          onComplete: () => v.concluir(),
+        });
 
-        /* ABERTURA */
-        aberto.current = true;
-        gsap
-          .timeline()
-          .fromTo(
-            el,
-            { autoAlpha: 0, clipPath: "inset(100% 0% 0% 0%)" },
-            { autoAlpha: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.62, ease: "expo.out" },
-          )
-          .fromTo(
-            entra,
-            { xPercent: 10 * lado.current, scale: 1.08, filter: "blur(13px)" },
-            { xPercent: 0, scale: 1, filter: "blur(0px)", duration: 0.8, ease: "expo.out" },
-            0,
-          );
-      });
+      /* TROCA — a moldura não se mexe: o fluido acontece INTEIRO por dentro. */
+      if (aberto.current) {
+        dissolve();
+        return;
+      }
+
+      /* ABERTURA — a máscara sobe, e o fluido corre junto: a primeira arte
+         entra pela mesma frente de onda que as seguintes, para não haver dois
+         vocabulários de entrada. */
+      aberto.current = true;
+      if (reduzido) {
+        gsap.set(el, { autoAlpha: 1, clipPath: "inset(0% 0% 0% 0%)" });
+        v.progresso(1);
+        v.concluir();
+        return;
+      }
+      gsap.fromTo(
+        el,
+        { autoAlpha: 0, clipPath: "inset(100% 0% 0% 0%)" },
+        { autoAlpha: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.62, ease: "expo.out", overwrite: "auto" },
+      );
+      dissolve();
+    });
   }, [sob]);
   const recentes = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano).slice(0, 2);
   /* a fita é duplicada no markup e o −50% do keyframe fecha o loop sem emenda */
@@ -398,21 +418,11 @@ export default function HomeD() {
           3840×2804, 1400×1663…) o visor mudava de formato a cada nome. */}
       <div ref={anel} className="p-visor-anel" aria-hidden="true">
         <div ref={visor} className="p-visor">
-          {/* ⚠ DUAS LÂMINAS FIXAS, e o `src` de cada uma é escrito pelo efeito,
-              não pelo React: a troca precisa das DUAS artes na tela ao mesmo
-              tempo — uma subindo para fora, a outra entrando por baixo. Com uma
-              tag só, "trocar por dentro" viraria um corte seco. */}
-          {[0, 1].map((i) => (
-            <img
-              key={i}
-              ref={(n) => {
-                if (n) lamina.current[i] = n;
-              }}
-              alt=""
-              decoding="async"
-              draggable={false}
-            />
-          ))}
+          {/* ⚠ O QUADRO É UM CANVAS, não duas <img>: a troca fluida precisa das
+              duas artes na MESMA superfície para o shader misturar uma na outra.
+              O renderer é montado uma vez (ver o efeito acima) e sobrevive a
+              todas as trocas — criar contexto WebGL a cada hover custaria caro. */}
+          <div ref={quadro} className="p-visor-quadro" />
         </div>
       </div>
     </Prancha>

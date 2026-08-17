@@ -773,18 +773,16 @@
   visibility: hidden;
   opacity: 0;
 }
-/* as duas lâminas ocupam a mesma caixa: a máscara é o quadro, elas deslizam
-   por dentro dele */
-.p-visor img {
+/* o canvas do WebGL ocupa o quadro inteiro; o `cover` da arte é feito no
+   shader, não aqui */
+.p-visor-quadro {
   position: absolute;
   inset: 0;
+}
+.p-visor-quadro canvas {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  will-change: transform, filter;
-  visibility: hidden;
-  opacity: 0;
 }
 /* ⓘ o visor não leva legenda — ver o comentário do gesto em `HomeD.tsx` */
 
