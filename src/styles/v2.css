@@ -1,0 +1,244 @@
+/**
+ * V2 — "A PRANCHA".
+ *
+ * Direção nova, pedida em 17/08/2026 ("não estou satisfeito, bora uma v2
+ * seguindo esse estilo, subpáginas, vasculha tudo") com três referências:
+ * corentinbernadou.com/about, artemshcherban.com e revelatio.studio.
+ *
+ * ## O que as três têm em comum, medido
+ *
+ *   corentin   régua de artboard nas bordas com números, "1600px × 1000px" no
+ *              canto, UM numeral gigante laranja sangrando, colunas de texto de
+ *              14px com rótulos mono minúsculos, base com local · hora · ano
+ *   artem      branco absoluto e UM gesto gráfico único (uma curva ligando
+ *              ideas → concept → design → result), serifada + mono
+ *   revelatio  alternância dura de superfície (preto ↔ branco), imagem tratada
+ *              em dither, nuvem de cidades onde uma acende por vez
+ *
+ * Três decisões e uma só regra: **uma ideia gráfica por página, texto pequeno e
+ * denso em coluna, e o resto vazio.**
+ *
+ * ## ⚠️ A CORREÇÃO QUE DEFINE ESTA DIREÇÃO
+ *
+ * A primeira montagem trouxe das referências a régua de artboard com a dimensão
+ * da viewport no canto, um cubo 3D de miniaturas girando, a sigla monograma
+ * sangrando pela base e a ficha "Coll. 2026 / Ref. MB-2026 / Plate 01". Ele
+ * respondeu: **"vc ta copiando, nao, apenas conceito"**. Estava certo — cada um
+ * desses quatro é ASSINATURA do corentin, e medir bem não autoriza colar.
+ *
+ * O que se leva de uma referência (CONCEITO):
+ *   · densidade tipográfica — texto pequeno e rigoroso, nada de manchete
+ *   · contraste de SUPERFÍCIE entre páginas, não dentro de uma página
+ *   · muito vazio, e uma ideia gráfica por página
+ *   · metadado vivo como matéria
+ *   · o trabalho apresentado como OBJETO, não como grade de cards
+ *
+ * O que fica com o dono (ASSINATURA): régua de artboard, dimensão no canto,
+ * sólido 3D de miniaturas, monograma sangrando, numeração de edição, cruz de
+ * registro, dither, nuvem de cidades.
+ *
+ * ## O partido próprio: O ESPÉCIME
+ *
+ * Ele é brand designer, e o material mais forte deste projeto são **as marcas
+ * que ele desenhou** — as capas do acervo são, na maioria, wordmark e lettering
+ * (ginga, BUREAU, FORTIS, HŌKI, ALEX ARCHER). Nenhum objeto emprestado compete
+ * com isso.
+ *
+ * Então o site se apresenta como uma **folha de espécimes**, que é o documento
+ * que uma fundição publica para mostrar seus tipos: cada projeto é um espécime —
+ * o nome em escala grande porque o nome É a peça, a disciplina e o ano em corpo
+ * de ficha, e a arte ao lado. A escala varia de linha para linha, como numa
+ * folha de espécime de verdade, e é essa variação que dá o ritmo sem precisar
+ * de card, sombra ou moldura.
+ *
+ * A matéria é toda do Mateus: Geist + Martian Mono self-hosted, papel/petróleo
+ * medidos da réplica, e o laranja queimado da direção autoral como único acento.
+ */
+
+:root {
+  /* ⭐ A UNIDADE FLUIDA — o achado que reorganiza o resto.
+     Medido no corentin: `--fs-laptop: calc(100vw / 1512 * 10)`. O rem dele é
+     FLUIDO, e a consequência é que a margem mede **3,307% da viewport em
+     qualquer largura** — 52,91px em 1600, 39,68px em 1200. Não existe
+     breakpoint de layout entre 1024 e 1920: o layout inteiro é uma figura só,
+     escalada. É por isso que o site parece o mesmo desenho em qualquer tela.
+
+     Aqui `--p-u` faz esse papel. Tudo o que é medida de PÁGINA (margem,
+     coluna, deslocamento) sai dela; o que é medida de LEITURA (corpo de texto)
+     continua em px, porque texto que escala com a janela quebra a leitura. */
+  --p-u: calc(100vw / 1512 * 10);
+
+  /* margem da prancha = 5u = os mesmos 3,307% da referência */
+  --p-margem: calc(var(--p-u) * 5);
+  /* vão de n colunas, na fórmula medida lá: 11,85n − 1 */
+  --p-col-4: calc(var(--p-u) * 46.4);
+  --p-col-5: calc(var(--p-u) * 58.2);
+
+  /* ⚠ ESCALA MINÚSCULA, e isto é o achado mais duro do levantamento:
+     **no corentin não existe título em texto**. Todo tamanho legível do site
+     cabe entre 7,4px e 14,8px — uma razão de 2,0× do menor ao maior. O único
+     corpo grande é um GLIFO DESENHADO (SVG de 428 a 525px de altura), um por
+     rota. Entre 16,9px e 529px não há nada.
+
+     A primeira versão desta direção tinha manchete de 74px, e era ela que
+     fazia a página parecer "mais um site" em vez da prancha: manchete grande
+     divide a atenção com o glifo, e aí nenhum dos dois manda.
+
+     Os valores abaixo são os dele + o ajuste da fonte: a Geist tem altura-x
+     maior que a Helvetica Now, então 13px aqui lê como os 12,7px de lá. */
+  --p-corpo: 13px;
+  --p-corpo-lh: 1.42;
+  --p-item: 14.5px;   /* item de lista de obra — o maior texto do site */
+  --p-rotulo: 8.5px;  /* rótulo de ficha, caixa alta */
+  --p-rotulo-ls: 0.12em;
+  --p-marca: 9.5px;   /* metadado, tick de régua, legenda */
+
+  /* a escala do ESPÉCIME. Numa folha de espécime de fundição a palavra PREENCHE
+     a medida — não existe "tamanho da linha", existe a largura da coluna e o
+     corpo que faz a palavra caber nela. Por isso o corpo aqui é derivado do
+     COMPRIMENTO do nome (`--n`, contado no componente), com um teto: nomes
+     curtos batem no teto e os longos encolhem sozinhos.
+
+     ⚠ A primeira tentativa usou uma cadência fixa de escalas (1 · 0,45 · 0,72…)
+     e "Remanescentes" em escala 0,45 transbordava a coluna enquanto "Neox" em
+     escala 1 sobrava — cadência decorativa ignora a matéria, que é a palavra. */
+  --p-especime-teto: clamp(58px, 11.4vw, 176px);
+  --p-especime-med: 46vw;
+}
+
+/* ── superfícies: cada PRANCHA tem a sua ───────────────────────────────── */
+.p-papel { background: #f4f4f2; color: #14201f; --p-fio: rgba(20, 32, 31, 0.13); --p-quieto: rgba(20, 32, 31, 0.55); }
+.p-branco { background: #ffffff; color: #14201f; --p-fio: rgba(20, 32, 31, 0.11); --p-quieto: rgba(20, 32, 31, 0.55); }
+.p-tinta {
+  background: #14201f;
+  color: #eceae5;
+  --p-fio: rgba(236, 234, 229, 0.18);
+  --p-quieto: rgba(236, 234, 229, 0.55);
+}
+
+/* ── vozes ─────────────────────────────────────────────────────────────── */
+/* item de lista de obra: o maior texto do site, e ainda assim 14,5px */
+.p-item {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: var(--p-item);
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+.p-corpo {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: var(--p-corpo);
+  line-height: var(--p-corpo-lh);
+  letter-spacing: -0.004em;
+}
+.p-rotulo {
+  font-family: 'Martian Mono', ui-monospace, monospace;
+  font-weight: 500;
+  font-size: var(--p-rotulo);
+  line-height: 1.4;
+  letter-spacing: var(--p-rotulo-ls);
+  text-transform: uppercase;
+  color: var(--p-quieto);
+}
+.p-marca {
+  font-family: 'Martian Mono', ui-monospace, monospace;
+  font-weight: 400;
+  font-size: var(--p-marca);
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: var(--p-quieto);
+  font-variant-numeric: tabular-nums;
+}
+/* ⚠ `.p-display` MORREU nesta direção. Ver a nota da escala acima: onde há
+   glifo gigante, manchete de 74px vira ruído. O que era manchete virou corpo
+   de leitura na ficha — e o texto não perdeu importância, perdeu VOLUME. */
+
+/* fio de bloco */
+.p-fio { border-top: 1px solid var(--p-fio); }
+
+/* link de leitura: sublinhado que nasce da esquerda no hover */
+.p-link {
+  position: relative;
+  display: inline-block;
+}
+.p-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.p-link:hover::after { transform: scaleX(1); }
+@media (prefers-reduced-motion: reduce) {
+  .p-link::after { transition: none; }
+}
+
+/* ── A ATENUAÇÃO ───────────────────────────────────────────────────────────
+   Medido no corentin: **passar o mouse num item da lista derruba a página
+   inteira para 10%** — o glifo gigante, o menu, o seletor, tudo. Só o item sob
+   o cursor fica de pé.
+
+   É o gesto mais barato e mais forte do site: em vez de destacar o alvo (que é
+   o que todo mundo faz), ele APAGA o resto. A hierarquia aparece por ausência.
+
+   `:has()` faz isso sem uma linha de JS. O escopo é a prancha inteira, que é
+   justamente o ponto — atenuar só a lista não seria o mesmo gesto. */
+[data-atenua]:has([data-alvo]:hover) > * {
+  opacity: 0.1;
+  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+[data-atenua] > * { transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+[data-atenua]:has([data-alvo]:hover) [data-alvo]:hover { opacity: 1; }
+/* o ancestral do item hovered também precisa ficar de pé, senão o item some
+   junto com a coluna que o contém */
+[data-atenua]:has([data-alvo]:hover) > *:has([data-alvo]:hover) { opacity: 1; }
+[data-atenua]:has([data-alvo]:hover) > *:has([data-alvo]:hover) [data-alvo]:not(:hover) {
+  opacity: 0.25;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-atenua] > *, [data-atenua]:has([data-alvo]:hover) > * { transition: none; }
+}
+
+/* ── O ESPÉCIME ───────────────────────────────────────────────────────────
+   A linha de uma marca na folha. O nome em escala grande (a marca É a peça —
+   ele desenha wordmark, e mostrar o wordmark em corpo pequeno ao lado de uma
+   foto seria esconder o trabalho), a ficha em corpo miúdo, a arte à direita.
+
+   A escala vem por `--esc` (0 → 1) definido no componente: a folha de espécime
+   varia o corpo de linha para linha, e é essa variação que dá ritmo sem card,
+   sem moldura e sem sombra. */
+.p-especime {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  /* 0,52em é a largura média do glifo da Geist em caixa mista, medida no
+     conjunto dos nove nomes do acervo */
+  font-size: min(calc(var(--p-especime-med) / (var(--n, 8) * 0.52)), var(--p-especime-teto));
+  line-height: 0.94;
+  letter-spacing: -0.03em;
+  transition: color 0.3s ease-out;
+}
+.p-especime-linha {
+  border-top: 1px solid var(--p-fio);
+  transition: background 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.p-especime-linha:hover { background: var(--p-toque, rgba(128, 128, 128, 0.06)); }
+/* a arte entra no hover, na altura da linha — a folha "revela" o espécime */
+.p-especime-arte {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.35s ease-out, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.p-especime-linha:hover .p-especime-arte,
+.p-especime-linha:focus-within .p-especime-arte {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .p-especime-arte { transition: none; }
+}

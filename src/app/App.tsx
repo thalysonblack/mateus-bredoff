@@ -8,7 +8,9 @@ import Home from "./pages/Home";
 import WorkIndex from "./pages/WorkIndex";
 import CaseStudy from "./pages/CaseStudy";
 import About from "./pages/About";
-import HomeV2 from "./pages/HomeV2";
+import HomeAutoral from "./pages/HomeV2";
+import PranchaIndex from "./v2/Home";
+import PranchaAbout from "./v2/About";
 import HomeV3 from "./pages/HomeV3";
 import AboutV3 from "./pages/AboutV3";
 import WorkIndexV3 from "./pages/WorkIndexV3";
@@ -185,10 +187,23 @@ export default function App() {
               que se compara aqui — duas abas lado a lado. */}
           <Route path="/arquivo/enxame" element={<HomeV3 work="enxame" />} />
           <Route path="/arquivo/framer" element={<Home />} />
-          <Route path="/arquivo/v2" element={<HomeV2 />} />
+          {/* ⚠ A direção autoral trocou de endereço: era `/arquivo/v2` e virou
+              `/arquivo/autoral`, porque `/v2` passou a ser a DIREÇÃO NOVA (a
+              prancha). Dois "v2" no mesmo site é confusão garantida na próxima
+              vez que ele pedir "abre a v2". */}
+          <Route path="/arquivo/autoral" element={<HomeAutoral />} />
           <Route path="/arquivo/framer/about" element={<About />} />
           <Route path="/arquivo/framer/work" element={<WorkIndex />} />
           <Route path="/arquivo/framer/work/:slug" element={<CaseStudy />} />
+
+          {/* ── V2: "A PRANCHA" ──────────────────────────────────────────
+              Direção nova pedida em 17/08 ("bora uma v2 seguindo esse estilo,
+              subpáginas"), a partir de corentinbernadou.com, artemshcherban.com
+              e revelatio.studio. Vive em rota própria COM as subpáginas — o
+              partido só se julga com o site inteiro de pé, não com uma home
+              solta. Ver `styles/v2.css` para o que foi medido em cada uma. */}
+          <Route path="/v2" element={<PranchaIndex />} />
+          <Route path="/v2/about" element={<PranchaAbout />} />
 
           {/* Slug inexistente cai no próprio case, que trata o 404 com a
               linguagem do site em vez de tela branca. */}
