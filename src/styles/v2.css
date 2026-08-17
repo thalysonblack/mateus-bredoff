@@ -481,12 +481,20 @@
    ⚠ o `:hover` do nome só assenta porque a fita PAROU no mesmo evento — em
    fita andando, enter/leave se cancelam ([[gotcha-hover-nao-funciona-em-elemento-animado]]). */
 .p-trama-campo:hover .p-trama-fita,
-.p-trama-campo:hover .p-trama-scroll { animation-play-state: paused; }
-.p-trama-campo:hover .p-trama-nome { opacity: 0.24; }
+.p-trama-campo:hover .p-trama-scroll,
+.p-trama-campo:focus-within .p-trama-fita,
+.p-trama-campo:focus-within .p-trama-scroll { animation-play-state: paused; }
+.p-trama-campo:hover .p-trama-nome,
+.p-trama-campo:focus-within .p-trama-nome { opacity: 0.24; }
 .p-trama--peca .p-trama-nome { cursor: none; }
-.p-trama-campo .p-trama-nome:hover {
+/* ⚠ `:focus-visible` junto do `:hover`: o nome é um LINK, e quem navega por
+   teclado tem de ver o mesmo destaque que o cursor produz. */
+.p-trama-campo .p-trama-nome:hover,
+.p-trama-campo .p-trama-nome:focus-visible {
   opacity: 1;
-  --p-trama-cor: var(--p-acento);
+  /* ⭐ a cor do PROJETO, que cada nome carrega em `--cor`; o acento do sistema
+     é só a rede de segurança para quem não tiver cor medida */
+  --p-trama-cor: var(--cor, var(--p-acento));
 }
 
 /* ── A PILHA ───────────────────────────────────────────────────────────────

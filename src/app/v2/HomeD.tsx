@@ -4,6 +4,7 @@ import { gsap, prefersReducedMotion } from "../../lib/gsap";
 import { criarVisorFluido, type VisorFluido } from "../../lib/visorFluido";
 import { WORK } from "../../content/work";
 import { REEL } from "../../content/reel";
+import { corDe } from "../../content/cores";
 import { RECONHECIMENTO } from "../../content/reconhecimento";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha, Bloco } from "./sistema";
@@ -108,8 +109,20 @@ export default function HomeD({
       /* ⚠ A PEÇA É O CURSOR — "o mouse no hover vira o projeto". O translate vai
          no ponto EXATO e continua fora do React: é o único trabalho que precisa
          acontecer a cada evento, e ele é uma escrita de string. */
+      /* ⚠ O VISOR SE MANTÉM INTEIRO NA TELA. Colado no cursor sem trava, na
+         primeira linha da trama ele saía cortado pelo topo — "quando o mouse
+         subir ali, já tem que subir a thumb". Preso à borda, ele deixa de
+         seguir o cursor no eixo travado, que é o comportamento certo: um visor
+         meio fora da tela não mostra a peça, que é a única coisa que ele faz. */
       const el = anel.current;
-      if (el) el.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+      if (el) {
+        const q = visor.current;
+        const meiaL = (q?.offsetWidth ?? 380) / 2 + 12;
+        const meiaA = (q?.offsetHeight ?? 214) / 2 + 12;
+        const x = Math.min(Math.max(e.clientX, meiaL), window.innerWidth - meiaL);
+        const y = Math.min(Math.max(e.clientY, meiaA), window.innerHeight - meiaA);
+        el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      }
       px = e.clientX;
       py = e.clientY;
       if (pendente) return;
@@ -308,6 +321,9 @@ export default function HomeD({
       tween.current?.kill();
       tween.current = null;
       v.resolver();
+      /* o fio da crista é a cor da peça que ENTRA: a transição anuncia o
+         projeto antes de a arte chegar */
+      v.acento(corDe(sob.slug));
       v.iniciar(src, lado.current as 1 | -1);
 
       const dissolve = () => {
@@ -405,6 +421,10 @@ export default function HomeD({
                         onFocus={() => setSob(w)}
                         onBlur={() => setSob(null)}
                         className="p-trama-nome"
+                        /* ⭐ cada nome acende na COR DO PROJETO, amostrada da
+                           capa dele — ver `content/cores.ts`. A cor entra como
+                           variável no nó, e o CSS decide QUANDO usá-la. */
+                        style={{ ["--cor" as string]: corDe(w.slug) }}
                         aria-label={`Open ${w.title}`}
                       >
                         {w.title}
