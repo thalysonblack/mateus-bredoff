@@ -1573,6 +1573,87 @@
   .p-servico-folha { min-height: 0; position: relative; }
 }
 
+/* ── serviços · FITA: o scroll vertical vira percurso HORIZONTAL ─────────
+   Uma tela de altura, quatro de conteúdo. O trilho alto é só percurso; quem
+   gruda é o quadro, e a faixa anda em X pela timeline do scroll. */
+/* ⚠ 210vh e não 300: o trilho é o percurso da fita, e cada tela a mais aqui é
+   uma tela a mais na PÁGINA — que é justamente o que ele cortou. 210vh dá
+   pouco mais de duas telas de rolagem para quatro cartas andarem. */
+.p-sv-trilho { grid-column: 1 / -1; height: 210vh; }
+.p-sv-quadro {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: grid;
+  align-content: center;
+  overflow: hidden;
+  margin-inline: calc(var(--p-margem) * -1);
+  padding-inline: var(--p-margem);
+}
+.p-sv-fita {
+  display: flex;
+  gap: var(--p-gap-x);
+  width: max-content;
+  will-change: transform;
+}
+@supports (animation-timeline: view()) {
+  .p-sv-fita {
+    animation: p-sv-anda linear both;
+    animation-timeline: view(block);
+    animation-range: contain 0% contain 100%;
+  }
+}
+@keyframes p-sv-anda {
+  /* ⚠ o deslocamento é em % da PRÓPRIA fita: 4 cartas de ~30vw cada, então
+     mover −72% deixa a última alinhada à direita sem sobra */
+  to { transform: translateX(-72%); }
+}
+.p-sv-carta { width: min(34vw, 480px); display: grid; gap: 12px; align-content: start; }
+
+/* ── serviços · CORTINA: faixas finas que abrem ao entrar ────────────────
+   Todas permanecem visíveis — é a vantagem sobre a pilha: dá para COMPARAR os
+   quatro sem voltar. */
+.p-sv-cortina { grid-column: 1 / -1; display: grid; }
+.p-sv-faixa { border-top: 1px solid var(--p-fio); padding: 22px 0; }
+.p-sv-faixa-cabeca {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 4fr) minmax(0, 6fr);
+  column-gap: var(--p-gap-x);
+  align-items: baseline;
+}
+.p-sv-faixa-resumo { color: var(--p-quieto); }
+.p-sv-faixa-corpo { overflow: hidden; height: 0; }
+@supports (animation-timeline: view()) {
+  .p-sv-faixa-corpo {
+    animation: p-sv-abre linear both;
+    animation-timeline: view();
+    animation-range: entry 20% cover 42%;
+  }
+}
+@keyframes p-sv-abre {
+  to { height: min(38vh, 330px); padding-top: 18px; }
+}
+.p-sv-faixa-corpo .p-sv-foto img { height: min(34vh, 300px); width: auto; aspect-ratio: auto; }
+
+/* comuns às três propostas */
+.p-sv-foto { margin: 0; }
+.p-sv-foto img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.p-sv-cap { padding-top: 8px; }
+.p-sv-n { color: var(--p-quieto); }
+.p-sv-titulo {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: clamp(22px, 2.4vw, 40px);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+}
+@media (prefers-reduced-motion: reduce) {
+  .p-sv-fita { animation: none; }
+  .p-sv-faixa-corpo { height: auto; animation: none; padding-top: 18px; }
+  .p-sv-trilho { height: auto; }
+  .p-sv-quadro { position: relative; height: auto; overflow: auto; }
+}
+
 /* ── valores: seção PRÓPRIA, porque contrato não é repertório ────────── */
 .p-valores {
   display: grid;

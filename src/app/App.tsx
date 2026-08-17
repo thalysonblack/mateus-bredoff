@@ -242,6 +242,9 @@ export default function App() {
           {/* a terceira: catálogo de serviços COM FOTO, no espírito da about
               original do Framer (superfície escura, rótulo lateral) */}
           <Route path="/v2/about-c" element={<AboutC />} />
+          {/* a mesma about com as outras duas mecânicas de serviços */}
+          <Route path="/v2/about-c-fita" element={<AboutC servicos="fita" />} />
+          <Route path="/v2/about-c-cortina" element={<AboutC servicos="cortina" />} />
           <Route path="/v2/lab" element={<PranchaLab />} />
 
           {/* ── AS TRÊS HOMES DE PARTIDO ─────────────────────────────────

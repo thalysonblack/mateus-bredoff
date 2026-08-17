@@ -7,6 +7,7 @@ import { LEAD, NUMEROS, PROCESSO_MANCHETE, PROCESSO } from "../../content/about"
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { useRevelar } from "./useRevelar";
 import { Prancha, useHora } from "./sistema";
+import Servicos, { type ModoServicos } from "./Servicos";
 
 /**
  * ABOUT — PROPOSTA C: "O CATÁLOGO".
@@ -38,7 +39,7 @@ import { Prancha, useHora } from "./sistema";
  * imagem PROVA o que a linha de texto promete.
  */
 
-export default function AboutC() {
+export default function AboutC({ servicos = "pilha" }: { servicos?: ModoServicos } = {}) {
   useMetaRota();
   const hora = useHora();
   const revIntro = useRevelar<HTMLElement>();
@@ -140,56 +141,11 @@ export default function AboutC() {
             ilustração genérica. */}
         <section ref={revServicos} className="p-catalogo">
           <p className="p-rotulo p-catalogo-rotulo">Services — {String(SERVICOS.length).padStart(2, "0")}</p>
-          {/* ⭐ OS SERVIÇOS SÃO FOLHAS QUE SE EMPILHAM, não cards lado a lado.
-            "services precisa de mais scroll based, card lado a lado é muito
-            clássico" — e ele tem razão: grade de quatro é o layout que qualquer
-            site de estúdio usa, e ela mostra tudo de uma vez, sem percurso.
-
-            Aqui cada serviço GRUDA na tela e o próximo sobe por cima, com a peça
-            em tamanho grande — é a mecânica das folhas do Laxer (dos salvos
-            dele) aplicada a esta seção, e o mesmo gesto que a página já usa na
-            capa. Rolar deixa de ser "descer a lista" e passa a ser VIRAR as
-            folhas do repertório.
-
-            E a folha coberta RECUA (escala e opacidade por `animation-timeline`),
-            para a que chega ter o palco — sem isso, quatro camadas paradas leem
-            como um borrão. */}
-        <ul className="p-servicos-pilha">
-          {SERVICOS.map((sv, i) => {
-            const peca = WORK.find((w) => w.slug === sv.peca);
-            return (
-              <li key={sv.nome} className="p-servico-folha">
-                <div className="p-servico-folha-corpo">
-                  {peca ? (
-                    <figure className="p-servico-foto">
-                      <img
-                        src={peca.cover.src}
-                        srcSet={peca.cover.src2x ? `${peca.cover.src} 1400w, ${peca.cover.src2x} 2200w` : undefined}
-                        sizes="(max-width: 1024px) 100vw, 48vw"
-                        alt={peca.cover.alt}
-                        decoding="async"
-                        draggable={false}
-                      />
-                    </figure>
-                  ) : null}
-                  <div className="p-servico-texto">
-                    <p className="p-marca p-servico-n">
-                      {String(i + 1).padStart(2, "0")} / {String(SERVICOS.length).padStart(2, "0")}
-                    </p>
-                    <h2 className="p-servico-titulo">{sv.nome}</h2>
-                    <p className="p-catalogo-corpo">{sv.entrega}</p>
-                    {peca ? (
-                      <p className="p-marca p-servico-cap" style={{ color: corDe(peca.slug, "tinta") }}>
-                        {peca.title} — {peca.year}
-                      </p>
-                    ) : null}
-                  </div>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-        </section>
+          {/* a mecânica desta seção é comparável em rota — ver `Servicos.tsx`:
+            pilha (4 telas) · fita (1 tela, percurso horizontal) · cortina
+            (1 tela, faixas que abrem). "ficou grande demais, quero propostas" */}
+        <Servicos modo={servicos} />
+      </section>
 
         {/* ─ QUANTO CUSTA ──────────────────────────────────────────────────
             ⚠ SEÇÃO PRÓPRIA, a pedido dele. Serviço é repertório; modalidade é
