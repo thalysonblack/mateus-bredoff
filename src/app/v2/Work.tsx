@@ -65,26 +65,59 @@ export default function WorkV2() {
     if (!caixa || !trilha) return;
     if (prefersReducedMotion()) return;
 
-    const passoDoItem = () => {
+    /* ⚠ `offsetHeight`, não `getBoundingClientRect()`: o ticker escreve `scale`
+       nas peças, e o rect devolveria a altura JÁ ESCALADA — a medida do passo
+       ficaria oscilando com a própria animação. */
+    const medidas = () => {
       const primeiro = trilha.firstElementChild as HTMLElement | null;
-      if (!primeiro) return 1;
-      const h = primeiro.getBoundingClientRect().height;
+      if (!primeiro) return { h: 1, H: 1 };
+      const h = primeiro.offsetHeight;
       const gap = parseFloat(getComputedStyle(trilha).rowGap || "0") || 0;
-      return h + gap;
+      return { h, H: h + gap };
     };
 
     const roda = (e: WheelEvent) => {
       alvo.current += e.deltaY / 420;
     };
+
     const passo = () => {
       pos.current += (alvo.current - pos.current) * 0.1;
       if (Math.abs(alvo.current - pos.current) < 0.0005) pos.current = alvo.current;
-      const H = passoDoItem();
-      const ciclo = H * WORK.length;
-      const bruto = pos.current * H;
-      const y = ciclo > 0 ? ((bruto % ciclo) + ciclo) % ciclo : bruto;
-      trilha.style.transform = `translate3d(0, ${-y - ciclo}px, 0)`;
-      const i = ((Math.round(pos.current) % WORK.length) + WORK.length) % WORK.length;
+
+      const { h, H } = medidas();
+      const n = WORK.length;
+      /* índice fracionário DENTRO do ciclo, sempre na cópia do meio: é o que
+         faz a coluna não ter começo nem fim */
+      const dentroDoCiclo = ((pos.current % n) + n) % n;
+      const idx = dentroDoCiclo + n;
+
+      /* ⚠ A TRILHA É ANCORADA EM `top: 50%` e o transform traz o item ativo
+         para o centro da janela. Uma versão anterior usava `align-items:
+         center` no visor E somava o deslocamento por cima — a trilha já vinha
+         centrada, os dois se somavam e a coluna saía inteira da janela. Um
+         dono de posição só. */
+      trilha.style.transform = `translate3d(0, ${-(idx * H + h / 2)}px, 0)`;
+
+      /* ⭐ ESCALA E OPACIDADE POR PROXIMIDADE — medido no código da referência:
+         `proximity = 1 - min(|dist| / 0.6, 1)`, escala 1,00 → 0,95 e opacidade
+         1,00 → 0,35. A queda de OPACIDADE é o que faz uma peça mandar e as
+         outras assistirem; sem ela a coluna é só uma pilha rolando, que foi o
+         "não tá igual". */
+      const pecas = trilha.children;
+      for (let k = 0; k < pecas.length; k++) {
+        const e = pecas[k] as HTMLElement;
+        const dist = Math.abs(k - idx);
+        if (dist > 3.2) {
+          e.style.visibility = "hidden";
+          continue;
+        }
+        const prox = 1 - Math.min(dist / 0.6, 1);
+        e.style.visibility = "visible";
+        e.style.transform = `scale(${(0.95 + 0.05 * prox).toFixed(4)})`;
+        e.style.opacity = (0.35 + 0.65 * prox).toFixed(3);
+      }
+
+      const i = Math.round(dentroDoCiclo) % n;
       setAtivo((antes) => (antes === i ? antes : i));
     };
     caixa.addEventListener("wheel", roda, { passive: true });
@@ -113,40 +146,16 @@ export default function WorkV2() {
   const trilha = [0, 1, 2].flatMap(() => WORK);
 
   return (
-    <Prancha n="02" nome="Work" superficie="branco" status={`${WORK.length} projects`}>
-      <section className="grid min-h-0 flex-1 grid-cols-12 pt-10 max-md:pt-6" style={{ columnGap: "var(--p-gap-x)" }}>
-        {/* ─ a coluna que rola ───────────────────────────────────────────
-            À ESQUERDA de propósito: o olho varre a lista pela esquerda, e com a
-            peça do mesmo lado o percurso cruza a imagem a cada linha. */}
-        <div className="col-span-4 max-lg:hidden">
-          {/* ⚠ a legenda fica FORA da janela: dentro do `overflow: hidden` ela
-              era cortada pela própria peça que descrevia */}
-          <div ref={janela} className="p-carrossel">
-            <div ref={pilha} className="p-carrossel-trilha">
-              {trilha.map((w, k) => (
-                <span key={k} className="p-carrossel-peca">
-                  <img
-                    src={w.cover.src}
-                    srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
-                    sizes="33vw"
-                    alt={w.cover.alt}
-                    decoding="async"
-                    draggable={false}
-                  />
-                </span>
-              ))}
-            </div>
-          </div>
-          <p className="p-marca flex items-baseline justify-between pt-2">
-            <span>FIG. {String(ativo + 1).padStart(2, "0")}</span>
-            <span>
-              {peca.title} — {peca.year}
-            </span>
-          </p>
-        </div>
-
-        {/* ─ a tabela ────────────────────────────────────────────────────── */}
-        <div className="col-span-7 col-start-6 max-lg:col-span-12 max-lg:col-start-1">
+    <Prancha n="02" nome="Work" superficie="branco" tela status={`${WORK.length} projects`}>
+      {/* ⚠ A ROTA CABE NA TELA e não rola — igual à referência
+          (`.archive-page` é `fixed inset:0; overflow:hidden`) e igual à home
+          deste site. O gesto é todo da coluna. */}
+      <section className="p-arquivo">
+        {/* ─ a tabela, À ESQUERDA ────────────────────────────────────────
+            Medido na referência: 48% da largura, com fio vertical separando.
+            (Aqui ela já esteve à direita, com a peça à esquerda — ele apontou
+            a referência e disse "não tá igual".) */}
+        <div className="p-arquivo-lista">
           <div
             className="p-rotulo grid pb-3"
             style={{ gridTemplateColumns: ".5fr 1.5fr 1fr .5fr", columnGap: "var(--p-gap-x)" }}
@@ -179,11 +188,38 @@ export default function WorkV2() {
                 </Link>
               </li>
             ))}
-            <li className="p-fio" />
           </ul>
 
           <p className="p-marca pt-6">
             Complete index — {String(WORK.length).padStart(2, "0")} projects, 2025–2026
+          </p>
+        </div>
+
+        {/* ─ a coluna, À DIREITA, com a peça ativa CENTRADA ───────────────
+            Medido na referência: escala 1,00 no centro caindo para 0,95, e
+            opacidade 1,00 caindo para 0,35 — a queda de opacidade é o que faz
+            uma peça mandar e as outras assistirem. Espaçamento quase zero
+            (card 1,80, passo 1,81), então as peças quase se encostam. */}
+        <div ref={janela} className="p-arquivo-visor">
+          <div ref={pilha} className="p-arquivo-trilha">
+            {trilha.map((w, k) => (
+              <span key={k} className="p-arquivo-peca" data-k={k}>
+                <img
+                  src={w.cover.src}
+                  srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
+                  sizes="42vw"
+                  alt={w.cover.alt}
+                  decoding="async"
+                  draggable={false}
+                />
+              </span>
+            ))}
+          </div>
+          <p className="p-marca p-arquivo-ficha">
+            <span>FIG. {String(ativo + 1).padStart(2, "0")}</span>
+            <span>
+              {peca.title} — {peca.year}
+            </span>
           </p>
         </div>
       </section>

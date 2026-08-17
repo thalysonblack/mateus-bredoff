@@ -772,49 +772,97 @@
    ao scroll". */
 .p-trama-scroll { will-change: transform; }
 
-/* ── O CARROSSEL VERTICAL (rota Work) ────────────────────────────────────
-   O scroll move a coluna de peças e a tabela acompanha. Referência dele:
-   `framer-assets-five.vercel.app/archive`, do próprio acervo — de lá vem a
-   ANATOMIA (coluna que rola + lista sincronizada), não a implementação: lá o
-   percurso é clamped e trava no último item; aqui é infinito, como a trama da
-   home, para o site ter UMA mecânica de rolagem e não duas.
+/* ── O ARQUIVO (rota Work) ────────────────────────────────────────────────
+   Anatomia medida no repo dele (`framer-assets`, rota /archive):
+     · a página é `fixed inset:0; overflow:hidden` — cabe na tela e não rola;
+     · lista à ESQUERDA em 48%, com fio vertical separando;
+     · coluna à direita com a peça ativa CENTRADA (`align-items: center`);
+     · passo entre cards quase igual à altura do card (1,81 contra 1,80), então
+       eles quase se encostam;
+     · escala 1,00 → 0,95 e opacidade 1,00 → 0,35 conforme a distância do
+       centro (a conta vive no ticker, em `Work.tsx`).
 
-   ⚠ A janela corta com `overflow: hidden` e a peça seguinte aparece pela base:
-   é o que diz que existe mais coisa embaixo sem precisar de seta nem de barra. */
-.p-carrossel {
-  position: relative;
+   ⚠ Da referência veio a ANATOMIA. O percurso continua INFINITO, ao contrário
+   dela — lá é clamped e trava no último item. */
+.p-arquivo {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: var(--p-gap-x);
+  padding-top: 26px;
+  /* ⚠ a trilha tem 24 peças; sem cortar aqui, ela ESTICA a página (medido:
+     documento de 8560px numa tela de 963) e o gesto vira scroll de documento */
   overflow: hidden;
-  /* a janela mostra uma peça inteira e o começo da próxima */
-  height: min(58vh, 520px);
 }
-.p-carrossel-trilha {
+.p-arquivo-lista {
+  width: 48%;
+  flex: none;
+  padding-right: var(--p-gap-x);
+  border-right: 1px solid var(--p-fio);
+  overflow: hidden;
+}
+.p-arquivo-visor {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  /* ⚠ SEM `align-items: center` aqui: a trilha é ancorada em `top: 50%` e o
+     ticker é quem leva o item ativo ao centro. Com os dois, o deslocamento
+     somava duas vezes e a coluna saía da janela. */
+  /* ⚠⚠ `min-height: 0` é o que permite o item flex ENCOLHER abaixo do conteúdo.
+     Sem ele, `overflow: hidden` não corta nada: a caixa cresce até caber a
+     trilha inteira, e foi assim que a página passou a rolar. */
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+.p-arquivo-trilha {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% 0;
   display: grid;
-  row-gap: 14px;
+  /* passo quase igual à altura: as peças se encostam, como na referência */
+  row-gap: 3px;
+  width: min(100%, 620px);
   will-change: transform;
 }
-.p-carrossel-peca {
+.p-arquivo-peca {
   display: block;
   aspect-ratio: 16 / 9;
   overflow: hidden;
   background: var(--p-fio);
+  transform-origin: center;
+  /* ⚠ NADA de transition aqui: escala e opacidade são escritas a cada frame
+     pelo ticker, e uma transição por cima brigaria com elas. */
 }
-.p-carrossel-peca img {
+.p-arquivo-peca img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-/* ⚠ a legenda vive FORA de `.p-carrossel` (ver `Work.tsx`): dentro do
-   `overflow: hidden` ela era cortada pela peça que descrevia. */
+.p-arquivo-ficha {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+}
+@media (max-width: 1024px) {
+  .p-arquivo { flex-direction: column; }
+  .p-arquivo-lista { width: 100%; border-right: 0; padding-right: 0; }
+  .p-arquivo-visor { display: none; }
+}
 
 /* ── A TABELA que acompanha ───────────────────────────────────────────────
    Só a linha enquadrada está acesa; o resto apaga. É a mesma gramática da
    trama da home (campo inteiro atenuado, um item em cor), aqui em corpo de
    ficha — e a cor é a DO PROJETO, como lá. */
 .p-tabela-linha { transition: opacity 0.35s ease-out; }
-.p-tabela:hover .p-tabela-linha { opacity: 0.42; }
+.p-tabela .p-tabela-linha { opacity: 0.42; }
 .p-tabela .p-tabela-linha.aceso,
-.p-tabela:hover .p-tabela-linha:hover { opacity: 1; }
+.p-tabela .p-tabela-linha:hover { opacity: 1; }
 .p-tabela-n,
 .p-tabela-meta { color: var(--p-quieto); }
 .p-tabela-linha.aceso .p-item { color: var(--cor, inherit); }

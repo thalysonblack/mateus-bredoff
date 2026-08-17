@@ -81,12 +81,21 @@ export function Prancha({
   nome,
   superficie = "papel",
   status,
+  tela = false,
   children,
 }: {
   n: string;
   nome: string;
   superficie?: "papel" | "branco" | "tinta";
   status?: string;
+  /**
+   * ⚠ A rota CABE NA TELA e não rola (index e work). Sem isto o wrapper usa
+   * `min-h-svh`, que é altura MÍNIMA e não define altura — então nenhum
+   * `min-h-0` ou `overflow: hidden` abaixo consegue cortar, e um conteúdo alto
+   * (a coluna de 24 peças da /work) estica o documento para 8560px numa tela de
+   * 963. Rota de tela usa `h-svh` + `overflow-hidden`.
+   */
+  tela?: boolean;
   children: ReactNode;
 }) {
   const hora = useHora();
@@ -95,10 +104,10 @@ export function Prancha({
       /* ⚠ o acento não vem mais daqui: cada superfície declara o SEU par (azul
          e marrom dele) em `v2.css`, porque a mesma cor não serve aos dois
          fundos ([[craft-token-de-cor-nao-serve-aos-dois-fundos]]) */
-      className={`p-${superficie} p-tela relative min-h-svh`}
+      className={`p-${superficie} p-tela relative ${tela ? "h-svh overflow-hidden" : "min-h-svh"}`}
     >
       <div
-        className="flex min-h-svh flex-col"
+        className={`flex flex-col ${tela ? "h-full" : "min-h-svh"}`}
         style={{ paddingInline: "var(--p-margem)", paddingBlock: "var(--p-margem-y)" }}
       >
         {/* Cabeçalho da prancha: nome do arquivo, navegação, status.
@@ -138,7 +147,12 @@ export function Prancha({
             resolve contra altura MÍNIMA. Sem isto, a rota que pedia `h-full`
             ficava do tamanho do conteúdo e a sobra vertical caía toda entre ela
             e o rodapé — medido, 140px de nada na home. */}
-        <main className="flex flex-1 flex-col">{children}</main>
+        {/* ⚠ `min-h-0` JUNTO com `flex-1`, e em CADA elo da cadeia: sem ele o
+            item flex tem `min-height: auto` e cresce com o conteúdo, de modo que
+            um `overflow: hidden` mais abaixo não corta nada. Na /work isso
+            esticou o documento para 8560px numa tela de 963 — a coluna de peças
+            empurrou a página inteira e o gesto virou scroll de documento. */}
+        <main className="flex min-h-0 flex-1 flex-col">{children}</main>
 
         {/* rodapé da prancha: os três metadados que o corentin ancora na base —
             onde ele está, que horas são lá, e o ano do arquivo */}

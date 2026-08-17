@@ -421,6 +421,7 @@ export default function HomeD({
       nome={comparando ? `Index — ${FLUIDOS[fluidoModo - 1].nome}` : "Index"}
       superficie="papel"
       status="Available for projects"
+      tela
     >
       {/* ⚠ UMA TELA SÓ, e é isso que a `h-full` + `min-h-0` garantem: a trama
           ocupa o que sobra depois do cabeçalho, da ficha e do rodapé, e as três
