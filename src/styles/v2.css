@@ -1509,25 +1509,68 @@
 }
 .p-catalogo-intro > div { grid-column: 5 / span 8; display: grid; gap: 22px; }
 
-/* ── serviços: o que ele FAZ, em grade de quatro ─────────────────────── */
-.p-servicos-grade {
-  grid-column: 1 / -1;
+/* ── serviços: FOLHAS QUE SE EMPILHAM ────────────────────────────────────
+   "card lado a lado é muito clássico". Grade de quatro mostra tudo de uma vez e
+   não tem percurso; aqui cada serviço gruda e o próximo sobe por cima, com a
+   peça em tamanho grande — a mecânica das folhas do Laxer (salvos dele),
+   aplicada a esta seção.
+
+   ⚠ A folha COBERTA recua (escala e opacidade), senão quatro camadas paradas
+   leem como borrão. E cada `li` precisa de fundo OPACO: sem ele, todas as
+   folhas aparecem ao mesmo tempo — é o mesmo defeito que a capa sticky já
+   causou nesta página. */
+.p-servicos-pilha { grid-column: 1 / -1; display: grid; }
+.p-servico-folha {
+  position: sticky;
+  top: 0;
+  min-height: 82vh;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  column-gap: var(--p-gap-x);
-  row-gap: 44px;
-  padding-top: 8px;
+  align-content: center;
+  background: #14201f;
+  border-top: 1px solid var(--p-fio);
+  padding-block: 40px;
 }
-.p-servico-card { display: grid; gap: 12px; align-content: start; }
-.p-servico-foto { margin: 0; }
-.p-servico-foto img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
-.p-servico-cap { padding-top: 8px; }
+.p-servico-folha-corpo {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  column-gap: var(--p-gap-x);
+  align-items: center;
+}
+.p-servico-foto { margin: 0; overflow: hidden; }
+.p-servico-foto img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+.p-servico-texto { display: grid; gap: 14px; align-content: center; }
+.p-servico-n { color: var(--p-quieto); }
 .p-servico-titulo {
   font-family: 'Geist', ui-sans-serif, sans-serif;
   font-weight: 400;
-  font-size: clamp(19px, 1.7vw, 26px);
-  line-height: 1.1;
-  letter-spacing: -0.025em;
+  font-size: clamp(30px, 4vw, 68px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+.p-servico-cap { padding-top: 4px; }
+
+@supports (animation-timeline: view()) {
+  .p-servico-folha-corpo {
+    animation: p-folha-recua linear both;
+    animation-timeline: view();
+    animation-range: exit 0% exit 70%;
+  }
+}
+@keyframes p-folha-recua {
+  to { transform: scale(0.94); opacity: 0.35; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .p-servico-folha { position: relative; min-height: 0; }
+  .p-servico-folha-corpo { animation: none; }
+}
+@media (max-width: 1024px) {
+  .p-servico-folha-corpo { grid-template-columns: 1fr; row-gap: 20px; }
+  .p-servico-folha { min-height: 0; position: relative; }
 }
 
 /* ── valores: seção PRÓPRIA, porque contrato não é repertório ────────── */
