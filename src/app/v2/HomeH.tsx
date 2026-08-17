@@ -8,7 +8,16 @@ import { Prancha, Bloco, useHora } from "./sistema";
 import { useRevelar } from "./useRevelar";
 
 /**
- * HOME — PARTIDO H: "O MURAL".
+ * A HOME — a estrutura da H com a seção de projetos da I.
+ *
+ * ⚠ Ele fechou assim: **"gostei da H na verdade, mas nao da section de
+ * projetos"** — depois de ter aprovado a I à parte ("gostei da I"). Então o que
+ * ficou de pé foi o RITMO e a DENSIDADE desta página, com a solução de projetos
+ * da outra. O mural saiu; entrou a sessão de cards sticky.
+ *
+ * Vale como método: quando ele aprova duas coisas em versões diferentes, o
+ * trabalho não é escolher entre elas — é achar qual PARTE de cada uma foi
+ * aprovada. Aqui a resposta estava explícita na frase dele.
  *
  * Resposta a três coisas ditas em 17/08: *"longa e repetitiva, principalmente a
  * parte de projetos"*, *"falta densidade"*, e o alvo declarado — **revelatio**.
@@ -23,9 +32,8 @@ import { useRevelar } from "./useRevelar";
  *
  * ## Os projetos deixam de ser lista
  * Nove capítulos com a mesma anatomia é uma lista disfarçada de página. Aqui as
- * nove peças formam UMA composição — escalas e posições diferentes, como a
- * parede de um estúdio — e o scroll atravessa a parede em vez de percorrer
- * fichas. Não há linha para se repetir.
+ * nove peças ocupam a MESMA tela, uma cobrindo a outra por `sticky` — um bloco
+ * só, percurso contínuo, nenhuma linha para se repetir.
  *
  * ## Densidade
  * Os blocos brancos passam a carregar tudo o que o site sabe: os quatro números
@@ -47,24 +55,6 @@ const NUMEROS = [
 ];
 
 const FERRAMENTAS = ["Figma", "Nano Banana Pro", "Seedream", "GPT", "Photoshop", "Illustrator", "Jitter"];
-
-/**
- * A parede. `x`/`w` em % da largura, `y` em px de topo — posições escritas à
- * mão para que o equilíbrio seja decidido, não sorteado. Peça grande = projeto
- * que aguenta escala (lettering, cartaz); peça pequena = peça de detalhe.
- */
-const MURAL = [
-  { x: 3, y: 0, w: 40 },
-  { x: 54, y: 210, w: 43 },
-  { x: 14, y: 660, w: 29 },
-  { x: 58, y: 940, w: 36 },
-  { x: 4, y: 1180, w: 42 },
-  { x: 62, y: 1560, w: 31 },
-  { x: 20, y: 1800, w: 34 },
-  { x: 57, y: 2120, w: 37 },
-  { x: 6, y: 2340, w: 33 },
-];
-const MURAL_ALTURA = 2980;
 
 export default function HomeH() {
   useMetaRota();
@@ -155,22 +145,108 @@ export default function HomeH() {
         </div>
       </section>
 
-      {/* ═ PRETO · ESPETÁCULO — o mural ══════════════════════════════════ */}
-      <section className="-mx-[var(--p-margem)] p-tinta" style={{ paddingInline: "var(--p-margem)" }}>
-        <div className="flex items-baseline justify-between gap-6 pt-[14svh]">
+      {/* ═ PRETO · ESPETÁCULO — a sessão ════════════════════════════════
+          ⚠ AQUI HAVIA O MURAL — as nove peças numa composição de parede. Ele
+          aprovou esta home E reprovou justamente esta seção ("gostei da H na
+          verdade, mas nao da section de projetos"), então entra no lugar a
+          solução da versão I, que ele tinha aprovado à parte: cada peça ocupa
+          a tela inteira e a seguinte SOBE POR CIMA, cobrindo.
+
+          A mecânica é `position: sticky` puro — medida no artefakt.mov, que
+          parece carrossel e não é (24s com a página parada = zero trocas). Sem
+          estado, sem timer, sem ScrollTrigger: não briga com o Lenis nem
+          quebra o teclado, e cada card carrega o seu próprio índice.
+
+          O mural continua no histórico (`git show cf4b151`) — foi a resposta
+          certa para "repetitiva" e a errada para esta página. */}
+      <div className="-mx-[var(--p-margem)] p-tinta" style={{ paddingInline: "var(--p-margem)" }}>
+        <div className="flex items-baseline justify-between gap-6 pt-[16svh]">
           <p className="p-rotulo">Selected work — {String(WORK.length).padStart(2, "0")}</p>
           <Link to="/v2/work" className="p-marca p-link">
             Index →
           </Link>
         </div>
 
-        <div className="p-mural mt-[8svh] max-md:mt-[6svh]" style={{ height: MURAL_ALTURA }}>
+        <div className="relative -mx-[var(--p-margem)] mt-6">
+          {/* a régua da sessão: mede o percurso pelas nove peças. Fio de 1px em
+              vez de bolinhas — o site inteiro é telemetria, não interface. */}
+          <div className="p-regua-sessao" aria-hidden="true">
+            <i />
+          </div>
+
           {WORK.map((w, k) => (
-            <PecaDoMural key={w.slug} w={w} k={k} />
+            <article key={w.slug} className="p-sessao-card">
+              {/* a peça INTEIRA é o alvo do clique: numa tela em que a arte
+                  ocupa tudo, obrigar a mirar num link de 13px é pedir precisão
+                  sem motivo. O rótulo continua, porque affordance não se
+                  adivinha. */}
+              <Link
+                to={`/v2/work/${w.slug}`}
+                className="absolute inset-0 z-10"
+                aria-label={`Open ${w.title}`}
+              />
+
+              <div className="p-sessao-camada">
+                <img
+                  src={w.cover.src}
+                  srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
+                  sizes="100vw"
+                  alt={w.cover.alt}
+                  width={w.cover.w}
+                  height={w.cover.h}
+                  loading={k > 1 ? "lazy" : undefined}
+                  decoding="async"
+                  draggable={false}
+                  className="p-sessao-art absolute inset-0 h-full w-full object-cover"
+                />
+              </div>
+
+              {/* o contador PARTIDO: número no centro, total na borda — medido
+                  no artefakt, e é o que dá ar de telemetria em vez de
+                  paginação. ⚠ Branco sólido, sem `mix-blend-difference`: sobre
+                  a arte vermelha do Ginga o blend devolvia verde-água. */}
+              <span
+                className="p-especime absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                style={{
+                  ["--n" as string]: 5,
+                  color: "#fff",
+                  textShadow: "0 2px 40px rgba(10,16,15,0.45)",
+                }}
+                aria-hidden="true"
+              >
+                {String(k + 1).padStart(2, "0")}
+              </span>
+              <span
+                className="p-rotulo absolute top-1/2 -translate-y-1/2"
+                style={{ right: "var(--p-margem)", color: "#fff" }}
+                aria-hidden="true"
+              >
+                / {String(WORK.length).padStart(2, "0")}
+              </span>
+
+              <div
+                className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-6 pb-8 pt-24"
+                style={{
+                  paddingInline: "var(--p-margem)",
+                  background: "linear-gradient(0deg, rgba(10,16,15,0.82), transparent)",
+                  color: "#fff",
+                }}
+              >
+                <div>
+                  <p className="p-especime" style={{ ["--n" as string]: w.title.length + 8 }}>
+                    {w.title}
+                  </p>
+                  <p className="p-marca pt-2" style={{ opacity: 0.75 }}>
+                    {w.disciplines.join(", ")} — {w.year}
+                  </p>
+                </div>
+                <span className="p-corpo p-link relative z-20 shrink-0">Open project →</span>
+              </div>
+            </article>
           ))}
         </div>
-        <div className="h-[14svh]" />
-      </section>
+        <div className="h-[10svh]" />
+      </div>
 
       {/* ═ BRANCO · A PROVA ══════════════════════════════════════════════ */}
       <section
@@ -266,38 +342,5 @@ export default function HomeH() {
         </div>
       </section>
     </Prancha>
-  );
-}
-
-/** Uma peça pregada na parede: posição fixa, entrada fora de foco, legenda ao pé. */
-function PecaDoMural({ w, k }: { w: (typeof WORK)[number]; k: number }) {
-  const ref = useRevelar<HTMLAnchorElement>();
-  const p = MURAL[k % MURAL.length];
-  return (
-    <Link
-      ref={ref}
-      to={`/v2/work/${w.slug}`}
-      className="p-mural-peca group"
-      style={{ left: `${p.x}%`, top: p.y, width: `${p.w}%` }}
-    >
-      <img
-        src={w.cover.src}
-        srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
-        sizes="(max-width: 900px) 92vw, 40vw"
-        alt={w.cover.alt}
-        width={w.cover.w}
-        height={w.cover.h}
-        loading={k > 1 ? "lazy" : undefined}
-        decoding="async"
-        draggable={false}
-        className="p-foca"
-      />
-      <span className="p-marca flex items-baseline justify-between pt-2">
-        <span>
-          {String(k + 1).padStart(2, "0")} · {w.title}
-        </span>
-        <span style={{ opacity: 0.7 }}>{w.year}</span>
-      </span>
-    </Link>
   );
 }
