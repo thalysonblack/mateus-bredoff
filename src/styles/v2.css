@@ -142,7 +142,10 @@
   inset: 0;
   z-index: 30;
   pointer-events: none;
-  opacity: 0.07;
+  /* 0,07 medido no artefakt.mov — aqui ele lia mais forte que lá porque o papel
+     é mais claro que o fundo de origem. "a textura no fundo da página tá forte,
+     diminuir um pouco" (17/08). */
+  opacity: 0.045;
   background:
     linear-gradient(currentColor 1px, transparent 1px) center / 5px 5px,
     linear-gradient(90deg, currentColor 1px, transparent 1px) center / 5px 5px;
@@ -152,11 +155,12 @@
 }
 
 /* ── superfícies: cada PRANCHA tem a sua ───────────────────────────────── */
-.p-papel { background: #f4f4f2; color: #14201f; --p-fio: rgba(20, 32, 31, 0.13); --p-quieto: rgba(20, 32, 31, 0.55); }
-.p-branco { background: #ffffff; color: #14201f; --p-fio: rgba(20, 32, 31, 0.11); --p-quieto: rgba(20, 32, 31, 0.55); }
+.p-papel { background: #f4f4f2; color: #14201f; --p-ink: #14201f; --p-fio: rgba(20, 32, 31, 0.13); --p-quieto: rgba(20, 32, 31, 0.55); }
+.p-branco { background: #ffffff; color: #14201f; --p-ink: #14201f; --p-fio: rgba(20, 32, 31, 0.11); --p-quieto: rgba(20, 32, 31, 0.55); }
 .p-tinta {
   background: #14201f;
   color: #eceae5;
+  --p-ink: #eceae5;
   --p-fio: rgba(236, 234, 229, 0.18);
   --p-quieto: rgba(236, 234, 229, 0.55);
 }
@@ -388,6 +392,52 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .p-trama-fita { animation: none; }
+}
+
+/* ── A TRAMA EM COR (home D) ───────────────────────────────────────────────
+   "tire os projetos de dentro da máscara" + "ao invés de ser preenchido com o
+   projeto, ser com a cor", 17/08.
+
+   O RECORTE FICA — o nome continua sendo uma máscara, e é isso que ele pediu
+   para manter. O que muda é o que passa por dentro dela: era a capa do projeto
+   (fotografia dentro de letra de 190px, que em corpo grande vira ruído), agora
+   é a cor do sistema.
+
+   ⭐ E a cor faz trabalho: a fita inteira anda em TINTA, e o nome sob o cursor
+   acende no ACENTO. A cor deixa de ser textura e vira o que aponta — a mesma
+   função que a thumb tem, dita em tipografia. Sem isto, "preencher com a cor"
+   seria só desligar uma imagem.
+
+   ⚠ ESCOPADO EM `.p-trama--peca`. `.p-trama-nome` é compartilhado com a home H
+   (a fechada), a I e o índice — mexer na classe base trocaria três rotas
+   aprovadas. */
+.p-trama--peca .p-trama-nome {
+  /* a máscara continua; o fundo dela agora é cor chapada */
+  background-image: linear-gradient(var(--p-trama-cor), var(--p-trama-cor));
+  /* ⚠ NÃO use `currentColor`: dentro de `.p-trama-nome` o `color` é
+     `transparent` — é ele que faz a máscara. A tinta da superfície vem por
+     `--p-ink`, declarado em `.p-papel` / `.p-branco` / `.p-tinta`. */
+  --p-trama-cor: var(--p-ink);
+  transition: opacity 0.35s ease-out;
+}
+.p-trama-campo {
+  /* corpo de cartaz, com teto pelos DOIS eixos: em vw puro, três linhas a
+     13,5vw não cabiam na primeira tela de um notebook baixo. */
+  --p-trama-corpo: clamp(56px, min(13.5vw, 19vh), 190px);
+  --p-trama-gap: clamp(6px, 1vh, 14px);
+}
+.p-trama--peca .p-trama-nome,
+.p-trama--peca .p-trama-ponto { font-size: var(--p-trama-corpo); }
+/* o hover é do CAMPO, não da linha: pousar numa fita para as três e apaga o
+   resto, para o nome aceso ficar sozinho em cor.
+   ⚠ o `:hover` do nome só assenta porque a fita PAROU no mesmo evento — em
+   fita andando, enter/leave se cancelam ([[gotcha-hover-nao-funciona-em-elemento-animado]]). */
+.p-trama-campo:hover .p-trama-fita,
+.p-trama-campo:hover .p-trama-scroll { animation-play-state: paused; }
+.p-trama-campo:hover .p-trama-nome { opacity: 0.24; }
+.p-trama-campo .p-trama-nome:hover {
+  opacity: 1;
+  --p-trama-cor: var(--p-acento);
 }
 
 /* ── A PILHA ───────────────────────────────────────────────────────────────
@@ -664,37 +714,57 @@
   .p-trama-scroll { animation: none; }
 }
 
-/* ── A THUMB QUE SEGUE O CURSOR ────────────────────────────────────────────
-   "no hover aparece a thumb". O nome já é a marca; a miniatura é a prova de que
-   ele existe como peça. Ela acompanha o cursor porque a trama está em
-   movimento — âncora fixa obrigaria o olho a sair do nome que se está lendo.
+/* ── O VISOR ───────────────────────────────────────────────────────────────
+   O nome já é a marca; a peça é a prova de que ela existe como objeto.
 
-   `translate3d` escrito direto no nó (fora do React) e `opacity` por classe:
-   dois updates por movimento de mouse não podem passar por estado. */
-.p-thumb {
+   ⚠ TRÊS CORREÇÕES DELE em 17/08, e cada uma tira algo:
+     · "sem deslocamento do mouse" — ele NÃO segue mais o cursor. Ancorado no
+       centro, a peça fica onde o olho já está, e a fita passa por trás dela.
+       (Colado no cursor, a imagem competia com o próprio movimento do mouse.)
+     · "16:9 mesmo" — proporção única para as nove capas. Com a nativa de cada
+       uma o visor trocava de formato a cada nome.
+     · "2px de arredondamento" e "sem sombra" — a sombra fingia um card
+       flutuando; sem ela o visor é uma janela ABERTA na página, e o raio de 2px
+       é o único canto arredondado do sistema, justamente por ser a única peça
+       que não é papel.
+
+   Sem posição por JS, o movimento inteiro é da ENTRADA, e ela é GSAP — ver o
+   `useLayoutEffect` do HomeD. Aqui só o repouso. */
+.p-visor {
   position: fixed;
-  left: 0;
-  top: 0;
+  inset: 0;
+  /* centro sem `transform`: o GSAP precisa de scale/clip livres no nó */
+  margin: auto;
+  width: min(38vw, 520px);
+  height: auto;
+  aspect-ratio: 16 / 9;
   z-index: 60;
-  width: 260px;
-  margin: -0.5px 0 0 -130px;
   pointer-events: none;
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--p-fio);
+  /* nasce invisível: quem acende é o GSAP (autoAlpha), e sem isto a peça
+     pisca no primeiro frame antes de o tween assumir */
+  visibility: hidden;
   opacity: 0;
-  transform: translate3d(-9999px, -9999px, 0);
-  transition: opacity 0.28s ease-out;
 }
-.p-thumb.aceso { opacity: 1; }
-.p-thumb img {
+.p-visor img {
   display: block;
   width: 100%;
-  height: auto;
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  height: 100%;
+  object-fit: cover;
+  will-change: transform, filter;
 }
-.p-thumb .cap {
+/* a legenda vive DENTRO do visor, na base: fora dele voltaria a ser um rótulo
+   solto no meio da tela */
+.p-visor-cap {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 8px;
   display: flex;
   justify-content: space-between;
-  padding-top: 6px;
+  color: #eceae5;
+  mix-blend-mode: difference;
 }
-@media (prefers-reduced-motion: reduce) {
-  .p-thumb { transition: none; }
-}
+
