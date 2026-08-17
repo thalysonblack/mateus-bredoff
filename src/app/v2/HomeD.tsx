@@ -71,8 +71,18 @@ export default function HomeD() {
       const el = anel.current;
       if (el) el.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
 
-      const alvo = (document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null)?.closest<HTMLElement>("[data-peca]");
-      const slug = alvo?.dataset.peca ?? null;
+      /* ⚠ QUEM FECHA O VISOR É SAIR DA TRAMA — não sair de um nome.
+         *"o 16:9 não pode fechar, a thumb muda interno tipo máscara"*: entre uma
+         palavra e a seguinte existe um VÃO (o espaço da fita, o ponto
+         separador), e ali `[data-peca]` não acha nada. Zerando a peça nesse vão,
+         o quadro fechava e reabria a cada nome — que é exatamente o piscar que
+         ele mandou tirar, e não some ajustando a animação, porque a causa é
+         o alvo do teste.
+         Dentro do campo e fora de uma palavra, a peça anterior FICA. */
+      const noPonto = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
+      const alvo = noPonto?.closest<HTMLElement>("[data-peca]");
+      const naTrama = !!noPonto && !!campo.current?.contains(noPonto);
+      const slug = alvo?.dataset.peca ?? (naTrama ? ultimo : null);
       if (slug === ultimo) return;
       ultimo = slug;
       setSob(slug ? WORK.find((w) => w.slug === slug) ?? null : null);
