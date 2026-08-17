@@ -456,3 +456,36 @@
 @media (prefers-reduced-motion: reduce) {
   .p-sobe, .p-foca { transition: none; opacity: 1; transform: none; filter: none; }
 }
+
+/* ── O MURAL ───────────────────────────────────────────────────────────────
+   "longa e repetitiva, principalmente a parte de projetos" (17/08). A home
+   anterior dava NOVE capítulos de tela cheia com a mesma anatomia — imagem de
+   um lado, ficha do outro, alternando. Depois do terceiro, a pessoa já sabe o
+   que vem, e saber o que vem é o fim da atenção.
+
+   O mural é o oposto da lista: uma COMPOSIÇÃO só, com as nove peças em posições
+   e escalas diferentes, como ficam pregadas na parede de um estúdio. Nenhuma
+   linha se repete porque não existem linhas.
+
+   ⚠ As posições são FIXAS e escritas à mão (ver `MURAL` no componente), não
+   geradas por algoritmo: composição sorteada erra o equilíbrio e muda a cada
+   visita — e uma parede de estúdio é a mesma parede toda manhã. */
+.p-mural {
+  position: relative;
+  width: 100%;
+}
+.p-mural-peca {
+  position: absolute;
+  display: block;
+}
+.p-mural-peca img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+@media (max-width: 900px) {
+  /* no telefone a parede vira pilha: posição absoluta em 390px de largura
+     empilha peça sobre peça e não sobra composição nenhuma para preservar */
+  .p-mural { display: grid; gap: 14svh; }
+  .p-mural-peca { position: relative !important; left: auto !important; top: auto !important; width: 100% !important; }
+}
