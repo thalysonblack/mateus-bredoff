@@ -1170,6 +1170,29 @@
    A alternativa à about de camadas: uma superfície só, do começo ao fim, com
    sumário fixo na lateral. O contraste é todo TIPOGRÁFICO — nunca de fundo.
    Ver o cabeçalho de `AboutB.tsx` para a diferença entre as duas propostas. */
+/* os números de abertura: credencial em corpo grande, logo abaixo do rosto */
+.p-numeros-abertura {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--p-gap-x);
+  padding: 44px 0 56px;
+  border-top: 1px solid var(--p-fio);
+  margin-top: 40px;
+}
+.p-numero-big {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  /* ⚠ MAIOR que o manifesto de propósito: aqui o dado é o argumento, e um
+     número do tamanho do texto ao lado não afirma nada */
+  font-size: clamp(40px, 5.2vw, 88px);
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+  padding-bottom: 6px;
+}
+@media (max-width: 720px) {
+  .p-numeros-abertura { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 28px; }
+}
+
 .p-dossie {
   display: grid;
   grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
@@ -1181,8 +1204,6 @@
   position: sticky;
   top: 24px;
   align-self: start;
-  display: grid;
-  gap: 40px;
   padding-bottom: 40px;
 }
 .p-sumario-lista { display: grid; gap: 2px; }
@@ -1281,7 +1302,30 @@
   letter-spacing: -0.015em;
 }
 @media (max-width: 1024px) {
-  .p-dossie { grid-template-columns: 1fr; row-gap: 32px; }
+  /* os números de abertura: credencial em corpo grande, logo abaixo do rosto */
+.p-numeros-abertura {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--p-gap-x);
+  padding: 44px 0 56px;
+  border-top: 1px solid var(--p-fio);
+  margin-top: 40px;
+}
+.p-numero-big {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  /* ⚠ MAIOR que o manifesto de propósito: aqui o dado é o argumento, e um
+     número do tamanho do texto ao lado não afirma nada */
+  font-size: clamp(40px, 5.2vw, 88px);
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+  padding-bottom: 6px;
+}
+@media (max-width: 720px) {
+  .p-numeros-abertura { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 28px; }
+}
+
+.p-dossie { grid-template-columns: 1fr; row-gap: 32px; }
   .p-sumario { position: relative; top: 0; }
   .p-precos-escopo { display: none; }
 }

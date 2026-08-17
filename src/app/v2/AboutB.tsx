@@ -53,6 +53,11 @@ export default function AboutB() {
   useMetaRota();
   const [parte, setParte] = useState("approach");
   const revDoc = useRevelar<HTMLElement>();
+  /* ⚠ CADA BLOCO COM `.p-sobe` PRECISA DO SEU OBSERVER. A classe nasce em
+     `opacity: 0` e só acende quando um ANCESTRAL ganha `.p-visivel` — sem a
+     ref, o bloco fica invisível para sempre. Os números sumiram exatamente
+     assim quando saíram do sumário para a abertura. */
+  const revNumeros = useRevelar<HTMLElement>();
 
   return (
     <Prancha n="03" nome="About" superficie="papel" status="Available for projects">
@@ -79,6 +84,25 @@ export default function AboutB() {
         </div>
       </section>
 
+      {/* ─ OS NÚMEROS, NO INÍCIO ─────────────────────────────────────────
+          ⚠ Eles já estiveram DENTRO do sumário, como ficha técnica miúda — e
+          ele cortou: *"os big numbers pode deixar no início"*. Faz sentido: a
+          trajetória é credencial de ABERTURA, o que autoriza a ler o resto. Ao
+          lado do sumário, ela virava rodapé de navegação; aqui, logo abaixo do
+          rosto, ela é a primeira coisa que o documento afirma.
+          E em corpo grande, porque número pequeno é rodapé — o argumento mais
+          forte de um portfólio não se escreve em 12px. */}
+      <section ref={revNumeros} className="p-numeros-abertura">
+        {NUMEROS.map((n) => (
+          <div key={n.rotulo} className="p-sobe">
+            <p className="p-numero-big">{n.valor}</p>
+            <p className="p-marca" style={{ color: "var(--p-quieto)" }}>
+              {n.rotulo}
+            </p>
+          </div>
+        ))}
+      </section>
+
       {/* ─ O DOSSIÊ ──────────────────────────────────────────────────────
           Sumário à esquerda (sticky), documento à direita. Uma superfície só:
           o contraste é todo tipográfico. */}
@@ -98,17 +122,6 @@ export default function AboutB() {
             ))}
           </nav>
 
-          {/* ⭐ os números como FICHA TÉCNICA do documento: aqui eles são
-              credencial, não manchete — e por isso vivem ao lado do sumário,
-              não numa faixa própria */}
-          <dl className="p-sumario-ficha">
-            {NUMEROS.map((n) => (
-              <div key={n.rotulo}>
-                <dt className="p-marca">{n.rotulo}</dt>
-                <dd className="p-sumario-valor">{n.valor}</dd>
-              </div>
-            ))}
-          </dl>
         </aside>
 
         <div className="p-documento">
