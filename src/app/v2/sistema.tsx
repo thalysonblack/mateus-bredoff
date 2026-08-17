@@ -115,8 +115,11 @@ export function Prancha({
             caía a ~30px da coluna onde começa a ficha, e ele marcou o
             desalinhamento com uma linha vertical na tela. Numa prancha, uma
             coluna que não fecha do topo à base entrega a página inteira. */}
+        {/* ⚠ `relative z-10`: quando uma rota abre com hero em FULL VIEWPORT, ela
+            sobe por baixo do cabeçalho (margem negativa) e o engoliria — a
+            navegação tem de continuar por cima, como na referência dele. */}
         <header
-          className="grid grid-cols-12 items-baseline max-md:flex max-md:flex-col max-md:gap-2"
+          className="relative z-10 grid grid-cols-12 items-baseline max-md:flex max-md:flex-col max-md:gap-2"
           style={{ columnGap: "var(--p-gap-x)" }}
         >
           <Link to="/v2" className="p-corpo p-link col-span-4">

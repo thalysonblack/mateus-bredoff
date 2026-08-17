@@ -1370,10 +1370,17 @@
    Sangria total, altura de tela, e o nome NA FAIXA LIVRE da foto — o retrato
    tem o rosto à esquerda e gradiente à direita, e é por isso que o texto cabe
    ali sem véu e sem cobrir a pessoa. */
+/* ⚠ FULL VIEWPORT DE VERDADE: a foto sobe até o topo da janela, por baixo do
+   cabeçalho da prancha. A margem negativa horizontal já existia; a vertical é
+   o que faltava — sem ela a hero começava depois do `padding-block` da prancha
+   e do cabeçalho, e "tela cheia" ficava sendo 88% dela.
+   O cabeçalho continua legível porque o alto da foto é o trecho escuro do
+   gradiente dela. */
 .p-hero {
   position: relative;
   margin-inline: calc(var(--p-margem) * -1);
-  height: min(88vh, 860px);
+  margin-top: calc((var(--p-margem-y) + 1.22rem) * -1);
+  height: 100svh;
   overflow: hidden;
 }
 .p-hero-foto,
