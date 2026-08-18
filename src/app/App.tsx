@@ -13,6 +13,9 @@ import PranchaIndex from "./v2/Home";
 import PranchaAbout from "./v2/About";
 import AboutB from "./v2/AboutB";
 import AboutC from "./v2/AboutC";
+import AboutD from "./v2/AboutD";
+import AboutE from "./v2/AboutE";
+import AboutF from "./v2/AboutF";
 import PranchaWork from "./v2/Work";
 import PranchaCase from "./v2/Case";
 import PranchaLab from "./v2/Lab";
@@ -242,6 +245,9 @@ export default function App() {
           {/* a terceira: catálogo de serviços COM FOTO, no espírito da about
               original do Framer (superfície escura, rótulo lateral) */}
           <Route path="/v2/about-c" element={<AboutC />} />
+          <Route path="/v2/about-d" element={<AboutD />} />
+          <Route path="/v2/about-e" element={<AboutE />} />
+          <Route path="/v2/about-f" element={<AboutF />} />
           {/* a mesma about com as outras duas mecânicas de serviços */}
           <Route path="/v2/about-c-fita" element={<AboutC servicos="fita" />} />
           <Route path="/v2/about-c-cortina" element={<AboutC servicos="cortina" />} />

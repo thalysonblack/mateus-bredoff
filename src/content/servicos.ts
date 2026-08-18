@@ -88,14 +88,14 @@ export type Modalidade = {
 export const MODALIDADES: Modalidade[] = [
   {
     nome: "Full Brand Identity",
-    para: "Para quem está construindo — ou reconstruindo — a marca inteira.",
+    para: "For companies building — or rebuilding — the whole brand.",
     inclui: ["Strategy & positioning", "Visual identity", "Applications", "Guidelines"],
     prazo: "6–8 weeks",
     precoDe: 2500,
   },
   {
     nome: "Art Direction",
-    para: "Para marcas que já têm identidade e precisam de direção no que produzem.",
+    para: "For brands that already have an identity and need direction in what they produce.",
     inclui: ["Campaign direction", "Editorial & print", "Image direction"],
     prazo: "Per project",
     precoDe: 1500,
@@ -103,7 +103,7 @@ export const MODALIDADES: Modalidade[] = [
   },
   {
     nome: "Monthly Retainer",
-    para: "Capacidade reservada, mês a mês, para quem produz o tempo todo.",
+    para: "Reserved capacity, month by month, for teams that produce all the time.",
     inclui: ["Reserved design days", "Priority turnaround", "Ongoing brand care"],
     prazo: "Monthly",
     precoDe: 2000,

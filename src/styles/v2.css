@@ -2040,3 +2040,309 @@
 }
 /* ⓘ o visor não leva legenda — ver o comentário do gesto em `HomeD.tsx` */
 
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TRÊS ABOUTS, TRÊS APOSTAS  —  colhidas do Savee dele em 18/08.
+
+   As três anteriores caíram no mesmo defeito: abriam explicando, em corpo
+   pequeno, com grade de doze. Variavam a montagem e repetiam a temperatura.
+   Estas discordam entre si de propósito — a escolha dele é entre POSTURAS,
+   não entre arranjos:
+
+     D · O RETRATO — a cara dele em tela cheia; o texto é legenda
+     E · A FICHA   — nenhuma imagem grande; a página é um instrumento
+     F · A PALAVRA — a tipografia é a arquitetura; o resto se aninha
+   ═════════════════════════════════════════════════════════════════════════ */
+
+/* ── D · O RETRATO ──────────────────────────────────────────────────────── */
+.ab-d-palco {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  /* sai das margens da prancha e sobe por baixo do cabeçalho */
+  margin: calc(var(--p-margem-y) * -1) calc(var(--p-margem) * -1) 0;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+.ab-d-foto {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 28%;
+  /* ⚠ o zoom é do SCROLL, não de um loop: a peça responde ao gesto de quem lê */
+  animation: ab-d-zoom linear both;
+  animation-timeline: scroll(root block);
+  animation-range: 0 100svh;
+}
+@keyframes ab-d-zoom {
+  from { transform: scale(1.06); }
+  to   { transform: scale(1.22); }
+}
+.ab-d-nome {
+  position: absolute;
+  left: var(--p-margem);
+  right: var(--p-margem);
+  bottom: calc(var(--p-margem-y) + 20px);
+  color: #fff;
+  mix-blend-mode: difference;
+  animation: ab-d-sobe linear both;
+  animation-timeline: scroll(root block);
+  animation-range: 0 70svh;
+}
+@keyframes ab-d-sobe {
+  from { transform: translateY(0); opacity: 1; }
+  to   { transform: translateY(14%); opacity: 0; }
+}
+.ab-d-nome svg { display: block; width: 100%; height: auto; overflow: visible; }
+.ab-d-nome text { fill: currentColor; letter-spacing: -0.03em; }
+.ab-d-pe {
+  position: absolute;
+  left: var(--p-margem);
+  right: var(--p-margem);
+  top: calc(var(--p-margem-y) + 26px);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: var(--p-marca);
+  letter-spacing: var(--p-rotulo-ls);
+  text-transform: uppercase;
+  color: #fff;
+  mix-blend-mode: difference;
+}
+/* ⚠ A folha traz o PAPEL de volta por cima do retrato — e precisa declarar o
+   fundo E os tokens dela: herdar os da tinta deixaria texto claro sobre claro,
+   e fundo transparente deixaria o palco aparecendo por trás do texto (o erro
+   que já derrubou esta página quatro vezes). */
+.ab-d-folha {
+  position: relative;
+  z-index: 1;
+  background: #f4f4f2;
+  color: #14201f;
+  --p-ink: #14201f;
+  --p-acento: #277796;
+  --p-acento-2: #9f5d4e;
+  --p-fio: rgba(20, 32, 31, 0.13);
+  --p-quieto: rgba(20, 32, 31, 0.62);
+  margin: 0 calc(var(--p-margem) * -1);
+  padding: 96px var(--p-margem) 0;
+  border-top: 1px solid var(--p-fio);
+}
+.ab-d-lead {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--p-gap-x);
+  row-gap: 34px;
+  padding-bottom: 76px;
+}
+.ab-d-lead-esq { grid-column: 1 / span 6; display: grid; align-content: space-between; gap: 56px; }
+.ab-d-ficha { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px var(--p-gap-x); }
+.ab-d-ficha dt { padding-bottom: 5px; }
+.ab-d-lead-1 { font-size: 16.5px; line-height: 1.44; letter-spacing: -0.008em; }
+.ab-d-frase {
+  font-size: clamp(26px, 3.4vw, 54px);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  font-weight: 400;
+}
+.ab-d-frase em { font-style: italic; color: var(--p-acento); }
+.ab-d-lead-corpo { grid-column: 8 / span 5; display: grid; gap: 16px; align-content: start; }
+.ab-d-numeros {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--p-gap-x);
+  row-gap: 28px;
+  padding: 40px 0 76px;
+  border-top: 1px solid var(--p-fio);
+  padding-top: 34px;
+}
+.ab-d-metodo, .ab-d-valores {
+  border-top: 1px solid var(--p-fio);
+  padding: 34px 0 76px;
+}
+.ab-d-metodo-lead { max-width: 62ch; padding: 18px 0 48px; }
+.ab-d-etapas { display: grid; gap: 0; }
+.ab-d-etapas li {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 4fr) minmax(0, 6fr);
+  column-gap: var(--p-gap-x);
+  padding: 22px 0;
+  border-top: 1px solid var(--p-fio);
+}
+.ab-d-etapas li:first-child { border-top: 0; }
+.ab-d-valores-lista {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: var(--p-gap-x);
+  row-gap: 34px;
+  padding-top: 26px;
+}
+.ab-d-valores-lista article { display: grid; gap: 10px; align-content: start; }
+.ab-d-inclui { display: grid; gap: 3px; color: var(--p-quieto); }
+.ab-d-preco { font-size: clamp(22px, 2.2vw, 34px); letter-spacing: -0.02em; }
+.ab-d-tools { padding-top: 40px; color: var(--p-quieto); }
+@media (max-width: 1024px) {
+  .ab-d-lead-esq, .ab-d-lead-corpo { grid-column: 1 / -1; }
+  .ab-d-lead-esq { gap: 32px; }
+  .ab-d-numeros, .ab-d-valores-lista { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ab-d-etapas li { grid-template-columns: 40px 1fr; }
+  .ab-d-etapas li p { grid-column: 2; }
+}
+
+/* ── E · A FICHA ────────────────────────────────────────────────────────── */
+.ab-e-cabeca {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 24px;
+  padding: 88px 0 40px;
+}
+.ab-e-titulo {
+  max-width: 22ch;
+  font-size: clamp(24px, 2.8vw, 44px);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  font-weight: 400;
+}
+.ab-e-linha { border-top: 1px solid var(--p-fio); }
+.ab-e-linha:last-child { border-bottom: 1px solid var(--p-fio); }
+.ab-e-linha summary {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 5fr) minmax(0, 5fr) 22px;
+  align-items: baseline;
+  column-gap: var(--p-gap-x);
+  padding: 17px 0;
+  cursor: pointer;
+  list-style: none;
+  transition: opacity 0.22s ease-out;
+}
+.ab-e-linha summary::-webkit-details-marker { display: none; }
+.ab-e-linha:hover summary { opacity: 0.6; }
+.ab-e-n { color: var(--p-quieto); }
+.ab-e-dado { color: var(--p-quieto); text-align: right; }
+/* o sinal é um mais que vira menos — sem ícone, sem biblioteca */
+.ab-e-sinal {
+  position: relative;
+  justify-self: end;
+  width: 11px;
+  height: 11px;
+  align-self: center;
+}
+.ab-e-sinal::before, .ab-e-sinal::after {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto;
+  height: 1px;
+  background: currentColor;
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ab-e-sinal::after { transform: rotate(90deg); }
+.ab-e-linha[open] .ab-e-sinal::after { transform: rotate(0deg); }
+.ab-e-corpo {
+  padding: 6px 0 42px calc(56px + var(--p-gap-x));
+  max-width: 96ch;
+  animation: ab-e-abre 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes ab-e-abre {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: none; }
+}
+.ab-e-perfil {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: var(--p-gap-x);
+  align-items: start;
+}
+.ab-e-perfil img { width: 100%; filter: grayscale(1) contrast(1.06); }
+.ab-e-perfil > div { display: grid; gap: 14px; }
+.ab-e-numeros { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+.ab-e-disc, .ab-e-metodo, .ab-e-press { display: grid; gap: 20px; }
+.ab-e-disc li, .ab-e-metodo li { display: grid; gap: 5px; max-width: 72ch; }
+.ab-e-metodo li { grid-template-columns: 44px minmax(0, 1fr); }
+.ab-e-metodo li h3, .ab-e-metodo li p { grid-column: 2; }
+.ab-e-pacote { display: grid; gap: 13px; }
+.ab-e-pacote ul { display: grid; gap: 3px; color: var(--p-quieto); }
+.ab-e-press li a { display: inline-block; }
+.ab-e-tools, .ab-e-pacote p:last-child { color: var(--p-quieto); }
+@media (max-width: 900px) {
+  .ab-e-linha summary { grid-template-columns: 34px minmax(0, 1fr) 18px; }
+  .ab-e-dado { grid-column: 2; text-align: left; padding-top: 3px; }
+  .ab-e-corpo { padding-left: 0; }
+  .ab-e-perfil { grid-template-columns: 1fr; }
+  .ab-e-numeros { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ── F · A PALAVRA ──────────────────────────────────────────────────────── */
+.ab-f-cap { padding: 74px 0 92px; }
+.ab-f-cap:first-child { padding-top: 40px; }
+.ab-f-palavra {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.ab-f-palavra text {
+  fill: var(--cor);
+  font-family: "Geist", ui-sans-serif, sans-serif;
+  letter-spacing: -0.03em;
+}
+.ab-f-conteudo {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+  column-gap: var(--p-gap-x);
+  padding-top: 40px;
+}
+.ab-f-retrato { width: 100%; }
+.ab-f-texto { display: grid; gap: 16px; align-content: start; }
+.ab-f-ficha {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  padding-top: 22px;
+  border-top: 1px solid var(--p-fio);
+  margin-top: 10px;
+}
+.ab-f-grade {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--p-gap-x);
+  row-gap: 26px;
+  padding-top: 34px;
+}
+.ab-f-grade article { display: grid; gap: 6px; align-content: start; border-top: 1px solid var(--p-fio); padding-top: 14px; }
+.ab-f-grade span { color: var(--cor); }
+.ab-f-rates {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: var(--p-gap-x);
+  row-gap: 30px;
+  padding-top: 34px;
+}
+.ab-f-rates article { display: grid; gap: 9px; align-content: start; border-top: 1px solid var(--p-fio); padding-top: 16px; }
+.ab-f-preco {
+  font-family: "Departure Mono", ui-monospace, monospace;
+  font-size: clamp(26px, 3vw, 46px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--cor);
+}
+.ab-f-rates ul { display: grid; gap: 3px; color: var(--p-quieto); }
+.ab-f-prazo { color: var(--p-quieto); }
+.ab-f-metodo { display: grid; padding-top: 34px; }
+.ab-f-metodo li {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 4fr) minmax(0, 6fr);
+  column-gap: var(--p-gap-x);
+  padding: 20px 0;
+  border-top: 1px solid var(--p-fio);
+}
+.ab-f-metodo li span { color: var(--cor); }
+.ab-f-tools { padding-top: 34px; color: var(--p-quieto); }
+@media (max-width: 1024px) {
+  .ab-f-conteudo, .ab-f-grade, .ab-f-rates { grid-template-columns: 1fr; }
+  .ab-f-ficha { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ab-f-metodo li { grid-template-columns: 40px 1fr; }
+  .ab-f-metodo li p { grid-column: 2; }
+}
