@@ -219,23 +219,41 @@
    Aqui isso vira Geist 700 em caixa alta. E o ganho é de sistema: a V2 passa a
    ter UMA voz tipográfica, contra o dueto da V3 — direção diferente, economia
    diferente. */
+/* ⭐ 18/08 — A VOZ MIÚDA VOLTA A SER MONO, agora com a DEPARTURE MONO, a
+   pedido dele ("bora usar essa font nos textinhos pequenos", SIL OFL).
+
+   ⚠ Isso REVERTE a decisão de cima, e de propósito: lá o argumento era que uma
+   segunda família não acrescentava nada porque a Martian Mono é só "uma mono a
+   mais". A Departure é outra coisa — ela tem DESENHO PIXEL, então não repete a
+   grotesca em outra roupa: traz uma matéria que a Geist não tem em peso nenhum.
+   O ganho de sistema (uma voz só) valia contra uma mono neutra; não vale contra
+   uma que diz algo.
+
+   ⚠ Onde ela NÃO entra: no corpo de leitura e em qualquer coisa acima de ~16px.
+   Fonte de grade de bitmap serrilha quando cresce, e parágrafo em mono não se
+   lê ([[craft-mono-e-rotulo-sans-e-leitura]]). Rótulo, metadado, índice e
+   ficha — nada além disso. */
 .p-rotulo {
-  font-family: 'Geist', ui-sans-serif, sans-serif;
-  font-weight: 700;
+  font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
+  font-weight: 400;
   font-size: var(--p-rotulo);
   line-height: 1.4;
-  letter-spacing: var(--p-rotulo-ls);
+  /* a Departure já nasce com contra-forma larga: o tracking de caixa alta que a
+     Geist pedia aqui empurra demais */
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--p-quieto);
+  -webkit-font-smoothing: antialiased;
 }
 .p-marca {
-  font-family: 'Geist', ui-sans-serif, sans-serif;
-  font-weight: 500;
+  font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
+  font-weight: 400;
   font-size: var(--p-marca);
   line-height: 1;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   color: var(--p-quieto);
   font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
 }
 /* ⚠ `.p-display` MORREU nesta direção. Ver a nota da escala acima: onde há
    glifo gigante, manchete de 74px vira ruído. O que era manchete virou corpo
@@ -1457,7 +1475,7 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
-  font-family: 'Martian Mono', ui-monospace, monospace;
+  font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
   font-size: 9.5px;
   line-height: 1.7;
   letter-spacing: 0.06em;
@@ -1746,7 +1764,7 @@
 }
 .p-catalogo-cap { display: flex; justify-content: space-between; padding-top: 8px; color: var(--p-quieto); }
 .p-catalogo-ficha { grid-column: 7 / span 6; display: grid; gap: 14px; }
-.p-catalogo-n { color: var(--p-quieto); font-family: 'Martian Mono', ui-monospace, monospace; font-size: 9.5px; }
+.p-catalogo-n { color: var(--p-quieto); font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace; font-size: 9.5px; }
 .p-catalogo-nome {
   font-family: 'Geist', ui-sans-serif, sans-serif;
   font-weight: 400;
@@ -1827,7 +1845,7 @@
 .p-cortina-indice {
   position: absolute;
   top: 50%;
-  font-family: 'Martian Mono', ui-monospace, monospace;
+  font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
   font-size: 9.5px;
   letter-spacing: 0.06em;
   text-transform: uppercase;

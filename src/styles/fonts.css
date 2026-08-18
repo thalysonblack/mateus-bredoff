@@ -179,3 +179,23 @@
   src: url('../assets/fonts/bodoni-moda-var-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
+
+/* ── Departure Mono ────────────────────────────────────────────────────────
+   Pedida por ele ("bora usar essa font nos textinhos pequenos") em 18/08.
+   Licença SIL OFL — livre inclusive para uso comercial, verificado na página
+   oficial antes de baixar.
+
+   ⚠ É uma fonte de DESENHO PIXEL: as formas nascem de uma grade de bitmap. Isso
+   tem duas consequências práticas:
+   · ela pede corpos pequenos e tracking largo, que é exatamente onde ele quer
+     usá-la (rótulo, metadado, índice) — em corpo grande o serrilhado aparece;
+   · o rendering fica mais nítido com `-webkit-font-smoothing: antialiased` do
+     que com subpixel, porque o traço tem 1px de espessura por construção.
+   22 kB no woff2, self-hosted como o resto. */
+@font-face {
+  font-family: 'Departure Mono';
+  src: url('../assets/fonts/DepartureMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
