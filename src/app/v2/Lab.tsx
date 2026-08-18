@@ -22,7 +22,7 @@ export default function LabV2() {
   useMetaRota();
 
   return (
-    <Prancha n="04" nome="Lab" superficie="tinta" status={`${LAB.length} experiments`}>
+    <Prancha n="04" nome="Lab" superficie="tinta" status={`${LAB.length} experiments`} rodape="completo">
       <section className="pt-14 max-md:pt-8" data-atenua>
         <p className="p-corpo max-w-[46ch]">
           Fictional brands, built to test systems that a client brief would never

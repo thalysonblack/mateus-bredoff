@@ -1001,7 +1001,7 @@
   max-width: 30ch;
 }
 .p-numero {
-  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
   font-weight: 400;
   font-size: clamp(30px, 3.4vw, 52px);
   line-height: 1;
@@ -1216,7 +1216,13 @@
 /* cada número ocupa três colunas: 1, 4, 7 e 10 — as mesmas linhas da grade */
 .p-numeros-abertura > * { grid-column: span 3; }
 .p-numero-big {
-  font-family: 'Geist', ui-sans-serif, sans-serif;
+  /* ⭐ 18/08 — "a fonte pode colocar nos números". A Departure é de desenho
+     PIXEL, e em corpo grande o serrilhado deixa de ser defeito e vira CONTADOR:
+     o número passa a ler como leitura de instrumento, não como manchete. É
+     onde uma pixel font cresce sem ficar amadora — algarismo tem forma
+     fechada, e a grade dá conta dela.
+     ⚠ Só ALGARISMO. Palavra em corpo grande nesta fonte serrilha e cansa. */
+  font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
   font-weight: 400;
   /* ⚠ MAIOR que o manifesto de propósito: aqui o dado é o argumento, e um
      número do tamanho do texto ao lado não afirma nada */
@@ -1266,7 +1272,7 @@
 .p-sumario-ficha { display: grid; gap: 14px; }
 .p-sumario-ficha dt { color: var(--p-quieto); }
 .p-sumario-valor {
-  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
   font-size: clamp(20px, 1.7vw, 28px);
   line-height: 1.05;
   letter-spacing: -0.02em;
@@ -1313,7 +1319,7 @@
 .p-precos-escopo { color: var(--p-quieto); padding-right: 24px; }
 .p-precos-valor {
   text-align: right;
-  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
   font-size: clamp(22px, 2.2vw, 34px);
   line-height: 1;
   letter-spacing: -0.03em;
@@ -1358,7 +1364,13 @@
 /* cada número ocupa três colunas: 1, 4, 7 e 10 — as mesmas linhas da grade */
 .p-numeros-abertura > * { grid-column: span 3; }
 .p-numero-big {
-  font-family: 'Geist', ui-sans-serif, sans-serif;
+  /* ⭐ 18/08 — "a fonte pode colocar nos números". A Departure é de desenho
+     PIXEL, e em corpo grande o serrilhado deixa de ser defeito e vira CONTADOR:
+     o número passa a ler como leitura de instrumento, não como manchete. É
+     onde uma pixel font cresce sem ficar amadora — algarismo tem forma
+     fechada, e a grade dá conta dela.
+     ⚠ Só ALGARISMO. Palavra em corpo grande nesta fonte serrilha e cansa. */
+  font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
   font-weight: 400;
   /* ⚠ MAIOR que o manifesto de propósito: aqui o dado é o argumento, e um
      número do tamanho do texto ao lado não afirma nada */
@@ -1525,7 +1537,13 @@
   column-gap: var(--p-gap-x);
   padding: 72px 0 84px;
 }
-.p-catalogo-intro > div { grid-column: 5 / span 8; display: grid; gap: 22px; }
+.p-catalogo-lateral { grid-column: 1 / span 3; display: grid; gap: 26px; align-content: start; }
+.p-catalogo-intro > div:not(.p-catalogo-lateral) { grid-column: 5 / span 8; display: grid; gap: 22px; }
+/* a ficha lateral: metadado em pares, o que dá DENSIDADE à coluna que estava
+   vazia — e é o vocabulário das referências dele */
+.p-ficha-lateral { display: grid; gap: 16px; }
+.p-ficha-lateral dt { color: var(--p-quieto); padding-bottom: 3px; }
+.p-ficha-lateral dd { margin: 0; }
 
 /* ── serviços: FOLHAS QUE SE EMPILHAM ────────────────────────────────────
    "card lado a lado é muito clássico". Grade de quatro mostra tudo de uma vez e
@@ -1784,7 +1802,7 @@
 }
 .p-catalogo-preco .p-marca { color: var(--p-quieto); }
 .p-catalogo-valor {
-  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
   font-size: clamp(22px, 2.2vw, 34px);
   line-height: 1;
   letter-spacing: -0.03em;
@@ -1812,6 +1830,68 @@
   .p-catalogo-retrato { height: 46vh; margin-right: calc(var(--p-margem) * -1); }
   .p-catalogo-numeros > * { grid-column: span 6; }
   .p-catalogo-ficha { padding-top: 22px; }
+}
+
+/* ── A VOZ MIÚDA nos elementos de navegação ──────────────────────────── */
+.p-nav {
+  font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── O RODAPÉ COMPLETO ────────────────────────────────────────────────────
+   "preciso de um footer maneiro pra outras páginas". Rota de tela fecha com a
+   régua; rota que ROLA termina de verdade — e um site que acaba numa linha de
+   9px termina no vazio.
+
+   ⚠ O e-mail é o maior elemento da página inteira depois do título: é a única
+   AÇÃO que ela pede, e quem chegou até aqui já viu o trabalho. Escala é
+   hierarquia de intenção, não de decoração. */
+.p-rodape {
+  margin-top: 96px;
+  padding-top: 34px;
+  border-top: 1px solid var(--p-fio);
+}
+.p-rodape-topo {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--p-gap-x);
+  row-gap: 40px;
+  padding-bottom: 56px;
+}
+.p-rodape-topo > :first-child { grid-column: 1 / span 6; }
+.p-rodape-canais { grid-column: 8 / span 2; }
+.p-rodape-indice { grid-column: 10 / span 3; }
+.p-rodape-email {
+  display: inline-block;
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: clamp(26px, 3.6vw, 58px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  color: var(--p-ink);
+  transition: color 0.3s ease-out;
+}
+.p-rodape-email:hover { color: var(--p-acento); }
+.p-rodape-canais ul,
+.p-rodape-indice ul { display: grid; gap: 7px; }
+.p-rodape-indice .p-marca { color: var(--p-quieto); padding-right: 6px; }
+.p-rodape-regua {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--p-gap-x);
+  padding-top: 16px;
+  border-top: 1px solid var(--p-fio);
+  padding-bottom: 4px;
+}
+.p-rodape-regua > :nth-child(1) { grid-column: 1 / span 4; }
+.p-rodape-regua > :nth-child(2) { grid-column: 6 / span 4; }
+.p-rodape-regua > :nth-child(3) { grid-column: 10 / span 3; text-align: right; }
+@media (max-width: 1024px) {
+  .p-rodape-topo > :first-child,
+  .p-rodape-canais,
+  .p-rodape-indice { grid-column: 1 / -1; }
 }
 
 /* ── A CORTINA DE GRADE (transição de rota) ───────────────────────────────

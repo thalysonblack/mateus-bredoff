@@ -37,7 +37,7 @@ export default function AboutV2() {
   const folhaMetodo = useRevelar<HTMLElement>();
 
   return (
-    <Prancha n="03" nome="About" superficie="papel" status="Available for projects">
+    <Prancha n="03" nome="About" superficie="papel" status="Available for projects" rodape="completo">
       {/* ⭐⭐ AS SEÇÕES SÃO FOLHAS QUE SE SOBREPÕEM.
           Veio dos salvos dele: o post do Obys sobre o Laxer descreve a mecânica
           inteira — *"sheets of paper. The entire website is a collection of

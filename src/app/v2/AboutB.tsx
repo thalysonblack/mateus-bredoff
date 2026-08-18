@@ -59,7 +59,7 @@ export default function AboutB() {
   const revNumeros = useRevelar<HTMLElement>();
 
   return (
-    <Prancha n="03" nome="About" superficie="papel" status="Available for projects">
+    <Prancha n="03" nome="About" superficie="papel" status="Available for projects" rodape="completo">
       {/* ─ A CAPA — a mesma da proposta A, que já está resolvida ────────── */}
       <section className="p-capa">
         <figure className="p-retrato">

@@ -3,7 +3,7 @@ import retrato2x from "../../assets/optimized/hero-portrait-3200.webp";
 import { SERVICOS, MODALIDADES } from "../../content/servicos";
 import { WORK } from "../../content/work";
 import { corDe } from "../../content/cores";
-import { LEAD, NUMEROS, PROCESSO_MANCHETE, PROCESSO } from "../../content/about";
+import { LEAD, NUMEROS, PROCESSO_MANCHETE, PROCESSO, FERRAMENTAS } from "../../content/about";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { useRevelar } from "./useRevelar";
 import { Prancha, useHora } from "./sistema";
@@ -49,7 +49,7 @@ export default function AboutC({ servicos = "pilha" }: { servicos?: ModoServicos
   const revMetodo = useRevelar<HTMLElement>();
 
   return (
-    <Prancha n="03" nome="About" superficie="tinta" status="Available for projects">
+    <Prancha n="03" nome="About" superficie="tinta" status="Available for projects" rodape="completo">
       {/* ─ A HERO: UM ELEMENTO SÓ ───────────────────────────────────────
           ⚠ "a hero tá muito cheia, precisa de elemento UAU e depois os textos".
           Ela tinha retrato + manifesto + approach + legenda dividindo a mesma

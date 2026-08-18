@@ -36,7 +36,7 @@ export default function CaseV2() {
 
   if (!item) {
     return (
-      <Prancha n="—" nome="Not found" superficie="papel">
+      <Prancha n="—" nome="Not found" superficie="papel" rodape="completo">
         <div className="flex min-h-[60svh] flex-col justify-center">
           <p className="p-rotulo" style={{ color: "var(--p-acento)" }}>
             404
@@ -55,7 +55,7 @@ export default function CaseV2() {
   const proximo = WORK[(i + 1) % WORK.length];
 
   return (
-    <Prancha n={String(i + 1).padStart(2, "0")} nome={item.title} superficie="papel">
+    <Prancha n={String(i + 1).padStart(2, "0")} nome={item.title} superficie="papel" rodape="completo">
       {/* ─ abertura: o nome no corpo do espécime, a ficha ao lado ───────── */}
       <header
         className="grid grid-cols-12 pt-14 max-md:pt-8"

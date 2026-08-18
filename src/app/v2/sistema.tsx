@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { Link, useLocation } from "react-router";
+import { CONTATO } from "../v3-system";
 import "../../styles/v2.css";
 
 /**
@@ -47,7 +48,10 @@ export function useHora(tz = "America/Sao_Paulo") {
 function Navegacao() {
   const { pathname } = useLocation();
   return (
-    <nav className="p-corpo flex flex-wrap items-baseline gap-x-1">
+    /* ⭐ a nav passa a falar na voz MIÚDA do sistema (Departure Mono) — "e no
+       menu". Navegação é metadado, não leitura: ela nomeia onde se está, e é
+       exatamente o papel que esta fonte tem aqui. */
+    <nav className="p-nav flex flex-wrap items-baseline gap-x-1">
       {PRANCHAS.map((p, i) => {
         const atual = pathname === p.to || (p.to !== "/" && pathname.startsWith(p.to));
         return (
@@ -82,6 +86,7 @@ export function Prancha({
   superficie = "papel",
   status,
   tela = false,
+  rodape = "regua",
   children,
 }: {
   n: string;
@@ -96,6 +101,16 @@ export function Prancha({
    * 963. Rota de tela usa `h-svh` + `overflow-hidden`.
    */
   tela?: boolean;
+  /**
+   * ⭐ O RODAPÉ COMPLETO — "preciso de um footer maneiro pra outras páginas".
+   *
+   * Rota de TELA (index, work) fecha com a régua de metadado, que é tudo o que
+   * cabe: a página não rola, e um rodapé alto roubaria a altura do conteúdo.
+   * Rota que ROLA termina de verdade, e um site que acaba numa linha de 9px
+   * termina no vazio — o fim da leitura é o único lugar em que a pessoa que
+   * gostou vai procurar como falar com ele.
+   */
+  rodape?: "regua" | "completo";
   children: ReactNode;
 }) {
   const hora = useHora();
@@ -129,7 +144,7 @@ export function Prancha({
             <Navegacao />
           </div>
           <p
-            className="p-corpo col-span-3 col-start-10 flex items-center justify-end gap-2"
+            className="p-nav col-span-3 col-start-10 flex items-center justify-end gap-2"
             style={{ color: "var(--p-quieto)" }}
           >
             {status ? (
@@ -159,21 +174,76 @@ export function Prancha({
 
         {/* rodapé da prancha: os três metadados que o corentin ancora na base —
             onde ele está, que horas são lá, e o ano do arquivo */}
-        {/* rodapé: os três metadados que o corentin ancora na base — onde ele
-            está, que horas são lá, e o ano do arquivo. Mesma grade do
-            cabeçalho, pela mesma razão. */}
-        <footer
-          className="p-marca grid grid-cols-12 items-baseline pt-5"
-          style={{ columnGap: "var(--p-gap-x)" }}
-        >
-          <span className="col-span-4">Brazil</span>
-          <span className="col-span-4 col-start-6">
-            {hora} <span>(UTC−3)</span>
-          </span>
-          <span className="col-span-3 col-start-10 text-right">
-            {n} / {nome.toUpperCase()}
-          </span>
-        </footer>
+        {/* ── O RODAPÉ ─────────────────────────────────────────────────
+            `regua`   os três metadados na base — onde ele está, que horas são
+                      lá, e o número da folha. É o que cabe numa rota de tela.
+            `completo` o fim de verdade: o convite em corpo grande, os canais,
+                      o índice do site e a régua embaixo. ⚠ O e-mail é o maior
+                      elemento porque é a ÚNICA ação que a página pede — quem
+                      chegou ao fim já viu o trabalho. */}
+        {rodape === "completo" ? (
+          <footer className="p-rodape">
+            <div className="p-rodape-topo">
+              <div>
+                <p className="p-rotulo pb-4">Say hello</p>
+                <a href="mailto:hello@mateusbredoff.com" className="p-rodape-email">
+                  hello@mateusbredoff.com
+                </a>
+              </div>
+              <nav className="p-rodape-canais">
+                <p className="p-rotulo pb-4">Elsewhere</p>
+                <ul>
+                  {CONTATO.filter((c) => c.label !== "Email").map((c) => (
+                    <li key={c.label}>
+                      {c.href ? (
+                        <a href={c.href} target="_blank" rel="noopener noreferrer" className="p-corpo p-link">
+                          {c.label}
+                        </a>
+                      ) : (
+                        <span className="p-corpo">{c.label}</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+              <nav className="p-rodape-indice">
+                <p className="p-rotulo pb-4">Site</p>
+                <ul>
+                  {PRANCHAS.map((p) => (
+                    <li key={p.to}>
+                      <Link to={p.to} className="p-corpo p-link">
+                        <span className="p-marca">{p.n}</span> {p.nome}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+
+            <p className="p-marca p-rodape-regua">
+              <span>Brazil</span>
+              <span>
+                {hora} (UTC−3)
+              </span>
+              <span>
+                {n} / {nome.toUpperCase()}
+              </span>
+            </p>
+          </footer>
+        ) : (
+          <footer
+            className="p-marca grid grid-cols-12 items-baseline pt-5"
+            style={{ columnGap: "var(--p-gap-x)" }}
+          >
+            <span className="col-span-4">Brazil</span>
+            <span className="col-span-4 col-start-6">
+              {hora} (UTC−3)
+            </span>
+            <span className="col-span-3 col-start-10 text-right">
+              {n} / {nome.toUpperCase()}
+            </span>
+          </footer>
+        )}
       </div>
     </div>
   );
