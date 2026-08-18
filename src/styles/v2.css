@@ -1805,6 +1805,13 @@
    o antialias deixa um fio do fundo aparecendo entre elas quando o quadro está
    fechado. */
 .p-cortina { position: fixed; inset: 0; z-index: 90; }
+/* ⚠⚠⚠ ESTADO DE REPOUSO NO CSS — QUARTA VEZ que este projeto cobre a própria
+   página por esquecer isto. As faixas são `absolute` dentro de uma raiz
+   `fixed inset:0; z-index:90`: sem transform inicial elas nascem em 0, ou seja,
+   COBRINDO TUDO. O site abria em branco com o DOM inteiro montado por baixo —
+   e nenhuma medição acusa, porque nada está quebrado: está coberto.
+   O repouso repete a alternância da coreografia (pares à esquerda, ímpares à
+   direita), então o primeiro frame já está na posição de onde elas entram. */
 .p-cortina-faixa {
   position: absolute;
   left: 0;
@@ -1812,7 +1819,9 @@
   height: calc(100% / 6 + 0.5%);
   background: #f4f4f2;
   will-change: transform;
+  transform: translateX(-101%);
 }
+.p-cortina-faixa:nth-child(even) { transform: translateX(101%); }
 /* o texto do quadro fechado, na língua da prancha */
 .p-cortina-rotulo,
 .p-cortina-indice {
