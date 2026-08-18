@@ -48,10 +48,7 @@ export function useHora(tz = "America/Sao_Paulo") {
 function Navegacao() {
   const { pathname } = useLocation();
   return (
-    /* ⭐ a nav passa a falar na voz MIÚDA do sistema (Departure Mono) — "e no
-       menu". Navegação é metadado, não leitura: ela nomeia onde se está, e é
-       exatamente o papel que esta fonte tem aqui. */
-    <nav className="p-nav flex flex-wrap items-baseline gap-x-1">
+    <nav className="p-corpo flex flex-wrap items-baseline gap-x-1">
       {PRANCHAS.map((p, i) => {
         const atual = pathname === p.to || (p.to !== "/" && pathname.startsWith(p.to));
         return (
@@ -144,7 +141,7 @@ export function Prancha({
             <Navegacao />
           </div>
           <p
-            className="p-nav col-span-3 col-start-10 flex items-center justify-end gap-2"
+            className="p-marca col-span-3 col-start-10 flex items-center justify-end gap-2"
             style={{ color: "var(--p-quieto)" }}
           >
             {status ? (

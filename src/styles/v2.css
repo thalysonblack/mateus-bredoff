@@ -1832,14 +1832,6 @@
   .p-catalogo-ficha { padding-top: 22px; }
 }
 
-/* ── A VOZ MIÚDA nos elementos de navegação ──────────────────────────── */
-.p-nav {
-  font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
-  font-size: 11px;
-  letter-spacing: 0.03em;
-  -webkit-font-smoothing: antialiased;
-}
-
 /* ── O RODAPÉ COMPLETO ────────────────────────────────────────────────────
    "preciso de um footer maneiro pra outras páginas". Rota de tela fecha com a
    régua; rota que ROLA termina de verdade — e um site que acaba numa linha de
