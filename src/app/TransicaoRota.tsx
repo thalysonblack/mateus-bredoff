@@ -191,7 +191,15 @@ export default function TransicaoRota() {
       /* ⭐ ALTERNANDO O LADO: pares entram pela esquerda, ímpares pela direita.
          É isso que faz a cortina parecer TECIDA em vez de lisa — e é a
          mecânica do post do Nischint Singh, dos salvos dele. */
-      gsap.set(faixa, { xPercent: (i) => (i % 2 === 0 ? -100 : 100) });
+      /* ⚠⚠ `x: 0` JUNTO com o xPercent — e eu já sabia disso. O CSS declara o
+         repouso como `translateX(±101%)` (senão as faixas nascem cobrindo a
+         página), o GSAP LÊ esse transform e guarda os ±1697px como `x`, e o
+         `xPercent` passa a SOMAR por cima: medido, o quadro "fechado" ficava em
+         ±1697 (nunca cobria) e o repouso final em ±17 (quase cobrindo). É o
+         mesmo par de consertos brigando que já derrubou a transição-folha hoje
+         — cada um certo sozinho. Zerando o `x`, o percentual volta a ser a
+         única coordenada. */
+      gsap.set(faixa, { x: 0, xPercent: (i) => (i % 2 === 0 ? -100 : 100) });
       gsap.set([rotulo, indice], { autoAlpha: 0 });
       gsap.set(titulo, { yPercent: 108, autoAlpha: 1 });
 
