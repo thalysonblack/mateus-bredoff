@@ -2055,6 +2055,10 @@
    ═════════════════════════════════════════════════════════════════════════ */
 
 /* ── D · O RETRATO ──────────────────────────────────────────────────────── */
+/* ⚠ `clip` e não `hidden`: recorta a sangria sem criar contexto de scroll — o
+   `sticky` do palco e do trilho continuam funcionando. Com `hidden` os dois
+   param de grudar. */
+.ab-d { overflow-x: clip; }
 .ab-d-palco {
   position: sticky;
   top: 0;
@@ -2149,29 +2153,91 @@
 }
 .ab-d-frase em { font-style: italic; color: var(--p-acento); }
 .ab-d-lead-corpo { grid-column: 8 / span 5; display: grid; gap: 16px; align-content: start; }
-.ab-d-numeros {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  column-gap: var(--p-gap-x);
-  row-gap: 28px;
-  padding: 40px 0 76px;
+/* A FAIXA — os números atravessam. Sangra das margens porque uma faixa que
+   respeita a margem não é faixa, é linha de tabela. */
+.ab-d-faixa {
+  margin: 0 calc(var(--p-margem) * -1);
+  padding: 30px 0 34px;
   border-top: 1px solid var(--p-fio);
-  padding-top: 34px;
+  border-bottom: 1px solid var(--p-fio);
+  overflow: hidden;
 }
-.ab-d-metodo, .ab-d-valores {
+.ab-d-faixa-fita {
+  display: flex;
+  width: max-content;
+  animation: ab-d-corre linear both;
+  animation-timeline: scroll(root block);
+  animation-range: 100svh 220svh;
+}
+.ab-d-faixa-grupo { display: flex; }
+.ab-d-faixa-item {
+  display: grid;
+  gap: 4px;
+  padding: 0 clamp(30px, 4.6vw, 78px);
+  border-right: 1px solid var(--p-fio);
+}
+@keyframes ab-d-corre {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+/* A PROVA — a única imagem do miolo, de margem a margem. */
+.ab-d-prova {
+  margin: 76px calc(var(--p-margem) * -1) 0;
+  position: relative;
+}
+.ab-d-prova img { display: block; width: 100%; height: auto; }
+.ab-d-prova-pe {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px var(--p-margem) 0;
+  color: var(--p-quieto);
+}
+
+/* O TRILHO — a seção fica presa e o método corre na horizontal. */
+.ab-d-trilho { height: 300svh; margin-top: 76px; }
+.ab-d-trilho-palco {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  margin: 0 calc(var(--p-margem) * -1);
+  padding: clamp(78px, 13vh, 130px) var(--p-margem) clamp(44px, 7vh, 74px);
+}
+.ab-d-trilho-cabeca { display: grid; gap: 14px; }
+.ab-d-fita { display: flex; gap: var(--p-gap-x); width: max-content; will-change: transform; }
+/* ⚠ O cartão é ALTO de propósito: com `align-content: start` ele encolhe para
+   a altura do texto e a sobra do palco vira dois buracos (um acima, um abaixo).
+   Aqui o número ancora no topo, o texto na base, e a coluna preenche a tela. */
+.ab-d-fita li {
+  width: clamp(280px, 26vw, 400px);
+  height: clamp(300px, 46vh, 470px);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 10px;
+  padding-top: 18px;
+  border-top: 1px solid var(--p-fio);
+}
+.ab-d-fita li h3 { align-self: end; }
+.ab-d-fita-n { color: var(--p-acento); }
+.ab-d-fita-titulo { font-size: clamp(21px, 1.9vw, 31px); letter-spacing: -0.02em; line-height: 1.1; }
+
+.ab-d-regua { height: 1px; background: var(--p-fio); position: relative; }
+.ab-d-regua span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--percurso, 0) * 100%);
+  background: var(--p-acento);
+}
+.ab-d-valores {
   border-top: 1px solid var(--p-fio);
   padding: 34px 0 76px;
 }
-.ab-d-metodo-lead { max-width: 62ch; padding: 18px 0 48px; }
-.ab-d-etapas { display: grid; gap: 0; }
-.ab-d-etapas li {
-  display: grid;
-  grid-template-columns: 64px minmax(0, 4fr) minmax(0, 6fr);
-  column-gap: var(--p-gap-x);
-  padding: 22px 0;
-  border-top: 1px solid var(--p-fio);
-}
-.ab-d-etapas li:first-child { border-top: 0; }
+.ab-d-metodo-lead { max-width: 34ch; }
+.ab-d-peca { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; margin-bottom: 6px; }
 .ab-d-valores-lista {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2186,9 +2252,11 @@
 @media (max-width: 1024px) {
   .ab-d-lead-esq, .ab-d-lead-corpo { grid-column: 1 / -1; }
   .ab-d-lead-esq { gap: 32px; }
-  .ab-d-numeros, .ab-d-valores-lista { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .ab-d-etapas li { grid-template-columns: 40px 1fr; }
-  .ab-d-etapas li p { grid-column: 2; }
+  .ab-d-valores-lista { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ab-d-trilho { height: auto; margin-top: 56px; }
+  .ab-d-trilho-palco { position: static; height: auto; overflow: visible; gap: 28px; }
+  .ab-d-fita { flex-direction: column; width: auto; transform: none !important; }
+  .ab-d-fita li { width: auto; }
 }
 
 /* ── E · A FICHA ────────────────────────────────────────────────────────── */
