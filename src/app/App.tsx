@@ -16,6 +16,7 @@ import AboutC from "./v2/AboutC";
 import AboutD from "./v2/AboutD";
 import AboutE from "./v2/AboutE";
 import AboutF from "./v2/AboutF";
+import AboutG from "./v2/AboutG";
 import PranchaWork from "./v2/Work";
 import PranchaCase from "./v2/Case";
 import PranchaLab from "./v2/Lab";
@@ -248,6 +249,7 @@ export default function App() {
           <Route path="/v2/about-d" element={<AboutD />} />
           <Route path="/v2/about-e" element={<AboutE />} />
           <Route path="/v2/about-f" element={<AboutF />} />
+          <Route path="/v2/about-g" element={<AboutG />} />
           {/* a mesma about com as outras duas mecânicas de serviços */}
           <Route path="/v2/about-c-fita" element={<AboutC servicos="fita" />} />
           <Route path="/v2/about-c-cortina" element={<AboutC servicos="cortina" />} />
