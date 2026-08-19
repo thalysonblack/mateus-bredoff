@@ -8,7 +8,6 @@ import { gsap } from "../../lib/gsap";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { useRevelar } from "./useRevelar";
 import { Prancha } from "./sistema";
-import Palavra from "./Palavra";
 
 /**
  * ABOUT — PROPOSTA D: "O RETRATO".
@@ -72,31 +71,43 @@ export default function AboutD() {
   return (
     <Prancha n="03" nome="About" superficie="tinta" status="Available for projects" rodape="completo">
       <div className="ab-d">
-        {/* ── O PALCO ────────────────────────────────────────────────────
-            Full bleed: sai das margens da prancha e sobe por baixo do
-            cabeçalho, como na home dele. O nome em `difference` porque a foto
-            é escura de um lado e clara do outro — cor fixa mancharia metade. */}
-        <div className="ab-d-palco">
-          <img
-            className="ab-d-foto"
-            src={retrato}
-            srcSet={`${retrato} 1600w, ${retrato2x} 3200w`}
-            sizes="100vw"
-            alt="Mateus Bredoff"
-          />
-          {/* ⚠ O nome ANCORA NA BASE, não no centro: a cabeça ocupa a faixa
-              do meio e tipografia sobre o rosto de alguém é sempre erro de
-              enquadramento, nunca de gosto. Aqui o retrato fica inteiro e a
-              palavra fecha a tela por baixo, encostando nas duas margens. */}
-          <h1 className="ab-d-nome">
-            <Palavra texto="MATEUS BREDOFF" />
-          </h1>
-          <p className="ab-d-pe">
-            <span>Brand designer</span>
-            <span>Brazil · working globally</span>
-            <span>Since 2019</span>
+        {/* ── A HERO ─ a da original dele ────────────────────────────────
+            "deixa aquela com ela Mateus… Brand…": nome na base à esquerda,
+            ofício na base à direita, os dois em caixa alta gigante sangrando
+            para fora e o corpo dele passando no meio. É a hero da home dele, e
+            as classes já estavam medidas contra o print — reusadas, não
+            reescritas.
+
+            ⚠ `mix-blend-mode: difference` em vez de cor fixa: a foto vai de
+            petróleo no alto a quase branco embaixo, passando pelo marrom da
+            camisa. Cor fixa perde contraste em algum trecho; o blend resolve
+            pixel a pixel. E o blend MORRE dentro de stacking context — por isso
+            o zoom do scroll vai no `img`, nunca num ancestral destes dois nós. */}
+        <section className="p-hero">
+          <figure className="p-hero-foto">
+            <img
+              className="ab-d-foto"
+              src={retrato}
+              srcSet={`${retrato} 1600w, ${retrato2x} 3200w`}
+              sizes="100vw"
+              alt="Mateus Bredoff"
+              width={1600}
+              height={850}
+              decoding="async"
+              draggable={false}
+            />
+          </figure>
+          <p className="p-hero-marca p-hero-marca--esq">
+            Mateus
+            <br />
+            Bredoff
           </p>
-        </div>
+          <p className="p-hero-marca p-hero-marca--dir">
+            Brand
+            <br />
+            Designer
+          </p>
+        </section>
 
         {/* ── A FOLHA ─ passa por cima do palco e leva o papel de volta ── */}
         <div className="ab-d-folha">
