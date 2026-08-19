@@ -1,186 +1,187 @@
 import retrato from "../../assets/optimized/hero-portrait-1600.webp";
 import retrato2x from "../../assets/optimized/hero-portrait-3200.webp";
-import { LEAD, NUMEROS, PROCESSO, FERRAMENTAS } from "../../content/about";
+import { LEAD, PROCESSO, FERRAMENTAS } from "../../content/about";
 import { MODALIDADES, SERVICOS } from "../../content/servicos";
-import { WORK } from "../../content/work";
-import { CORES } from "../../content/cores";
+import { RECONHECIMENTO } from "../../content/reconhecimento";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { useRevelar } from "./useRevelar";
 import { Prancha } from "./sistema";
 
 /**
- * ABOUT — PROPOSTA G: "A CARTELA".
+ * ABOUT — "O PÔSTER".
  *
- * Lida dos 63 SALVOS dele no Savee (19/08). O que ele guarda, em ordem de
- * frequência:
+ * A versão anterior desta rota era a CARTELA, e ele matou em duas palavras:
+ * "gostei não". O erro foi de tradução, não de referência — os salvos dele são
+ * PEÇA GRÁFICA IMPRESSA (massa, textura, sobreposição, rotação) e eu devolvi
+ * grade de interface com cards de cor. Vocabulário certo, gramática errada.
  *
- *   · tipografia condensada dentro de RETÂNGULO DE COR CHAPADA — "Full Circle"
- *     roxo, "EVERY DETAIL", "Time Will Tell", "youth culture";
- *   · notação de FICHA TÉCNICA — `SP–307 9.12B`, `P06 AW07 S62 NK30`, o ©, as
- *     setas, os cantos numerados 1·2·3·4;
- *   · cartelas de cor pura isoladas, e o grid de bandeirinhas náuticas: cor
- *     como CONTEÚDO, não como enfeite;
- *   · macro de objeto metálico sobre fundo chapado.
+ * Esta é a leitura oposta dos mesmos 63 saves: uma peça só, que se rola como
+ * quem lê um cartaz. Massa tipográfica que se sobrepõe à foto, palavra girada,
+ * texto miúdo espremido na borda em vertical, fundo de tinta. Zero card, zero
+ * grade.
  *
- * Nenhuma das propostas anteriores usou nada disso: todas eram papel, fio de
- * 1px e coluna de texto. Esta troca o papel pelo BLOCO. A about deixa de ser
- * um documento sobre ele e vira a FICHA TÉCNICA dele — cada dado num campo de
- * cor, numerado, com a notação de quem cataloga o próprio trabalho.
- *
- * ⚠ A cartela de cor não é decorativa: são as oito cores amostradas das capas
- * dos projetos dele (`content/cores.ts`). É o único lugar do site em que o
- * acervo inteiro aparece de uma vez — e diz o que nenhuma frase diria sobre a
- * amplitude do que ele já fez.
+ * ⚠ E o conteúdo mudou por ordem dele: "vamos eliminar os big number e focar
+ * nas conquistas de prêmios". Os 62+/100+/56+ saíram inteiros. O que ocupa o
+ * centro agora é ONDE O TRABALHO FOI PUBLICADO — cinco matérias, cada uma com
+ * a peça que saiu e o link que eu abri. É a diferença entre dizer que se é bom
+ * e mostrar quem disse.
  */
 export default function AboutG() {
   useMetaRota("/about");
-  const bloco2 = useRevelar<HTMLDivElement>();
-  const bloco3 = useRevelar<HTMLDivElement>();
-  const bloco4 = useRevelar<HTMLDivElement>();
-
-  /* A cartela mostra o acervo inteiro, sem repetir hex (Bureau e Alex Archer
-     dividem a mesma cor). */
-  const paleta = Object.entries(CORES).filter(
-    ([slug], i, a) => a.findIndex(([, c]) => c.papel === CORES[slug].papel) === i,
-  );
-  /* ⚠ Os blocos de dado NÃO puxam da paleta por índice: os dois primeiros
-     azuis do acervo são quase o mesmo tom e os campos ficavam indistinguíveis.
-     Estes três foram escolhidos por DISTÂNCIA de matiz — vermelho, verde,
-     ocre —, que é o que faz três campos lidos como três campos. */
-  const CAMPO = ["ginga", "votare", "trivo"].map((k) => CORES[k].papel);
-  const DISCIPLINA = ["ginga", "alex-archer", "stag", "votare"].map((k) => CORES[k].papel);
+  const premios = useRevelar<HTMLElement>();
+  const oficio = useRevelar<HTMLElement>();
+  const tarifa = useRevelar<HTMLElement>();
 
   return (
-    <Prancha n="03" nome="About" superficie="branco" status="Available for projects" rodape="completo">
-      <div className="ab-g">
-        {/* ── A CAPA DA FICHA ─ notação antes de qualquer frase ─────────── */}
-        <header className="ab-g-capa">
-          <div className="ab-g-serie">
-            <span>MB—2019</span>
-            <span>REV. 03</span>
-            <span>BR / UTC−3</span>
-            <span>ALL RIGHTS RESERVED</span>
-          </div>
-          <h1 className="ab-g-titulo">
-            Brand
-            <br />
-            Designer
+    <Prancha n="03" nome="About" superficie="tinta" status="Available for projects" rodape="completo">
+      <div className="pz">
+        {/* ── O CARTAZ ─────────────────────────────────────────────────────
+            A foto entra ENTRE as duas palavras do nome, não atrás delas: é
+            colagem de cartaz, e é o que separa esta peça de um hero com texto
+            por cima. O tratamento em alto contraste não é filtro bonito — é o
+            que faz a foto virar MATÉRIA GRÁFICA e conviver com a massa. */}
+        <header className="pz-cartaz">
+          <h1 className="pz-nome">
+            <span className="pz-nome-1">Mateus</span>
+            <span className="pz-foto">
+              <img
+                src={retrato}
+                srcSet={`${retrato} 1600w, ${retrato2x} 3200w`}
+                sizes="60vw"
+                alt="Mateus Bredoff"
+              />
+            </span>
+            <span className="pz-nome-2">Bredoff</span>
           </h1>
-          <div className="ab-g-capa-pe">
-            <p className="p-corpo">{LEAD[0]}</p>
-          </div>
+
+          <p className="pz-lateral pz-lateral--esq">Brand designer · Brazil · working globally</p>
+          <p className="pz-lateral pz-lateral--dir">Est. 2019 · Available for projects</p>
+
+          <p className="pz-girada" aria-hidden="true">
+            Identity
+          </p>
         </header>
 
-        {/* ── O CAMPO ─ cada dado num bloco, numerado ───────────────────── */}
-        <div className="ab-g-campo">
-          <figure className="ab-g-bloco ab-g-bloco--retrato">
-            <img
-              src={retrato}
-              srcSet={`${retrato} 1600w, ${retrato2x} 3200w`}
-              sizes="50vw"
-              alt="Mateus Bredoff"
-            />
-            <figcaption className="ab-g-n">01</figcaption>
-          </figure>
-
-          {NUMEROS.slice(0, 3).map((n, i) => (
-            <div
-              className="ab-g-bloco ab-g-bloco--dado"
-              key={n.rotulo}
-              style={{ "--cor": CAMPO[i] } as React.CSSProperties}
-            >
-              <p className="ab-g-valor">{n.valor}</p>
-              <p className="ab-g-rotulo">{n.rotulo}</p>
-              <span className="ab-g-n">{String(i + 2).padStart(2, "0")}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* ── A CARTELA ─ o acervo inteiro numa tira ────────────────────── */}
-        <section className="ab-g-cartela" ref={bloco2}>
-          <p className="ab-g-secao">
-            <span>Colour index</span>
-            <span>{paleta.length} entries · sampled from the work</span>
+        {/* ── A FRASE ─ uma só, em corpo de cartaz ───────────────────────── */}
+        <section className="pz-frase">
+          <p>
+            I build identities that hold up <em>after</em> the launch.
           </p>
-          <ul className="p-sobe grid">
-            {paleta.map(([slug, cor]) => {
-              const peca = WORK.find((w) => w.slug === slug);
-              return (
-                <li key={slug} style={{ "--cor": cor.papel } as React.CSSProperties}>
-                  <span className="ab-g-swatch" />
-                  <span className="ab-g-swatch-nome">{peca?.title ?? slug}</span>
-                  <span className="ab-g-swatch-hex">{cor.papel.toUpperCase()}</span>
-                </li>
-              );
-            })}
-          </ul>
+          <div className="pz-frase-pe">
+            {LEAD.map((t, i) => (
+              <p key={i} className="p-corpo">
+                {t}
+              </p>
+            ))}
+          </div>
         </section>
 
-        {/* ── AS DISCIPLINAS ─ blocos de cor com o que ele faz ──────────── */}
-        <section className="ab-g-disciplinas" ref={bloco3}>
-          <p className="ab-g-secao">
+        {/* ── OS PRÊMIOS ─ o centro da peça ──────────────────────────────
+            "eliminar os big number e focar nas conquistas de prêmios". Cada
+            publicação é uma FAIXA de cartaz: o veículo em massa, a peça que
+            saiu sangrando por baixo, e a matéria em corpo miúdo. */}
+        <section className="pz-premios" ref={premios}>
+          <p className="pz-secao">
+            <span>Published in</span>
+            <span>{RECONHECIMENTO.length} features</span>
+          </p>
+          <ol>
+            {RECONHECIMENTO.map((r, i) => {
+              /* ⚠ Três das cinco matérias são do MESMO veículo. Repetir
+                 "WORLD BRAND DESIGN" em massa três vezes seguidas mata a
+                 força que a massa deveria dar — na segunda ocorrência em
+                 diante quem sobe para o corpo grande é o PROJETO, e o veículo
+                 desce para o metadado. A informação é a mesma; o ritmo, não. */
+              const repetido = RECONHECIMENTO.findIndex((x) => x.veiculo === r.veiculo) !== i;
+              return (
+              <li key={r.titulo} className="p-sobe grid">
+                <span className="pz-premio-n">{String(i + 1).padStart(2, "0")}</span>
+                <div className="pz-premio-corpo">
+                  <h2 className="pz-veiculo">{repetido ? r.projeto : r.veiculo}</h2>
+                  {r.href ? (
+                    <a className="pz-materia" href={r.href} target="_blank" rel="noopener noreferrer">
+                      {r.titulo}
+                      <span className="pz-seta" aria-hidden="true">
+                        ↗
+                      </span>
+                    </a>
+                  ) : (
+                    <span className="pz-materia">{r.titulo}</span>
+                  )}
+                  <p className="pz-meta p-marca">
+                    {repetido ? r.veiculo : r.projeto} · {r.ano}
+                  </p>
+                </div>
+                <figure className="pz-premio-peca">
+                  <img
+                    src={r.foto.src}
+                    srcSet={r.foto.src2x ? `${r.foto.src} 1400w, ${r.foto.src2x} 2200w` : undefined}
+                    sizes="40vw"
+                    width={r.foto.w}
+                    height={r.foto.h}
+                    alt={r.foto.alt}
+                    loading="lazy"
+                  />
+                </figure>
+              </li>
+              );
+            })}
+          </ol>
+        </section>
+
+        {/* ── O OFÍCIO ─ massa tipográfica, sem card ─────────────────────── */}
+        <section className="pz-oficio" ref={oficio}>
+          <p className="pz-secao">
             <span>Practice</span>
             <span>{SERVICOS.length} disciplines</span>
           </p>
-          <div className="p-sobe grid">
-            {SERVICOS.map((s, i) => (
-              <article key={s.nome} style={{ "--cor": DISCIPLINA[i] } as React.CSSProperties}>
-                <span className="ab-g-n">{String(i + 1).padStart(2, "0")}</span>
+          <ul className="p-sobe grid">
+            {SERVICOS.map((s) => (
+              <li key={s.nome}>
                 <h3>{s.nome}</h3>
                 <p className="p-corpo">{s.entrega}</p>
-              </article>
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
 
-        {/* ── OS PACOTES ─ ficha de produto, com número de série ────────── */}
-        <section className="ab-g-pacotes" ref={bloco4}>
-          <p className="ab-g-secao">
+        {/* ── A TARIFA ────────────────────────────────────────────────────── */}
+        <section className="pz-tarifa" ref={tarifa}>
+          <p className="pz-secao">
             <span>Engagements</span>
-            <span>Rates in USD</span>
+            <span>USD</span>
           </p>
-          <div className="p-sobe grid">
-            {MODALIDADES.map((m, i) => (
-              <article key={m.nome}>
-                <div className="ab-g-pacote-cabeca">
-                  <span className="ab-g-n">SP—{30 + i}</span>
-                  <h3>{m.nome}</h3>
-                </div>
-                <p className="ab-g-preco">
-                  {m.precoDe ? `$${m.precoDe.toLocaleString("en-US")}${m.unidade ?? ""}` : "On request"}
+          <ol className="p-sobe grid">
+            {MODALIDADES.map((m) => (
+              <li key={m.nome}>
+                <h3>{m.nome}</h3>
+                <p className="pz-preco">
+                  {m.precoDe ? m.precoDe.toLocaleString("en-US") : "On request"}
+                  {m.unidade ? <span className="pz-unidade">{m.unidade}</span> : null}
                 </p>
                 <p className="p-corpo">{m.para}</p>
-                <ul>
-                  {m.inclui.map((x) => (
-                    <li key={x} className="p-marca">
-                      {x}
-                    </li>
-                  ))}
-                </ul>
-                <p className="p-marca ab-g-prazo">↳ {m.prazo}</p>
-              </article>
+                <p className="p-marca pz-prazo">{m.prazo}</p>
+              </li>
             ))}
-          </div>
+          </ol>
         </section>
 
-        {/* ── O PROCESSO ─ sequência numerada, sem prosa ────────────────── */}
-        <section className="ab-g-processo">
-          <p className="ab-g-secao">
+        {/* ── O MÉTODO ─ rodapé de cartaz: seco, em uma linha por etapa ──── */}
+        <section className="pz-metodo">
+          <p className="pz-secao">
             <span>Sequence</span>
             <span>{PROCESSO.length} stages</span>
           </p>
           <ol>
             {PROCESSO.map((e, i) => (
               <li key={e.titulo}>
-                <span className="ab-g-n">{String(i + 1).padStart(2, "0")}</span>
+                <span className="p-marca">{String(i + 1).padStart(2, "0")}</span>
                 <h3>{e.titulo}</h3>
                 <p className="p-corpo">{e.corpo}</p>
               </li>
             ))}
           </ol>
-          <p className="ab-g-tools p-marca">
-            Toolkit — {FERRAMENTAS.join(" / ")}
-          </p>
+          <p className="pz-tools p-marca">Toolkit — {FERRAMENTAS.join(" / ")}</p>
         </section>
       </div>
     </Prancha>

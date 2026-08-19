@@ -2373,165 +2373,222 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   G · A CARTELA  —  lida dos 63 salvos dele no Savee (19/08).
+   O PÔSTER  —  segunda leitura dos 63 saves dele.
 
-   As propostas anteriores eram todas papel, fio de 1px e coluna de texto. O que
-   ele SALVA é outra coisa: tipografia dentro de retângulo de cor chapada,
-   notação de ficha técnica (SP–307, ©, setas, cantos numerados) e cartela de
-   cor como conteúdo. Aqui o papel dá lugar ao BLOCO — a about vira a ficha
-   técnica dele.
+   A primeira virou grade de interface com cards de cor e ele matou em duas
+   palavras. O vocabulário estava certo e a gramática errada: o que ele guarda é
+   PEÇA IMPRESSA — massa, sobreposição, rotação, texto espremido na borda. Aqui
+   não existe card nem coluna de doze: existe uma peça que se rola como quem lê
+   um cartaz.
    ═════════════════════════════════════════════════════════════════════════ */
-.ab-g { padding-bottom: 40px; --ab-g-gap: clamp(10px, 0.9vw, 16px); }
+.pz { --pz-massa: clamp(52px, 13.2vw, 218px); }
 
-/* mono de notação: número de série, ©, seta, canto numerado */
-.ab-g-n, .ab-g-serie, .ab-g-secao, .ab-g-swatch-hex, .ab-g-prazo, .ab-g-tools {
+/* ── O CARTAZ ────────────────────────────────────────────────────────────── */
+.pz-cartaz {
+  position: relative;
+  margin-inline: calc(var(--p-margem) * -1);
+  padding: clamp(20px, 4vh, 54px) var(--p-margem) clamp(30px, 6vh, 78px);
+  overflow: hidden;
+}
+.pz-nome {
+  display: grid;
+  font-size: var(--pz-massa);
+  line-height: 0.8;
+  letter-spacing: -0.055em;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+.pz-nome-1 { justify-self: start; }
+.pz-nome-2 { justify-self: end; position: relative; z-index: 2; }
+/* ⚠ A foto entra ENTRE as duas palavras e as duas AVANÇAM sobre ela — é
+   colagem, e é o que separa isto de um hero com texto por cima. As margens
+   negativas são o recorte da colagem, não erro de layout. */
+.pz-foto {
+  display: block;
+  width: min(56%, 640px);
+  justify-self: center;
+  margin: clamp(-46px, -4.6vw, -14px) 0;
+  position: relative;
+  z-index: 1;
+}
+/* ⚠ Altura FIXA, não `aspect-ratio`: a proporção 4/5 em 62% de largura dava
+   1040px e o cartaz não cabia numa tela — cartaz que não cabe não é cartaz, é
+   página. Aqui as duas palavras e a foto fecham dentro de 100svh. */
+.pz-foto img {
+  display: block;
+  width: 100%;
+  height: clamp(230px, 44svh, 460px);
+  object-fit: cover;
+  object-position: 50% 20%;
+  /* alto contraste em P&B: a foto deixa de ser retrato e vira MATÉRIA
+     gráfica, que é a única forma de conviver com massa deste tamanho */
+  filter: grayscale(1) contrast(1.38) brightness(0.92);
+}
+/* texto miúdo espremido na borda, em vertical */
+.pz-lateral {
+  position: absolute;
+  top: 50%;
+  font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--p-quieto);
+  white-space: nowrap;
+  z-index: 3;
+}
+.pz-lateral--esq { left: 8px; transform: rotate(-90deg) translateX(-50%); transform-origin: left center; }
+.pz-lateral--dir { right: 8px; transform: rotate(90deg) translateX(50%); transform-origin: right center; }
+/* a palavra girada dos posters que ele salva */
+.pz-girada {
+  position: absolute;
+  right: 4%;
+  top: 16%;
+  z-index: 3;
+  font-size: clamp(26px, 3.6vw, 62px);
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--p-acento);
+  transform: rotate(-24deg);
+  pointer-events: none;
+}
+
+/* ── A FRASE ─────────────────────────────────────────────────────────────── */
+.pz-frase { padding: clamp(34px, 6vh, 72px) 0 clamp(26px, 4vh, 52px); }
+.pz-frase > p {
+  font-size: clamp(26px, 4.4vw, 76px);
+  line-height: 1.0;
+  letter-spacing: -0.04em;
+  max-width: 18ch;
+}
+.pz-frase em { font-style: italic; color: var(--p-acento); }
+.pz-frase-pe {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--p-gap-x);
+  padding-top: clamp(24px, 4vh, 46px);
+  max-width: 96ch;
+  margin-left: auto;
+}
+
+/* rótulo de seção */
+.pz-secao {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
   font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
   font-size: 10px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  color: var(--p-quieto);
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--p-fio);
 }
 
-.ab-g-capa { padding: 40px 0 clamp(30px, 4vh, 56px); }
-.ab-g-serie {
-  display: flex;
-  gap: clamp(16px, 2.6vw, 46px);
-  color: var(--p-quieto);
-  padding-bottom: 20px;
+/* ── OS PRÊMIOS ─ o centro da peça ───────────────────────────────────────── */
+.pz-premios { padding-top: clamp(30px, 5vh, 56px); }
+.pz-premios ol { display: grid; }
+.pz-premios li {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) minmax(0, 0.72fr);
+  gap: var(--p-gap-x);
+  align-items: center;
+  padding: clamp(22px, 3.4vh, 42px) 0;
+  border-bottom: 1px solid var(--p-fio);
 }
-.ab-g-titulo {
-  font-size: clamp(52px, 12.4vw, 210px);
-  line-height: 0.84;
-  letter-spacing: -0.05em;
+.pz-premio-n {
+  font-family: 'Departure Mono', ui-monospace, monospace;
+  font-size: 10px;
+  color: var(--p-quieto);
+  align-self: start;
+  padding-top: 8px;
+}
+.pz-premio-corpo { display: grid; gap: 8px; }
+/* o veículo em MASSA: quem publicou é o argumento, não a matéria */
+.pz-veiculo {
+  font-size: clamp(28px, 4.2vw, 68px);
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
   font-weight: 500;
+}
+.pz-materia {
+  display: inline-block;
+  max-width: 52ch;
+  font-size: var(--p-item);
+  line-height: 1.3;
+  color: var(--p-ink);
+  transition: color 0.28s ease-out;
+}
+a.pz-materia:hover { color: var(--p-acento); }
+.pz-seta { padding-left: 7px; }
+.pz-meta { color: var(--p-quieto); text-transform: uppercase; }
+.pz-premio-peca { margin: 0; overflow: hidden; }
+.pz-premio-peca img {
+  display: block;
+  width: 100%;
+  height: clamp(120px, 17vh, 210px);
+  object-fit: cover;
+}
+
+/* ── O OFÍCIO ────────────────────────────────────────────────────────────── */
+.pz-oficio { padding-top: clamp(46px, 8vh, 104px); }
+.pz-oficio ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--p-gap-x);
+  row-gap: clamp(22px, 3.4vh, 40px);
+  padding-top: clamp(20px, 3vh, 34px);
+}
+.pz-oficio li { display: grid; gap: 7px; align-content: start; }
+.pz-oficio h3 {
+  font-size: clamp(22px, 2.8vw, 44px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
   text-transform: uppercase;
 }
-.ab-g-capa-pe { display: flex; justify-content: flex-end; padding-top: 26px; }
-.ab-g-capa-pe p { max-width: 58ch; }
+.pz-oficio .p-corpo { max-width: 48ch; color: var(--p-quieto); }
 
-/* O CAMPO — retrato grande + três blocos de cor com os números */
-.ab-g-campo {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: var(--ab-g-gap);
-}
-.ab-g-bloco { position: relative; overflow: hidden; }
-.ab-g-bloco--retrato { grid-column: span 3; aspect-ratio: 4 / 3; margin: 0; }
-.ab-g-bloco--retrato img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 24%; display: block; }
-.ab-g-bloco--dado {
-  grid-column: span 1;
-  background: var(--cor, var(--p-acento));
-  color: #fff;
-  aspect-ratio: 4 / 3;
-  display: grid;
-  align-content: end;
-  gap: 3px;
-  padding: 16px;
-}
-.ab-g-valor { font-size: clamp(28px, 3.4vw, 56px); line-height: 0.9; letter-spacing: -0.03em; }
-/* ⚠ Sem opacidade: sobre campo de cor cheia qualquer atenuação derruba o
-   contraste abaixo de AA — o branco já é o degrau atenuado que existe aqui. */
-.ab-g-rotulo { font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
-/* o canto numerado dos posters que ele salva */
-.ab-g-n { position: absolute; top: 12px; right: 13px; }
-/* sobre a FOTO o número vira etiqueta: o gradiente do retrato vai de escuro a
-   quase branco e nenhuma cor de texto sobrevive aos dois extremos */
-.ab-g-bloco--retrato .ab-g-n {
-  top: 0;
-  right: 0;
-  background: var(--p-ink);
-  color: #fff;
-  padding: 7px 10px 6px;
-}
-
-/* rótulo de seção: nome à esquerda, contagem à direita, fio embaixo */
-.ab-g-secao {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  color: var(--p-quieto);
-  padding: 60px 0 14px;
-  border-bottom: 1px solid var(--p-fio);
-  margin-bottom: 20px;
-}
-
-/* A CARTELA — o acervo inteiro numa tira de swatches */
-.ab-g-cartela ul {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: var(--ab-g-gap);
-}
-.ab-g-swatch { display: block; height: clamp(74px, 9vw, 126px); background: var(--cor); }
-.ab-g-swatch-nome { display: block; padding-top: 9px; font-size: var(--p-corpo); }
-.ab-g-swatch-hex { display: block; color: var(--p-quieto); padding-top: 2px; }
-
-/* AS DISCIPLINAS — bloco de cor com o texto por cima */
-.ab-g-disciplinas > div {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--ab-g-gap);
-}
-.ab-g-disciplinas article {
-  position: relative;
-  background: var(--cor, var(--p-acento));
-  color: #fff;
-  min-height: clamp(200px, 24vw, 300px);
-  display: grid;
-  align-content: end;
-  gap: 8px;
-  padding: 18px;
-}
-.ab-g-disciplinas h3 { font-size: clamp(17px, 1.5vw, 24px); letter-spacing: -0.02em; line-height: 1.08; }
-
-.ab-g-disciplinas .ab-g-n { color: #fff; }
-
-/* OS PACOTES — ficha de produto com número de série */
-.ab-g-pacotes > div {
+/* ── A TARIFA ────────────────────────────────────────────────────────────── */
+.pz-tarifa { padding-top: clamp(46px, 8vh, 104px); }
+.pz-tarifa ol {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(20px, 2.4vw, 40px);
-}
-.ab-g-pacotes article {
-  display: grid;
-  gap: 11px;
-  align-content: start;
-  border-top: 2px solid var(--p-ink);
-  padding-top: 16px;
-}
-.ab-g-pacote-cabeca { display: grid; gap: 6px; }
-.ab-g-pacote-cabeca .ab-g-n { position: static; opacity: 1; color: var(--p-quieto); }
-.ab-g-pacotes h3 { font-size: var(--p-item); }
-.ab-g-preco {
-  font-family: 'Departure Mono', ui-monospace, monospace;
-  font-size: clamp(28px, 3.2vw, 48px);
-  line-height: 1;
-  letter-spacing: -0.02em;
-}
-.ab-g-pacotes ul { display: grid; gap: 3px; color: var(--p-quieto); }
-.ab-g-prazo { color: var(--p-quieto); }
-
-/* O PROCESSO — sequência seca */
-.ab-g-processo ol { display: grid; }
-.ab-g-processo li {
-  display: grid;
-  grid-template-columns: 76px minmax(0, 3fr) minmax(0, 6fr);
   gap: var(--p-gap-x);
-  padding: 17px 0;
+  padding-top: clamp(20px, 3vh, 34px);
+}
+.pz-tarifa li { display: grid; gap: 9px; align-content: start; }
+.pz-tarifa h3 { font-size: var(--p-item); text-transform: uppercase; letter-spacing: 0.01em; }
+.pz-preco {
+  font-size: clamp(36px, 5.4vw, 96px);
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+  font-weight: 500;
+}
+.pz-unidade { font-size: 0.3em; letter-spacing: -0.01em; padding-left: 0.08em; }
+.pz-preco::before { content: "$"; font-size: 0.42em; vertical-align: 0.62em; padding-right: 0.06em; }
+.pz-tarifa .p-corpo { color: var(--p-quieto); max-width: 34ch; }
+.pz-prazo { color: var(--p-quieto); text-transform: uppercase; }
+
+/* ── O MÉTODO ────────────────────────────────────────────────────────────── */
+.pz-metodo { padding-top: clamp(46px, 8vh, 104px); }
+.pz-metodo ol { display: grid; padding-top: 6px; }
+.pz-metodo li {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 3fr) minmax(0, 6fr);
+  gap: var(--p-gap-x);
+  padding: 16px 0;
   border-bottom: 1px solid var(--p-fio);
 }
-.ab-g-processo .ab-g-n { position: static; opacity: 1; color: var(--p-quieto); }
-.ab-g-processo h3 { font-size: var(--p-item); }
-.ab-g-tools { padding-top: 22px; color: var(--p-quieto); }
-.ab-g-c { padding-left: 6px; }
+.pz-metodo li span { color: var(--p-quieto); }
+.pz-metodo h3 { font-size: var(--p-item); }
+.pz-tools { padding-top: 20px; color: var(--p-quieto); }
 
-@media (max-width: 1024px) {
-  .ab-g-campo { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .ab-g-bloco--retrato { grid-column: 1 / -1; }
-  .ab-g-disciplinas > div { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .ab-g-pacotes > div { grid-template-columns: 1fr; }
-  .ab-g-processo li { grid-template-columns: 46px 1fr; }
-  .ab-g-processo li p { grid-column: 2; }
-}
-@media (max-width: 620px) {
-  .ab-g-campo, .ab-g-disciplinas > div { grid-template-columns: 1fr; }
-  .ab-g-serie { flex-wrap: wrap; gap: 12px; }
+@media (max-width: 900px) {
+  .pz-foto { width: 84%; }
+  .pz-lateral { display: none; }
+  .pz-frase-pe, .pz-oficio ul, .pz-tarifa ol { grid-template-columns: 1fr; }
+  .pz-premios li { grid-template-columns: 36px minmax(0, 1fr); }
+  .pz-premio-peca { grid-column: 2; }
+  .pz-metodo li { grid-template-columns: 36px 1fr; }
+  .pz-metodo li p { grid-column: 2; }
 }
