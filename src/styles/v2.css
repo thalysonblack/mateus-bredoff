@@ -2592,3 +2592,167 @@ a.pz-materia:hover { color: var(--p-acento); }
   .pz-metodo li { grid-template-columns: 36px 1fr; }
   .pz-metodo li p { grid-column: 2; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   G · A CARTELA  —  lida dos 63 salvos dele no Savee (19/08).
+
+   As propostas anteriores eram todas papel, fio de 1px e coluna de texto. O que
+   ele SALVA é outra coisa: tipografia dentro de retângulo de cor chapada,
+   notação de ficha técnica (SP–307, ©, setas, cantos numerados) e cartela de
+   cor como conteúdo. Aqui o papel dá lugar ao BLOCO — a about vira a ficha
+   técnica dele.
+   ═════════════════════════════════════════════════════════════════════════ */
+.ab-h { padding-bottom: 40px; --ab-h-gap: clamp(10px, 0.9vw, 16px); }
+
+/* mono de notação: número de série, ©, seta, canto numerado */
+.ab-h-n, .ab-h-serie, .ab-h-secao, .ab-h-swatch-hex, .ab-h-prazo, .ab-h-tools {
+  font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.ab-h-capa { padding: 40px 0 clamp(30px, 4vh, 56px); }
+.ab-h-serie {
+  display: flex;
+  gap: clamp(16px, 2.6vw, 46px);
+  color: var(--p-quieto);
+  padding-bottom: 20px;
+}
+.ab-h-titulo {
+  font-size: clamp(52px, 12.4vw, 210px);
+  line-height: 0.84;
+  letter-spacing: -0.05em;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+.ab-h-capa-pe { display: flex; justify-content: flex-end; padding-top: 26px; }
+.ab-h-capa-pe p { max-width: 58ch; }
+
+/* O CAMPO — retrato grande + três blocos de cor com os números */
+.ab-h-campo {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--ab-h-gap);
+}
+.ab-h-bloco { position: relative; overflow: hidden; }
+.ab-h-bloco--retrato { grid-column: span 3; aspect-ratio: 4 / 3; margin: 0; }
+.ab-h-bloco--retrato img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 24%; display: block; }
+.ab-h-bloco--dado {
+  grid-column: span 1;
+  background: var(--cor, var(--p-acento));
+  color: #fff;
+  aspect-ratio: 4 / 3;
+  display: grid;
+  align-content: end;
+  gap: 3px;
+  padding: 16px;
+}
+.ab-h-valor { font-size: clamp(28px, 3.4vw, 56px); line-height: 0.9; letter-spacing: -0.03em; }
+/* ⚠ Sem opacidade: sobre campo de cor cheia qualquer atenuação derruba o
+   contraste abaixo de AA — o branco já é o degrau atenuado que existe aqui. */
+.ab-h-rotulo { font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
+/* o canto numerado dos posters que ele salva */
+.ab-h-n { position: absolute; top: 12px; right: 13px; }
+/* sobre a FOTO o número vira etiqueta: o gradiente do retrato vai de escuro a
+   quase branco e nenhuma cor de texto sobrevive aos dois extremos */
+.ab-h-bloco--retrato .ab-h-n {
+  top: 0;
+  right: 0;
+  background: var(--p-ink);
+  color: #fff;
+  padding: 7px 10px 6px;
+}
+
+/* rótulo de seção: nome à esquerda, contagem à direita, fio embaixo */
+.ab-h-secao {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: var(--p-quieto);
+  padding: 60px 0 14px;
+  border-bottom: 1px solid var(--p-fio);
+  margin-bottom: 20px;
+}
+
+/* A CARTELA — o acervo inteiro numa tira de swatches */
+.ab-h-cartela ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--ab-h-gap);
+}
+.ab-h-swatch { display: block; height: clamp(74px, 9vw, 126px); background: var(--cor); }
+.ab-h-swatch-nome { display: block; padding-top: 9px; font-size: var(--p-corpo); }
+.ab-h-swatch-hex { display: block; color: var(--p-quieto); padding-top: 2px; }
+
+/* AS DISCIPLINAS — bloco de cor com o texto por cima */
+.ab-h-disciplinas > div {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--ab-h-gap);
+}
+.ab-h-disciplinas article {
+  position: relative;
+  background: var(--cor, var(--p-acento));
+  color: #fff;
+  min-height: clamp(200px, 24vw, 300px);
+  display: grid;
+  align-content: end;
+  gap: 8px;
+  padding: 18px;
+}
+.ab-h-disciplinas h3 { font-size: clamp(17px, 1.5vw, 24px); letter-spacing: -0.02em; line-height: 1.08; }
+
+.ab-h-disciplinas .ab-h-n { color: #fff; }
+
+/* OS PACOTES — ficha de produto com número de série */
+.ab-h-pacotes > div {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 2.4vw, 40px);
+}
+.ab-h-pacotes article {
+  display: grid;
+  gap: 11px;
+  align-content: start;
+  border-top: 2px solid var(--p-ink);
+  padding-top: 16px;
+}
+.ab-h-pacote-cabeca { display: grid; gap: 6px; }
+.ab-h-pacote-cabeca .ab-h-n { position: static; opacity: 1; color: var(--p-quieto); }
+.ab-h-pacotes h3 { font-size: var(--p-item); }
+.ab-h-preco {
+  font-family: 'Departure Mono', ui-monospace, monospace;
+  font-size: clamp(28px, 3.2vw, 48px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.ab-h-pacotes ul { display: grid; gap: 3px; color: var(--p-quieto); }
+.ab-h-prazo { color: var(--p-quieto); }
+
+/* O PROCESSO — sequência seca */
+.ab-h-processo ol { display: grid; }
+.ab-h-processo li {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 3fr) minmax(0, 6fr);
+  gap: var(--p-gap-x);
+  padding: 17px 0;
+  border-bottom: 1px solid var(--p-fio);
+}
+.ab-h-processo .ab-h-n { position: static; opacity: 1; color: var(--p-quieto); }
+.ab-h-processo h3 { font-size: var(--p-item); }
+.ab-h-tools { padding-top: 22px; color: var(--p-quieto); }
+.ab-h-c { padding-left: 6px; }
+
+@media (max-width: 1024px) {
+  .ab-h-campo { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ab-h-bloco--retrato { grid-column: 1 / -1; }
+  .ab-h-disciplinas > div { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ab-h-pacotes > div { grid-template-columns: 1fr; }
+  .ab-h-processo li { grid-template-columns: 46px 1fr; }
+  .ab-h-processo li p { grid-column: 2; }
+}
+@media (max-width: 620px) {
+  .ab-h-campo, .ab-h-disciplinas > div { grid-template-columns: 1fr; }
+  .ab-h-serie { flex-wrap: wrap; gap: 12px; }
+}
