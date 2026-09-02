@@ -726,3 +726,30 @@
   .q-tabela-linha { grid-template-columns: minmax(0, 1fr) 4rem; }
   .q-tabela-linha > :nth-child(3) { grid-column: 1 / -1; }
 }
+
+/* ── a ficha de projeto ─────────────────────────────────────────────────── */
+
+/* header de 720px medidos — quase o dobro da about. É a única interna com
+   abertura alta: aqui o nome do projeto é o assunto */
+.q-cabeca-projeto {
+  min-height: clamp(360px, 50vw, 720px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 14px;
+  padding: calc(56px + clamp(40px, 5vw, 72px)) var(--q-m) clamp(28px, 3.5vw, 48px);
+}
+.q-cabeca-projeto-ficha { display: flex; gap: clamp(16px, 3vw, 48px); }
+
+/* cada peça é uma SEÇÃO com a sua composição, não um item de pilha */
+.q-peca { padding: 0 var(--q-m) clamp(48px, 6vw, 88px); }
+.q-peca img { width: 100%; height: auto; display: block; }
+.q-peca-par {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--q-m);
+  align-items: start;
+}
+@media (max-width: 700px) {
+  .q-peca-par { grid-template-columns: 1fr; }
+}

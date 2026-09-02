@@ -14,6 +14,38 @@ import { useMetaRota } from "../../hooks/useMetaRota";
  * portar aquilo seria trocar de tecnologia mantendo o defeito, e escrever por
  * conta própria seria inventar a narrativa dos projetos dele.
  */
+/**
+ * A CADÊNCIA das seções de peça: larga → par → larga → par.
+ *
+ * ⚠ A peça panorâmica (mais larga que 1,6:1) nunca entra num par — ela ocupa a
+ * largura cheia, porque horizontal espremida em meia coluna vira tarja. O resto
+ * se emparelha de dois em dois, e uma peça sobrando fecha sozinha em largura
+ * cheia em vez de ficar meia-página com um buraco ao lado.
+ */
+function agrupar(imgs: { src: string; src2x?: string; w: number; h: number; alt: string }[]) {
+  const grupos: (typeof imgs)[] = [];
+  let fila: typeof imgs = [];
+  imgs.forEach((im) => {
+    /* ⚠ SÓ a panorâmica vai larga. A primeira cadência mandava uma a cada três
+       para a largura cheia e o Alex Archer foi de 6.712 para 11.655px — as peças
+       dele são quase quadradas (3840×4040), e em largura cheia cada uma come
+       1.400px de altura. A referência fecha em 9.529 com OITO seções; a régua é
+       a altura da página, não a contagem de seções largas. */
+    const querLarga = im.w / im.h > 1.6;
+    if (querLarga && !fila.length) {
+      grupos.push([im]);
+      return;
+    }
+    fila.push(im);
+    if (fila.length === 2) {
+      grupos.push(fila);
+      fila = [];
+    }
+  });
+  if (fila.length) grupos.push(fila);
+  return grupos;
+}
+
 export default function CaseV4() {
   useMetaRota();
   const { slug } = useParams();
@@ -37,10 +69,17 @@ export default function CaseV4() {
 
   return (
     <Quadro>
-      <header className="q-cabeca q-cabeca-baixa">
+      {/* ⚠ o header da ficha de projeto tem 720px medidos — quase o dobro da
+          about (335). É a única interna com abertura alta: aqui o nome do
+          projeto é o assunto, e ele precisa de ar antes da primeira peça. */}
+      <header className="q-cabeca-projeto">
         <h1 className="q-display" style={{ color: CORES[w.slug]?.papel }}>
           {w.title}
         </h1>
+        <p className="q-meta q-cabeca-projeto-ficha">
+          <span className="q-meta-ink">{w.disciplines.join(", ")}</span>
+          <span>{w.year}</span>
+        </p>
       </header>
 
       <img
@@ -104,42 +143,39 @@ export default function CaseV4() {
         </section>
       )}
 
-      {w.images.length > 0 && (
-        /**
-         * ⚠ A pilha é de DUAS colunas, e não de peças sangrando uma sob a
-         * outra. Medido: o Alex Archer tem doze peças, várias em 3840×4040 —
-         * em largura cheia a página fechava em 16.338px, quase três vezes a
-         * referência. Página desse tamanho não é case completo, é rolagem, e
-         * ninguém chega no fim. Em duas colunas ela cai para perto de 6.000 e
-         * o par lado a lado ainda ganha uma leitura que a pilha não dava.
-         *
-         * Quem atravessa as duas colunas é a peça PANORÂMICA (mais larga que
-         * 1,6:1) — regra tirada do próprio arquivo, não escolhida a dedo: peça
-         * horizontal espremida em meia coluna vira tarja, e peça vertical
-         * atravessando duas colunas vira parede. O campo `meia` do CMS dele,
-         * quando vier preenchido, manda acima disso.
-         */
-        <section className="q-pilha">
-          {w.images.map((im, k) => (
-            <img
-              key={k}
-              src={im.src}
-              srcSet={im.src2x ? `${im.src} 1400w, ${im.src2x} 2200w` : undefined}
-              sizes="(max-width: 700px) 100vw, 50vw"
-              alt={im.alt}
-              width={im.w}
-              height={im.h}
-              className={
-                im.meia === true ? undefined : im.w / im.h > 1.6 ? "q-pilha-larga" : undefined
-              }
-              style={{ width: "100%", height: "auto", display: "block" }}
-              loading="lazy"
-              decoding="async"
-              draggable={false}
-            />
-          ))}
-        </section>
-      )}
+      {/**
+        * ⚠ CADA PEÇA É UMA SEÇÃO, não uma pilha de imagens.
+        *
+        * Medido na ficha de projeto da referência (9.529px de altura): depois do
+        * header de 720px vêm OITO seções de 714 a 956px, cada uma com a sua
+        * composição — uma peça em largura cheia (1416×944), um par quadrado
+        * (702×702) ou um par retrato (464×580). Não é uma lista de arquivos com
+        * espaçamento: é um ritmo montado, e é ele que faz a página de case não
+        * cansar mesmo com nove telas de altura.
+        *
+        * A cadência aqui alterna larga → par → larga, e a peça PANORÂMICA
+        * (acima de 1,6:1) sempre puxa a largura cheia: horizontal espremida em
+        * meia coluna vira tarja.
+        */}
+      {w.images.length > 0 &&
+        agrupar(w.images).map((grupo, k) => (
+          <section className={grupo.length === 1 ? "q-peca q-peca-larga" : "q-peca q-peca-par"} key={k}>
+            {grupo.map((im, j) => (
+              <img
+                key={j}
+                src={im.src}
+                srcSet={im.src2x ? `${im.src} 1400w, ${im.src2x} 2200w` : undefined}
+                sizes={grupo.length === 1 ? "100vw" : "(max-width: 700px) 100vw, 50vw"}
+                alt={im.alt}
+                width={im.w}
+                height={im.h}
+                loading="lazy"
+                decoding="async"
+                draggable={false}
+              />
+            ))}
+          </section>
+        ))}
 
       <Link to={`/v4/work/${proximo.slug}`} className="q-proximo">
         <span className="q-meta">Next</span>
