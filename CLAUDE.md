@@ -5,37 +5,43 @@ o site publicado em Framer (`mateusbredoff.framer.website`). O artboard escalado
 do Figma (`src/imports/Home.tsx`) foi **aposentado e removido** — cada seção hoje é um
 componente React responsivo de verdade.
 
-## ⭐ Leia primeiro: qual é o site, hoje (15/08/2026)
+## ⭐ Leia primeiro: qual é o site, hoje (20/08/2026)
 
-O site é a direção **"o portfólio como visor"** — a que morava em `/v3` e foi
-**promovida à raiz**. Ela nasceu da mecânica do `noartmusic.com` com a matéria
-do Mateus, e foi a única aprovada por ele depois de sete homes reprovadas.
-Enquanto vivia numa rota de laboratório, o que estava no ar não era o que
-estava aprovado — a promoção existe para fechar essa distância.
+O site é a **home D "A TRAMA"** com o visor fluido no modo Arco — a direção da
+V2 "A PRANCHA", promovida à raiz em 17/08. A direção anterior, "o portfólio
+como visor" (a V3), foi inteira para `/arquivo/visor/*` e não é mais o alvo.
 
 ```
-/                  HomeV3        hero de capas em tela cheia + anatomia do noart
-/about             AboutV3       manifesto, números, processo em 5 etapas
-/work              WorkIndexV3   teatro de 3 colunas, índice sticky
-/work/:slug        CaseV3        um componente para TODOS os cases
-/lab               LabV3         contact sheet dos ensaios de marca fictícia
-/arquivo/*         —             direções descartadas, montáveis para comparar
+/                  HomeD (fluidoModo 4)   a trama: nomes acendendo na cor do projeto
+/about             PranchaAbout           camadas — folhas sobrepostas
+/work              PranchaWork
+/work/:slug        PranchaCase            um componente para TODOS os cases
+/lab               PranchaLab
+/v2/*              —                      partidos de home (a…i) e as 8 abouts
+/arquivo/*         —                      direções descartadas, montáveis para comparar
 ```
 
-**As rotas canônicas não mudaram de nome** — são as mesmas do CMS dele e do
-Framer original. O que mudou foi qual componente as monta, e é por isso que
-`content/meta.ts` e o pré-render seguiram valendo sem uma linha de mudança.
+**As rotas canônicas nunca mudaram de nome** — são as mesmas do CMS dele e do
+Framer original. O que muda a cada direção é qual componente as monta, e é por
+isso que `content/meta.ts` e o pré-render seguem valendo sem uma linha de
+mudança.
 
-**`/arquivo/*` é material de estúdio, não site.** Fica fora do pré-render de
-propósito: sem HTML próprio, não aparece em busca nem em unfurl.
+🚩 **A about ainda não foi fechada.** Oito versões vivas e comparáveis, à espera
+do veredito: `/about` camadas · `/v2/about-b` dossiê · `/v2/about-c` catálogo ·
+`/v2/about-d` o retrato (escolhida, com a hero da original) · `/v2/about-e` a
+ficha · `/v2/about-f` a palavra · `/v2/about-g` o pôster (a última) ·
+`/v2/about-h` a cartela (reprovada, preservada como repertório).
+
+**`/v2/*` e `/arquivo/*` são material de estúdio, não site.** Ficam fora do
+pré-render de propósito: sem HTML próprio, não aparecem em busca nem em unfurl.
 `/arquivo/framer` é a réplica fiel do publicado — foi a FONTE do conteúdo,
 medida rota a rota, e continua sendo a régua contra a qual se confere um fato.
 
-⚠ **Este arquivo tem seções escritas quando o alvo era outro.** A parte de
-"Direção de design (branch `estilo-editorial`)" descreve o sistema da direção
-autoral, que hoje vive em `/arquivo/v2` — vale como histórico, não como
-instrução para a raiz. O sistema vivo é `src/app/v3-system.tsx` +
-`src/styles/v3.css`.
+⚠ **Este arquivo tem seções escritas quando o alvo era outro.** O que fala de
+`v3-system.tsx` / `v3.css` descreve o sistema de `/arquivo/visor`, e a seção
+"Direção de design (branch `estilo-editorial`)" descreve a direção autoral, hoje
+em `/arquivo/autoral`. Valem como histórico. O sistema vivo é
+`src/app/v2/` + `src/styles/v2.css`.
 
 ## Arquitetura de motion e scroll
 

@@ -30,6 +30,11 @@ import HomeF from "./v2/HomeF";
 import HomeG from "./v2/HomeG";
 import HomeH from "./v2/HomeH";
 import HomeI from "./v2/HomeI";
+import HomeV4 from "./v4/Home";
+import WorkV4 from "./v4/Work";
+import CaseV4 from "./v4/Case";
+import AboutV4 from "./v4/About";
+import LabV4 from "./v4/Lab";
 import HomeV3 from "./pages/HomeV3";
 import AboutV3 from "./pages/AboutV3";
 import WorkIndexV3 from "./pages/WorkIndexV3";
@@ -279,6 +284,19 @@ export default function App() {
           <Route path="/v2/g" element={<HomeG />} />
           <Route path="/v2/h" element={<HomeH />} />
           <Route path="/v2/i" element={<HomeI />} />
+
+
+          {/* ── V4 "O ÍNDICE" ────────────────────────────────────────────
+              01/09/2026, "copia esse site e cria uma versão" +
+              julienpianetti.com. Anatomia minerada com `scout-ref.mjs` e
+              documentada no cabeçalho de `styles/v4.css`; matéria e assinatura
+              são dele. Nasce com o site INTEIRO, nunca só a home — partido só
+              se julga com as internas de pé (a lição da V7). */}
+          <Route path="/v4" element={<HomeV4 />} />
+          <Route path="/v4/work" element={<WorkV4 />} />
+          <Route path="/v4/work/:slug" element={<CaseV4 />} />
+          <Route path="/v4/about" element={<AboutV4 />} />
+          <Route path="/v4/lab" element={<LabV4 />} />
 
           {/* Slug inexistente cai no próprio case, que trata o 404 com a
               linguagem do site em vez de tela branca. */}
