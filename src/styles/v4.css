@@ -42,8 +42,10 @@
 
 .q-tela {
   /* margem de página miúda: o índice sangra e o texto quase encosta na borda —
-     é o que faz a página inteira ler como uma FOLHA, não como um contêiner */
-  --q-m: 16px;
+     é o que faz a página inteira ler como uma FOLHA, não como um contêiner.
+     12px é o valor MEDIDO na referência (lista de 1416px numa viewport de
+     1440), não um arredondamento meu. */
+  --q-m: 12px;
   --q-fio: rgba(20, 32, 31, 0.14);
   --q-ink: #14201f;
   /* ⚠ 0,55 MEDIU 3,8:1 sobre o branco — abaixo de AA, e este token pinta todo
@@ -165,16 +167,34 @@
    da Ginga, que É o projeto. Grade que força altura igual recorta o trabalho do
    cliente para caber no layout, e é regra desta casa que isso não se faz. As
    linhas ficam irregulares; é o preço certo. */
+/* ⭐ A GRADE É UNIFORME — é a uniformidade que faz um índice ler como índice, e
+   foi o que a montagem de proporção livre perdeu.
+
+   ⚠ Mas a RAZÃO é 11:8 (1,375), não o 4:5 retrato da referência. Medido no
+   acervo dele: as oito capas vão de 0,84 a 1,78, com mediana 1,369 — o acervo é
+   de peça DEITADA. Em 4:5 sobrava meia célula de campo vazio em cima e embaixo
+   de cada arte. A razão da grade se tira do material que ela vai receber.
+
+   ⚠ `display: block` NÃO É DETALHE. O elemento é um `<span>`, e em `inline` o
+   `aspect-ratio` é ignorado EM SILÊNCIO: a altura vinha da imagem, a grade
+   nunca foi uniforme, e eu cheguei a "corrigir" a proporção livre que na
+   verdade era este bug. Caixa que precisa de razão precisa ser bloco.
+
+   ⚠ E o ajuste é `contain`, não `cover`: em 4:5 o `cover` decepava o lettering
+   da Ginga, e a régua desta casa proíbe recortar a peça do cliente para caber
+   no layout. O campo que sobra recebe a COR AMOSTRADA DA PRÓPRIA CAPA — a
+   grade fica uniforme, a arte fica inteira, e a faixa vira cartela, não vazio. */
 .q-cel-arte {
+  display: block;
   position: relative;
   overflow: hidden;
-  aspect-ratio: var(--q-ar, 4 / 5);
-  background: #f4f4f2;
+  aspect-ratio: 11 / 8;
+  background: var(--q-cor-campo, #f4f4f2);
 }
 .q-cel-arte img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
   /* ⚠ O REPOUSO É NÍTIDO. A primeira montagem deixava as capas fora de foco até
      o mouse chegar — e num portfólio isso esconde justamente o produto: quem
@@ -187,7 +207,25 @@
 }
 .q-cel:hover .q-cel-arte img,
 .q-cel:focus-visible .q-cel-arte img {
-  transform: scale(1.03);
+  transform: scale(1.02);
+}
+
+/* ⭐ O SEGUNDO QUADRO — o equivalente honesto ao vídeo de hover da referência.
+   Lá cada projeto tem um `.mp4` de 60 quadros que roda ao passar o mouse; o
+   Mateus não tem filme de projeto nenhum, e inventar um não é opção. O que ele
+   TEM é a pilha de peças de cada case — então o card mostra a peça seguinte do
+   próprio projeto. Mesma promessa (o índice ganha vida e entrega mais do que a
+   capa), com o material que existe. Case sem segunda peça simplesmente não
+   troca, e não finge que troca. */
+.q-cel-arte-2 {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.q-cel:hover .q-cel-arte-2,
+.q-cel:focus-visible .q-cel-arte-2 {
+  opacity: 1;
 }
 
 .q-cel-legenda {

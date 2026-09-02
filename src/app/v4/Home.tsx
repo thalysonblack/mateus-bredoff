@@ -19,6 +19,21 @@ import { useMetaRota } from "../../hooks/useMetaRota";
  * empilhada — e vai ser reprovada inteira.
  * [[am_feedback_clonar_de_fato_quando_a_referencia_e_dele]]
  */
+/**
+ * O campo por trás da arte, na cor da própria capa.
+ *
+ * `CORES` guarda o tom já escurecido para passar contraste como TEXTO; aqui ele
+ * é FUNDO atrás de uma peça, e o mesmo valor deixaria a célula pesada demais.
+ * A saída é a cor dela com opacidade baixa sobre o papel — matiz preservado,
+ * presença de cartela, sem competir com a arte que está por cima.
+ */
+function campo(slug: string) {
+  const c = CORES[slug]?.papel;
+  if (!c) return "#f4f4f2";
+  const n = parseInt(c.slice(1), 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, 0.10)`;
+}
+
 export default function HomeV4() {
   useMetaRota();
 
@@ -119,7 +134,10 @@ export default function HomeV4() {
                   className="q-cel"
                   style={{
                     ["--q-cor" as string]: CORES[w.slug]?.papel,
-                    ["--q-ar" as string]: `${w.cover.w} / ${w.cover.h}`,
+                    /* o campo por trás da arte é a cor da PRÓPRIA capa, com o
+                       valor puxado para o claro: a peça inteira aparece e a
+                       faixa que sobra vira cartela, não vazio */
+                    ["--q-cor-campo" as string]: campo(w.slug),
                   }}
                 >
                   <span className="q-cel-arte">
@@ -134,6 +152,18 @@ export default function HomeV4() {
                       decoding="async"
                       draggable={false}
                     />
+                    {w.images[0] && (
+                      <img
+                        className="q-cel-arte-2"
+                        src={w.images[0].src}
+                        sizes="(max-width: 560px) 96vw, (max-width: 900px) 48vw, 33vw"
+                        alt=""
+                        aria-hidden="true"
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                      />
+                    )}
                   </span>
                   <span className="q-cel-legenda">
                     <span className="q-cel-nome">{w.title}</span>
