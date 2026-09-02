@@ -27,7 +27,8 @@
  *
  * ## O que é dele, e por isso não muda
  *
- *   · Geist (display e leitura) + Departure Mono (a voz miúda do sistema)
+ *   · Geist, self-hosted — display E voz miúda (⚠ esta direção NÃO usa a
+ *     Departure Mono das outras: ver a nota em `.q-meta`)
  *   · o par papel/tinta e o azul/marrom derivados da réplica do Framer
  *   · a cor amostrada de cada capa, que acende no nome do projeto (`cores.ts`)
  *   · o gesto de FOCAR — repouso levemente fora de foco, nítido ao alcançar
@@ -67,33 +68,59 @@
 
 /* ── as duas vozes ──────────────────────────────────────────────────────── */
 
-/* display: a única voz alta do site. 54px em 1440 na referência = 3,75vw */
+/* ⭐ A ESCALA É A MEDIDA, não uma aproximação. Colhida nó a nó na referência:
+     13px / 500 / lh 15,6  → a voz miúda, e é a MAIS usada (47 nós)
+     54px / 400 / lh 54    → o display (37 nós)
+     45,07px / lh 45,07 / tracking −0,56px → a manchete de bloco
+     32px / 400 / lh 33,6  → o nome de item numerado
+   Uma família só, dois pesos (400 e 500), e nada mais. */
+
 .q-display {
-  font-size: clamp(28px, 3.75vw, 56px);
-  line-height: 1.0;
+  font-size: clamp(30px, 3.75vw, 54px);
+  line-height: 1;
   font-weight: 400;
-  letter-spacing: -0.012em;
+  letter-spacing: normal;
   margin: 0;
 }
 .q-display-md {
-  font-size: clamp(24px, 3.13vw, 45px);
-  line-height: 1.06;
+  font-size: clamp(26px, 3.13vw, 45.07px);
+  line-height: 1;
   font-weight: 400;
-  letter-spacing: -0.012em;
+  letter-spacing: -0.0124em; /* −0,56px em 45,07px */
   margin: 0;
 }
 
-/* a voz miúda é a DELE — mono, não sans. É o que separa esta página da
-   referência com um único token: lá o metadado é sans 13px/500 */
+/* ⚠ A VOZ MIÚDA É GROTESCA, NÃO MONO — e essa troca é a que mais aproxima a
+   página da referência, mais do que qualquer ajuste de layout.
+   
+   A montagem anterior usava Departure Mono em caixa alta com tracking aberto,
+   porque é a voz miúda que o sistema da casa adotou nas outras direções. Só que
+   mono pixelada em caixa alta dá cara de terminal, e a referência é o oposto
+   disso: sans 13px/500 em caixa MISTA, sem tracking, quase invisível de tão
+   neutra. Eu tinha segurado a mudança com argumento de coerência de sistema —
+   e coerência com as outras direções não é motivo para não alcançar a
+   referência que ele apontou. Direção nova pode ter voz própria.
+   
+   A família continua sendo a Geist dele, self-hosted no projeto. */
 .q-meta {
-  font-family: "Departure Mono", "Martian Mono", ui-monospace, monospace;
-  font-size: 10.5px;
-  line-height: 1.3;
-  letter-spacing: 0.055em;
-  text-transform: uppercase;
+  font-family: "Geist", ui-sans-serif, sans-serif;
+  font-size: 13px;
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
   color: var(--q-quieto);
 }
 .q-meta-ink { color: var(--q-ink); }
+
+/* o numeral de item: mesmo corpo, entrelinha FECHADA (10,4px medidos) porque
+   ele nunca passa de dois dígitos e a caixa não precisa de altura de linha */
+.q-num {
+  font-size: 13px;
+  line-height: 0.8;
+  font-weight: 500;
+  color: var(--q-quieto);
+}
 
 .q-corpo {
   font-size: 13px;
@@ -236,9 +263,11 @@
   padding-top: 10px;
 }
 .q-cel-nome {
-  font-size: 15px;
+  /* 13px/500, o mesmo da disciplina ao lado: na referência o nome do projeto e
+     a disciplina são o MESMO corpo, e o que separa os dois é só a cor */
+  font-size: 13px;
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: normal;
   /* a cor do projeto sai da própria capa (`content/cores.ts`) e só acende ao
      alcançar — parada, a página é preta e branca */
   transition: color 0.28s ease;
@@ -273,7 +302,12 @@
   padding: 26px 0;
   border-top: 1px solid var(--q-fio);
 }
-.q-servico-nome { font-size: clamp(20px, 2.2vw, 32px); font-weight: 400; letter-spacing: -0.012em; }
+.q-servico-nome {
+  font-size: clamp(20px, 2.2vw, 32px);
+  line-height: 1.05; /* 33,6 em 32px */
+  font-weight: 400;
+  letter-spacing: normal;
+}
 
 @media (max-width: 700px) {
   .q-servico { grid-template-columns: 2.5rem minmax(0, 1fr); }
@@ -287,7 +321,7 @@
   font-weight: 400;
   letter-spacing: -0.018em;
 }
-.q-nomes-sep { color: var(--q-quieto); padding: 0 0.22em; }
+.q-nomes-sep { color: var(--q-ink); padding: 0 0.22em; }
 
 /* ── marquee do playground ──────────────────────────────────────────────── */
 
@@ -329,6 +363,8 @@
 }
 
 /* ── rodapé ─────────────────────────────────────────────────────────────── */
+
+.q-rodape-convite { font-weight: 500; }
 
 .q-rodape {
   background: #14201f;
@@ -511,15 +547,8 @@
   color: inherit;
   text-decoration: none;
 }
-.q-hero-peca img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transform: scale(1.03);
-  transition: transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.q-hero-peca:hover img { transform: scale(1); }
+/* ⚠ a regra genérica `.q-hero-peca img` saiu: com as oito capas empilhadas ela
+   brigava com `.q-hero-img` no hover e reanimava a escala das sete invisíveis */
 /* ⚠ AQUI O BLEND NÃO SERVE. Tentei `exclusion`, como na nav: sobre a capa da
    Ginga — vermelho puro — a inversão devolve ciano, e o nome do projeto ficou
    ilegível justamente na peça de abertura. Blend funciona sobre foto, que tem
@@ -554,4 +583,22 @@
   }
   .q-hero-dizer { padding: 96px var(--q-m) clamp(40px, 8vw, 72px); }
   .q-hero-peca { height: 62svh; margin-top: 0; }
+}
+
+/* as capas da abertura, empilhadas — só a viva tem opacidade */
+.q-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0;
+  transform: scale(1.03);
+  transition: opacity 1.05s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 5.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.q-hero-img-viva { opacity: 1; transform: scale(1); }
+@media (prefers-reduced-motion: reduce) {
+  .q-hero-img { transition: none; transform: none; }
 }

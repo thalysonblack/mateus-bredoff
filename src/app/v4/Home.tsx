@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { Quadro, Marquee } from "./sistema";
 import { WORK } from "../../content/work";
@@ -44,7 +45,25 @@ export default function HomeV4() {
   const anos = WORK.map((w) => w.year);
   /* a abertura é a peça mais recente do acervo — a lista já vem na ordem
      editorial dele, então é o primeiro item, não um "destaque" escolhido aqui */
-  const abertura = WORK[0];
+  /**
+   * ⭐ A ABERTURA TROCA SOZINHA — o equivalente ao showreel da referência.
+   *
+   * Lá o hero é um `.mp4` em autoplay/loop cobrindo a viewport inteira, e é o
+   * movimento contínuo dele que faz aquela abertura não ser uma foto parada. O
+   * Mateus não tem filme (`content/reel.ts` segue `null`), mas tem oito capas —
+   * então a coluna da direita percorre o acervo, uma peça de cada vez.
+   *
+   * ⚠ 4,2s por peça: abaixo de ~3s vira slideshow de banner, e a leitura do
+   * nome no rodapé não fecha antes da troca. E `prefers-reduced-motion` para a
+   * roda na primeira peça, em vez de esconder a seção.
+   */
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t = setInterval(() => setI((n) => (n + 1) % WORK.length), 4200);
+    return () => clearInterval(t);
+  }, []);
+  const abertura = WORK[i];
 
   /* empacotamento por altura, feito na montagem — sem JS de medição: cada peça
      entra na coluna que está mais curta, medida em razão (altura/largura) */
@@ -88,17 +107,25 @@ export default function HomeV4() {
         </div>
 
         <Link to={`/v4/work/${abertura.slug}`} className="q-hero-peca">
-          <img
-            src={abertura.cover.src}
-            srcSet={abertura.cover.src2x ? `${abertura.cover.src} 1400w, ${abertura.cover.src2x} 2200w` : undefined}
-            sizes="(max-width: 900px) 100vw, 46vw"
-            alt={abertura.cover.alt}
-            width={abertura.cover.w}
-            height={abertura.cover.h}
-            fetchpriority="high"
-            decoding="async"
-            draggable={false}
-          />
+          {/* as oito ficam montadas e trocam por opacidade: recriar o <img> a
+              cada 4,2s daria um flash branco enquanto o arquivo decodifica */}
+          {WORK.map((w, k) => (
+            <img
+              key={w.slug}
+              className={k === i ? "q-hero-img q-hero-img-viva" : "q-hero-img"}
+              src={w.cover.src}
+              srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
+              sizes="(max-width: 900px) 100vw, 46vw"
+              alt={k === 0 ? w.cover.alt : ""}
+              aria-hidden={k === 0 ? undefined : true}
+              width={w.cover.w}
+              height={w.cover.h}
+              fetchpriority={k === 0 ? "high" : undefined}
+              loading={k === 0 ? undefined : "lazy"}
+              decoding="async"
+              draggable={false}
+            />
+          ))}
           <span className="q-meta q-hero-peca-legenda">
             <span className="q-meta-ink">{abertura.title}</span>
             <span>
@@ -182,9 +209,9 @@ export default function HomeV4() {
           Four ways the work usually arrives.
         </h2>
         <div>
-          {SERVICOS.map((s, i) => (
+          {SERVICOS.map((s, k) => (
             <div className="q-servico" key={s.nome}>
-              <span className="q-meta">{String(i + 1).padStart(2, "0")}</span>
+              <span className="q-num">{String(k + 1).padStart(2, "0")}</span>
               <span className="q-servico-nome">{s.nome}</span>
               <span className="q-corpo" style={{ color: "var(--q-quieto)" }}>
                 {s.entrega}

@@ -68,6 +68,11 @@ const SUPERFICIE: Record<string, "papel" | "branco" | "tinta"> = {
   "/lab": "tinta",
 };
 function superficieDaRota(p: string) {
+  /* ⚠ A V4 é BRANCO ABSOLUTO em todas as rotas. Sem esta linha ela caía no
+     `papel` do fallback e a lâmina chegava num creme que não existe em lugar
+     nenhum daquela direção — a transição entregava uma superfície mentirosa,
+     que é exatamente o que o comentário acima manda evitar. */
+  if (p === "/v4" || p.startsWith("/v4/")) return "branco";
   if (SUPERFICIE[p]) return SUPERFICIE[p];
   if (p.startsWith("/work/")) return "branco";
   return "papel";
