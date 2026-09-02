@@ -52,61 +52,74 @@ function Nav() {
 function Rodape() {
   return (
     <footer className="q-rodape">
-      <p className="q-display" style={{ maxWidth: "16ch" }}>
-        Building something
-        <br />
-        that deserves to be seen?
+      {/* ⚠ O VAZIO É O BLOCO. Medido na referência: 1.056px de rodapé com o
+          convite no alto, o e-mail logo abaixo e ~380px de NADA até a régua de
+          colunas. A primeira montagem encostou as colunas no e-mail e o rodapé
+          virou uma lista de links com uma frase em cima. */}
+      <p className="q-display q-rodape-convite" style={{ maxWidth: "17ch" }}>
+        Building something that deserves to be seen?
       </p>
-      <p style={{ paddingTop: "clamp(28px,3vw,44px)" }}>
-        <a href={`mailto:${EMAIL}`} className="q-display-md">
+      <p className="q-rodape-email">
+        <a href={`mailto:${EMAIL}`} className="q-display q-rodape-convite">
           {EMAIL}
         </a>
       </p>
 
-      <div className="q-rodape-cols q-meta">
+      {/* as quatro colunas: rótulo no topo, lista ancorada na BASE, fio vertical
+          entre elas — o vão fica no meio da coluna, não depois da lista */}
+      <div className="q-rodape-cols">
         <div className="q-rodape-col">
-          <p className="q-meta" style={{ paddingBottom: 12, opacity: 0.5 }}>
-            Index
+          <p className="q-meta q-rodape-rot">
+            <span className="q-ponto" aria-hidden="true" />
+            Contact
           </p>
-          <Link to="/v4/work">Work</Link>
-          <Link to="/v4/about">About</Link>
-          <Link to="/v4/lab">Lab</Link>
+          <div className="q-rodape-links q-meta">
+            <a href={`mailto:${EMAIL}`}>Email</a>
+            <a href={INSTAGRAM} target="_blank" rel="noreferrer">
+              Instagram
+            </a>
+            <a href={BEHANCE} target="_blank" rel="noreferrer">
+              Behance
+            </a>
+          </div>
         </div>
+
         <div className="q-rodape-col">
-          <p className="q-meta" style={{ paddingBottom: 12, opacity: 0.5 }}>
+          <p className="q-meta q-rodape-rot">
+            <span className="q-ponto" aria-hidden="true" />
             Selected work
           </p>
-          {WORK.slice(0, 4).map((w) => (
-            <Link key={w.slug} to={`/v4/work/${w.slug}`}>
-              {w.title}
-            </Link>
-          ))}
+          <div className="q-rodape-links q-meta">
+            {WORK.slice(0, 6).map((w) => (
+              <Link key={w.slug} to={`/v4/work/${w.slug}`}>
+                {w.title}
+              </Link>
+            ))}
+          </div>
         </div>
+
         <div className="q-rodape-col">
-          <p className="q-meta" style={{ paddingBottom: 12, opacity: 0.5 }}>
-            Elsewhere
+          <p className="q-meta q-rodape-rot">
+            <span className="q-ponto" aria-hidden="true" />
+            Index
           </p>
-          <a href={BEHANCE} target="_blank" rel="noreferrer">
-            Behance
-          </a>
-          <a href={INSTAGRAM} target="_blank" rel="noreferrer">
-            Instagram
-          </a>
-          <a href={`mailto:${EMAIL}`}>Email</a>
+          <div className="q-rodape-links q-meta">
+            <Link to="/v4/work">Work</Link>
+            <Link to="/v4/about">About</Link>
+            <Link to="/v4/lab">Lab</Link>
+          </div>
         </div>
+
         <div className="q-rodape-col">
-          <p className="q-meta" style={{ paddingBottom: 12, opacity: 0.5 }}>
-            Studio
+          <p className="q-meta q-rodape-rot">
+            <span className="q-ponto" aria-hidden="true" />
+            Infos
           </p>
-          <span style={{ display: "block", padding: "3px 0", opacity: 0.72 }}>
-            Brazil, working globally
-          </span>
-          <span style={{ display: "block", padding: "3px 0", opacity: 0.72 }}>
-            Available for projects
-          </span>
-          <span style={{ display: "block", padding: "3px 0", opacity: 0.72 }}>
-            © {new Date().getFullYear()}
-          </span>
+          <div className="q-rodape-links q-meta">
+            <span>Brazil, working globally</span>
+            <span>Available for projects</span>
+            <span>© {new Date().getFullYear()}</span>
+          </div>
         </div>
       </div>
     </footer>
@@ -136,14 +149,28 @@ export function Quadro({ children }: { children: ReactNode }) {
  * ponto de emenda, e o buraco só aparece 40 segundos depois — tarde demais
  * para quem está olhando o layout.
  */
-export function Marquee({ itens }: { itens: { texto: string; nota: string }[] }) {
+export function Marquee({
+  itens,
+}: {
+  itens: { texto: string; nota: string; arte?: { src: string; alt: string } }[];
+}) {
   const fita = [...itens, ...itens];
   return (
     <div className="q-marquee">
       <div className="q-marquee-fita" aria-hidden="true">
         {fita.map((it, i) => (
           <span className="q-marquee-item" key={i}>
-            <span>{it.texto}</span>
+            {/* ⚠ o marquee da referência corre PEÇAS. Ensaio sem arte no repo
+                não recebe imagem emprestada: ele corre como placa tipográfica,
+                e a diferença entre os dois estados é honesta na tela. */}
+            {it.arte ? (
+              <span className="q-marquee-arte">
+                <img src={it.arte.src} alt="" loading="lazy" decoding="async" draggable={false} />
+              </span>
+            ) : (
+              <span className="q-marquee-placa" />
+            )}
+            <span className="q-marquee-nome">{it.texto}</span>
             <span className="q-meta">{it.nota}</span>
           </span>
         ))}

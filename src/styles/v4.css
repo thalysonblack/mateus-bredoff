@@ -166,7 +166,6 @@
 }
 .q-cel {
   display: block;
-  align-self: start;
   color: inherit;
   text-decoration: none;
   border-bottom: 1px solid var(--q-fio);
@@ -181,47 +180,40 @@
    quando os filhos do índice são COLUNAS e não células, o fio vertical passa a
    ser da coluna: nas células ele seguiria a altura de cada peça e ficaria
    picotado, em vez de correr a página inteira */
-.q-coluna {
-  display: grid;
-  align-content: start;
-  border-right: 1px solid var(--q-fio);
-}
-.q-coluna:last-child { border-right: 0; }
-.q-coluna .q-cel { border-right: 0; }
+/* (a variante empacotada saiu: ela resolvia buraco de proporção livre e
+   desalinhava as legendas — com célula de razão fixa não existe buraco) */
 
 /* ⚠ A PROPORÇÃO É DA PEÇA, não da grade. A primeira montagem fixou 4/5 em toda
    célula e o `cover` decepou o topo de metade do acervo — inclusive o lettering
    da Ginga, que É o projeto. Grade que força altura igual recorta o trabalho do
    cliente para caber no layout, e é regra desta casa que isso não se faz. As
    linhas ficam irregulares; é o preço certo. */
-/* ⭐ A GRADE É UNIFORME — é a uniformidade que faz um índice ler como índice, e
-   foi o que a montagem de proporção livre perdeu.
+/* ⭐ A CÉLULA É UNIFORME EM 11:8, e a grade é de LINHAS.
 
-   ⚠ Mas a RAZÃO é 11:8 (1,375), não o 4:5 retrato da referência. Medido no
-   acervo dele: as oito capas vão de 0,84 a 1,78, com mediana 1,369 — o acervo é
-   de peça DEITADA. Em 4:5 sobrava meia célula de campo vazio em cima e embaixo
-   de cada arte. A razão da grade se tira do material que ela vai receber.
+   A razão sai do acervo dele, não da referência: as oito capas vão de 0,84 a
+   1,78, com mediana 1,369. Em 4:5 (o valor de lá) sobrava meia célula de vazio
+   por cima e por baixo de cada arte — a razão de uma grade se tira do material
+   que ela vai receber.
 
-   ⚠ `display: block` NÃO É DETALHE. O elemento é um `<span>`, e em `inline` o
-   `aspect-ratio` é ignorado EM SILÊNCIO: a altura vinha da imagem, a grade
-   nunca foi uniforme, e eu cheguei a "corrigir" a proporção livre que na
-   verdade era este bug. Caixa que precisa de razão precisa ser bloco.
+   ⚠ `display: block` NÃO É DETALHE: o elemento é um `<span>`, e em `inline` o
+   `aspect-ratio` é ignorado em silêncio — a altura vinha da imagem e a grade
+   nunca foi uniforme.
 
-   ⚠ E o ajuste é `contain`, não `cover`: em 4:5 o `cover` decepava o lettering
-   da Ginga, e a régua desta casa proíbe recortar a peça do cliente para caber
-   no layout. O campo que sobra recebe a COR AMOSTRADA DA PRÓPRIA CAPA — a
-   grade fica uniforme, a arte fica inteira, e a faixa vira cartela, não vazio. */
+   ⚠ E é `cover`, não `contain`: com a razão casada com a mediana o corte fica
+   em poucos por cento, e o `contain` deixava cada peça flutuando num campo de
+   cor que roubava a atenção da própria arte. A única retrato do acervo (Neox,
+   0,84) é a que mais perde, e ainda assim mantém o corpo inteiro em quadro. */
 .q-cel-arte {
   display: block;
   position: relative;
   overflow: hidden;
   aspect-ratio: 11 / 8;
-  background: var(--q-cor-campo, #f4f4f2);
+  background: #f4f4f2;
 }
 .q-cel-arte img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   display: block;
   /* ⚠ O REPOUSO É NÍTIDO. A primeira montagem deixava as capas fora de foco até
      o mouse chegar — e num portfólio isso esconde justamente o produto: quem
@@ -278,22 +270,20 @@
   .q-indice { grid-template-columns: repeat(2, 1fr); }
   .q-cel:nth-child(3n) { border-right: 1px solid var(--q-fio); }
   .q-cel:nth-child(2n) { border-right: 0; }
-  /* ⚠ a terceira coluna não some: ela vira a continuação da primeira. Em duas
-     colunas de grade, a coluna 3 do empacotamento cairia sozinha embaixo com
-     metade da página vazia ao lado */
-  .q-coluna:nth-child(3) { grid-column: 1 / -1; }
-  .q-coluna:nth-child(3) { border-right: 0; }
 }
 @media (max-width: 560px) {
   .q-indice { grid-template-columns: 1fr; }
   .q-cel, .q-cel:nth-child(3n) { border-right: 0; }
-  .q-coluna, .q-coluna:nth-child(3) { border-right: 0; grid-column: auto; }
 }
 
 /* ── blocos de texto ────────────────────────────────────────────────────── */
 
 .q-bloco { padding: clamp(72px, 9vw, 132px) var(--q-m); }
 
+/* ⚠ ERA PILHA DE LINHAS horizontais. Na referência os serviços são CARDS lado
+   a lado, com fio separando, numeral marcado no alto e a lista de entregas por
+   baixo — outra estrutura, não outro espaçamento. A pilha continua servindo na
+   /about, onde o conteúdo é processo e a leitura é sequencial. */
 .q-servico {
   display: grid;
   grid-template-columns: 3.5rem minmax(0, 15rem) minmax(0, 1fr);
@@ -377,15 +367,21 @@
 .q-rodape-cols {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 32px;
-  padding-top: clamp(64px, 8vw, 112px);
   border-top: 1px solid var(--q-fio);
-  margin-top: clamp(56px, 7vw, 96px);
+  /* ⚠ o vão medido entre o e-mail e a régua de colunas é de ~380px. A primeira
+     montagem encostou as colunas no e-mail e o rodapé virou uma lista de links
+     com uma frase em cima — o vazio É o bloco. */
+  margin-top: clamp(120px, 22vw, 340px);
 }
+.q-rodape-cols > * + * { border-left: 1px solid var(--q-fio); }
+.q-rodape-cols > * { padding: 18px; }
+.q-rodape-cols > :first-child { padding-left: 0; }
 .q-rodape-col a { display: block; padding: 3px 0; opacity: 0.72; transition: opacity 0.2s ease; }
 .q-rodape-col a:hover { opacity: 1; }
 @media (max-width: 700px) {
-  .q-rodape-cols { grid-template-columns: repeat(2, 1fr); gap: 28px; }
+  .q-rodape-cols { grid-template-columns: repeat(2, 1fr); }
+  .q-rodape-cols > :nth-child(3) { border-left: 0; }
+  .q-rodape-cols > :nth-child(n+3) { border-top: 1px solid var(--q-fio); }
 }
 
 /* ── a lista da /work ───────────────────────────────────────────────────── */
@@ -501,91 +497,25 @@
   .q-pilha { grid-template-columns: 1fr; }
 }
 
-/* ── hero ───────────────────────────────────────────────────────────────── */
+/* ── hero: a mídia cobre a viewport e o texto vive por cima ─────────────── */
 
+/* ⚠ ERA SPLIT 54/46 (texto à esquerda, peça à direita) e a referência é
+   SOBREPOSIÇÃO: o filme ocupa os 1000px inteiros e a declaração fica por cima.
+   Não é ajuste de proporção — split apresenta duas coisas lado a lado,
+   sobreposição apresenta uma só, e a segunda leitura é a daquele site. */
 .q-hero {
-  min-height: 100svh;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 46vw;
-  align-items: end;
-  gap: clamp(24px, 4vw, 64px);
-  padding: 0 0 var(--q-m) var(--q-m);
-}
-.q-hero-dizer {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: clamp(40px, 6vw, 88px);
-}
-/* ⚠ a régua QUEBRA em duas linhas em 1440 — a coluna de texto tem ~54vw e os
-   quatro campos não cabem numa linha só. Quebrar tudo bem; o que não pode é a
-   segunda linha encostar na borda da tela, que foi o que a primeira montagem
-   fez. `row-gap` próprio e o mesmo respiro da margem de página embaixo. */
-.q-hero-regua {
-  display: flex;
-  column-gap: clamp(16px, 3vw, 48px);
-  row-gap: 8px;
-  flex-wrap: wrap;
-}
-
-/* a peça sangra pelo TOPO e pela borda direita: cortada em dois lados ela lê
-   como um pedaço de algo maior, e não como um card colado na tela */
-/* ⚠ A PEÇA COMEÇA ABAIXO DA NAV, e não no topo da tela.
-   Sangrando pelo topo, ela passava por baixo da nav em `exclusion` — e sobre o
-   vermelho cheio da capa de abertura o e-mail virava ciano, medido ilegível. O
-   blend resolve sozinho sobre foto; sobre campo chapado saturado, não. Com a
-   faixa de 56px em branco, a nav inverte para preto na página inteira e a peça
-   continua cortada em dois lados (direita e base), que era o que dava a
-   sensação de pedaço de algo maior. */
-.q-hero-peca {
   position: relative;
-  display: block;
-  margin-top: 56px;
-  height: calc(100svh - 56px);
-  overflow: hidden;
-  background: #f4f4f2;
-  color: inherit;
-  text-decoration: none;
-}
-/* ⚠ a regra genérica `.q-hero-peca img` saiu: com as oito capas empilhadas ela
-   brigava com `.q-hero-img` no hover e reanimava a escala das sete invisíveis */
-/* ⚠ AQUI O BLEND NÃO SERVE. Tentei `exclusion`, como na nav: sobre a capa da
-   Ginga — vermelho puro — a inversão devolve ciano, e o nome do projeto ficou
-   ilegível justamente na peça de abertura. Blend funciona sobre foto, que tem
-   faixa tonal larga; sobre campo chapado saturado ele entrega a cor
-   complementar e nada mais. A legenda é informação, não efeito: véu em
-   gradiente e creme sólido, que lê em qualquer capa do acervo. */
-.q-hero-peca::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 38%;
-  background: linear-gradient(to top, rgba(12, 16, 16, 0.72), transparent);
-  pointer-events: none;
-}
-.q-hero-peca-legenda {
-  position: absolute;
-  z-index: 1;
-  left: var(--q-m);
-  bottom: var(--q-m);
+  min-height: 100svh;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  color: rgba(236, 234, 229, 0.78);
+  align-items: flex-end;
+  overflow: hidden;
 }
-.q-hero-peca-legenda .q-meta-ink { color: #eceae5; }
-
-@media (max-width: 900px) {
-  .q-hero {
-    grid-template-columns: 1fr;
-    align-items: stretch;
-    padding: 0 0 var(--q-m);
-  }
-  .q-hero-dizer { padding: 96px var(--q-m) clamp(40px, 8vw, 72px); }
-  .q-hero-peca { height: 62svh; margin-top: 0; }
+.q-hero-peca {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background: #14201f;
 }
-
-/* as capas da abertura, empilhadas — só a viva tem opacidade */
 .q-hero-img {
   position: absolute;
   inset: 0;
@@ -594,11 +524,124 @@
   object-fit: cover;
   display: block;
   opacity: 0;
-  transform: scale(1.03);
+  transform: scale(1.04);
   transition: opacity 1.05s cubic-bezier(0.22, 1, 0.36, 1),
-              transform 5.2s cubic-bezier(0.22, 1, 0.36, 1);
+              transform 6.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .q-hero-img-viva { opacity: 1; transform: scale(1); }
-@media (prefers-reduced-motion: reduce) {
-  .q-hero-img { transition: none; transform: none; }
+
+/* ⚠ o véu não é enfeite: a capa troca a cada 4,2s e vai de vermelho cheio a
+   preto — sem ele, nenhuma cor fixa de texto sobrevive às oito peças */
+.q-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10, 14, 14, 0.82) 0%,
+                                      rgba(10, 14, 14, 0.34) 34%,
+                                      rgba(10, 14, 14, 0.12) 62%,
+                                      rgba(10, 14, 14, 0.28) 100%);
+  pointer-events: none;
 }
+.q-hero-dizer {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 0 var(--q-m) var(--q-m);
+  color: #ffffff;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(36px, 5vw, 72px);
+}
+.q-hero-dizer a { pointer-events: auto; }
+.q-hero-regua {
+  display: flex;
+  column-gap: clamp(16px, 3vw, 48px);
+  row-gap: 8px;
+  flex-wrap: wrap;
+  color: rgba(255, 255, 255, 0.7);
+}
+/* o nome da peça no ar acompanha a troca — é a legenda da abertura, e por isso
+   é o único campo aceso da régua */
+.q-hero-agora { color: #ffffff; }
+
+@media (max-width: 900px) {
+  .q-hero { min-height: 92svh; }
+}
+
+
+
+/* ── serviços em cards ──────────────────────────────────────────────────── */
+
+.q-manchete {
+  max-width: 30ch;
+  padding-bottom: clamp(48px, 6vw, 88px);
+}
+.q-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--q-fio);
+}
+.q-card {
+  display: flex;
+  flex-direction: column;
+  min-height: clamp(300px, 26vw, 380px);
+  padding: 18px;
+  border-right: 1px solid var(--q-fio);
+}
+.q-card:last-child { border-right: 0; }
+.q-card .q-servico-nome { padding: clamp(28px, 3vw, 48px) 0 14px; }
+.q-card-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+/* o pé do card cola na base: com `margin-top: auto` os três cards fecham na
+   mesma linha mesmo com listas de tamanhos diferentes */
+.q-card-pe { margin-top: auto; padding-top: 24px; }
+
+/* o marcador do numeral — bolinha de 5px, o vernáculo de ficha que a referência
+   usa no alto de cada card e no rótulo de cada coluna do rodapé */
+.q-ponto {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  margin-right: 7px;
+  vertical-align: middle;
+}
+.q-num { display: flex; align-items: center; }
+
+@media (max-width: 860px) {
+  .q-cards { grid-template-columns: 1fr; }
+  .q-card { border-right: 0; border-bottom: 1px solid var(--q-fio); min-height: 0; }
+  .q-card:last-child { border-bottom: 0; }
+}
+
+/* ── marquee com as peças ───────────────────────────────────────────────── */
+
+.q-marquee-arte,
+.q-marquee-placa {
+  display: block;
+  width: clamp(96px, 9vw, 132px);
+  aspect-ratio: 11 / 8;
+  overflow: hidden;
+  background: #f4f4f2;
+  flex: 0 0 auto;
+}
+.q-marquee-arte img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* ensaio sem arte no repo: placa vazia na mesma medida, para o ritmo da fita
+   não quebrar — e sem imagem emprestada de outro projeto */
+.q-marquee-placa { background: var(--q-fio); }
+.q-marquee-nome { font-size: clamp(18px, 2vw, 28px); letter-spacing: -0.012em; }
+.q-marquee-item { align-items: center; gap: 14px; }
+
+/* ── rodapé: o vazio é o bloco ──────────────────────────────────────────── */
+
+.q-rodape-email { padding-top: 4px; }
+.q-rodape-convite { font-weight: 500; }
+.q-rodape-col { display: flex; flex-direction: column; min-height: clamp(150px, 15vw, 210px); }
+.q-rodape-rot { padding-bottom: 12px; }
+/* a lista ancora na BASE da coluna: o vão fica no meio, e é isso que faz a
+   régua do rodapé ler como quatro campos e não como quatro listas */
+.q-rodape-links { margin-top: auto; display: grid; gap: 1px; }
+.q-rodape-links a,
+.q-rodape-links span { display: block; padding: 1px 0; opacity: 0.74; }
+.q-rodape-links a:hover { opacity: 1; }
