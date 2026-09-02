@@ -3,6 +3,9 @@ import type { ReactNode } from "react";
 import "../../styles/v4.css";
 import { INSTAGRAM } from "../../content/lab";
 import { WORK } from "../../content/work";
+import { MODALIDADES } from "../../content/servicos";
+import { RECONHECIMENTO } from "../../content/reconhecimento";
+import { LAB } from "../../content/lab";
 import { useCraft } from "../../hooks/useCraft";
 
 /**
@@ -179,5 +182,117 @@ export function Marquee({
         {itens.map((i) => `${i.texto} — ${i.nota}`).join(". ")}
       </span>
     </div>
+  );
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   OS BLOCOS COMPARTILHADOS
+
+   ⭐ Descoberta ao medir as INTERNAS da referência, que eu não tinha aberto: a
+   `/about` de lá não é uma página própria de ponta a ponta — ela tem três
+   blocos exclusivos (currículo, galeria, prêmios) e depois REPETE os três
+   últimos da home (serviços, nomes, marquee) antes do rodapé. É arquitetura,
+   não preguiça: a home apresenta, a about aprofunda, e as duas fecham com a
+   mesma oferta e a mesma prova. Enquanto cada página montava os seus, nenhuma
+   das duas tinha o ritmo daquele site.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+export function BlocoServicos() {
+  return (
+    <section className="q-bloco" aria-labelledby="v4-serv">
+      <h2 id="v4-serv" className="q-display-md q-manchete">
+        Three ways the work arrives — from building the whole brand to a month
+        reserved on the calendar.
+      </h2>
+      <div className="q-cards">
+        {MODALIDADES.map((m, k) => (
+          <article className="q-card" key={m.nome}>
+            <p className="q-num">
+              <span className="q-ponto" aria-hidden="true" />
+              {String(k + 1).padStart(2, "0")}
+            </p>
+            <h3 className="q-servico-nome">{m.nome}</h3>
+            <ul className="q-card-lista q-meta">
+              {m.inclui.map((it) => (
+                <li key={it}>{it}</li>
+              ))}
+            </ul>
+            <p className="q-card-pe q-meta">
+              {m.prazo}
+              {" · "}
+              {m.precoDe && !m.aConfirmar
+                ? `from US$ ${m.precoDe.toLocaleString("en-US")}${m.unidade ?? ""}`
+                : "on request"}
+            </p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function BlocoNomes() {
+  const veiculos = [...new Set(RECONHECIMENTO.map((r) => r.veiculo))];
+  const nomes = [...WORK.map((w) => w.title), ...veiculos];
+  return (
+    <section className="q-bloco" aria-labelledby="v4-pub" style={{ paddingTop: 0 }}>
+      <h2 id="v4-pub" className="q-meta q-meta-ink" style={{ paddingBottom: "clamp(28px,3.5vw,48px)" }}>
+        The work, and where it has been published
+      </h2>
+      <p className="q-nomes">
+        {nomes.map((n, k) => (
+          <span key={n}>
+            {n}
+            {k < nomes.length - 1 && <span className="q-nomes-sep">·</span>}
+          </span>
+        ))}
+      </p>
+    </section>
+  );
+}
+
+export function BlocoPlayground() {
+  return (
+    <section aria-labelledby="v4-lab-fita">
+      <h2 id="v4-lab-fita" className="sr-only">
+        Lab
+      </h2>
+      <Marquee
+        itens={LAB.map((e) => ({
+          texto: e.brand,
+          nota: e.discipline,
+          arte: WORK.find((w) => w.slug === e.slug)?.cover,
+        }))}
+      />
+    </section>
+  );
+}
+
+/**
+ * A TABELA DE PRÊMIOS — quatro colunas, fio entre linhas.
+ *
+ * ⚠ A coluna 1 é o PROJETO, não o nome dele repetido linha a linha. Na
+ * referência o autor se repete em todas as linhas porque lá o prêmio é do
+ * estúdio; aqui o que ganha destaque é qual trabalho saiu onde, que é a
+ * informação que este site tem para dar.
+ */
+export function BlocoPremios() {
+  return (
+    <section className="q-bloco" aria-labelledby="v4-awards">
+      <h2 id="v4-awards" className="q-display-md" style={{ paddingBottom: "clamp(36px,4.5vw,64px)" }}>
+        Awards &amp; recognitions
+      </h2>
+      <div className="q-tabela">
+        {RECONHECIMENTO.map((r, k) => (
+          <div className="q-tabela-linha" key={k}>
+            <span className="q-meta q-meta-ink">{r.projeto ?? "Mateus Bredoff"}</span>
+            <span className="q-meta q-meta-ink">{r.veiculo}</span>
+            <span className="q-meta">{r.titulo}</span>
+            <span className="q-meta q-tabela-ano">{r.ano}</span>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }

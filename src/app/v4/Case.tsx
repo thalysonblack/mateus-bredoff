@@ -37,7 +37,7 @@ export default function CaseV4() {
 
   return (
     <Quadro>
-      <header style={{ padding: "clamp(120px,14vw,200px) var(--q-m) clamp(32px,4vw,56px)" }}>
+      <header className="q-cabeca q-cabeca-baixa">
         <h1 className="q-display" style={{ color: CORES[w.slug]?.papel }}>
           {w.title}
         </h1>

@@ -19,7 +19,7 @@ export default function WorkV4() {
   useMetaRota();
   return (
     <Quadro>
-      <header style={{ padding: "clamp(120px,14vw,200px) var(--q-m) clamp(48px,6vw,80px)" }}>
+      <header className="q-cabeca q-cabeca-baixa">
         <h1 className="q-display-md" style={{ maxWidth: "20ch" }}>
           Selected work
         </h1>

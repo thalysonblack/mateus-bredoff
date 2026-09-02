@@ -5,7 +5,16 @@ import { WORK } from "../../content/work";
 import { useMetaRota } from "../../hooks/useMetaRota";
 
 /**
- * V4 — O LAB.
+ * V4 — O LAB, na anatomia da `/playground` medida.
+ *
+ * Três blocos e nada mais: header de 222px, a grade grande (2.773px numa página
+ * de 3.982) e o rodapé. É a página mais simples do site de lá, e a simplicidade
+ * é o partido — a grade ocupa 70% da altura e nenhuma linha de texto disputa
+ * com ela.
+ *
+ * ⚠ O header é BAIXO — 222px, contra os 335px da about. Página de galeria
+ * começa quase no conteúdo, porque a matéria dela é a imagem, não o argumento.
+ * O meu tinha 200px só de padding superior.
  *
  * Marcas fictícias que ele cria para testar ideia. A seção diz o que é; nenhum
  * item carrega carimbo de "fictício" — o contexto separa, a etiqueta não.
@@ -20,11 +29,11 @@ export default function LabV4() {
 
   return (
     <Quadro>
-      <header style={{ padding: "clamp(120px,14vw,200px) var(--q-m) clamp(48px,6vw,80px)" }}>
-        <h1 className="q-display-md" style={{ maxWidth: "24ch" }}>
+      <header className="q-cabeca q-cabeca-baixa">
+        <h1 className="q-display-md" style={{ maxWidth: "22ch" }}>
           Fictional brands, built to test an idea.
         </h1>
-        <p className="q-meta" style={{ paddingTop: "clamp(24px,3vw,40px)" }}>
+        <p className="q-meta" style={{ paddingTop: 14 }}>
           {LAB.length} studies ·{" "}
           <a href={INSTAGRAM} target="_blank" rel="noreferrer" className="q-meta-ink">
             @sir.bredoff

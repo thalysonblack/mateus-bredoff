@@ -645,3 +645,84 @@
 .q-rodape-links a,
 .q-rodape-links span { display: block; padding: 1px 0; opacity: 0.74; }
 .q-rodape-links a:hover { opacity: 1; }
+
+/* ══ AS INTERNAS, na anatomia medida das páginas da referência ═════════════
+   /about  header 335 · ficha 644 · galeria 644 · prêmios 592 · serviços 759 ·
+           nomes 819 · marquee 653 · rodapé 986  =  6.425px
+   /play   header 222 · grade 2.773 · rodapé 986  =  3.982px
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ⚠ a cabeça de página é BAIXA. As minhas abriam com 200px de padding superior
+   e a manchete caía no meio da tela; lá o header inteiro tem 335px na about e
+   222px na galeria — página interna começa quase no conteúdo, porque quem
+   chegou nela já decidiu entrar. */
+.q-cabeca {
+  padding: calc(56px + clamp(56px, 7vw, 104px)) var(--q-m) clamp(36px, 4.5vw, 64px);
+}
+.q-cabeca-baixa {
+  padding-top: calc(56px + clamp(40px, 5vw, 72px));
+  padding-bottom: clamp(24px, 3vw, 40px);
+}
+
+/* ── a ficha com o retrato sangrando ────────────────────────────────────── */
+
+.q-ficha-cv {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 42vw;
+  gap: clamp(24px, 4vw, 64px);
+  align-items: end;
+  padding: 0 0 clamp(64px, 8vw, 112px) var(--q-m);
+}
+.q-cv { display: flex; flex-direction: column; gap: clamp(28px, 3.5vw, 52px); }
+.q-cv-rot { display: flex; align-items: center; }
+.q-cv-lista { margin: 0; display: grid; gap: 14px; }
+.q-cv-lista dd { margin: 0; color: var(--q-quieto); max-width: 46ch; }
+.q-cv-fer { color: var(--q-quieto); }
+/* o retrato sangra pela DIREITA e para no fio da coluna: cortado num lado só,
+   ele ainda lê como retrato; cortado em dois, viraria textura */
+.q-retrato { margin: 0; height: clamp(340px, 44vw, 620px); overflow: hidden; }
+.q-retrato img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+@media (max-width: 900px) {
+  .q-ficha-cv { grid-template-columns: 1fr; padding-right: var(--q-m); }
+  .q-retrato { height: 62vw; }
+}
+
+/* ── galeria: uma faixa de altura fixa que rola na horizontal ───────────── */
+
+/* ⚠ altura FIXA e largura livre. A galeria da referência tem 644px de altura
+   numa faixa só; com peças de proporções diferentes, a única forma de manter a
+   altura sem recortar nenhuma é deixar cada uma escolher a própria largura. */
+.q-galeria {
+  display: flex;
+  gap: var(--q-m);
+  overflow-x: auto;
+  padding: 0 var(--q-m) clamp(64px, 8vw, 112px);
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+.q-galeria::-webkit-scrollbar { display: none; }
+.q-galeria-item {
+  margin: 0;
+  flex: 0 0 auto;
+  height: clamp(240px, 34vw, 480px);
+  scroll-snap-align: start;
+}
+.q-galeria-item img { height: 100%; width: auto; display: block; }
+
+/* ── tabela de prêmios ──────────────────────────────────────────────────── */
+
+.q-tabela { border-top: 1px solid var(--q-fio); }
+.q-tabela-linha {
+  display: grid;
+  grid-template-columns: minmax(0, 12rem) minmax(0, 12rem) minmax(0, 1fr) 4rem;
+  gap: 16px;
+  align-items: baseline;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--q-fio);
+}
+.q-tabela-ano { text-align: right; }
+@media (max-width: 760px) {
+  .q-tabela-linha { grid-template-columns: minmax(0, 1fr) 4rem; }
+  .q-tabela-linha > :nth-child(3) { grid-column: 1 / -1; }
+}
