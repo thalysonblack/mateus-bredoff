@@ -35,6 +35,8 @@ import WorkV4 from "./v4/Work";
 import CaseV4 from "./v4/Case";
 import AboutV4 from "./v4/About";
 import LabV4 from "./v4/Lab";
+import HomeV5 from "./v5/Home";
+import CaseV5 from "./v5/Case";
 import HomeV3 from "./pages/HomeV3";
 import AboutV3 from "./pages/AboutV3";
 import WorkIndexV3 from "./pages/WorkIndexV3";
@@ -297,6 +299,15 @@ export default function App() {
           <Route path="/v4/work/:slug" element={<CaseV4 />} />
           <Route path="/v4/about" element={<AboutV4 />} />
           <Route path="/v4/lab" element={<LabV4 />} />
+
+
+          {/* ── V5 "O PALCO" ─────────────────────────────────────────────
+              02/09/2026. Direção AUTORAL, sem referência de terceiro: depois de
+              quatro rodadas fechando distância para um site que não é nosso, a
+              saída é uma peça cuja matéria seja a dele por construção. Partido
+              no cabeçalho de `styles/v5.css`. */}
+          <Route path="/v5" element={<HomeV5 />} />
+          <Route path="/v5/work/:slug" element={<CaseV5 />} />
 
           {/* Slug inexistente cai no próprio case, que trata o 404 com a
               linguagem do site em vez de tela branca. */}

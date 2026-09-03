@@ -1,0 +1,271 @@
+/**
+ * V5 — "O PALCO".
+ *
+ * Direção AUTORAL, sem referência de terceiro apontada. Nasceu em 02/09/2026,
+ * depois de quatro rodadas tentando fechar a distância para um site que não é
+ * nosso: se a matéria que faltava era sempre a do outro, o caminho é fazer uma
+ * peça cuja matéria seja a DELE por construção.
+ *
+ * ## O partido
+ *
+ * O material mais forte deste projeto é a obra: oito identidades, quase todas
+ * wordmark e lettering em campo de cor cheia. Numa grade branca elas viram
+ * miniatura; num palco escuro, cada uma vira o assunto da tela inteira.
+ *
+ * Então o site é um PALCO: superfície tinta, uma peça por vez ocupando a
+ * viewport, e o nome do projeto em escala extrema atravessando a arte. O scroll
+ * não rola uma lista — ele TROCA a peça em cena. Uma ideia por tela.
+ *
+ * ## O que a régua da casa manda, e está aplicado
+ *
+ *   · "mais awwwards" pede TROCAR O REGISTRO — palco escuro, trabalho real em
+ *     full-bleed, um motor de assinatura. Não é somar animação sobre o que já
+ *     existe: a V4 branca continua viva em `/v4`, esta é outra coisa.
+ *   · mono caixa alta 10–12px é do METADADO; a navegação é grotesca. Mono no
+ *     menu rebaixa a navegação a metadado e ele manda tirar.
+ *   · peça de portfólio não se mostra pela metade: nada de arte atenuada ou
+ *     fora de foco em repouso. A obra entra em cor cheia.
+ *   · um acento só, gasto onde a superfície já o carrega — aqui ele vem da
+ *     PRÓPRIA peça em cena (`content/cores.ts`), então a paleta do site é a
+ *     paleta do trabalho dele, e muda de tela para tela.
+ *   · atenuar é UM degrau, piso 0,62.
+ *
+ * ⚠ Sem `pin` de ScrollTrigger: pin sequestra a rolagem e em portfólio lê como
+ * travamento. O palco é `position: sticky` puro — a página segue livre.
+ */
+
+.p5 {
+  --p5-tinta: #0d1211;
+  --p5-creme: #eceae5;
+  --p5-fio: rgba(236, 234, 229, 0.16);
+  --p5-quieto: rgba(236, 234, 229, 0.62);
+  --p5-m: 20px;
+
+  background: var(--p5-tinta);
+  color: var(--p5-creme);
+  font-family: "Geist", ui-sans-serif, sans-serif;
+  min-height: 100svh;
+}
+@media (max-width: 768px) {
+  .p5 { --p5-m: 14px; }
+}
+
+/* ── as duas vozes ──────────────────────────────────────────────────────── */
+
+/* o metadado — mono, caixa alta, o registro de ficha técnica */
+.p5-meta {
+  font-family: "Departure Mono", "Martian Mono", ui-monospace, monospace;
+  font-size: 11px;
+  line-height: 1.3;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--p5-quieto);
+}
+.p5-meta-vivo { color: var(--p5-creme); }
+
+/* a navegação é GROTESCA: mono no menu rebaixa a navegação a metadado */
+.p5-nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  padding: 18px var(--p5-m);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.006em;
+  color: var(--p5-creme);
+  mix-blend-mode: difference;
+}
+.p5-nav a { color: inherit; text-decoration: none; opacity: 0.66; transition: opacity 0.22s ease; }
+.p5-nav a:hover,
+.p5-nav a[aria-current="page"] { opacity: 1; }
+.p5-nav .p5-marca { opacity: 1; }
+.p5-nav-fim { margin-left: auto; }
+@media (max-width: 640px) { .p5-nav-fim { display: none; } }
+
+/* ── a abertura ─────────────────────────────────────────────────────────── */
+
+.p5-abre {
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding: 0 var(--p5-m) var(--p5-m);
+}
+/* escala extrema: o nome ocupa a largura útil e sangra o descendente. É o
+   gesto da casa para "o registro é outro" — a palavra vira o elemento gráfico */
+.p5-nome {
+  align-self: center;
+  font-size: clamp(48px, 13.2vw, 210px);
+  line-height: 0.86;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  margin: 0;
+  padding-top: 8vh;
+}
+.p5-nome em { font-style: normal; color: var(--p5-quieto); }
+.p5-abre-pe {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--p5-fio);
+  padding-top: 14px;
+}
+.p5-abre-frase {
+  font-size: clamp(15px, 1.5vw, 19px);
+  line-height: 1.45;
+  max-width: 34ch;
+  margin: 0;
+}
+
+/* ── o palco: uma peça por tela ─────────────────────────────────────────── */
+
+.p5-palco { position: relative; }
+
+/* ⚠ `sticky`, nunca `pin`. O quadro fica preso enquanto o bloco da peça
+   atravessa, e a página segue livre — pin sequestra o scroll e em portfólio
+   lê como travamento. */
+.p5-quadro {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+.p5-cena {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.p5-cena-viva { opacity: 1; }
+.p5-cena img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  /* peça de portfólio não se mostra pela metade: cor cheia, foco cheio */
+  transform: scale(1.06);
+  transition: transform 7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.p5-cena-viva img { transform: scale(1); }
+
+/* o véu existe porque o nome atravessa a arte: sem ele, uma capa clara come a
+   tipografia e uma escura come o metadado */
+.p5-quadro::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* ⚠ medido na cena do Neox, que é a capa mais CLARA do acervo: com o véu a
+     0,86 na base o metadado em mono ainda saía fraco, porque a peça é quase
+     branca ali embaixo. A base vai a 0,94 e a rampa sobe mais cedo — o véu se
+     calibra pela peça mais clara da coleção, não pela média. */
+  background: linear-gradient(to top, rgba(13, 18, 17, 0.94) 0%,
+                                      rgba(13, 18, 17, 0.62) 22%,
+                                      rgba(13, 18, 17, 0.18) 52%,
+                                      rgba(13, 18, 17, 0.46) 100%);
+  pointer-events: none;
+}
+
+/* o nome do projeto em cena, no corpo de cartaz, sobre a arte */
+.p5-cena-nome {
+  position: absolute;
+  left: var(--p5-m);
+  right: var(--p5-m);
+  bottom: var(--p5-m);
+  z-index: 2;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.p5-cena-titulo {
+  font-size: clamp(38px, 8.4vw, 132px);
+  line-height: 0.9;
+  font-weight: 400;
+  letter-spacing: -0.032em;
+  margin: 0;
+  /* o acento é a cor amostrada da PRÓPRIA peça em cena: a paleta do site é a
+     paleta do trabalho dele, e troca a cada tela */
+  color: var(--p5-cor, var(--p5-creme));
+}
+.p5-cena-ficha { display: flex; flex-direction: column; gap: 4px; text-align: right; }
+
+/* os gatilhos: um bloco de altura de tela por peça, e o quadro sticky por cima */
+.p5-passo { height: 100svh; }
+
+/* o contador do palco, no alto à direita do quadro */
+.p5-conta {
+  position: absolute;
+  top: calc(18px + 26px);
+  right: var(--p5-m);
+  z-index: 2;
+}
+
+@media (max-width: 700px) {
+  .p5-cena-nome { flex-direction: column; align-items: flex-start; }
+  .p5-cena-ficha { text-align: left; }
+}
+
+/* ── a ficha do ofício ──────────────────────────────────────────────────── */
+
+.p5-bloco { padding: clamp(88px, 11vw, 160px) var(--p5-m); }
+.p5-manchete {
+  font-size: clamp(26px, 4.4vw, 64px);
+  line-height: 1.04;
+  font-weight: 400;
+  letter-spacing: -0.024em;
+  max-width: 22ch;
+  margin: 0;
+}
+.p5-linha {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 16rem) minmax(0, 1fr);
+  gap: 22px;
+  align-items: baseline;
+  padding: 22px 0;
+  border-top: 1px solid var(--p5-fio);
+}
+.p5-linha-nome {
+  font-size: clamp(19px, 2.1vw, 30px);
+  font-weight: 400;
+  letter-spacing: -0.014em;
+}
+.p5-linha-corpo { font-size: 15px; line-height: 1.5; color: var(--p5-quieto); }
+@media (max-width: 700px) {
+  .p5-linha { grid-template-columns: 2.2rem minmax(0, 1fr); }
+  .p5-linha > :last-child { grid-column: 2; }
+}
+
+/* ── o fecho ────────────────────────────────────────────────────────────── */
+
+.p5-fecho {
+  padding: clamp(96px, 13vw, 190px) var(--p5-m) var(--p5-m);
+  border-top: 1px solid var(--p5-fio);
+}
+.p5-fecho a { color: inherit; text-decoration: none; }
+.p5-convite {
+  font-size: clamp(30px, 5.6vw, 88px);
+  line-height: 0.98;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  margin: 0 0 clamp(28px, 4vw, 56px);
+  max-width: 18ch;
+}
+.p5-fecho-regua {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--p5-fio);
+  padding-top: 14px;
+  margin-top: clamp(64px, 9vw, 128px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p5-cena, .p5-cena img { transition: none; }
+}
