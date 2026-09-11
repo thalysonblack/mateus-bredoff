@@ -3,9 +3,10 @@ import retrato2x from "../../assets/optimized/hero-portrait-3200.webp";
 import { TIERS } from "../sections/Pricing";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { useRevelar } from "./useRevelar";
-import { Prancha, Bloco } from "./sistema";
-import { CONTATO } from "../v3-system";
-import { LEAD, NUMEROS, PROCESSO_MANCHETE, PROCESSO, FERRAMENTAS } from "../../content/about";
+import { Prancha } from "./sistema";
+import { LEAD, PROCESSO_MANCHETE, PROCESSO, FERRAMENTAS } from "../../content/about";
+import { WORK } from "../../content/work";
+import { RECONHECIMENTO } from "../../content/reconhecimento";
 
 /**
  * PRANCHA 03 — ABOUT.
@@ -31,10 +32,15 @@ export default function AboutV2() {
      a folha que chega precisa revelar o SEU conteúdo no momento em que cobre a
      anterior. Um gatilho único revelaria tudo na primeira rolagem, e as folhas
      de baixo chegariam já prontas — o gesto some. */
-  const folhaFicha = useRevelar<HTMLElement>();
-  const folhaNumeros = useRevelar<HTMLElement>();
-  const folhaServicos = useRevelar<HTMLElement>();
   const folhaMetodo = useRevelar<HTMLElement>();
+  const folhaServicos = useRevelar<HTMLElement>();
+  const folhaProva = useRevelar<HTMLElement>();
+  const folhaPecas = useRevelar<HTMLElement>();
+
+  /* os veículos onde o trabalho saiu, sem repetir: três das cinco matérias são
+     do mesmo lugar, e o nome em corpo de cartaz três vezes seguidas mata a
+     escala que ele deveria dar */
+  const veiculos = [...new Set(RECONHECIMENTO.map((r) => r.veiculo))];
 
   return (
     <Prancha n="03" nome="About" superficie="papel" status="Available for projects" rodape="completo">
@@ -91,72 +97,64 @@ export default function AboutV2() {
         </div>
       </section>
 
-      {/* ─ 2. A FICHA, EM TRÊS COLUNAS ───────────────────────────────────
-          Approach, Tools e Contact lado a lado: empilhados numa coluna só eles
-          viravam uma tira estreita de 400px de altura, com o resto da página
-          vazio ao lado. */}
-      <section ref={folhaFicha} className="p-folha-sec p-papel grid grid-cols-12 pt-10" style={{ columnGap: "var(--p-gap-x)" }}>
-        <div className="p-sobe col-span-5 pt-8 max-lg:col-span-12">
-          <Bloco rotulo="Approach">
-            <p className="p-corpo max-w-[52ch]">{LEAD[1]}</p>
-          </Bloco>
-        </div>
-        <div className="p-sobe col-span-3 col-start-7 pt-8 max-lg:col-span-6 max-lg:col-start-1">
-          <Bloco rotulo="Tools">
-            <p className="p-corpo" style={{ color: "var(--p-quieto)" }}>
-              {FERRAMENTAS.join(", ")}
-            </p>
-          </Bloco>
-        </div>
-        <div className="p-sobe col-span-3 col-start-10 pt-8 max-lg:col-span-6 max-lg:col-start-7">
-          <Bloco rotulo="Contact & inquiries">
-            <ul className="grid gap-[6px]">
-              {CONTATO.map((c) => (
-                <li key={c.label}>
-                  {c.href ? (
-                    <a
-                      href={c.href}
-                      target={c.href.startsWith("http") ? "_blank" : undefined}
-                      rel="noopener noreferrer"
-                      className="p-corpo p-link"
-                    >
-                      {c.valor}
-                    </a>
-                  ) : (
-                    <span className="p-corpo">{c.valor}</span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </Bloco>
+      {/* ══ O MIOLO, REFEITO EM 11/09/2026 — "princípios de design mesmo" ════
+          Diagnóstico medido antes de mexer: a capa era o ÚNICO momento da
+          página. Da segunda tela ao rodapé tudo caía para 13/9,5/8,5px em
+          cinza — ficha de três colunas com meia tela vazia, quatro números em
+          mono (que ele mandou tirar em 19/08 e continuavam no ar), e o método
+          em tabela de planilha. Escala achatada, um só registro, nenhuma
+          imagem além do retrato: a about de um brand designer sem uma peça.
+
+          Os princípios que o conserto aplica, na ordem:
+          · HIERARQUIA — três escalas de verdade (display 50px, item 28–32px,
+            corpo 13px), em vez de display na capa e 13px no resto;
+          · RITMO — a página troca de temperatura a cada bloco: papel (capa) →
+            papel em escala (método) → TINTA (serviços) → BRANCO (prova) →
+            papel com peça sangrando → rodapé. Diferenciar é VALOR, não matiz;
+          · UMA GRADE — borda esquerda fixa na margem da prancha, de cima a
+            baixo; nada de coluna que começa em outro lugar;
+          · O GESTO — os veículos onde ele foi publicado em escala extrema,
+            atravessando a tela, e uma faixa de peças em sangria. É o que ele
+            pediu em 19/08: "focar nas conquistas de prêmios".
+          O que saiu: os big numbers (ordem dele), a ficha de três colunas
+          (Tools vira metadado da capa; Contact já mora no rodapé). */}
+
+      {/* ─ 2. O MÉTODO, EM ESCALA ────────────────────────────────────────
+          É o argumento comercial dele — cinco etapas que dizem como o
+          trabalho acontece — e estava em 13px cinza, lendo como planilha.
+          Agora cada etapa tem o numeral no corpo de índice do sistema, o nome
+          em corpo de item e o texto em coluna de leitura. A manchete de
+          abertura sobe para o display: é a mesma anatomia dos serviços, então
+          método e serviços leem como duas partes de um só documento. */}
+      <section ref={folhaMetodo} className="p-folha-sec p-papel p-metodo">
+        <div style={{ paddingInline: "var(--p-margem)" }}>
+          <p className="p-secao-indice p-sobe">
+            <span>02</span>
+            <span className="p-rotulo">Method — {String(PROCESSO.length).padStart(2, "0")}</span>
+          </p>
+          <p className="p-servico-nome p-sobe p-metodo-manchete">{PROCESSO_MANCHETE}</p>
+          <ul>
+            {PROCESSO.map((e, i) => (
+              <li key={e.titulo} className="p-fio p-sobe p-metodo-linha">
+                <span className="p-metodo-n">{String(i + 1).padStart(2, "0")}</span>
+                <span className="p-metodo-nome">{e.titulo}</span>
+                <p className="p-corpo p-metodo-corpo">{e.corpo}</p>
+              </li>
+            ))}
+          </ul>
+          <p className="p-marca p-metodo-pe" style={{ color: "var(--p-quieto)" }}>
+            {FERRAMENTAS.join(" · ")}
+          </p>
         </div>
       </section>
 
-      {/* ─ 3. A RÉGUA DA TRAJETÓRIA ──────────────────────────────────────
-          Os quatro números numa linha só, com fio: é a tabela de registros do
-          sistema, não quatro manchetes. Dado se lê comparando — em coluna, cada
-          um vira um cartaz isolado e a comparação se perde. */}
-      <section ref={folhaNumeros} className="p-folha-sec p-branco grid grid-cols-4 max-md:grid-cols-2" style={{ columnGap: "var(--p-gap-x)" }}>
-        {NUMEROS.map((n) => (
-          <div key={n.rotulo} className="p-sobe pt-4">
-            <p className="p-numero">{n.valor}</p>
-            <p className="p-marca pt-1" style={{ color: "var(--p-quieto)" }}>
-              {n.rotulo}
-            </p>
-          </div>
-        ))}
-      </section>
-
-      {/* ─ 4. OS SERVIÇOS, EM TINTA ─────────────────────────────────────
+      {/* ─ 3. OS SERVIÇOS, EM TINTA ─────────────────────────────────────
           ⭐ "essa section tem que brilhar os olhos" — e o que brilha nesta
           direção é SUPERFÍCIE, não efeito: o bloco de serviços sangra de borda
-          a borda em tinta, e é a única troca de superfície DENTRO de uma
-          página no site inteiro. Depois de duas telas de papel, ele acende.
-
+          a borda em tinta. Depois do método em papel, ele acende.
           A anatomia é a linha de recibo: nome e preço nos cantos opostos, o
           escopo miúdo embaixo. Preço é a informação que a pessoa veio buscar e
           não pode estar em corpo de rodapé.
-
           ⚠ Só o Essential tem preço — é o que ele publica no Behance (US$
           2.500). Os outros dois seguem "On request" porque preço é fato do
           cliente e não se inventa. */}
@@ -195,34 +193,81 @@ export default function AboutV2() {
         </div>
       </section>
 
-      {/* ─ 5. O MÉTODO ───────────────────────────────────────────────────
-          As cinco etapas na anatomia da tabela da /work: índice, título, corpo.
-          É a mesma régua aplicada a outro conteúdo, que é o que faz um sistema
-          em vez de uma coleção de páginas. */}
-      <section ref={folhaMetodo} className="p-folha-sec p-papel grid grid-cols-12 pb-8" style={{ columnGap: "var(--p-gap-x)" }}>
-        <p className="p-secao-indice p-sobe col-span-12">
-          <span>04</span>
-          <span className="p-rotulo">Method — {String(PROCESSO.length).padStart(2, "0")}</span>
-        </p>
-        <p className="p-corpo col-span-5 max-w-[46ch] pb-10 max-lg:col-span-12">{PROCESSO_MANCHETE}</p>
-
-        <ul className="col-span-12">
-          {PROCESSO.map((e, i) => (
-            <li
-              key={e.titulo}
-              className="p-fio p-sobe grid items-baseline py-5 max-md:grid-cols-1"
-              style={{ gridTemplateColumns: ".4fr 1.2fr 2.4fr", columnGap: "var(--p-gap-x)" }}
-            >
-              <span className="p-marca" style={{ color: "var(--p-quieto)" }}>
-                {String(i + 1).padStart(2, "0")}
+      {/* ─ 4. A PROVA, EM BRANCO ─────────────────────────────────────────
+          "vamos eliminar os big number e focar nas conquistas de prêmios"
+          (19/08). É a ordem que nunca tinha chegado à página no ar. O centro
+          agora é ONDE O TRABALHO FOI PUBLICADO: os veículos em escala extrema
+          atravessando a tela — o gesto que a régua do uau pede — e por baixo as
+          cinco matérias em tabela, na anatomia de registro do sistema.
+          ⚠ Superfície BRANCA, a terceira da página: depois da tinta, o branco
+          absoluto é o que faz a prova ler como outro capítulo e não como
+          continuação dos serviços. */}
+      <section ref={folhaProva} className="p-folha-sec p-branco p-prova">
+        <div style={{ paddingInline: "var(--p-margem)" }}>
+          <p className="p-secao-indice p-sobe">
+            <span>04</span>
+            <span className="p-rotulo">Published — {String(RECONHECIMENTO.length).padStart(2, "0")}</span>
+          </p>
+          <p className="p-prova-nomes p-sobe">
+            {veiculos.map((v, i) => (
+              <span key={v}>
+                <span className="p-faixa-nome">{v}</span>
+                {i < veiculos.length - 1 && <span className="p-faixa-ponto"> · </span>}
               </span>
-              <span className="p-item">{e.titulo}</span>
-              <p className="p-corpo max-w-[64ch]" style={{ color: "var(--p-quieto)" }}>
-                {e.corpo}
-              </p>
-            </li>
+            ))}
+          </p>
+          <ul className="p-prova-tabela">
+            {RECONHECIMENTO.map((r, i) => (
+              <li key={i} className="p-fio p-sobe p-prova-linha">
+                <span className="p-item">{r.projeto}</span>
+                <span className="p-corpo">{r.veiculo}</span>
+                <span className="p-corpo p-prova-titulo" style={{ color: "var(--p-quieto)" }}>
+                  {r.href ? (
+                    <a href={r.href} target="_blank" rel="noopener noreferrer" className="p-link">
+                      {r.titulo}
+                    </a>
+                  ) : (
+                    r.titulo
+                  )}
+                </span>
+                <span className="p-marca p-prova-ano" style={{ color: "var(--p-quieto)" }}>
+                  {r.ano}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* ─ 5. AS PEÇAS, EM SANGRIA ───────────────────────────────────────
+          A about de um brand designer sem uma peça é um currículo. A faixa
+          começa na margem da prancha e SANGRA pela direita, com altura fixa e
+          largura livre por capa: é a única forma de manter a altura sem
+          recortar nenhuma. Rola na horizontal; a página não cresce. */}
+      <section ref={folhaPecas} className="p-folha-sec p-papel p-pecas">
+        <p className="p-secao-indice p-sobe" style={{ paddingInline: "var(--p-margem)" }}>
+          <span>05</span>
+          <span className="p-rotulo">Selected — {String(WORK.length).padStart(2, "0")}</span>
+        </p>
+        <div className="p-pecas-faixa p-sobe">
+          {WORK.map((w) => (
+            <a key={w.slug} href={`/work/${w.slug}`} className="p-pecas-item">
+              <img
+                src={w.cover.src}
+                srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
+                sizes="46vw"
+                alt={w.cover.alt}
+                loading="lazy"
+                decoding="async"
+                draggable={false}
+              />
+              <span className="p-marca p-pecas-legenda">
+                <span>{w.title}</span>
+                <span style={{ color: "var(--p-quieto)" }}>{w.year}</span>
+              </span>
+            </a>
           ))}
-        </ul>
+        </div>
       </section>
     </Prancha>
   );
