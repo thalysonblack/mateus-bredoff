@@ -21,6 +21,7 @@ import AboutH from "./v2/AboutH";
 import AboutI from "./v2/AboutI";
 import AboutJ from "./v2/AboutJ";
 import AboutK from "./v2/AboutK";
+import AboutL from "./v2/AboutL";
 import PranchaWork from "./v2/Work";
 import PranchaCase from "./v2/Case";
 import PranchaLab from "./v2/Lab";
@@ -269,6 +270,9 @@ export default function App() {
           <Route path="/v2/about-i" element={<AboutI />} />
           <Route path="/v2/about-j" element={<AboutJ />} />
           <Route path="/v2/about-k" element={<AboutK />} />
+          {/* 12/09 — "não gostei" nas três; a resposta desenhada foi MOVIMENTO
+              COMO PROTAGONISTA. O visor fluido da home em tela cheia. */}
+          <Route path="/v2/about-l" element={<AboutL />} />
           {/* a mesma about com as outras duas mecânicas de serviços */}
           <Route path="/v2/about-c-fita" element={<AboutC servicos="fita" />} />
           <Route path="/v2/about-c-cortina" element={<AboutC servicos="cortina" />} />
