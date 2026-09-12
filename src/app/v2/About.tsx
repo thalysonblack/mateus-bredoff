@@ -1,6 +1,8 @@
 import retrato from "../../assets/optimized/hero-portrait-1600.webp";
 import retrato2x from "../../assets/optimized/hero-portrait-3200.webp";
 import { TIERS } from "../sections/Pricing";
+import { useEffect, useRef, useState } from "react";
+import { gsap, ScrollTrigger } from "../../lib/gsap";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { useRevelar } from "./useRevelar";
 import { Prancha } from "./sistema";
@@ -33,6 +35,62 @@ export default function AboutV2() {
      anterior. Um gatilho único revelaria tudo na primeira rolagem, e as folhas
      de baixo chegariam já prontas — o gesto some. */
   const folhaMetodo = useRevelar<HTMLElement>();
+  /* ⭐ O ÍNDICE QUE ATRAVESSA. "não ficar muito blocado" (12/09): cinco folhas
+     com a mesma anatomia — fio no topo, "0X RÓTULO" no mesmo canto — liam como
+     cinco caixas. O numeral sai de dentro de cada folha e vira UM elemento fixo
+     no canto, que troca quando a folha seguinte chega: o mesmo índice cruzando
+     todas as fronteiras é o que faz a página ler como um documento contínuo, e
+     não como blocos. Régua do uau: um elemento cruzando a fronteira. */
+  const [folhaAtual, setFolhaAtual] = useState(0);
+  const trilho = useRef<HTMLDivElement | null>(null);
+  const percurso = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const folhas = [...document.querySelectorAll<HTMLElement>("[data-folha]")];
+    if (!folhas.length) return;
+    const io = new IntersectionObserver(
+      (es) =>
+        es.forEach((e) => {
+          /* `data-folha` é 1-based (é o número que a página mostra); o estado é
+             o índice do array de rótulos — medido: sem o −1 a capa dizia "02" */
+          if (e.isIntersecting) setFolhaAtual(Number((e.target as HTMLElement).dataset.folha) - 1);
+        }),
+      { rootMargin: "-40% 0px -55% 0px", threshold: 0 },
+    );
+    folhas.forEach((f) => io.observe(f));
+    return () => io.disconnect();
+  }, []);
+  /* ⭐ O MÉTODO CORRE NA HORIZONTAL COM A SEÇÃO PRESA — o gesto que consertou o
+     miolo em 18/08 e que a lista vertical de 11/09 tinha desfeito. A folha ganha
+     percurso (altura de tela + o comprimento do trilho) e fica grudada; o scroll
+     que atravessa esse percurso move as cinco etapas lateralmente. `scrub` com
+     número, nunca `true` — é o atraso que dá peso. Sem pin: pin sequestra a
+     rolagem. O Lenis já alimenta o ScrollTrigger (`lib/lenis.ts`). */
+  useEffect(() => {
+    const t = trilho.current;
+    const sec = percurso.current;
+    if (!t || !sec) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const dist = () => Math.max(0, t.scrollWidth - t.clientWidth);
+    const tween = gsap.fromTo(
+      t,
+      { x: 0 },
+      {
+        x: () => -dist(),
+        ease: "none",
+        scrollTrigger: {
+          trigger: sec,
+          start: "top top",
+          end: () => `+=${dist()}`,
+          scrub: 0.6,
+          invalidateOnRefresh: true,
+        },
+      },
+    );
+    return () => {
+      tween.scrollTrigger?.kill();
+      tween.kill();
+    };
+  }, []);
   const folhaServicos = useRevelar<HTMLElement>();
   const folhaProva = useRevelar<HTMLElement>();
   const folhaPecas = useRevelar<HTMLElement>();
@@ -74,20 +132,25 @@ export default function AboutV2() {
 
           O manifesto fica no alto, ancorado no topo da foto: as duas coisas que
           apresentam a pessoa começam na mesma linha. */}
-      <section className="p-folha-sec p-papel p-capa">
+      {/* ⭐ "a hero que gosto dela, full" (12/09). A mesma capa — retrato +
+          manifesto — mas cobrindo a viewport inteira, com o header da Prancha
+          e o manifesto flutuando POR CIMA da foto, como no visor. O retrato
+          deixa de ser uma coluna de 5 e vira a superfície; o manifesto desce
+          para a base, sobre véu, onde a foto é escura e ele lê. */}
+      <section className="p-folha-sec p-papel p-capa p-capa-full" data-folha="1">
         <figure className="p-retrato">
           <img
             src={retrato}
             srcSet={`${retrato} 1600w, ${retrato2x} 3200w`}
-            sizes="(max-width: 1024px) 100vw, 40vw"
+            sizes="100vw"
             alt="Mateus Bredoff"
             width={1600}
             height={850}
+            fetchpriority="high"
             decoding="async"
             draggable={false}
           />
         </figure>
-
         <div className="p-capa-texto">
           <p className="p-manifesto">{LEAD[0]}</p>
           <p className="p-marca p-capa-pe">
@@ -97,6 +160,13 @@ export default function AboutV2() {
         </div>
       </section>
 
+      {/* o índice que atravessa: um só, fixo no canto, trocando por folha */}
+      <p className="p-secao-indice p-indice-vivo" aria-hidden="true">
+        <span>{String(folhaAtual + 1).padStart(2, "0")}</span>
+        <span className="p-rotulo">
+          {["About", "Method", "Services", "Published", "Selected"][folhaAtual] ?? ""}
+        </span>
+      </p>
       {/* ══ O MIOLO, REFEITO EM 11/09/2026 — "princípios de design mesmo" ════
           Diagnóstico medido antes de mexer: a capa era o ÚNICO momento da
           página. Da segunda tela ao rodapé tudo caía para 13/9,5/8,5px em
@@ -126,25 +196,34 @@ export default function AboutV2() {
           em corpo de item e o texto em coluna de leitura. A manchete de
           abertura sobe para o display: é a mesma anatomia dos serviços, então
           método e serviços leem como duas partes de um só documento. */}
-      <section ref={folhaMetodo} className="p-folha-sec p-papel p-metodo">
-        <div style={{ paddingInline: "var(--p-margem)" }}>
-          <p className="p-secao-indice p-sobe">
-            <span>02</span>
-            <span className="p-rotulo">Method — {String(PROCESSO.length).padStart(2, "0")}</span>
-          </p>
-          <p className="p-servico-nome p-sobe p-metodo-manchete">{PROCESSO_MANCHETE}</p>
-          <ul>
+      <section
+        ref={(el) => {
+          (folhaMetodo as React.MutableRefObject<HTMLElement | null>).current = el;
+          percurso.current = el;
+        }}
+        className="p-folha-sec p-papel p-metodo p-metodo-trilho"
+        data-folha="2"
+      >
+        <div className="p-metodo-fixo">
+          <div style={{ paddingInline: "var(--p-margem)" }}>
+            <p className="p-servico-nome p-sobe p-metodo-manchete">{PROCESSO_MANCHETE}</p>
+          </div>
+          {/* o trilho: as cinco etapas lado a lado, cada uma uma tela de 62vw;
+              o scroll as move. Sem fio entre elas — o vão é o separador */}
+          <div className="p-trilho" ref={trilho}>
             {PROCESSO.map((e, i) => (
-              <li key={e.titulo} className="p-fio p-sobe p-metodo-linha">
+              <article key={e.titulo} className="p-trilho-etapa">
                 <span className="p-metodo-n">{String(i + 1).padStart(2, "0")}</span>
                 <span className="p-metodo-nome">{e.titulo}</span>
                 <p className="p-corpo p-metodo-corpo">{e.corpo}</p>
-              </li>
+              </article>
             ))}
-          </ul>
-          <p className="p-marca p-metodo-pe" style={{ color: "var(--p-quieto)" }}>
-            {FERRAMENTAS.join(" · ")}
-          </p>
+            <article className="p-trilho-etapa p-trilho-fim">
+              <span className="p-metodo-n" style={{ color: "var(--p-quieto)" }}>—</span>
+              <span className="p-metodo-nome">Tools</span>
+              <p className="p-corpo p-metodo-corpo">{FERRAMENTAS.join(" · ")}</p>
+            </article>
+          </div>
         </div>
       </section>
 
@@ -158,12 +237,8 @@ export default function AboutV2() {
           ⚠ Só o Essential tem preço — é o que ele publica no Behance (US$
           2.500). Os outros dois seguem "On request" porque preço é fato do
           cliente e não se inventa. */}
-      <section ref={folhaServicos} className="p-folha-sec p-tinta p-servicos">
+      <section ref={folhaServicos} className="p-folha-sec p-tinta p-servicos" data-folha="3">
         <div style={{ paddingInline: "var(--p-margem)" }}>
-          <p className="p-secao-indice p-sobe">
-            <span>03</span>
-            <span className="p-rotulo">Services — {String(TIERS.length).padStart(2, "0")}</span>
-          </p>
           <ul>
             {TIERS.map((t, i) => (
               <li key={t.name} className="p-fio p-servico p-sobe">
@@ -202,12 +277,8 @@ export default function AboutV2() {
           ⚠ Superfície BRANCA, a terceira da página: depois da tinta, o branco
           absoluto é o que faz a prova ler como outro capítulo e não como
           continuação dos serviços. */}
-      <section ref={folhaProva} className="p-folha-sec p-branco p-prova">
+      <section ref={folhaProva} className="p-folha-sec p-papel p-prova" data-folha="4">
         <div style={{ paddingInline: "var(--p-margem)" }}>
-          <p className="p-secao-indice p-sobe">
-            <span>04</span>
-            <span className="p-rotulo">Published — {String(RECONHECIMENTO.length).padStart(2, "0")}</span>
-          </p>
           <p className="p-prova-nomes p-sobe">
             {veiculos.map((v, i) => (
               <span key={v}>
@@ -244,11 +315,7 @@ export default function AboutV2() {
           começa na margem da prancha e SANGRA pela direita, com altura fixa e
           largura livre por capa: é a única forma de manter a altura sem
           recortar nenhuma. Rola na horizontal; a página não cresce. */}
-      <section ref={folhaPecas} className="p-folha-sec p-papel p-pecas">
-        <p className="p-secao-indice p-sobe" style={{ paddingInline: "var(--p-margem)" }}>
-          <span>05</span>
-          <span className="p-rotulo">Selected — {String(WORK.length).padStart(2, "0")}</span>
-        </p>
+      <section ref={folhaPecas} className="p-folha-sec p-papel p-pecas" data-folha="5">
         <div className="p-pecas-faixa p-sobe">
           {WORK.map((w) => (
             <a key={w.slug} href={`/work/${w.slug}`} className="p-pecas-item">

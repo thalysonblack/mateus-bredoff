@@ -3091,3 +3091,157 @@ a.pz-materia:hover { color: var(--p-acento); }
   .p-visorpg-hud { max-width: none; right: var(--p-margem); bottom: calc(var(--p-margem-y) + 30px + 14px); }
   .p-visorpg-conta { display: none; }
 }
+
+/* ══ ABOUT (raiz) — "não ficar muito blocado" + "a hero full" (12/09) ══════
+   Três gestos: a capa cobre a viewport com o header por cima; o método corre
+   na horizontal com a folha presa; um índice só atravessa todas as folhas. E
+   dois cortes: os fios de topo saem, e a prova volta ao papel — a tinta dos
+   serviços fica sendo a ÚNICA troca de superfície da página. */
+
+/* nesta about, as folhas não desenham o fio de topo: cinco fios iguais eram a
+   "caixa" de cada bloco. A aresta da folha que sobe já é a fronteira. */
+.p-tela:has(.p-capa-full) .p-folha-sec { border-top: 0; }
+
+/* ── a capa full ────────────────────────────────────────────────────────── */
+.p-capa-full {
+  display: block;
+  position: sticky;
+  top: 0;
+  /* ⚠ começa em y=0, POR BAIXO do header da Prancha: desfaz o padding-block
+     do wrapper (margem-y) e a altura do header (18px em 1440). O header é
+     `relative z-10` e continua por cima. */
+  margin-top: calc(-1 * (var(--p-margem-y) + 18px));
+  height: 100svh;
+  padding: 0;
+  overflow: hidden;
+}
+.p-capa-full > .p-retrato {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  height: auto;
+}
+.p-capa-full > .p-retrato img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 22%;
+}
+/* o véu: só na base e à direita, onde o manifesto vive — a foto é clara do
+   lado direito, e texto sobre ela sem campo não lê */
+.p-capa-full::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(20, 32, 31, 0.84) 0%, rgba(20, 32, 31, 0.5) 30%, transparent 58%),
+    linear-gradient(to left, rgba(20, 32, 31, 0.36), transparent 50%);
+  pointer-events: none;
+}
+.p-capa-full > .p-capa-texto {
+  position: absolute;
+  z-index: 2;
+  left: var(--p-margem);
+  right: var(--p-margem);
+  bottom: calc(var(--p-margem-y) + 12px);
+  height: auto;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--p-gap-x);
+  color: #eceae5;
+  padding: 0;
+}
+.p-capa-full .p-manifesto {
+  grid-column: 6 / span 7;
+  font-size: clamp(26px, 3.1vw, 46px);
+  line-height: 1.04;
+  margin: 0 0 22px;
+}
+.p-capa-full .p-capa-pe {
+  grid-column: 1 / span 12;
+  border-top: 1px solid rgba(236, 234, 229, 0.22);
+  padding-top: 12px;
+  color: rgba(236, 234, 229, 0.72);
+}
+@media (max-width: 860px) {
+  .p-capa-full { margin-top: calc(-1 * (var(--p-margem-y) + 62px)); }
+  .p-capa-full .p-manifesto { grid-column: 1 / span 12; font-size: clamp(22px, 5.6vw, 30px); }
+}
+
+/* ── o índice que atravessa ─────────────────────────────────────────────── */
+.p-indice-vivo {
+  position: fixed;
+  z-index: 8;
+  left: var(--p-margem);
+  top: calc(var(--p-margem-y) + 18px + 26px);
+  margin: 0;
+  pointer-events: none;
+  /* a cor troca com a superfície por baixo: sobre a tinta ele clareia */
+  color: var(--p-ink);
+  mix-blend-mode: difference;
+  filter: invert(1);
+}
+@media (max-width: 860px) { .p-indice-vivo { display: none; } }
+
+/* ── o método em trilho, com a folha presa ──────────────────────────────── */
+.p-metodo-trilho {
+  /* o percurso: uma tela + o que o trilho precisa andar. O ScrollTrigger
+     mede o trilho de verdade (`scrollWidth − clientWidth`); esta altura só
+     garante que a folha seguinte não chega antes do fim do gesto. */
+  height: calc(100svh + 62vw * 4);
+  padding: 0;
+}
+.p-metodo-fixo {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(40px, 6vh, 72px);
+  overflow: hidden;
+}
+.p-metodo-trilho .p-metodo-manchete { padding: 0; max-width: 24ch; }
+.p-trilho {
+  display: flex;
+  gap: clamp(32px, 4vw, 72px);
+  padding-inline: var(--p-margem);
+  will-change: transform;
+}
+.p-trilho-etapa {
+  flex: 0 0 62vw;
+  max-width: 720px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 2fr);
+  column-gap: var(--p-gap-x);
+  align-items: baseline;
+  padding-top: 22px;
+  border-top: 1px solid var(--p-fio);
+}
+.p-trilho-etapa .p-metodo-corpo { grid-column: 2; }
+.p-trilho-fim { flex-basis: 40vw; }
+@media (max-width: 860px) {
+  /* no celular o trilho vira a lista de antes: dispersão horizontal em 390px
+     é ruído, e sticky de tela inteira com texto não cabe */
+  .p-metodo-trilho { height: auto; padding: 40px 0 56px; }
+  .p-metodo-fixo { position: static; height: auto; overflow: visible; gap: 32px; }
+  .p-trilho { flex-direction: column; transform: none !important; gap: 0; }
+  .p-trilho-etapa { flex-basis: auto; max-width: none; grid-template-columns: 2.4rem minmax(0, 1fr); padding: 22px 0; }
+  .p-trilho-etapa .p-metodo-corpo { grid-column: 2; }
+}
+
+/* ⚠ medido na captura: o header da Prancha é tinta (superfície papel) e ficou
+   quase invisível sobre o topo escuro do retrato full. Ele rola junto com a
+   capa — enquanto existe, está sobre ela — então nesta about ele é creme. */
+.p-tela:has(.p-capa-full) > div > header,
+.p-tela:has(.p-capa-full) > div > header a,
+.p-tela:has(.p-capa-full) > div > header p { color: #eceae5; }
+.p-tela:has(.p-capa-full) > div > header i { background: #34a1cb !important; }
+
+/* ⚠ o `.p-secao-indice` desenha um fio depois do rótulo (é o traço de abertura
+   de cada seção). No índice VIVO, fixo e em `difference`, esse fio cortava a
+   tela inteira em todas as folhas — ruído. Aqui ele é só numeral + rótulo. */
+.p-indice-vivo::before,
+.p-indice-vivo::after { display: none; content: none; }
+.p-indice-vivo { border: 0; background: none; width: auto; }
+.p-indice-vivo > * { border: 0; background: none; flex: 0 0 auto; }
