@@ -48,10 +48,10 @@ function Navegacao() {
   const { pathname } = useLocation();
   /* ⭐ o print dele (12/09): WORK · ABOUT · CONTACT empilhados à direita, em
      caixa alta, com um ■ ao lado do item ativo. Contact entra como item da
-     lista — é um link, não um campo. O Index não está na lista porque a marca
-     no canto oposto já leva para a home. */
+     lista — é um link, não um campo. "No menu adicionar Index" (12/09): a home
+     entra como primeiro item, com o mesmo ■ quando é a página atual. */
   const itens = [
-    ...PRANCHAS.filter((p) => p.to !== "/").map((p) => ({ nome: p.nome, to: p.to, href: undefined as string | undefined })),
+    ...PRANCHAS.map((p) => ({ nome: p.nome, to: p.to, href: undefined as string | undefined })),
     { nome: "Contact", to: "", href: "mailto:hello@mateusbredoff.com" },
   ];
   return (
