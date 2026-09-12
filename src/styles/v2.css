@@ -3132,11 +3132,7 @@ a.pz-materia:hover { color: var(--p-acento); }
   gap: 3px;
   font-family: 'Geist', ui-sans-serif, sans-serif;
   font-weight: 500;
-  /* "ajustar tamanho da fonte do menu para fazer sentido com o site" (12/09):
-     o node dizia 15px, mas o corpo do site é 13px e os rótulos 8,5–9,5 —
-     15 deixava o menu como o único texto acima do corpo fora dos títulos.
-     O menu entra no token do corpo. */
-  font-size: var(--p-corpo);
+  font-size: 15px;
   line-height: 1.09;
   letter-spacing: -0.03em;
   color: #e9e3e1;
@@ -3253,7 +3249,11 @@ a.pz-materia:hover { color: var(--p-acento); }
   align-items: start;
   font-family: 'Geist', ui-sans-serif, sans-serif;
   font-weight: 500;
-  font-size: 15px;
+  /* "ajustar tamanho da fonte do menu para fazer sentido com o site" (12/09):
+     o node dizia 15px, mas o corpo do site é 13px e os rótulos 8,5–9,5 —
+     15 deixava o menu como o único texto acima do corpo fora dos títulos.
+     O menu entra no token do corpo. */
+  font-size: var(--p-corpo);
   line-height: 1.09;
   letter-spacing: -0.03em;
   /* ⚠ "em fundo claro fica preto": o default é a tinta do sistema, sólida.
