@@ -165,23 +165,9 @@ export default function AboutV2() {
             draggable={false}
           />
         </figure>
-        <div className="p-hero-fichas" aria-hidden="true">
-          <p>
-            <span>Brazil based</span>
-            <span>Working globally</span>
-          </p>
-          <p>
-            <span>{hora} BRT</span>
-            <span>{new Date().toLocaleDateString("en-GB")}</span>
-          </p>
-          <p>
-            <span>Currently</span>
-            <span>Available for work</span>
-          </p>
-          <p className="p-hero-fichas-fim">
-            <a href="mailto:hello@mateusbredoff.com">Contact</a>
-          </p>
-        </div>
+        {/* as fichas que ficavam aqui saíram: o menu geral passou a ser a barra
+            do node (mesmo estilo, mesma informação) — repetir 30px abaixo era
+            dizer a mesma coisa duas vezes. */}
         <p className="p-hero-marca p-hero-marca--esq">
           Mateus
           <br />

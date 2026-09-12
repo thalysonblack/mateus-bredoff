@@ -47,23 +47,33 @@ export function useHora(tz = "America/Sao_Paulo") {
 /** navegação: as pranchas separadas por vírgula, a atual em tinta cheia */
 function Navegacao() {
   const { pathname } = useLocation();
+  /* ⭐ o print dele (12/09): WORK · ABOUT · CONTACT empilhados à direita, em
+     caixa alta, com um ■ ao lado do item ativo. Contact entra como item da
+     lista — é um link, não um campo. O Index não está na lista porque a marca
+     no canto oposto já leva para a home. */
+  const itens = [
+    ...PRANCHAS.filter((p) => p.to !== "/").map((p) => ({ nome: p.nome, to: p.to, href: undefined as string | undefined })),
+    { nome: "Contact", to: "", href: "mailto:hello@mateusbredoff.com" },
+  ];
   return (
-    <nav className="p-corpo flex flex-wrap items-baseline gap-x-1">
-      {PRANCHAS.map((p, i) => {
-        const atual = pathname === p.to || (p.to !== "/" && pathname.startsWith(p.to));
-        return (
-          <span key={p.to}>
-            <Link
-              to={p.to}
-              className="p-link"
-              style={{ color: atual ? "inherit" : "var(--p-quieto)" }}
-            >
-              {p.nome}
-            </Link>
-            {i < PRANCHAS.length - 1 ? (
-              <span style={{ color: "var(--p-quieto)" }}>,</span>
-            ) : null}
-          </span>
+    <nav className="p-menu-nav" aria-label="Site">
+      {itens.map((p) => {
+        const atual = !!p.to && (pathname === p.to || pathname.startsWith(p.to + "/"));
+        const miolo = (
+          <>
+            {p.nome}
+            {/* o ■ do ativo: o mesmo quadrado que o sistema já usa; some nos outros */}
+            <i aria-hidden="true" className="p-menu-ponto" style={{ visibility: atual ? "visible" : "hidden" }} />
+          </>
+        );
+        return p.href ? (
+          <a key={p.nome} href={p.href} className="p-link">
+            {miolo}
+          </a>
+        ) : (
+          <Link key={p.nome} to={p.to} className="p-link" aria-current={atual ? "page" : undefined}>
+            {miolo}
+          </Link>
         );
       })}
     </nav>
@@ -130,31 +140,29 @@ export function Prancha({
         {/* ⚠ `relative z-10`: quando uma rota abre com hero em FULL VIEWPORT, ela
             sobe por baixo do cabeçalho (margem negativa) e o engoliria — a
             navegação tem de continuar por cima, como na referência dele. */}
-        <header
-          className="relative z-10 grid grid-cols-12 items-baseline max-md:flex max-md:flex-col max-md:gap-2"
-          style={{ columnGap: "var(--p-gap-x)" }}
-        >
-          <Link to="/v2" className="p-corpo p-link col-span-4">
-            Mateus Bredoff
-          </Link>
-          <div className="col-span-4 col-start-6 max-md:col-span-12">
-            <Navegacao />
+        {/* ⭐ O MENU GERAL, no estilo do node 630:1721 (12/09): quatro campos de
+            duas linhas em Geist Medium 15px — a barra do topo da home original
+            dele. Primeira linha acesa, segunda a 50%. Adaptado ao lugar: a
+            barra do node diz local · hora · disponível · contato; o menu diz
+            marca+ofício · nav+página atual · hora+disponível · contato.
+            A cor obedece à superfície (ver `.p-menu` no CSS): tinta sólida no
+            papel e no branco; branco em `difference` na tinta e sobre foto. */}
+        <header className="p-menu relative z-10">
+          <div className="p-menu-campo">
+            <Link to="/" className="p-link">
+              Mateus Bredoff
+            </Link>
+            <span>Brand designer &amp; art director</span>
           </div>
-          <p
-            className="p-marca col-span-3 col-start-10 flex items-center justify-end gap-2"
-            style={{ color: "var(--p-quieto)" }}
-          >
-            {status ? (
-              <>
-                <i
-                  aria-hidden="true"
-                  className="inline-block h-[7px] w-[7px]"
-                  style={{ background: "var(--p-acento)" }}
-                />
-                {status}
-              </>
-            ) : null}
-          </p>
+          <div className="p-menu-campo">
+            <span>{hora} BRT</span>
+            <span>{new Date().toLocaleDateString("en-GB")}</span>
+          </div>
+          <div className="p-menu-campo">
+            <span>Currently</span>
+            <span>{status ?? "Available for work"}</span>
+          </div>
+          <Navegacao />
         </header>
 
         {/* ⚠ `flex flex-col` no main, e não só `flex-1`: o wrapper da prancha

@@ -3209,10 +3209,7 @@ a.pz-materia:hover { color: var(--p-acento); }
 /* ⚠ medido na captura: o header da Prancha é tinta (superfície papel) e ficou
    quase invisível sobre o topo escuro do retrato full. Ele rola junto com a
    capa — enquanto existe, está sobre ela — então nesta about ele é creme. */
-.p-tela:has(.p-capa-full) > div > header,
-.p-tela:has(.p-capa-full) > div > header a,
-.p-tela:has(.p-capa-full) > div > header p { color: #eceae5; }
-.p-tela:has(.p-capa-full) > div > header i { background: #34a1cb !important; }
+/* (a regra do header creme sobre a hero saiu: o `.p-menu` em difference a substitui) */
 
 /* ⚠ o `.p-secao-indice` desenha um fio depois do rótulo (é o traço de abertura
    de cada seção). No índice VIVO, fixo e em `difference`, esse fio cortava a
@@ -3259,4 +3256,89 @@ a.pz-materia:hover { color: var(--p-acento); }
 }
 @media (prefers-reduced-motion: reduce) {
   .p-hero-fichas { animation: none; }
+}
+
+/* ══ O MENU GERAL — o estilo do node 630:1721 (12/09/2026) ═════════════════
+   Quatro campos de duas linhas, Geist Medium 15px, entrelinha 1,09, tracking
+   −0,03em. Primeira linha acesa, segunda a 50%. Distribuição do node em 1920:
+   x = 14 · 530 · 1083 · direita → colunas 0 · 27,6% · 56,4% · fim. */
+.p-menu {
+  display: grid;
+  grid-template-columns: 27.6% 28.8% minmax(0, 1fr) auto;
+  column-gap: 16px;
+  align-items: start;
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 1.09;
+  letter-spacing: -0.03em;
+  /* ⚠ "em fundo claro fica preto": o default é a tinta do sistema, sólida.
+     Sem blend aqui — difference sobre papel devolve cores que não existem. */
+  color: var(--p-ink);
+}
+.p-menu-campo { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.p-menu-campo > span:last-child,
+.p-menu-campo > nav + span { color: var(--p-quieto); font-weight: 300; }
+.p-menu-campo a { color: inherit; text-decoration: none; }
+.p-menu-fim { align-items: flex-end; text-align: right; }
+.p-menu .p-link { color: inherit; }
+
+/* ⚠ "em fundo escuro usa blending mode difference": na TINTA e sobre a HERO
+   (foto) o menu é branco em `difference`. Blend resolve sobre foto e sobre
+   campo escuro uniforme; o que ele não resolve é campo chapado SATURADO — e
+   nenhuma superfície do sistema é. O `.p-quieto` da segunda linha vira
+   branco a 50% para o blend compor certo. */
+.p-tinta > div > .p-menu,
+.p-tela:has(.p-capa-full) > div > .p-menu {
+  color: #ffffff;
+  mix-blend-mode: difference;
+}
+.p-tinta > div > .p-menu .p-menu-campo > span:last-child,
+.p-tinta > div > .p-menu .p-menu-campo > nav + span,
+.p-tela:has(.p-capa-full) > div > .p-menu .p-menu-campo > span:last-child,
+.p-tela:has(.p-capa-full) > div > .p-menu .p-menu-campo > nav + span { color: rgba(255, 255, 255, 0.5); }
+
+@media (max-width: 860px) {
+  .p-menu { grid-template-columns: 1fr 1fr; row-gap: 12px; font-size: 14px; }
+  .p-menu-fim { align-items: flex-start; text-align: left; }
+}
+
+/* ── a nav do menu: vertical, à direita, caixa alta, ■ no ativo (o print) ── */
+.p-menu-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  text-transform: uppercase;
+  justify-self: end;
+}
+.p-menu-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.p-menu-nav a:not([aria-current]) { color: var(--p-quieto); }
+.p-menu-nav a:hover { color: inherit; }
+/* o quadrado do ativo: 7px, na cor do texto, à direita do item — como no print */
+.p-menu-ponto { display: inline-block; width: 7px; height: 7px; background: currentColor; }
+.p-tinta > div > .p-menu .p-menu-nav a:not([aria-current]),
+.p-tela:has(.p-capa-full) > div > .p-menu .p-menu-nav a:not([aria-current]) { color: rgba(255, 255, 255, 0.5); }
+.p-tinta > div > .p-menu .p-menu-nav a[aria-current],
+.p-tela:has(.p-capa-full) > div > .p-menu .p-menu-nav a[aria-current],
+.p-tinta > div > .p-menu .p-menu-nav a:hover,
+.p-tela:has(.p-capa-full) > div > .p-menu .p-menu-nav a:hover { color: #ffffff; }
+@media (max-width: 860px) {
+  .p-menu-nav { grid-column: 2; grid-row: 1 / span 2; }
+}
+
+/* ⚠ medido em 390: a regra de 4 colunas escrita DEPOIS da media query vencia
+   por cascata — 100/104/0/110px, nav a 266px da borda. A de 2 colunas é
+   reafirmada aqui, no fim, para ganhar. */
+@media (max-width: 860px) {
+  .p-menu { grid-template-columns: 1fr 1fr; }
+  .p-menu-nav { grid-column: 2; grid-row: 1 / span 3; align-items: flex-end; }
+  .p-menu-fim { display: none; }
 }
