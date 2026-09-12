@@ -16,7 +16,7 @@ como visor" (a V3), foi inteira para `/arquivo/visor/*` e não é mais o alvo.
 /about             PranchaAbout           camadas — folhas sobrepostas
 /work              PranchaWork
 /work/:slug        PranchaCase            um componente para TODOS os cases
-/lab               PranchaLab
+/lab               —                      REMOVIDO do site em 12/09/2026 (ordem dele); /v2/lab e /v4/lab ficam como estúdio
 /v2/*              —                      partidos de home (a…i) e as 8 abouts
 /arquivo/*         —                      direções descartadas, montáveis para comparar
 ```
