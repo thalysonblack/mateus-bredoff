@@ -11,8 +11,13 @@ import { useEffect, useRef } from "react";
  * transforma rolagem para cima em espetáculo, e quem rola de volta está
  * procurando algo — não quer assistir de novo.
  *
- * O limiar é 0,18: com 0,5 o bloco de uma tela inteira só acende quando já
- * está na metade da viewport, e o reveal acontece atrás do olho.
+ * ⚠ O limiar é ZERO e a margem faz o trabalho (12/09/2026). Antes era
+ * `threshold: 0.18` — uma FRAÇÃO DO BLOCO — e a folha do trilho do método
+ * (100svh + 62vw × 4 ≈ 5,5 telas) nunca chegou a ter 18% de si na tela: a
+ * manchete ficou em `opacity: 0` para sempre ("faltou título da section").
+ * `threshold: 0` + `rootMargin` de -15% na base diz "acende quando o topo do
+ * bloco passa 15% acima da base da viewport" — independe da altura do bloco,
+ * e continua cedo o bastante para o reveal não acontecer atrás do olho.
  */
 export function useRevelar<T extends HTMLElement = HTMLDivElement>() {
   const ref = useRef<T | null>(null);
@@ -32,7 +37,7 @@ export function useRevelar<T extends HTMLElement = HTMLDivElement>() {
           }
         });
       },
-      { threshold: 0.18, rootMargin: "0px 0px -8% 0px" },
+      { threshold: 0, rootMargin: "0px 0px -15% 0px" },
     );
     io.observe(el);
     return () => io.disconnect();
