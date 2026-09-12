@@ -35,6 +35,7 @@ const CENAS_METODO = [
 import { TIERS } from "../sections/Pricing";
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger } from "../../lib/gsap";
+import { getLenis } from "../../lib/lenis";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { useRevelar } from "./useRevelar";
 import { Prancha } from "./sistema";
@@ -103,6 +104,9 @@ export default function AboutV2() {
   }, []);
   const folhaSobre = useRevelar<HTMLElement>();
   const folhaStack = useRevelar<HTMLElement>();
+  const obraSec = useRef<HTMLElement | null>(null);
+  const obraTrilho = useRef<HTMLDivElement | null>(null);
+  const marquee = useRef<HTMLDivElement | null>(null);
   const folhaServicos = useRevelar<HTMLElement>();
   const folhaProva = useRevelar<HTMLElement>();
   const folhaPecas = useRevelar<HTMLElement>();
@@ -111,6 +115,55 @@ export default function AboutV2() {
      do mesmo lugar, e o nome em corpo de cartaz três vezes seguidas mata a
      escala que ele deveria dar */
   const veiculos = [...new Set(RECONHECIMENTO.map((r) => r.veiculo))];
+
+  /* ⭐ O TRILHO DA OBRA: o mesmo scrub do método, em 70vw. */
+  useEffect(() => {
+    const sec = obraSec.current;
+    const tr = obraTrilho.current;
+    if (!sec || !tr) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(max-width: 860px)").matches) return;
+    const dist = () => Math.max(0, tr.scrollWidth - tr.clientWidth);
+    const tween = gsap.fromTo(
+      tr,
+      { x: 0 },
+      { x: () => -dist(), ease: "none", scrollTrigger: { trigger: sec, start: "top top", end: () => `+=${dist()}`, scrub: 0.6, invalidateOnRefresh: true } },
+    );
+    return () => {
+      tween.scrollTrigger?.kill();
+      tween.kill();
+    };
+  }, []);
+
+  /* ⭐ A STACK ACENDE ao cruzar o centro: um trigger por palavra, sem scrub. */
+  useEffect(() => {
+    const itens = Array.from(document.querySelectorAll<HTMLElement>("[data-stack]"));
+    if (!itens.length) return;
+    const trs = itens.map((el) =>
+      ScrollTrigger.create({ trigger: el, start: "top 62%", end: "bottom 38%", toggleClass: { targets: el, className: "p-stack-item--aceso" } }),
+    );
+    return () => trs.forEach((s) => s.kill());
+  }, []);
+
+  /* ⭐ O MARQUEE anda no ticker do GSAP (um relógio só) e acelera com a
+     velocidade do Lenis; a faixa tem o conteúdo duas vezes e volta ao zero na
+     metade — o loop não tem emenda. A referência do ticker é guardada. */
+  useEffect(() => {
+    const el = marquee.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let x = 0;
+    const anda = () => {
+      const meia = el.scrollWidth / 2;
+      if (!meia) return;
+      const v = Math.min(Math.abs(getLenis()?.velocity ?? 0), 60);
+      x -= (0.9 + v * 0.12) * (gsap.ticker.deltaRatio(60) || 1);
+      if (-x >= meia) x += meia;
+      el.style.transform = `translate3d(${x}px,0,0)`;
+    };
+    gsap.ticker.add(anda);
+    return () => gsap.ticker.remove(anda);
+  }, []);
 
   /* ⭐ PROFUNDIDADE — a coreografia entre folhas (12/09). Para cada folha que
      tem uma seguinte: enquanto a seguinte sobe da base ao topo da viewport, a
@@ -318,94 +371,121 @@ export default function AboutV2() {
         </div>
       </section>
 
-      {/* ─ MY STACK — "faz a my stack tbm" (12/09), do frame About do Figma:
-          rótulo à esquerda, as ferramentas em display na coluna, a primeira
-          acesa e as outras quietas (lá: Figma em branco, o resto a 50%).
-          Em papel, colada ao método: o "como" e o "com o quê" são o mesmo
-          capítulo — e as ferramentas deixam de ser a última coluna do trilho,
-          para não aparecerem duas vezes. Cabe numa tela: fica sticky. */}
-      <section ref={folhaStack} className="p-folha-sec p-papel p-stack" data-folha="4">
-        <div className="p-grade-secao" style={{ paddingInline: "var(--p-margem)" }}>
-          <p className="p-rotulo p-sobe">My stack</p>
-          <ul className="p-stack-lista">
-            {FERRAMENTAS.map((f, i) => (
-              <li key={f} className={i === 0 ? "p-servico-nome p-stack-item p-stack-item--aceso p-sobe" : "p-servico-nome p-stack-item p-sobe"}>
-                {f}
-              </li>
+      {/* ═══ DE MÉTODO PARA BAIXO — "de lá pra baixo é boring, bora algo
+          imersivo e não blocado" (12/09). O defeito era de REGISTRO: cinco
+          blocos em grade rótulo | conteúdo, alternando papel e tinta. A troca
+          herda os gestos que ele aprovou (o trilho, a hero full, escala
+          extrema) em vez de somar animação: um palco escuro contínuo. */}
+
+      {/* ─ SELECTED WORK — trilho full-bleed: as capas a 70vw passando com o
+          scroll, o nome em escala grande. O mesmo gesto do método em OUTRA
+          escala — um gesto em duas escalas lê como sistema. */}
+      <section
+        ref={(el) => {
+          (folhaPecas as React.MutableRefObject<HTMLElement | null>).current = el;
+          obraSec.current = el;
+        }}
+        className="p-folha-sec p-tinta p-obra"
+        data-folha="4"
+      >
+        <div className="p-obra-fixo">
+          <p className="p-rotulo p-obra-carimbo p-sobe">
+            Selected work <span style={{ color: "var(--p-quieto)" }}>{String(WORK.length).padStart(2, "0")}</span>
+          </p>
+          <div className="p-obra-trilho" ref={obraTrilho}>
+            {WORK.map((w, k) => (
+              <a key={w.slug} href={`/work/${w.slug}`} className="p-obra-item">
+                <img
+                  src={w.cover.src}
+                  srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
+                  sizes="70vw"
+                  alt={w.cover.alt}
+                  width={w.cover.w}
+                  height={w.cover.h}
+                  loading={k < 2 ? undefined : "lazy"}
+                  decoding="async"
+                  draggable={false}
+                />
+                <span className="p-obra-nome">
+                  <span className="p-marca" style={{ color: "var(--p-quieto)" }}>{String(k + 1).padStart(2, "0")}</span>
+                  <span>{w.title}</span>
+                  <span className="p-marca" style={{ color: "var(--p-quieto)" }}>{w.year}</span>
+                </span>
+              </a>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
-      {/* ─ 3. OS SERVIÇOS, EM TINTA ─────────────────────────────────────
-          ⭐ "essa section tem que brilhar os olhos" — e o que brilha nesta
-          direção é SUPERFÍCIE, não efeito: o bloco de serviços sangra de borda
-          a borda em tinta. Depois do método em papel, ele acende.
-          A anatomia é a linha de recibo: nome e preço nos cantos opostos, o
-          escopo miúdo embaixo. Preço é a informação que a pessoa veio buscar e
-          não pode estar em corpo de rodapé.
-          ⚠ Só o Essential tem preço — é o que ele publica no Behance (US$
-          2.500). Os outros dois seguem "On request" porque preço é fato do
-          cliente e não se inventa. */}
-      {/* "vamos melhorar o pricing e o restante" (12/09): a MESMA grade de Sobre e
-          Método — rótulo da seção à esquerda, o conteúdo a partir de um terço —
-          para as folhas lerem como capítulos de um só documento. E a folha
-          ROLA: com 724px ela era sticky e o terceiro tier (Brand System) nunca
-          aparecia em tela de 704 ([[gotcha_folha_sticky_maior_que_a_tela_esconde_a_base]]). */}
-      <section ref={folhaServicos} className="p-folha-sec p-tinta p-servicos" data-folha="5">
-        <div className="p-grade-secao" style={{ paddingInline: "var(--p-margem)" }}>
-          <p className="p-rotulo p-sobe">Services</p>
-          <ul>
-            {TIERS.map((t, i) => (
-              <li key={t.name} className="p-fio p-servico p-sobe">
-                <div className="p-servico-linha">
-                  <span className="p-marca p-servico-n">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="p-servico-nome">{t.name}</span>
-                  <span className="p-servico-preco">
-                    {t.priceFrom === null ? (
-                      "On request"
-                    ) : (
-                      <>
-                        <span className="p-servico-de">from </span>
-                        {`$${t.priceFrom.toLocaleString("en-US")}`}
-                      </>
-                    )}
+      {/* ─ MY STACK — sete palavras gigantes que ACENDEM ao cruzar o centro da
+          tela (ScrollTrigger com toggleClass, sem scrub): movimento como
+          protagonista, nada de lista. */}
+      <section ref={folhaStack} className="p-folha-sec p-tinta p-stack" data-folha="5">
+        <p className="p-rotulo p-carimbo p-sobe">My stack</p>
+        <ul className="p-stack-lista">
+          {FERRAMENTAS.map((f) => (
+            <li key={f} className="p-stack-item" data-stack>
+              {f}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* ─ SERVICES — o CAMPO CHAPADO: o acento azul da tinta gasto de uma vez,
+          num bloco só, com os três tiers em escala extrema — nome à esquerda,
+          preço à direita. Sobre o azul só a tinta passa no contraste, então o
+          campo tem UMA cor de texto (ver `.p-campo`). */}
+      <section ref={folhaServicos} className="p-folha-sec p-campo p-servicos" data-folha="6">
+        <p className="p-rotulo p-carimbo p-sobe">Services</p>
+        <ul className="p-tiers">
+          {TIERS.map((tier, i) => (
+            <li key={tier.name} className="p-tier p-sobe">
+              <div className="p-tier-linha">
+                <span className="p-tier-nome">{tier.name}</span>
+                <span className="p-tier-preco">
+                  {tier.priceFrom === null ? (
+                    "On request"
+                  ) : (
+                    <>
+                      <span className="p-tier-de">from </span>
+                      {`$${tier.priceFrom.toLocaleString("en-US")}`}
+                    </>
+                  )}
+                </span>
+              </div>
+              <div className="p-tier-ficha">
+                <span className="p-marca">{String(i + 1).padStart(2, "0")}</span>
+                <p className="p-corpo">{tier.description}</p>
+                <p className="p-marca p-tier-escopo">
+                  {tier.scope.join(" · ")} — {tier.timeline}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* ─ PUBLISHED IN — os veículos em MARQUEE de 9vw atravessando a tela
+          (anda no ticker do GSAP, acelera com o scroll do Lenis — um relógio
+          só), e as cinco matérias em tabela por baixo. */}
+      <section ref={folhaProva} className="p-folha-sec p-tinta p-prova" data-folha="7">
+        <p className="p-rotulo p-carimbo p-sobe">Published in</p>
+        <div className="p-marquee" aria-hidden="true">
+          <div className="p-marquee-faixa" ref={marquee}>
+            {[0, 1].map((rep) => (
+              <span key={rep} className="p-marquee-bloco">
+                {veiculos.map((v) => (
+                  <span key={v} className="p-marquee-nome">
+                    {v}
+                    <span className="p-marquee-ponto">·</span>
                   </span>
-                </div>
-                <div className="p-servico-ficha">
-                  <p className="p-corpo max-w-[52ch]">{t.description}</p>
-                  <p className="p-marca p-servico-escopo">
-                    {t.scope.join(" · ")} <span className="p-servico-prazo">{t.timeline}</span>
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* ─ 4. A PROVA, EM BRANCO ─────────────────────────────────────────
-          "vamos eliminar os big number e focar nas conquistas de prêmios"
-          (19/08). É a ordem que nunca tinha chegado à página no ar. O centro
-          agora é ONDE O TRABALHO FOI PUBLICADO: os veículos em escala extrema
-          atravessando a tela — o gesto que a régua do uau pede — e por baixo as
-          cinco matérias em tabela, na anatomia de registro do sistema.
-          ⚠ Superfície BRANCA, a terceira da página: depois da tinta, o branco
-          absoluto é o que faz a prova ler como outro capítulo e não como
-          continuação dos serviços. */}
-      <section ref={folhaProva} className="p-folha-sec p-papel p-prova" data-folha="6">
-        <div style={{ paddingInline: "var(--p-margem)" }}>
-          <div className="p-grade-secao">
-          <p className="p-rotulo p-sobe">Published in</p>
-          <p className="p-prova-nomes p-sobe">
-            {veiculos.map((v, i) => (
-              <span key={v}>
-                <span className="p-faixa-nome">{v}</span>
-                {i < veiculos.length - 1 && <span className="p-faixa-ponto"> · </span>}
+                ))}
               </span>
             ))}
-          </p>
           </div>
+        </div>
+        <p className="sr-only">{veiculos.join(", ")}</p>
+        <div style={{ paddingInline: "var(--p-margem)" }}>
           <ul className="p-prova-tabela">
             {RECONHECIMENTO.map((r, i) => (
               <li key={i} className="p-fio p-sobe p-prova-linha">
@@ -426,37 +506,6 @@ export default function AboutV2() {
               </li>
             ))}
           </ul>
-        </div>
-      </section>
-
-      {/* ─ 5. AS PEÇAS, EM SANGRIA ───────────────────────────────────────
-          A about de um brand designer sem uma peça é um currículo. A faixa
-          começa na margem da prancha e SANGRA pela direita, com altura fixa e
-          largura livre por capa: é a única forma de manter a altura sem
-          recortar nenhuma. Rola na horizontal; a página não cresce. */}
-      <section ref={folhaPecas} className="p-folha-sec p-papel p-pecas" data-folha="7">
-        <div className="p-grade-secao p-pecas-cab" style={{ paddingInline: "var(--p-margem)" }}>
-          <p className="p-rotulo p-sobe">Selected work</p>
-          <p className="p-marca p-sobe" style={{ color: "var(--p-quieto)" }}>{String(WORK.length).padStart(2, "0")} identities</p>
-        </div>
-        <div className="p-pecas-faixa p-sobe">
-          {WORK.map((w) => (
-            <a key={w.slug} href={`/work/${w.slug}`} className="p-pecas-item">
-              <img
-                src={w.cover.src}
-                srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
-                sizes="46vw"
-                alt={w.cover.alt}
-                loading="lazy"
-                decoding="async"
-                draggable={false}
-              />
-              <span className="p-marca p-pecas-legenda">
-                <span>{w.title}</span>
-                <span style={{ color: "var(--p-quieto)" }}>{w.year}</span>
-              </span>
-            </a>
-          ))}
         </div>
       </section>
     </Prancha>

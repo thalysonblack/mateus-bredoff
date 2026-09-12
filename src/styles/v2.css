@@ -1429,8 +1429,10 @@
    sabe que o Lenis existe. Sem suporte, a hero simplesmente fica parada — o
    conteúdo continua legível e nada quebra. */
 .p-hero {
-  position: sticky;
-  top: 0;
+  /* ⚠ 12/09: a hero NÃO gruda mais — com as folhas em Profundidade ela desce
+     e escurece como as outras. Grudada, ela reaparecia por trás do rodapé
+     (que não tem fundo) no fim da página. */
+  position: relative;
   z-index: 0;
   margin-inline: calc(var(--p-margem) * -1);
   /* a altura do menu vem MEDIDA (`--p-menu-h`, ResizeObserver na Prancha) —
@@ -1861,28 +1863,35 @@
   border-top: 1px solid var(--p-fio);
 }
 .p-rodape-grade {
-  /* o rodapé vive fora das folhas (só a margem da tela): a grade ganha a
-     margem de folha para a coluna do conteúdo bater com as de cima */
   padding-inline: var(--p-margem);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-  column-gap: var(--p-gap-x);
+  display: flex;
+  justify-content: space-between;
   align-items: start;
-  padding-bottom: clamp(48px, 7vh, 96px);
+  padding-bottom: clamp(24px, 4vh, 56px);
 }
 .p-rodape-grade .p-rotulo { padding-top: 0.5em; }
-.p-rodape-miolo { display: flex; justify-content: space-between; gap: var(--p-gap-x); align-items: start; }
-.p-rodape-canais, .p-rodape-indice ul { list-style: none; margin: 0; padding: 0; }
-.p-rodape-canais { display: flex; flex-direction: column; gap: 0.18em; }
-.p-rodape-canais li:first-child { padding-bottom: 0.5em; }
-.p-rodape-canal { color: var(--p-quieto); text-decoration: none; transition: color 0.25s ease; }
-.p-rodape-canal--aceso, .p-rodape-canal:hover { color: var(--p-ink); }
-.p-rodape-indice ul { display: flex; flex-direction: column; gap: 6px; text-align: right; }
+.p-rodape-indice ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 22px; }
 .p-rodape-indice .p-marca { color: var(--p-quieto); margin-right: 6px; }
+/* o e-mail em escala de LARGURA: 23 caracteres da Geist ≈ 12em; 7,9vw enche a
+   tela com as margens. `nowrap`: se a webfont falhar a linha estoura, não quebra. */
+.p-rodape-mail {
+  display: block;
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: clamp(28px, 7.9vw, 150px);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+  color: var(--p-ink);
+  text-decoration: none;
+  padding: 0 var(--p-margem) clamp(24px, 4vh, 56px);
+}
+.p-rodape-canais { list-style: none; margin: 0; padding: 0 var(--p-margem) clamp(40px, 6vh, 80px); display: flex; flex-wrap: wrap; gap: 0.2em 1em; }
+.p-rodape-canal { color: var(--p-quieto); text-decoration: none; transition: color 0.25s ease; }
+.p-rodape-canal:hover { color: var(--p-ink); }
 @media (max-width: 860px) {
-  .p-rodape-grade { grid-template-columns: 1fr; row-gap: 14px; }
-  .p-rodape-miolo { flex-direction: column; gap: 32px; }
-  .p-rodape-indice ul { text-align: left; }
+  .p-rodape-grade { flex-direction: column; gap: 14px; }
+  .p-rodape-mail { font-size: 7.6vw; }
 }
 .p-rodape-regua {
   display: grid;
@@ -3448,18 +3457,79 @@ a.pz-materia:hover { color: var(--p-acento); }
   .p-numeros { grid-template-columns: 1fr 1fr; row-gap: 24px; }
 }
 
-/* ── "melhorar o pricing e o restante" (12/09): as folhas seguintes entram na
-   grade rótulo | conteúdo. Serviços e prova ROLAM (passam de uma tela). ── */
-.p-servicos { padding-block: 40px 96px; }
-.p-servicos ul { margin: 0; padding: 0; list-style: none; }
-.p-servicos .p-servico:first-child { border-top: 0; padding-top: 0.2em; }
-.p-prova-nomes { padding-top: 0; }
-.p-prova-tabela { margin-top: clamp(24px, 3vw, 48px); }
-.p-pecas-cab { padding-bottom: clamp(16px, 2vw, 28px); }
-.p-pecas-cab .p-marca { padding-top: 0.6em; }
+/* ══ DE MÉTODO PARA BAIXO — o palco (12/09) ═══════════════════════════════
+   "de lá pra baixo é boring… imersivo e não blocado". Um registro só, em
+   tinta, sem grade rótulo | conteúdo: o rótulo vira CARIMBO no canto e o
+   conteúdo toma a tela. */
+.p-carimbo { padding: 0 var(--p-margem); }
 
-/* ── MY STACK (12/09): ferramentas em display, a primeira acesa ─────────── */
-.p-stack { padding-top: 40px; padding-bottom: clamp(56px, 8vh, 96px); }
-.p-stack-lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.32em; }
-.p-stack-item { color: var(--p-quieto); transition: color 0.25s ease; }
-.p-stack-item--aceso, .p-stack-item:hover { color: var(--p-ink); }
+/* ── Selected work: trilho full-bleed ──────────────────────────────────── */
+.p-obra { padding-bottom: 0; height: calc(100svh + 70vw * 6); }
+.p-obra-fixo { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; justify-content: center; gap: clamp(20px, 4vh, 40px); overflow: hidden; }
+.p-obra-carimbo { padding: 0 var(--p-margem); display: flex; gap: 10px; }
+.p-obra-trilho { display: flex; gap: var(--p-gap-x); padding: 0 var(--p-margem); will-change: transform; }
+.p-obra-item { flex: 0 0 auto; color: inherit; text-decoration: none; display: flex; flex-direction: column; gap: clamp(12px, 1.6vh, 20px); }
+.p-obra-item img { display: block; height: min(56svh, 39vw); width: auto; max-width: 70vw; object-fit: cover; }
+.p-obra-nome {
+  display: flex; align-items: baseline; gap: 14px;
+  font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 400;
+  font-size: clamp(24px, 3.4vw, 64px); line-height: 1; letter-spacing: -0.03em;
+}
+@media (max-width: 860px) {
+  .p-obra { height: auto; padding-bottom: 56px; }
+  .p-obra-fixo { position: static; height: auto; overflow: visible; }
+  .p-obra-trilho { flex-direction: column; gap: 40px; }
+  .p-obra-item img { height: auto; width: 100%; max-width: none; }
+}
+
+/* ── My stack: palavras gigantes que acendem ao cruzar o centro ────────── */
+.p-stack { padding-top: 40px; padding-bottom: clamp(56px, 10vh, 120px); }
+.p-stack-lista { list-style: none; margin: 0; padding: clamp(24px, 6vh, 64px) var(--p-margem) 0; display: flex; flex-direction: column; gap: 0.06em; }
+.p-stack-item {
+  font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 300;
+  font-size: clamp(40px, 7.4vw, 140px); line-height: 1.02; letter-spacing: -0.04em;
+  color: rgba(236, 234, 229, 0.22); transition: color 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.p-stack-item--aceso { color: var(--p-ink); }
+
+/* ── Services: o campo chapado ─────────────────────────────────────────── */
+.p-campo {
+  background: #34a1cb; /* o acento da tinta, gasto de uma vez */
+  color: #14201f;
+  --p-ink: #14201f;
+  --p-quieto: #14201f; /* ⚠ sobre o azul só a tinta cheia passa (5,4:1); o quieto não */
+  --p-fio: rgba(20, 32, 31, 0.28);
+  --p-acento: #14201f;
+}
+.p-servicos { padding-top: 40px; padding-bottom: clamp(56px, 9vh, 112px); }
+.p-tiers { list-style: none; margin: clamp(24px, 6vh, 64px) 0 0; padding: 0 var(--p-margem); }
+.p-tier { border-top: 1px solid var(--p-fio); padding: clamp(18px, 3vh, 36px) 0 clamp(22px, 3.6vh, 44px); }
+.p-tier-linha { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; }
+.p-tier-nome, .p-tier-preco {
+  font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 400;
+  font-size: clamp(34px, 6.2vw, 118px); line-height: 1; letter-spacing: -0.04em; white-space: nowrap;
+}
+.p-tier-de { font-size: 0.34em; letter-spacing: 0; margin-right: 0.3em; }
+.p-tier-ficha { display: grid; grid-template-columns: 2.6rem minmax(0, 38em) minmax(0, 1fr); column-gap: var(--p-gap-x); align-items: start; padding-top: clamp(14px, 2vh, 22px); }
+.p-tier-ficha .p-corpo { margin: 0; }
+.p-tier-escopo { text-align: right; }
+@media (max-width: 860px) {
+  .p-tier-linha { flex-direction: column; align-items: start; gap: 4px; }
+  .p-tier-nome, .p-tier-preco { white-space: normal; }
+  .p-tier-ficha { grid-template-columns: 2.4rem minmax(0, 1fr); }
+  .p-tier-escopo { grid-column: 2; text-align: left; }
+}
+
+/* ── Published in: o marquee ───────────────────────────────────────────── */
+.p-prova { padding-top: 40px; }
+.p-marquee { overflow: hidden; margin: clamp(20px, 5vh, 56px) 0 clamp(32px, 6vh, 72px); }
+.p-marquee-faixa { display: flex; width: max-content; will-change: transform; }
+.p-marquee-bloco { display: flex; }
+.p-marquee-nome {
+  display: inline-flex; align-items: baseline; gap: 0.32em; padding-right: 0.32em;
+  font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 400;
+  font-size: clamp(56px, 9vw, 176px); line-height: 1.05; letter-spacing: -0.04em; white-space: nowrap;
+}
+.p-marquee-ponto { color: var(--p-quieto); }
+.p-prova-tabela { margin-top: 0; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
