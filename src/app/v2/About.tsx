@@ -68,42 +68,10 @@ export default function AboutV2() {
      anterior. Um gatilho único revelaria tudo na primeira rolagem, e as folhas
      de baixo chegariam já prontas — o gesto some. */
   const folhaMetodo = useRevelar<HTMLElement>();
-  const trilho = useRef<HTMLDivElement | null>(null);
-  const percurso = useRef<HTMLElement | null>(null);
-  /* ⭐ O MÉTODO CORRE NA HORIZONTAL COM A SEÇÃO PRESA — o gesto que consertou o
-     miolo em 18/08 e que a lista vertical de 11/09 tinha desfeito. A folha ganha
-     percurso (altura de tela + o comprimento do trilho) e fica grudada; o scroll
-     que atravessa esse percurso move as cinco etapas lateralmente. `scrub` com
-     número, nunca `true` — é o atraso que dá peso. Sem pin: pin sequestra a
-     rolagem. O Lenis já alimenta o ScrollTrigger (`lib/lenis.ts`). */
-  useEffect(() => {
-    const t = trilho.current;
-    const sec = percurso.current;
-    if (!t || !sec) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const dist = () => Math.max(0, t.scrollWidth - t.clientWidth);
-    const tween = gsap.fromTo(
-      t,
-      { x: 0 },
-      {
-        x: () => -dist(),
-        ease: "none",
-        scrollTrigger: {
-          trigger: sec,
-          start: "top top",
-          end: () => `+=${dist()}`,
-          scrub: 0.6,
-          invalidateOnRefresh: true,
-        },
-      },
-    );
-    return () => {
-      tween.scrollTrigger?.kill();
-      tween.kill();
-    };
-  }, []);
   const folhaSobre = useRevelar<HTMLElement>();
   const folhaStack = useRevelar<HTMLElement>();
+  const tamborSec = useRef<HTMLElement | null>(null);
+  const tamborLista = useRef<HTMLOListElement | null>(null);
   const obraSec = useRef<HTMLElement | null>(null);
   const obraTrilho = useRef<HTMLDivElement | null>(null);
   const marquee = useRef<HTMLDivElement | null>(null);
@@ -115,6 +83,48 @@ export default function AboutV2() {
      do mesmo lugar, e o nome em corpo de cartaz três vezes seguidas mata a
      escala que ele deveria dar */
   const veiculos = [...new Set(RECONHECIMENTO.map((r) => r.veiculo))];
+
+  /* ⭐ O TAMBOR: a lista anda −(N−1)·passo enquanto a seção fica pinada; o
+     item i chega ao centro em progress = i/(N−1) e acende. Distância curta
+     (0,7 tela por etapa) para o gesto não virar corredor. */
+  useEffect(() => {
+    const sec = tamborSec.current;
+    const lista = tamborLista.current;
+    if (!sec || !lista) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(max-width: 860px)").matches) return;
+    const itens = Array.from(lista.querySelectorAll<HTMLElement>(".p-tambor-etapa"));
+    const n = itens.length;
+    const passo = () => itens[0]?.getBoundingClientRect().height ?? 0;
+    const grupo = (i: number) => Array.from(sec.querySelectorAll<HTMLElement>(`.p-tambor [data-etapa="${i}"]`));
+    let atual = 0;
+    const acende = (i: number) => {
+      if (i === atual) return;
+      grupo(atual).forEach((el) => el.classList.remove("p-tambor-acesa"));
+      grupo(i).forEach((el) => el.classList.add("p-tambor-acesa"));
+      atual = i;
+    };
+    const tween = gsap.fromTo(
+      lista,
+      { y: 0 },
+      {
+        y: () => -(n - 1) * passo(),
+        ease: "none",
+        scrollTrigger: {
+          trigger: sec,
+          start: "top top",
+          end: () => `+=${(n - 1) * 0.7 * window.innerHeight}`,
+          scrub: 0.5,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => acende(Math.min(n - 1, Math.round(self.progress * (n - 1)))),
+        },
+      },
+    );
+    return () => {
+      tween.scrollTrigger?.kill();
+      tween.kill();
+    };
+  }, []);
 
   /* ⭐ O TRILHO DA OBRA: o mesmo scrub do método, em 70vw. */
   useEffect(() => {
@@ -325,52 +335,80 @@ export default function AboutV2() {
         </div>
       </section>
 
-      {/* ─ 3. O MÉTODO, EM ESCALA ────────────────────────────────────────
-          É o argumento comercial dele — cinco etapas que dizem como o
-          trabalho acontece — e estava em 13px cinza, lendo como planilha.
-          Agora cada etapa tem o numeral no corpo de índice do sistema, o nome
-          em corpo de item e o texto em coluna de leitura. A manchete de
-          abertura sobe para o display: é a mesma anatomia dos serviços, então
-          método e serviços leem como duas partes de um só documento. */}
+      {/* ─ 3. O MÉTODO — O TAMBOR (12/09, referência apontada: a features
+          section da United Carriers no details.so). A seção fica PINADA e o
+          scroll gira a lista das cinco etapas pelo centro: a ativa acende no
+          meio, o corpo dela à direita e a CENA 16:9 à esquerda (no lugar do
+          ícone circular da referência — a matéria é dele). Herda o conceito,
+          não a montagem: sem círculo, sem caixa alta, o numeral do sistema.
+          Um markup por etapa: no desktop a cena e o corpo saem do fluxo por
+          `position: absolute` e só o nome fica na lista; no mobile tudo volta
+          ao fluxo e vira cinco blocos. O scrub move a lista; `onUpdate` acende. */}
       <section
         ref={(el) => {
           (folhaMetodo as React.MutableRefObject<HTMLElement | null>).current = el;
-          percurso.current = el;
+          tamborSec.current = el;
         }}
-        className="p-folha-sec p-papel p-metodo p-metodo-trilho"
+        className="p-folha-sec p-tinta p-metodo p-tambor-sec"
         data-folha="3"
       >
-        <div className="p-metodo-fixo">
-          {/* "faltou título da section e o texto" (12/09): o rótulo da seção na
-              coluna da esquerda e a manchete a um terço — a mesma grade da
-              folha Sobre, para as duas lerem como partes de um documento */}
-          <div className="p-metodo-cab" style={{ paddingInline: "calc(var(--p-margem) * 2)" }}>
+        <div className="p-metodo-fixo p-tambor-fixo">
+          <div className="p-metodo-cab" style={{ paddingInline: "var(--p-margem)" }}>
             <p className="p-rotulo p-sobe">Method</p>
             <p className="p-servico-nome p-sobe p-metodo-manchete">{PROCESSO_MANCHETE}</p>
           </div>
-          {/* o trilho: as cinco etapas lado a lado, cada uma uma tela de 62vw;
-              o scroll as move. Sem fio entre elas — o vão é o separador */}
-          <div className="p-trilho" ref={trilho}>
-            {PROCESSO.map((e, i) => (
-              <article key={e.titulo} className="p-trilho-etapa">
-                {/* a cena em 16:9 ocupa o vazio que havia acima do título —
-                    o slot que ele apontou no print */}
+          {/* ⚠ desktop: TRÊS grupos irmãos — cenas, lista, corpos. A lista se
+              move por transform, e transform vira containing block dos
+              absolutos: cena e corpo dentro dela saíam com 117px, presos à
+              coluna. Fora dela, ancoram no centro do fixo. */}
+          <div className="p-tambor" aria-hidden="true">
+            <div className="p-tambor-cenas">
+              {PROCESSO.map((e, i) => (
                 <img
-                  className="p-trilho-foto"
+                  key={e.titulo}
+                  className={i === 0 ? "p-tambor-cena p-tambor-acesa" : "p-tambor-cena"}
+                  data-etapa={i}
                   src={CENAS_METODO[i].src}
-                  alt={CENAS_METODO[i].alt}
+                  alt=""
                   width={1440}
                   height={810}
                   loading={i === 0 ? undefined : "lazy"}
                   decoding="async"
                   draggable={false}
                 />
-                <span className="p-metodo-n">{String(i + 1).padStart(2, "0")}</span>
-                <span className="p-metodo-nome">{e.titulo}</span>
-                <p className="p-corpo p-metodo-corpo">{e.corpo}</p>
-              </article>
-            ))}
+              ))}
+            </div>
+            <ol className="p-tambor-lista" ref={tamborLista}>
+              {PROCESSO.map((e, i) => (
+                <li key={e.titulo} className={i === 0 ? "p-tambor-etapa p-tambor-acesa" : "p-tambor-etapa"} data-etapa={i}>
+                  <span className="p-tambor-nome">
+                    <span className="p-marca p-tambor-n">{String(i + 1).padStart(2, "0")}</span>
+                    <span>{e.titulo}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <div className="p-tambor-corpos">
+              {PROCESSO.map((e, i) => (
+                <p key={e.titulo} className={i === 0 ? "p-corpo p-tambor-corpo p-tambor-acesa" : "p-corpo p-tambor-corpo"} data-etapa={i}>
+                  {e.corpo}
+                </p>
+              ))}
+            </div>
           </div>
+          {/* mobile e leitor de tela: um bloco por etapa, em fluxo */}
+          <ol className="p-tambor-mob">
+            {PROCESSO.map((e, i) => (
+              <li key={e.titulo}>
+                <img className="p-tambor-mob-cena" src={CENAS_METODO[i].src} alt={CENAS_METODO[i].alt} width={1440} height={810} loading="lazy" decoding="async" draggable={false} />
+                <span className="p-tambor-nome">
+                  <span className="p-marca p-tambor-n">{String(i + 1).padStart(2, "0")}</span>
+                  <span>{e.titulo}</span>
+                </span>
+                <p className="p-corpo">{e.corpo}</p>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 

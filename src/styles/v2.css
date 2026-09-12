@@ -3167,13 +3167,6 @@ a.pz-materia:hover { color: var(--p-acento); }
 
 
 /* ── o método em trilho, com a folha presa ──────────────────────────────── */
-.p-metodo-trilho {
-  /* o percurso: uma tela + o que o trilho precisa andar. O ScrollTrigger
-     mede o trilho de verdade (`scrollWidth − clientWidth`); esta altura só
-     garante que a folha seguinte não chega antes do fim do gesto. */
-  height: calc(100svh + 62vw * 4);
-  padding: 0;
-}
 .p-metodo-fixo {
   position: sticky;
   top: 0;
@@ -3184,32 +3177,9 @@ a.pz-materia:hover { color: var(--p-acento); }
   gap: clamp(40px, 6vh, 72px);
   overflow: hidden;
 }
-.p-metodo-trilho .p-metodo-manchete { padding: 0; max-width: 24ch; }
-.p-trilho {
-  display: flex;
-  gap: clamp(32px, 4vw, 72px);
-  padding-inline: var(--p-margem);
-  will-change: transform;
-}
-.p-trilho-etapa {
-  flex: 0 0 62vw;
-  max-width: 720px;
-  display: grid;
-  grid-template-columns: minmax(0, 0.7fr) minmax(0, 2fr);
-  column-gap: var(--p-gap-x);
-  align-items: baseline;
-  padding-top: 22px;
-  border-top: 1px solid var(--p-fio);
-}
-.p-trilho-etapa .p-metodo-corpo { grid-column: 2; }
 @media (max-width: 860px) {
   /* no celular o trilho vira a lista de antes: dispersão horizontal em 390px
      é ruído, e sticky de tela inteira com texto não cabe */
-  .p-metodo-trilho { height: auto; padding: 40px 0 56px; }
-  .p-metodo-fixo { position: static; height: auto; overflow: visible; gap: 32px; }
-  .p-trilho { flex-direction: column; transform: none !important; gap: 0; }
-  .p-trilho-etapa { flex-basis: auto; max-width: none; grid-template-columns: 2.4rem minmax(0, 1fr); padding: 22px 0; }
-  .p-trilho-etapa .p-metodo-corpo { grid-column: 2; }
 }
 
 /* ⚠ medido na captura: o header da Prancha é tinta (superfície papel) e ficou
@@ -3360,42 +3330,6 @@ a.pz-materia:hover { color: var(--p-acento); }
 }
 
 
-/* ── as cenas do método: 16:9 acima de cada etapa do trilho ─────────────── */
-.p-trilho-etapa {
-  /* a etapa vira coluna: foto em cima, a grade numeral·título·corpo embaixo */
-  display: grid;
-  grid-template-columns: minmax(0, 0.7fr) minmax(0, 2fr);
-  grid-template-rows: auto auto;
-  row-gap: 18px;
-  padding-top: 0;
-  border-top: 0;
-}
-.p-trilho-foto {
-  grid-column: 1 / -1;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  display: block;
-  background: #14201f;
-}
-.p-trilho-etapa .p-metodo-n { grid-row: 2; }
-.p-trilho-etapa .p-metodo-nome { grid-row: 2; }
-.p-trilho-etapa .p-metodo-corpo { grid-column: 2; grid-row: 3; }
-/* ⚠ "ficou desalinhado" (12/09): alinhado pela BASE, o corpo de 3 linhas da 03
-   e o de 4 da 04 empurravam as fotos para alturas diferentes. O trilho alinha
-   pelo TOPO — as fotos têm a mesma largura e a mesma razão, então ficam na
-   mesma linha, e numeral+título também; só o corpo varia embaixo. */
-.p-trilho { align-items: start; }
-.p-metodo-fixo { justify-content: center; }
-/* ⚠ e a foto se limita pela ALTURA da tela: em 2000×800 (a tela dele) a foto
-   de 720px mais o texto empurravam a manchete para fora da folha — o vazio do
-   print. Com teto de 40svh, manchete + foto + texto cabem em qualquer tela. */
-.p-trilho-foto { max-height: 40svh; }
-@media (max-width: 860px) {
-  .p-trilho-etapa { grid-template-columns: 2.4rem minmax(0, 1fr); }
-  .p-trilho-foto { grid-column: 1 / -1; }
-  .p-trilho-etapa .p-metodo-corpo { grid-column: 2; }
-}
 
 /* ══ A FOLHA SOBRE — node 433:217 do Figma (12/09/2026) ═══════════════════
    Rótulo na esquerda, texto a partir de um terço (no frame: 656/1920), corpo
@@ -3533,3 +3467,48 @@ a.pz-materia:hover { color: var(--p-acento); }
 .p-marquee-ponto { color: var(--p-quieto); }
 .p-prova-tabela { margin-top: 0; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ── O TAMBOR do método (12/09) ────────────────────────────────────────── */
+.p-tambor-sec { height: calc(100svh + 280svh); padding-bottom: 0; }
+.p-tambor-fixo { justify-content: flex-start; gap: 0; padding-top: calc(var(--p-margem-y) + var(--p-menu-h, 60px) + 24px); }
+.p-tambor-fixo .p-metodo-manchete { font-size: clamp(18px, 1.9vw, 30px); line-height: 1.15; max-width: 34ch; }
+/* três colunas ancoradas no centro da TELA (o fixo é o containing block):
+   cena | lista | corpo, em 1 : 1,25 : 1 da largura útil */
+.p-tambor { --p-passo: clamp(64px, 8.4vh, 112px); --p-col: calc((100% - 2 * var(--p-margem) - 2 * var(--p-gap-x)) / 3.25); }
+.p-tambor-cenas, .p-tambor-corpos { position: absolute; top: 50%; width: var(--p-col); transform: translateY(-50%); }
+.p-tambor-cenas { left: var(--p-margem); aspect-ratio: 16 / 9; }
+.p-tambor-corpos { right: var(--p-margem); max-width: 34em; }
+.p-tambor-cena { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+.p-tambor-corpo { position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 100%; margin: 0; opacity: 0; transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.08s; }
+.p-tambor-corpos { height: 1px; } /* só um ponto de ancoragem: os corpos se centram nele */
+.p-tambor-lista {
+  list-style: none; margin: 0; padding: 0;
+  position: absolute; top: 50%;
+  left: calc(var(--p-margem) + var(--p-col) + var(--p-gap-x));
+  width: calc(var(--p-col) * 1.25);
+  margin-top: calc(var(--p-passo) * -0.5);
+  will-change: transform;
+}
+.p-tambor-etapa { height: var(--p-passo); display: flex; align-items: center; }
+.p-tambor-nome {
+  display: flex; align-items: baseline; gap: 14px;
+  font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 400;
+  font-size: clamp(26px, 3.3vw, 58px); line-height: 1; letter-spacing: -0.035em;
+  color: rgba(236, 234, 229, 0.22);
+  transition: color 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  white-space: nowrap;
+}
+.p-tambor-n { color: inherit; }
+.p-tambor-etapa.p-tambor-acesa .p-tambor-nome { color: var(--p-ink); }
+.p-tambor-cena.p-tambor-acesa, .p-tambor-corpo.p-tambor-acesa { opacity: 1; }
+.p-tambor-mob { display: none; }
+@media (max-width: 860px) {
+  .p-tambor-sec { height: auto; padding-bottom: 56px; }
+  .p-tambor-fixo { position: static; height: auto; overflow: visible; padding-top: 0; }
+  .p-tambor { display: none; }
+  .p-tambor-mob { list-style: none; margin: 0; padding: 32px var(--p-margem) 0; display: flex; flex-direction: column; gap: 40px; }
+  .p-tambor-mob li { display: grid; gap: 12px; }
+  .p-tambor-mob-cena { width: 100%; height: auto; display: block; }
+  .p-tambor-mob .p-tambor-nome { color: var(--p-ink); white-space: normal; }
+  .p-tambor-mob .p-corpo { margin: 0; }
+}
