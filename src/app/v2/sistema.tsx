@@ -210,41 +210,48 @@ export function Prancha({
                       chegou ao fim já viu o trabalho. */}
         {rodape === "completo" ? (
           <footer className="p-rodape">
-            <div className="p-rodape-topo">
-              <div>
-                <p className="p-rotulo pb-4">Say hello</p>
-                <a href="mailto:hello@mateusbredoff.com" className="p-rodape-email">
-                  hello@mateusbredoff.com
-                </a>
-              </div>
-              <nav className="p-rodape-canais">
-                <p className="p-rotulo pb-4">Elsewhere</p>
-                <ul>
-                  {CONTATO.filter((c) => c.label !== "Email").map((c) => (
+            {/* ⭐ O RODAPÉ no registro do Figma (Contact, 12/09): rótulo à esquerda,
+                "Let's talk" aceso e os canais em display quietos a partir de um
+                terço — a mesma grade das folhas da about — e o índice do site à
+                direita, como a nav do frame. A régua de baixo é do sistema e fica. */}
+            <div className="p-rodape-grade">
+              <p className="p-rotulo">Contact</p>
+              <div className="p-rodape-miolo">
+                <ul className="p-rodape-canais">
+                  <li>
+                    <a href="mailto:hello@mateusbredoff.com" className="p-servico-nome p-rodape-canal p-rodape-canal--aceso">
+                      Let's talk
+                    </a>
+                  </li>
+                  {CONTATO.map((c) => (
                     <li key={c.label}>
                       {c.href ? (
-                        <a href={c.href} target="_blank" rel="noopener noreferrer" className="p-corpo p-link">
-                          {c.label}
+                        <a
+                          href={c.href}
+                          target={c.href.startsWith("http") ? "_blank" : undefined}
+                          rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                          className="p-servico-nome p-rodape-canal"
+                        >
+                          {c.label === "Email" ? "E-mail" : c.label}
                         </a>
                       ) : (
-                        <span className="p-corpo">{c.label}</span>
+                        <span className="p-servico-nome p-rodape-canal">{c.label}</span>
                       )}
                     </li>
                   ))}
                 </ul>
-              </nav>
-              <nav className="p-rodape-indice">
-                <p className="p-rotulo pb-4">Site</p>
-                <ul>
-                  {PRANCHAS.map((p) => (
-                    <li key={p.to}>
-                      <Link to={p.to} className="p-corpo p-link">
-                        <span className="p-marca">{p.n}</span> {p.nome}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
+                <nav className="p-rodape-indice" aria-label="Site">
+                  <ul>
+                    {PRANCHAS.map((p) => (
+                      <li key={p.to}>
+                        <Link to={p.to} className="p-corpo p-link">
+                          <span className="p-marca">{p.n}</span> {p.nome}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              </div>
             </div>
 
             <p className="p-marca p-rodape-regua">

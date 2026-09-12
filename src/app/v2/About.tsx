@@ -262,7 +262,7 @@ export default function AboutV2() {
           {/* "faltou título da section e o texto" (12/09): o rótulo da seção na
               coluna da esquerda e a manchete a um terço — a mesma grade da
               folha Sobre, para as duas lerem como partes de um documento */}
-          <div className="p-metodo-cab" style={{ paddingInline: "var(--p-margem)" }}>
+          <div className="p-metodo-cab" style={{ paddingInline: "calc(var(--p-margem) * 2)" }}>
             <p className="p-rotulo p-sobe">Method</p>
             <p className="p-servico-nome p-sobe p-metodo-manchete">{PROCESSO_MANCHETE}</p>
           </div>
@@ -307,8 +307,14 @@ export default function AboutV2() {
           ⚠ Só o Essential tem preço — é o que ele publica no Behance (US$
           2.500). Os outros dois seguem "On request" porque preço é fato do
           cliente e não se inventa. */}
+      {/* "vamos melhorar o pricing e o restante" (12/09): a MESMA grade de Sobre e
+          Método — rótulo da seção à esquerda, o conteúdo a partir de um terço —
+          para as folhas lerem como capítulos de um só documento. E a folha
+          ROLA: com 724px ela era sticky e o terceiro tier (Brand System) nunca
+          aparecia em tela de 704 ([[gotcha_folha_sticky_maior_que_a_tela_esconde_a_base]]). */}
       <section ref={folhaServicos} className="p-folha-sec p-tinta p-servicos" data-folha="4">
-        <div style={{ paddingInline: "var(--p-margem)" }}>
+        <div className="p-grade-secao" style={{ paddingInline: "var(--p-margem)" }}>
+          <p className="p-rotulo p-sobe">Services</p>
           <ul>
             {TIERS.map((t, i) => (
               <li key={t.name} className="p-fio p-servico p-sobe">
@@ -349,6 +355,8 @@ export default function AboutV2() {
           continuação dos serviços. */}
       <section ref={folhaProva} className="p-folha-sec p-papel p-prova" data-folha="5">
         <div style={{ paddingInline: "var(--p-margem)" }}>
+          <div className="p-grade-secao">
+          <p className="p-rotulo p-sobe">Published in</p>
           <p className="p-prova-nomes p-sobe">
             {veiculos.map((v, i) => (
               <span key={v}>
@@ -357,6 +365,7 @@ export default function AboutV2() {
               </span>
             ))}
           </p>
+          </div>
           <ul className="p-prova-tabela">
             {RECONHECIMENTO.map((r, i) => (
               <li key={i} className="p-fio p-sobe p-prova-linha">
@@ -386,6 +395,10 @@ export default function AboutV2() {
           largura livre por capa: é a única forma de manter a altura sem
           recortar nenhuma. Rola na horizontal; a página não cresce. */}
       <section ref={folhaPecas} className="p-folha-sec p-papel p-pecas" data-folha="6">
+        <div className="p-grade-secao p-pecas-cab" style={{ paddingInline: "var(--p-margem)" }}>
+          <p className="p-rotulo p-sobe">Selected work</p>
+          <p className="p-marca p-sobe" style={{ color: "var(--p-quieto)" }}>{String(WORK.length).padStart(2, "0")} identities</p>
+        </div>
         <div className="p-pecas-faixa p-sobe">
           {WORK.map((w) => (
             <a key={w.slug} href={`/work/${w.slug}`} className="p-pecas-item">

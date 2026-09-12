@@ -1850,30 +1850,30 @@
   padding-top: 34px;
   border-top: 1px solid var(--p-fio);
 }
-.p-rodape-topo {
+.p-rodape-grade {
+  /* o rodapé vive fora das folhas (só a margem da tela): a grade ganha a
+     margem de folha para a coluna do conteúdo bater com as de cima */
+  padding-inline: var(--p-margem);
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
   column-gap: var(--p-gap-x);
-  row-gap: 40px;
-  padding-bottom: 56px;
+  align-items: start;
+  padding-bottom: clamp(48px, 7vh, 96px);
 }
-.p-rodape-topo > :first-child { grid-column: 1 / span 6; }
-.p-rodape-canais { grid-column: 8 / span 2; }
-.p-rodape-indice { grid-column: 10 / span 3; }
-.p-rodape-email {
-  display: inline-block;
-  font-family: 'Geist', ui-sans-serif, sans-serif;
-  font-weight: 400;
-  font-size: clamp(26px, 3.6vw, 58px);
-  line-height: 1.02;
-  letter-spacing: -0.035em;
-  color: var(--p-ink);
-  transition: color 0.3s ease-out;
+.p-rodape-grade .p-rotulo { padding-top: 0.5em; }
+.p-rodape-miolo { display: flex; justify-content: space-between; gap: var(--p-gap-x); align-items: start; }
+.p-rodape-canais, .p-rodape-indice ul { list-style: none; margin: 0; padding: 0; }
+.p-rodape-canais { display: flex; flex-direction: column; gap: 0.18em; }
+.p-rodape-canais li:first-child { padding-bottom: 0.5em; }
+.p-rodape-canal { color: var(--p-quieto); text-decoration: none; transition: color 0.25s ease; }
+.p-rodape-canal--aceso, .p-rodape-canal:hover { color: var(--p-ink); }
+.p-rodape-indice ul { display: flex; flex-direction: column; gap: 6px; text-align: right; }
+.p-rodape-indice .p-marca { color: var(--p-quieto); margin-right: 6px; }
+@media (max-width: 860px) {
+  .p-rodape-grade { grid-template-columns: 1fr; row-gap: 14px; }
+  .p-rodape-miolo { flex-direction: column; gap: 32px; }
+  .p-rodape-indice ul { text-align: left; }
 }
-.p-rodape-email:hover { color: var(--p-acento); }
-.p-rodape-canais ul,
-.p-rodape-indice ul { display: grid; gap: 7px; }
-.p-rodape-indice .p-marca { color: var(--p-quieto); padding-right: 6px; }
 .p-rodape-regua {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -2822,7 +2822,7 @@ a.pz-materia:hover { color: var(--p-acento); }
 }
 .p-prova-ano { text-align: right; }
 @media (max-width: 860px) {
-  .p-prova-linha { grid-template-columns: minmax(0, 1fr) 4rem; row-gap: 4px; }
+  .p-prova-linha { grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; } /* auto: o veículo caía na coluna de 4rem e "World Brand Design" quebrava em 3 linhas */
   .p-prova-titulo { grid-column: 1 / -1; }
 }
 
@@ -3398,13 +3398,14 @@ a.pz-materia:hover { color: var(--p-acento); }
    aparecia — o método subia por cima antes. Medido em 12/09. */
 .p-sobre { position: relative; padding-top: 40px; padding-bottom: clamp(72px, 9vh, 120px); }
 .p-sobre-grade,
-.p-metodo-cab {
+.p-metodo-cab,
+.p-grade-secao {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
   column-gap: var(--p-gap-x);
   align-items: start;
 }
-.p-sobre-grade .p-rotulo, .p-metodo-cab .p-rotulo { padding-top: 0.5em; }
+.p-sobre-grade .p-rotulo, .p-metodo-cab .p-rotulo, .p-grade-secao .p-rotulo { padding-top: 0.5em; }
 .p-sobre-txt {
   margin: 0;
   max-width: 34em;
@@ -3446,6 +3447,17 @@ a.pz-materia:hover { color: var(--p-acento); }
 /* a manchete do método mede pela coluna, não por 24ch */
 .p-metodo-cab .p-metodo-manchete { max-width: none; }
 @media (max-width: 860px) {
-  .p-sobre-grade, .p-metodo-cab { grid-template-columns: 1fr; row-gap: 14px; }
+  .p-sobre-grade, .p-metodo-cab, .p-grade-secao { grid-template-columns: 1fr; row-gap: 14px; }
   .p-numeros { grid-template-columns: 1fr 1fr; row-gap: 24px; }
 }
+
+/* ── "melhorar o pricing e o restante" (12/09): as folhas seguintes entram na
+   grade rótulo | conteúdo. Serviços e prova ROLAM (passam de uma tela). ── */
+.p-servicos { position: relative; padding-block: 40px 96px; }
+.p-servicos ul { margin: 0; padding: 0; list-style: none; }
+.p-servicos .p-servico:first-child { border-top: 0; padding-top: 0.2em; }
+.p-prova { position: relative; }
+.p-prova-nomes { padding-top: 0; }
+.p-prova-tabela { margin-top: clamp(24px, 3vw, 48px); }
+.p-pecas-cab { padding-bottom: clamp(16px, 2vw, 28px); }
+.p-pecas-cab .p-marca { padding-top: 0.6em; }
