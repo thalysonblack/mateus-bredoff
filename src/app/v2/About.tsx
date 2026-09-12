@@ -190,8 +190,11 @@ export default function AboutV2() {
     return () => ctx.revert();
   }, []);
 
+  /* superfície TINTA (12/09): de Método para baixo a página é um palco escuro
+     e o rodapé geral herda a superfície da tela — em papel ele quebrava o
+     palco no fim. As folhas de papel (método) pintam a própria cor. */
   return (
-    <Prancha n="03" nome="About" superficie="papel" status="Available for projects" rodape="completo">
+    <Prancha n="03" nome="About" superficie="tinta" status="Available for projects" rodape="completo">
       {/* ⭐⭐ AS SEÇÕES SÃO FOLHAS QUE SE SOBREPÕEM.
           Veio dos salvos dele: o post do Obys sobre o Laxer descreve a mecânica
           inteira — *"sheets of paper. The entire website is a collection of
