@@ -60,7 +60,7 @@ export default function HomeV5() {
           Mateus Bredoff
         </Link>
         <a href="#palco">Work</a>
-        <a href="#oficio">Practice</a>
+        <Link to="/v5/about">About</Link>
         <a className="p5-nav-fim" href={`mailto:${EMAIL}`}>
           {EMAIL}
         </a>

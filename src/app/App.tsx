@@ -37,6 +37,7 @@ import AboutV4 from "./v4/About";
 import LabV4 from "./v4/Lab";
 import HomeV5 from "./v5/Home";
 import CaseV5 from "./v5/Case";
+import AboutV5 from "./v5/About";
 import HomeV3 from "./pages/HomeV3";
 import AboutV3 from "./pages/AboutV3";
 import WorkIndexV3 from "./pages/WorkIndexV3";
@@ -308,6 +309,8 @@ export default function App() {
               no cabeçalho de `styles/v5.css`. */}
           <Route path="/v5" element={<HomeV5 />} />
           <Route path="/v5/work/:slug" element={<CaseV5 />} />
+          {/* "a about eu preciso de uma versão mais criativa" → "awwwards" (11/09) */}
+          <Route path="/v5/about" element={<AboutV5 />} />
 
           {/* Slug inexistente cai no próprio case, que trata o 404 com a
               linguagem do site em vez de tela branca. */}

@@ -269,3 +269,211 @@
 @media (prefers-reduced-motion: reduce) {
   .p5-cena, .p5-cena img { transition: none; }
 }
+
+/* ══ A ABOUT — "A SESSÃO" ══════════════════════════════════════════════════
+   Seis cenas em palco. Ver o cabeçalho de `v5/About.tsx`. */
+
+/* ── 1. o retrato com o nome atravessando ───────────────────────────────── */
+.p5-sessao-abre {
+  position: relative;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--p5-tinta);
+}
+.p5-sessao-retrato {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 18%;
+  display: block;
+  /* P&B de alto contraste: a foto deixa de ser retrato e vira MATÉRIA GRÁFICA,
+     que é a única forma de conviver com massa tipográfica desse tamanho — a
+     lição do pôster (G) */
+  filter: grayscale(1) contrast(1.18) brightness(0.92);
+}
+/* a camada da frente: a mesma foto, recortada pela metade de baixo, para o
+   rosto e o ombro passarem NA FRENTE das letras. A máscara é um gradiente
+   vertical — corte reto lia como faixa colada. */
+.p5-sessao-retrato-frente {
+  z-index: 2;
+  /* ⚠ medido na primeira captura: com a máscara em 30→44% a segunda linha do
+     nome sumia INTEIRA atrás do rosto. O gesto é a pessoa na frente da
+     palavra, não a palavra desaparecendo — a camada da frente só começa no
+     ombro (54→66%), e "Bredoff" fica atravessado, ainda legível. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 54%, #000 66%);
+  mask-image: linear-gradient(to bottom, transparent 54%, #000 66%);
+}
+.p5-sessao-nome {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  top: 24%;
+  margin: 0;
+  padding: 0 var(--p5-m);
+  display: flex;
+  flex-direction: column;
+  line-height: 0.8;
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  color: var(--p5-creme);
+  /* escala EXTREMA: o nome ocupa a largura da tela e a segunda linha fica
+     parcialmente atrás do rosto */
+  font-size: clamp(64px, 19.5vw, 300px);
+}
+.p5-sessao-nome span:last-child { align-self: flex-end; }
+.p5-sessao-abre-pe {
+  position: absolute;
+  z-index: 3;
+  left: var(--p5-m);
+  right: var(--p5-m);
+  bottom: var(--p5-m);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+@media (max-width: 700px) {
+  .p5-sessao-nome { top: 16%; font-size: 20vw; }
+  .p5-sessao-retrato { object-position: 50% 28%; }
+}
+
+/* ── 2. o credo em campo chapado ────────────────────────────────────────── */
+.p5-credo {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(28px, 4vw, 56px);
+  padding: clamp(96px, 14vw, 200px) var(--p5-m);
+  color: var(--p5-creme);
+}
+.p5-credo-frase {
+  font-size: clamp(34px, 6.4vw, 104px);
+  line-height: 0.96;
+  font-weight: 400;
+  letter-spacing: -0.036em;
+  max-width: 14ch;
+  margin: 0;
+}
+.p5-credo-pe { max-width: 52ch; color: rgba(236, 234, 229, 0.78); }
+
+/* ── 3. o método coreografado ───────────────────────────────────────────── */
+.p5-metodo { position: relative; }
+.p5-metodo-quadro {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+/* o véu do método é mais fechado que o do palco: aqui há um parágrafo inteiro
+   para ler, e ele fica em cima da peça */
+.p5-metodo-quadro::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(13, 18, 17, 0.9) 0%, rgba(13, 18, 17, 0.7) 46%, rgba(13, 18, 17, 0.2) 100%);
+  pointer-events: none;
+}
+.p5-metodo-texto {
+  position: absolute;
+  z-index: 2;
+  left: var(--p5-m);
+  right: var(--p5-m);
+  bottom: clamp(72px, 12vh, 140px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: clamp(20px, 4vw, 64px);
+  align-items: end;
+}
+/* o numeral em escala de cartaz, na cor do projeto que ilustra: é o motor da
+   cena — é ele que "vira" quando a etapa troca */
+.p5-metodo-num {
+  font-size: clamp(120px, 24vw, 380px);
+  line-height: 0.78;
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  margin: 0;
+  transition: color 0.5s ease;
+}
+.p5-metodo-titulo {
+  font-size: clamp(28px, 4vw, 60px);
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: -0.026em;
+  margin: 0 0 16px;
+}
+.p5-metodo-corpo {
+  font-size: 15px;
+  line-height: 1.5;
+  max-width: 44ch;
+  color: rgba(236, 234, 229, 0.82);
+  margin: 0;
+}
+.p5-metodo-rodape {
+  position: absolute;
+  z-index: 2;
+  left: var(--p5-m);
+  right: var(--p5-m);
+  bottom: var(--p5-m);
+  display: flex;
+  gap: 18px;
+}
+@media (max-width: 860px) {
+  .p5-metodo-texto { grid-template-columns: 1fr; gap: 8px; bottom: 64px; }
+  .p5-metodo-num { font-size: 30vw; }
+}
+
+/* ── 4. a prova sobre as capas ──────────────────────────────────────────── */
+.p5-prova {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  border-top: 1px solid var(--p5-fio);
+}
+/* as capas publicadas passam atrás, atenuadas UM degrau (piso 0,62 vale para
+   texto; imagem de fundo pode descer mais porque ela é cenário, não peça) */
+.p5-prova-capas {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  opacity: 0.28;
+  filter: grayscale(1);
+}
+.p5-prova-capas img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.p5-prova::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(13, 18, 17, 0.96) 30%, rgba(13, 18, 17, 0.4) 100%);
+  pointer-events: none;
+}
+.p5-prova-texto {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: clamp(96px, 14vw, 200px) var(--p5-m) var(--p5-m);
+}
+.p5-prova-nomes {
+  display: flex;
+  flex-direction: column;
+  font-size: clamp(40px, 8.8vw, 140px);
+  line-height: 0.88;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  margin: 12px 0 clamp(40px, 6vw, 88px);
+}
+.p5-prova-lista { list-style: none; margin: 0; padding: 0; }
+.p5-prova-linha { grid-template-columns: 3rem minmax(0, 10rem) minmax(0, 1fr); }
+
+/* ⚠ a nav da ABOUT é sólida, sem `difference`. O credo é campo chapado
+   saturado (o vermelho da Ginga) e sobre ele a inversão devolve verde-ciano —
+   o gotcha registrado esta semana: blend resolve sobre foto, não sobre cor
+   chapada. Creme fixo lê nas cinco cenas; a home mantém o blend porque lá só
+   há foto por baixo. */
+.p5-nav-solida { mix-blend-mode: normal; color: var(--p5-creme); }
