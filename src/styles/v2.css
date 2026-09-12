@@ -1024,8 +1024,14 @@
    (senão as bordas mostram a folha de baixo e a leitura de camada se perde),
    mas o conteúdo continua na coluna da prancha. */
 .p-folha-sec {
-  position: sticky;
-  top: 0;
+  /* ⚠ 12/09: "vamos remover a section subindo a outra e fazer outra forma de
+     scroll" → a folha NÃO gruda mais. A coreografia agora é PROFUNDIDADE (ele
+     escolheu entre quatro): quando a próxima entra pela base, esta desce a
+     0,6× do scroll e escurece com um véu até 40%; a próxima vem inteira por
+     cima. GSAP com scrub no Lenis, em `useProfundidade` (About.tsx); o
+     transform vem de lá, o véu é o ::after abaixo lendo `--p-veu`. */
+  position: relative;
+  isolation: isolate;
   margin-inline: calc(var(--p-margem) * -1);
   padding-inline: var(--p-margem);
   border-top: 1px solid var(--p-fio);
@@ -1036,11 +1042,15 @@
 }
 /* a primeira folha não tem emenda acima dela */
 .p-folha-sec:first-of-type { border-top: 0; }
-/* ⚠ a ÚLTIMA não pode ser sticky: ela seria "colada" no topo enquanto o rodapé
-   sobe, e o rodapé passaria por cima do conteúdo dela */
-.p-folha-sec:last-of-type { position: relative; }
-@media (prefers-reduced-motion: reduce) {
-  .p-folha-sec { position: relative; }
+/* o véu da folha que sai: preto, opacidade dirigida pelo scroll */
+.p-folha-sec::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: var(--p-veu, 0);
+  pointer-events: none;
+  z-index: 5;
 }
 
 /* ⭐ A CAPA: o retrato SANGRA na altura da primeira tela e o texto se ancora
@@ -3383,11 +3393,7 @@ a.pz-materia:hover { color: var(--p-acento); }
    de leitura grande (32px em 1920 → clamp), o primeiro parágrafo com recuo
    de abertura como lá. "By the numbers": quatro colunas com fio em cima,
    número em Geist Light (128px em 1920 → clamp) e rótulo no token quieto. */
-/* ⚠ Esta folha ROLA, não gruda. As folhas do sistema são sticky sobrepostas e
-   só funcionam para folha que cabe numa tela: texto + números aqui passam de
-   100svh em 1280×704, e com `sticky` a parte de baixo (os números) nunca
-   aparecia — o método subia por cima antes. Medido em 12/09. */
-.p-sobre { position: relative; padding-top: 40px; padding-bottom: clamp(72px, 9vh, 120px); }
+.p-sobre { padding-top: 40px; padding-bottom: clamp(72px, 9vh, 120px); }
 .p-sobre-grade,
 .p-metodo-cab,
 .p-grade-secao {
@@ -3444,10 +3450,9 @@ a.pz-materia:hover { color: var(--p-acento); }
 
 /* ── "melhorar o pricing e o restante" (12/09): as folhas seguintes entram na
    grade rótulo | conteúdo. Serviços e prova ROLAM (passam de uma tela). ── */
-.p-servicos { position: relative; padding-block: 40px 96px; }
+.p-servicos { padding-block: 40px 96px; }
 .p-servicos ul { margin: 0; padding: 0; list-style: none; }
 .p-servicos .p-servico:first-child { border-top: 0; padding-top: 0.2em; }
-.p-prova { position: relative; }
 .p-prova-nomes { padding-top: 0; }
 .p-prova-tabela { margin-top: clamp(24px, 3vw, 48px); }
 .p-pecas-cab { padding-bottom: clamp(16px, 2vw, 28px); }

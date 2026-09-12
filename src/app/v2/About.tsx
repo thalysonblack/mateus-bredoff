@@ -112,6 +112,31 @@ export default function AboutV2() {
      escala que ele deveria dar */
   const veiculos = [...new Set(RECONHECIMENTO.map((r) => r.veiculo))];
 
+  /* ⭐ PROFUNDIDADE — a coreografia entre folhas (12/09). Para cada folha que
+     tem uma seguinte: enquanto a seguinte sobe da base ao topo da viewport, a
+     que sai anda +0,4·vh para baixo (= 0,6× do scroll) e o véu vai a 0,4. A
+     que entra tem z-index maior e fundo opaco, então passa por cima. Scrub
+     numérico no Lenis, nunca pin; `invalidateOnRefresh` porque a distância é
+     a altura da viewport. */
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const folhas = Array.from(document.querySelectorAll<HTMLElement>(".p-tela .p-folha-sec"));
+    const ctx = gsap.context(() => {
+      folhas.forEach((sec, i) => {
+        sec.style.zIndex = String(i + 1);
+        const prox = folhas[i + 1];
+        if (!prox) return;
+        gsap.to(sec, {
+          y: () => 0.4 * window.innerHeight,
+          "--p-veu": 0.4,
+          ease: "none",
+          scrollTrigger: { trigger: prox, start: "top bottom", end: "top top", scrub: 0.4, invalidateOnRefresh: true },
+        });
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
   return (
     <Prancha n="03" nome="About" superficie="papel" status="Available for projects" rodape="completo">
       {/* ⭐⭐ AS SEÇÕES SÃO FOLHAS QUE SE SOBREPÕEM.
