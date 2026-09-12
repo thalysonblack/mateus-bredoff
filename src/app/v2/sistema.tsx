@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode, useLayoutEffect } from "react";
 import { Link, useLocation } from "react-router";
 import { CONTATO } from "../v3-system";
 import "../../styles/v2.css";
@@ -121,8 +121,28 @@ export function Prancha({
   children: ReactNode;
 }) {
   const hora = useHora();
+  /* ⭐ A ALTURA DO MENU É MEDIDA, não escrita. A hero da about começa por
+     baixo do header com um margin-top negativo — e ele estava hardcoded para
+     18px, a altura do header ANTIGO. Quando o menu virou quatro linhas (a nav
+     vertical), sobrou uma faixa de papel de ~72px acima da foto: "bugou".
+     Um ResizeObserver escreve `--p-menu-h` na `.p-tela`; quem precisa subir
+     por baixo do menu lê a variável. */
+  /* ⚠ `tela` já é a prop da Prancha ("rota que cabe na tela") — o ref tem outro nome */
+  const raizTela = useRef<HTMLDivElement | null>(null);
+  const menu = useRef<HTMLElement | null>(null);
+  useLayoutEffect(() => {
+    const t = raizTela.current;
+    const m = menu.current;
+    if (!t || !m) return;
+    const medir = () => t.style.setProperty("--p-menu-h", `${Math.round(m.getBoundingClientRect().height)}px`);
+    medir();
+    const ro = new ResizeObserver(medir);
+    ro.observe(m);
+    return () => ro.disconnect();
+  }, []);
   return (
     <div
+      ref={raizTela}
       /* ⚠ o acento não vem mais daqui: cada superfície declara o SEU par (azul
          e marrom dele) em `v2.css`, porque a mesma cor não serve aos dois
          fundos ([[craft-token-de-cor-nao-serve-aos-dois-fundos]]) */
@@ -147,7 +167,7 @@ export function Prancha({
             marca+ofício · nav+página atual · hora+disponível · contato.
             A cor obedece à superfície (ver `.p-menu` no CSS): tinta sólida no
             papel e no branco; branco em `difference` na tinta e sobre foto. */}
-        <header className="p-menu relative z-10">
+        <header ref={menu} className="p-menu relative z-10">
           <div className="p-menu-campo">
             <Link to="/" className="p-link">
               Mateus Bredoff

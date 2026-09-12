@@ -1423,7 +1423,9 @@
   top: 0;
   z-index: 0;
   margin-inline: calc(var(--p-margem) * -1);
-  margin-top: calc((var(--p-margem-y) + 1.22rem) * -1);
+  /* a altura do menu vem MEDIDA (`--p-menu-h`, ResizeObserver na Prancha) —
+     era 1,22rem escrito à mão, e quebrou no dia em que o menu cresceu */
+  margin-top: calc((var(--p-margem-y) + var(--p-menu-h, 1.22rem)) * -1);
   height: 100svh;
   overflow: hidden;
 }
@@ -3341,4 +3343,16 @@ a.pz-materia:hover { color: var(--p-acento); }
   .p-menu { grid-template-columns: 1fr 1fr; }
   .p-menu-nav { grid-column: 2; grid-row: 1 / span 3; align-items: flex-end; }
   .p-menu-fim { display: none; }
+}
+
+
+/* ══ "ajustar tbm o padding/margin global para 12px" (12/09/2026) ══════════
+   A margem de página do sistema era fluida (`--p-u × 3,6` ≈ 34px em 1440,
+   `--p-u × 2,1` ≈ 20px na vertical). Passa a 12px fixos nos dois eixos — o
+   valor da referência que ele apontou, e o mesmo que a V4 já usava. Vale para
+   toda Prancha: nav, folhas, sangrias (`calc(var(--p-margem) * -1)`) e rodapé
+   leem o token. */
+:root {
+  --p-margem: 12px;
+  --p-margem-y: 12px;
 }
