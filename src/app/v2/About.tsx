@@ -378,6 +378,7 @@ export default function AboutV2() {
                 />
               ))}
             </div>
+            <div className="p-tambor-janela">
             <ol className="p-tambor-lista" ref={tamborLista}>
               {PROCESSO.map((e, i) => (
                 <li key={e.titulo} className={i === 0 ? "p-tambor-etapa p-tambor-acesa" : "p-tambor-etapa"} data-etapa={i}>
@@ -388,6 +389,7 @@ export default function AboutV2() {
                 </li>
               ))}
             </ol>
+            </div>
             <div className="p-tambor-corpos">
               {PROCESSO.map((e, i) => (
                 <p key={e.titulo} className={i === 0 ? "p-corpo p-tambor-corpo p-tambor-acesa" : "p-corpo p-tambor-corpo"} data-etapa={i}>

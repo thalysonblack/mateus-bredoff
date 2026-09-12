@@ -3481,14 +3481,28 @@ a.pz-materia:hover { color: var(--p-acento); }
 .p-tambor-cena { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
 .p-tambor-corpo { position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 100%; margin: 0; opacity: 0; transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.08s; }
 .p-tambor-corpos { height: 1px; } /* só um ponto de ancoragem: os corpos se centram nele */
-.p-tambor-lista {
-  list-style: none; margin: 0; padding: 0;
-  position: absolute; top: 50%;
+/* ⚠ a JANELA: cinco passos de altura, centrada na tela, com máscara nas
+   bordas — os itens apagados esvanecem antes de alcançar o cabeçalho (medido:
+   sem ela, "Immersion" subia por cima da manchete quando a última etapa
+   estava acesa). A lista dentro começa com o item 0 no centro da janela. */
+.p-tambor-janela {
+  position: absolute; top: 50%; transform: translateY(-50%);
   left: calc(var(--p-margem) + var(--p-col) + var(--p-gap-x));
   width: calc(var(--p-col) * 1.25);
-  margin-top: calc(var(--p-passo) * -0.5);
+  height: calc(var(--p-passo) * 5);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
+}
+.p-tambor-lista {
+  list-style: none; margin: 0; padding: 0;
+  position: absolute; top: calc(var(--p-passo) * 2); left: 0; width: 100%;
   will-change: transform;
 }
+/* o cabeçalho do tambor fica na coluna da cena: rótulo e manchete empilhados */
+.p-tambor-fixo .p-metodo-cab { display: block; max-width: var(--p-col, 34ch); }
+.p-tambor-fixo .p-metodo-cab .p-rotulo { padding-bottom: 10px; }
+.p-tambor-fixo .p-metodo-cab .p-metodo-manchete { text-indent: 0; }
 .p-tambor-etapa { height: var(--p-passo); display: flex; align-items: center; }
 .p-tambor-nome {
   display: flex; align-items: baseline; gap: 14px;
