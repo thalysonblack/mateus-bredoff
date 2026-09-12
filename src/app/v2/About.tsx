@@ -1,28 +1,36 @@
 import retrato from "../../assets/optimized/hero-portrait-1600.webp";
 import retrato2x from "../../assets/optimized/hero-portrait-3200.webp";
-import metodo01 from "../../assets/optimized/metodo-01-1400.webp";
-import metodo01x from "../../assets/optimized/metodo-01-2200.webp";
-import metodo02 from "../../assets/optimized/metodo-02-1400.webp";
-import metodo02x from "../../assets/optimized/metodo-02-2200.webp";
-import metodo03 from "../../assets/optimized/metodo-03-1400.webp";
-import metodo03x from "../../assets/optimized/metodo-03-2200.webp";
-import metodo04 from "../../assets/optimized/metodo-04-1400.webp";
-import metodo04x from "../../assets/optimized/metodo-04-2200.webp";
-import metodo05 from "../../assets/optimized/metodo-05-1400.webp";
-import metodo05x from "../../assets/optimized/metodo-05-2200.webp";
+import metodo01 from "../../assets/optimized/metodo-01-1440.webp";
+import metodo02 from "../../assets/optimized/metodo-02-1440.webp";
+import metodo03 from "../../assets/optimized/metodo-03-1440.webp";
+import metodo04 from "../../assets/optimized/metodo-04-1440.webp";
+import metodo05 from "../../assets/optimized/metodo-05-1440.webp";
 
-/* ⭐ AS CENAS DO MÉTODO — "imagem 16:9, nessa pegada, gera na Magnific, mesma
-   paleta de acordo com o processo" (12/09). Cinco frames de filme gerados no
-   Seedream 5 Pro em 2k, uma bible comum (50 mm f/2, a tela como única luz,
-   pretos #0c0a08, creme #efe7d6, âmbar na pele, lâmpada quente e planta na
-   borda) e só a cena mudando por etapa. Sem rosto, sem texto legível. Os PNGs
-   originais e os contact sheets ficam em `_refs/metodo-cenas/`. */
+/* ⭐ AS CENAS DO MÉTODO — refeitas em 12/09 por três ordens dele, na sequência:
+   "refazer a foto de acordo com o que ele faz que é marcas, uso de ia.. e
+   fotografia de acordo com a hero" · "veja que ele é negro" · "botar efeitos
+   de dither". O que cada uma mudou:
+   · ASSUNTO: o trabalho dele, não "um designer num laptop" — grid de marcas,
+     mapa de posicionamento, moodboard com a interface de geração atrás,
+     wordmark em construção com o mockup gerado ao lado, brand book aberto.
+   · LUZ E PALETA: as da HERO (estúdio, fonte grande fora do quadro, fundo em
+     gradiente petróleo #1e3a42 → cinza #c2c8c6, papel creme), não o âmbar
+     noturno da referência de filme que valia antes.
+   · ELENCO: a mão é dele — pele escura, escrita na PRIMEIRA linha do prompt.
+     A leva sem isso veio inteira com mão clara e foi descartada.
+   · DITHER em pós, não em runtime: bayer (scale 1) para cinco tons amostrados
+     da hero (tinta · petróleo · cinza · claro · papel), via ffmpeg
+     `paletteuse`. Cinco tons comprimem quase de graça — WebP LOSSLESS de
+     48–72 KB por cena (o lossy borra o padrão, e a 100 pesava 500 KB).
+   · UM arquivo por cena, 1440×810: em retina cai 1:1 sobre os 720px do slot
+     e o dither fica nítido; em tela 1x vira textura fina. Sem srcSet.
+   Originais e folhas de contato em `_refs/metodo-cenas/` (PNGs fora do git). */
 const CENAS_METODO = [
-  { src: metodo01, src2x: metodo01x, alt: "A primeira noite com o briefing — caderno de notas sob a luz do laptop" },
-  { src: metodo02, src2x: metodo02x, alt: "O mapa de posicionamento, impresso e na tela" },
-  { src: metodo03, src2x: metodo03x, alt: "O board de direção visual tomando forma na mesa" },
-  { src: metodo04, src2x: metodo04x, alt: "O símbolo em construção na tela, a mão no mouse" },
-  { src: metodo05, src2x: metodo05x, alt: "A entrega — o manual encadernado, o pendrive, a caixa" },
+  { src: metodo01, alt: "The brief under his hand, a board of brand marks on the laptop" },
+  { src: metodo02, alt: "The positioning map — printed in his hand, and on the screen" },
+  { src: metodo03, alt: "The direction board: printed cards on the desk, generated variations on the screen" },
+  { src: metodo04, alt: "The wordmark under construction on the screen, the pencil sketch under his hand" },
+  { src: metodo05, alt: "The delivery — the brand book open on the symbol, the cards and the drive" },
 ];
 import { TIERS } from "../sections/Pricing";
 import { useEffect, useRef } from "react";
@@ -233,11 +241,9 @@ export default function AboutV2() {
                 <img
                   className="p-trilho-foto"
                   src={CENAS_METODO[i].src}
-                  srcSet={`${CENAS_METODO[i].src} 1400w, ${CENAS_METODO[i].src2x} 2200w`}
-                  sizes="62vw"
                   alt={CENAS_METODO[i].alt}
-                  width={2560}
-                  height={1440}
+                  width={1440}
+                  height={810}
                   loading={i === 0 ? undefined : "lazy"}
                   decoding="async"
                   draggable={false}
