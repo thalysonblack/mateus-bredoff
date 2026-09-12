@@ -102,6 +102,7 @@ export default function AboutV2() {
     };
   }, []);
   const folhaSobre = useRevelar<HTMLElement>();
+  const folhaStack = useRevelar<HTMLElement>();
   const folhaServicos = useRevelar<HTMLElement>();
   const folhaProva = useRevelar<HTMLElement>();
   const folhaPecas = useRevelar<HTMLElement>();
@@ -288,12 +289,26 @@ export default function AboutV2() {
                 <p className="p-corpo p-metodo-corpo">{e.corpo}</p>
               </article>
             ))}
-            <article className="p-trilho-etapa p-trilho-fim">
-              <span className="p-metodo-n" style={{ color: "var(--p-quieto)" }}>—</span>
-              <span className="p-metodo-nome">Tools</span>
-              <p className="p-corpo p-metodo-corpo">{FERRAMENTAS.join(" · ")}</p>
-            </article>
           </div>
+        </div>
+      </section>
+
+      {/* ─ MY STACK — "faz a my stack tbm" (12/09), do frame About do Figma:
+          rótulo à esquerda, as ferramentas em display na coluna, a primeira
+          acesa e as outras quietas (lá: Figma em branco, o resto a 50%).
+          Em papel, colada ao método: o "como" e o "com o quê" são o mesmo
+          capítulo — e as ferramentas deixam de ser a última coluna do trilho,
+          para não aparecerem duas vezes. Cabe numa tela: fica sticky. */}
+      <section ref={folhaStack} className="p-folha-sec p-papel p-stack" data-folha="4">
+        <div className="p-grade-secao" style={{ paddingInline: "var(--p-margem)" }}>
+          <p className="p-rotulo p-sobe">My stack</p>
+          <ul className="p-stack-lista">
+            {FERRAMENTAS.map((f, i) => (
+              <li key={f} className={i === 0 ? "p-servico-nome p-stack-item p-stack-item--aceso p-sobe" : "p-servico-nome p-stack-item p-sobe"}>
+                {f}
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
@@ -312,7 +327,7 @@ export default function AboutV2() {
           para as folhas lerem como capítulos de um só documento. E a folha
           ROLA: com 724px ela era sticky e o terceiro tier (Brand System) nunca
           aparecia em tela de 704 ([[gotcha_folha_sticky_maior_que_a_tela_esconde_a_base]]). */}
-      <section ref={folhaServicos} className="p-folha-sec p-tinta p-servicos" data-folha="4">
+      <section ref={folhaServicos} className="p-folha-sec p-tinta p-servicos" data-folha="5">
         <div className="p-grade-secao" style={{ paddingInline: "var(--p-margem)" }}>
           <p className="p-rotulo p-sobe">Services</p>
           <ul>
@@ -353,7 +368,7 @@ export default function AboutV2() {
           ⚠ Superfície BRANCA, a terceira da página: depois da tinta, o branco
           absoluto é o que faz a prova ler como outro capítulo e não como
           continuação dos serviços. */}
-      <section ref={folhaProva} className="p-folha-sec p-papel p-prova" data-folha="5">
+      <section ref={folhaProva} className="p-folha-sec p-papel p-prova" data-folha="6">
         <div style={{ paddingInline: "var(--p-margem)" }}>
           <div className="p-grade-secao">
           <p className="p-rotulo p-sobe">Published in</p>
@@ -394,7 +409,7 @@ export default function AboutV2() {
           começa na margem da prancha e SANGRA pela direita, com altura fixa e
           largura livre por capa: é a única forma de manter a altura sem
           recortar nenhuma. Rola na horizontal; a página não cresce. */}
-      <section ref={folhaPecas} className="p-folha-sec p-papel p-pecas" data-folha="6">
+      <section ref={folhaPecas} className="p-folha-sec p-papel p-pecas" data-folha="7">
         <div className="p-grade-secao p-pecas-cab" style={{ paddingInline: "var(--p-margem)" }}>
           <p className="p-rotulo p-sobe">Selected work</p>
           <p className="p-marca p-sobe" style={{ color: "var(--p-quieto)" }}>{String(WORK.length).padStart(2, "0")} identities</p>
