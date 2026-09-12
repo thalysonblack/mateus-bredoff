@@ -3515,14 +3515,16 @@ a.pz-materia:hover { color: var(--p-acento); }
    máscara na cor da tinta — um arquivo, qualquer superfície. O Abduzeedo usa
    só o nome numa grotesca pesada no próprio site: entra tipográfico. */
 .p-marquee-logo {
-  display: inline-block; height: clamp(30px, 4.4vw, 76px); width: auto;
+  /* iguais pela LARGURA, não pela altura: com altura igual o Bēhance saía
+     enorme e o brasão do WBDS ilegível (medido em 1280) */
+  display: inline-block; width: clamp(170px, 22vw, 380px); height: auto;
   background: currentColor;
   -webkit-mask: var(--logo) no-repeat center / contain; mask: var(--logo) no-repeat center / contain;
   vertical-align: middle;
 }
 .p-marquee-abz {
   font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 700; text-transform: uppercase;
-  font-size: clamp(26px, 3.6vw, 62px); letter-spacing: 0.02em; line-height: 1;
+  font-size: clamp(26px, 3.4vw, 58px); letter-spacing: 0.02em; line-height: 1;
 }
 .p-marquee-nome { align-items: center; gap: 0.5em; padding-right: 0.5em; line-height: 1; }
 .p-marquee-ponto { font-family: 'Geist', ui-sans-serif, sans-serif; font-size: clamp(30px, 4.4vw, 76px); }
