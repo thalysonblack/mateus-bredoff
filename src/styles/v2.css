@@ -2945,7 +2945,9 @@ a.pz-materia:hover { color: var(--p-acento); }
 }
 .p-mesa-legenda { display: flex; gap: 6px; padding-top: 6px; }
 .p-mesa-nota {
-  opacity: var(--p-mesa-op, 1);
+  /* ⚠ a nota NÃO atenua por opacidade: é texto, e o rótulo de 8,5px dentro
+     dela caía a 3,92:1 compondo com o 0,92 da nota. Profundidade da nota fica
+     por escala e blur — só IMAGEM recua por opacidade. */
   background: #f4f4f2;
   border: 1px solid var(--p-fio);
   padding: 12px 14px 14px;
