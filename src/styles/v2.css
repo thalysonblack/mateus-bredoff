@@ -2845,3 +2845,123 @@ a.pz-materia:hover { color: var(--p-acento); }
 }
 .p-pecas-item img { height: 100%; width: auto; display: block; min-height: 0; flex: 1 1 auto; }
 .p-pecas-legenda { display: flex; justify-content: space-between; gap: 16px; }
+
+/* ══ ABOUT I — "DOIS TAMANHOS" ═══════════════════════════════════════════
+   O nome em escala de largura; todo o resto em mono 11px. Nenhum tamanho no
+   meio. Ver o cabeçalho de `AboutI.tsx`. */
+.p-dois-colunas {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--p-gap-x);
+  padding: 0 var(--p-margem);
+}
+.p-dois-topo { padding-top: 28px; padding-bottom: 20px; }
+.p-dois-base { padding-top: 24px; padding-bottom: 40px; border-top: 1px solid var(--p-fio); }
+.p-dois-txt,
+.p-dois-lista {
+  font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
+  font-size: 11px;
+  line-height: 1.45;
+  letter-spacing: 0.02em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-width: 34ch;
+}
+.p-dois-lista li { padding: 1px 0; }
+/* ⚠ o corpo sai da LARGURA: 14 caracteres em Geist 400 medem ~8,1em de linha,
+   então largura útil ÷ 8,1 encosta o nome nas duas margens. `vw` com trava,
+   sem calc no glifo — se a webfont falhar, a linha estoura, não quebra. */
+.p-dois-nome {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: clamp(52px, 12.1vw, 176px);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+  margin: 0;
+  padding: 18px var(--p-margem) 26px;
+  border-top: 1px solid var(--p-fio);
+}
+/* a única imagem: miniaturas em escala de SELO, sangrando pela direita */
+.p-dois-selos {
+  display: flex;
+  gap: 6px;
+  padding: 0 0 8px var(--p-margem);
+  overflow: hidden;
+}
+.p-dois-selos img { height: 52px; width: auto; display: block; flex: 0 0 auto; }
+@media (max-width: 860px) {
+  .p-dois-colunas { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
+}
+
+/* ══ ABOUT J — "A MESA" ══════════════════════════════════════════════════
+   Plano com profundidade; posições à mão; um z comanda tudo. Ver `AboutJ.tsx`. */
+.p-mesa {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  /* o grão da mesa: a textura que a régua da casa pede e a página branca
+     sozinha não tem */
+  background:
+    radial-gradient(1200px 700px at 50% 40%, rgba(20, 32, 31, 0.035), transparent 70%),
+    #fff;
+}
+.p-mesa-fantasma {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -52%);
+  z-index: 0;
+  margin: 0;
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: clamp(120px, 22vw, 340px);
+  line-height: 0.82;
+  letter-spacing: -0.05em;
+  text-align: center;
+  color: rgba(20, 32, 31, 0.05);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+.p-mesa-item {
+  position: absolute;
+  margin: 0;
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease, filter 0.5s ease;
+  will-change: transform;
+  cursor: pointer;
+}
+.p-mesa-capa img {
+  width: 100%;
+  height: auto;
+  display: block;
+  box-shadow: 0 1px 0 rgba(20, 32, 31, 0.06), 0 14px 40px -18px rgba(20, 32, 31, 0.35);
+}
+.p-mesa-legenda { display: flex; gap: 6px; padding-top: 6px; }
+.p-mesa-nota {
+  background: #f4f4f2;
+  border: 1px solid var(--p-fio);
+  padding: 12px 14px 14px;
+  box-shadow: 0 14px 40px -18px rgba(20, 32, 31, 0.3);
+}
+.p-mesa-nota-txt {
+  font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
+  font-size: 10.5px;
+  line-height: 1.45;
+  white-space: pre-line;
+  margin: 6px 0 0;
+  color: var(--p-ink);
+}
+@media (max-width: 860px) {
+  /* no celular a mesa vira pilha: dispersão em 390px é ruído */
+  .p-mesa { overflow: auto; }
+  .p-mesa-item { position: static; width: auto !important; transform: none !important; filter: none !important; opacity: 1 !important; margin: 0 var(--p-margem) 24px; display: block; }
+  .p-mesa-fantasma { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .p-mesa-item { transition: none; }
+}

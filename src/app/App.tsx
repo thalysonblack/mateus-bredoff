@@ -18,6 +18,9 @@ import AboutE from "./v2/AboutE";
 import AboutF from "./v2/AboutF";
 import AboutG from "./v2/AboutG";
 import AboutH from "./v2/AboutH";
+import AboutI from "./v2/AboutI";
+import AboutJ from "./v2/AboutJ";
+import AboutK from "./v2/AboutK";
 import PranchaWork from "./v2/Work";
 import PranchaCase from "./v2/Case";
 import PranchaLab from "./v2/Lab";
@@ -260,6 +263,12 @@ export default function App() {
           <Route path="/v2/about-f" element={<AboutF />} />
           <Route path="/v2/about-g" element={<AboutG />} />
           <Route path="/v2/about-h" element={<AboutH />} />
+          {/* 11/09 — "ainda não" na décima. Repertório novo (acervo da casa):
+              três POSTURAS mutuamente incompatíveis, cada uma numa família que
+              nenhuma das dez tocou. Ver o cabeçalho de cada arquivo. */}
+          <Route path="/v2/about-i" element={<AboutI />} />
+          <Route path="/v2/about-j" element={<AboutJ />} />
+          <Route path="/v2/about-k" element={<AboutK />} />
           {/* a mesma about com as outras duas mecânicas de serviços */}
           <Route path="/v2/about-c-fita" element={<AboutC servicos="fita" />} />
           <Route path="/v2/about-c-cortina" element={<AboutC servicos="cortina" />} />
