@@ -61,9 +61,10 @@ function Navegacao() {
         const atual = !!p.to && (pathname === p.to || pathname.startsWith(p.to + "/"));
         const miolo = (
           <>
-            {p.nome}
-            {/* o ■ do ativo: o mesmo quadrado que o sistema já usa; some nos outros */}
+            {/* o ■ do ativo, à ESQUERDA do nome ("botar o pixel pro lado esquerdo",
+                12/09): o mesmo quadrado que o sistema já usa; some nos outros */}
             <i aria-hidden="true" className="p-menu-ponto" style={{ visibility: atual ? "visible" : "hidden" }} />
+            {p.nome}
           </>
         );
         return p.href ? (
