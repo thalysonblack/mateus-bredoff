@@ -2939,10 +2939,13 @@ a.pz-materia:hover { color: var(--p-acento); }
   width: 100%;
   height: auto;
   display: block;
+  opacity: var(--p-mesa-op, 1);
+  transition: opacity 0.5s ease;
   box-shadow: 0 1px 0 rgba(20, 32, 31, 0.06), 0 14px 40px -18px rgba(20, 32, 31, 0.35);
 }
 .p-mesa-legenda { display: flex; gap: 6px; padding-top: 6px; }
 .p-mesa-nota {
+  opacity: var(--p-mesa-op, 1);
   background: #f4f4f2;
   border: 1px solid var(--p-fio);
   padding: 12px 14px 14px;
@@ -2959,7 +2962,8 @@ a.pz-materia:hover { color: var(--p-acento); }
 @media (max-width: 860px) {
   /* no celular a mesa vira pilha: dispersão em 390px é ruído */
   .p-mesa { overflow: auto; }
-  .p-mesa-item { position: static; width: auto !important; transform: none !important; filter: none !important; opacity: 1 !important; margin: 0 var(--p-margem) 24px; display: block; }
+  .p-mesa-item { position: static; width: auto !important; transform: none !important; filter: none !important; margin: 0 var(--p-margem) 24px; display: block; }
+  .p-mesa-capa img, .p-mesa-nota { opacity: 1 !important; }
   .p-mesa-fantasma { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {

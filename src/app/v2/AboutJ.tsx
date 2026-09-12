@@ -101,7 +101,11 @@ export default function AboutJ() {
             top: `${it.y}%`,
             width: `${it.w}%`,
             zIndex: Math.round(z * 100) + (naFrente ? 100 : 0),
-            opacity: 0.45 + z * 0.55,
+            /* ⚠ a atenuação é da IMAGEM, nunca da legenda: com `opacity` no item
+               inteiro, as legendas das peças do fundo mediram 2,46:1 (alvo 4,5).
+               A variável vai para o `img` e para a nota no CSS; o texto fica em
+               tinta cheia — piso 0,62 é para texto, e texto informa. */
+            ["--p-mesa-op" as string]: 0.45 + z * 0.55,
             transform: `translate3d(${mouse.x * -36 * z}px, ${mouse.y * -24 * z}px, 0) scale(${0.86 + z * 0.14})`,
             filter: naFrente ? "none" : `blur(${(1 - z) * 1.6}px)`,
           };
