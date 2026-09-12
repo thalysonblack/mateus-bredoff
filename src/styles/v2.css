@@ -3146,20 +3146,6 @@ a.pz-materia:hover { color: var(--p-acento); }
   .p-hero-fichas-fim { text-align: left; align-items: flex-start; }
 }
 
-/* ── o índice que atravessa ─────────────────────────────────────────────── */
-.p-indice-vivo {
-  position: fixed;
-  z-index: 8;
-  left: var(--p-margem);
-  top: calc(var(--p-margem-y) + 18px + 26px);
-  margin: 0;
-  pointer-events: none;
-  /* a cor troca com a superfície por baixo: sobre a tinta ele clareia */
-  color: var(--p-ink);
-  mix-blend-mode: difference;
-  filter: invert(1);
-}
-@media (max-width: 860px) { .p-indice-vivo { display: none; } }
 
 /* ── o método em trilho, com a folha presa ──────────────────────────────── */
 .p-metodo-trilho {
@@ -3213,13 +3199,6 @@ a.pz-materia:hover { color: var(--p-acento); }
    capa — enquanto existe, está sobre ela — então nesta about ele é creme. */
 /* (a regra do header creme sobre a hero saiu: o `.p-menu` em difference a substitui) */
 
-/* ⚠ o `.p-secao-indice` desenha um fio depois do rótulo (é o traço de abertura
-   de cada seção). No índice VIVO, fixo e em `difference`, esse fio cortava a
-   tela inteira em todas as folhas — ruído. Aqui ele é só numeral + rótulo. */
-.p-indice-vivo::before,
-.p-indice-vivo::after { display: none; content: none; }
-.p-indice-vivo { border: 0; background: none; width: auto; }
-.p-indice-vivo > * { border: 0; background: none; flex: 0 0 auto; }
 
 /* ══ "a fonte departure, sempre usar maiúscula" (12/09/2026) ═══════════════
    Regra de sistema dele. A régua da casa já dizia "mono, caixa alta, 10–12px";
@@ -3243,7 +3222,6 @@ a.pz-materia:hover { color: var(--p-acento); }
 /* a barra de fichas da hero recua com o scroll, como a foto e os nomes — parada,
    ela ficava sozinha no topo enquanto a folha seguinte subia, e colidia com o
    índice vivo. Mesma timeline dos outros três gestos da hero. */
-.p-indice-vivo { transition: opacity 0.35s ease; }
 @supports (animation-timeline: scroll()) {
   .p-hero-fichas {
     animation-name: p-hero-fichas-some;
@@ -3292,13 +3270,14 @@ a.pz-materia:hover { color: var(--p-acento); }
    branco a 50% para o blend compor certo. */
 .p-tinta > div > .p-menu,
 .p-tela:has(.p-capa-full) > div > .p-menu {
-  color: #ffffff;
+  /* o spec dele, colado do Figma: Geist 500 · 15px · 109% · −0,03em · #E9E3E1 */
+  color: #e9e3e1;
   mix-blend-mode: difference;
 }
 .p-tinta > div > .p-menu .p-menu-campo > span:last-child,
 .p-tinta > div > .p-menu .p-menu-campo > nav + span,
 .p-tela:has(.p-capa-full) > div > .p-menu .p-menu-campo > span:last-child,
-.p-tela:has(.p-capa-full) > div > .p-menu .p-menu-campo > nav + span { color: rgba(255, 255, 255, 0.5); }
+.p-tela:has(.p-capa-full) > div > .p-menu .p-menu-campo > nav + span { color: rgba(233, 227, 225, 0.5); }
 
 @media (max-width: 860px) {
   .p-menu { grid-template-columns: 1fr 1fr; row-gap: 12px; font-size: 14px; }
@@ -3327,11 +3306,11 @@ a.pz-materia:hover { color: var(--p-acento); }
 /* o quadrado do ativo: 7px, na cor do texto, à direita do item — como no print */
 .p-menu-ponto { display: inline-block; width: 7px; height: 7px; background: currentColor; }
 .p-tinta > div > .p-menu .p-menu-nav a:not([aria-current]),
-.p-tela:has(.p-capa-full) > div > .p-menu .p-menu-nav a:not([aria-current]) { color: rgba(255, 255, 255, 0.5); }
+.p-tela:has(.p-capa-full) > div > .p-menu .p-menu-nav a:not([aria-current]) { color: rgba(233, 227, 225, 0.5); }
 .p-tinta > div > .p-menu .p-menu-nav a[aria-current],
 .p-tela:has(.p-capa-full) > div > .p-menu .p-menu-nav a[aria-current],
 .p-tinta > div > .p-menu .p-menu-nav a:hover,
-.p-tela:has(.p-capa-full) > div > .p-menu .p-menu-nav a:hover { color: #ffffff; }
+.p-tela:has(.p-capa-full) > div > .p-menu .p-menu-nav a:hover { color: #e9e3e1; }
 @media (max-width: 860px) {
   .p-menu-nav { grid-column: 2; grid-row: 1 / span 2; }
 }
@@ -3355,4 +3334,39 @@ a.pz-materia:hover { color: var(--p-acento); }
 :root {
   --p-margem: 12px;
   --p-margem-y: 12px;
+}
+
+
+/* ── as cenas do método: 16:9 acima de cada etapa do trilho ─────────────── */
+.p-trilho-etapa {
+  /* a etapa vira coluna: foto em cima, a grade numeral·título·corpo embaixo */
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 2fr);
+  grid-template-rows: auto auto;
+  row-gap: 18px;
+  padding-top: 0;
+  border-top: 0;
+}
+.p-trilho-foto {
+  grid-column: 1 / -1;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+  background: #14201f;
+}
+.p-trilho-etapa .p-metodo-n { grid-row: 2; }
+.p-trilho-etapa .p-metodo-nome { grid-row: 2; }
+.p-trilho-etapa .p-metodo-corpo { grid-column: 2; grid-row: 3; }
+/* a etapa "Tools" não tem cena — o numeral/título sobem para a linha 1 */
+.p-trilho-fim { grid-template-rows: auto; align-self: end; }
+.p-trilho-fim .p-metodo-n, .p-trilho-fim .p-metodo-nome { grid-row: 1; }
+.p-trilho-fim .p-metodo-corpo { grid-row: 2; }
+/* o trilho alinha pela BASE: a foto define a altura, o texto pendura embaixo */
+.p-trilho { align-items: end; }
+.p-metodo-fixo { justify-content: flex-end; padding-bottom: clamp(48px, 7vh, 88px); }
+@media (max-width: 860px) {
+  .p-trilho-etapa { grid-template-columns: 2.4rem minmax(0, 1fr); }
+  .p-trilho-foto { grid-column: 1 / -1; }
+  .p-trilho-etapa .p-metodo-corpo { grid-column: 2; }
 }

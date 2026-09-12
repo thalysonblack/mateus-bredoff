@@ -1,11 +1,35 @@
 import retrato from "../../assets/optimized/hero-portrait-1600.webp";
 import retrato2x from "../../assets/optimized/hero-portrait-3200.webp";
+import metodo01 from "../../assets/optimized/metodo-01-1400.webp";
+import metodo01x from "../../assets/optimized/metodo-01-2200.webp";
+import metodo02 from "../../assets/optimized/metodo-02-1400.webp";
+import metodo02x from "../../assets/optimized/metodo-02-2200.webp";
+import metodo03 from "../../assets/optimized/metodo-03-1400.webp";
+import metodo03x from "../../assets/optimized/metodo-03-2200.webp";
+import metodo04 from "../../assets/optimized/metodo-04-1400.webp";
+import metodo04x from "../../assets/optimized/metodo-04-2200.webp";
+import metodo05 from "../../assets/optimized/metodo-05-1400.webp";
+import metodo05x from "../../assets/optimized/metodo-05-2200.webp";
+
+/* ⭐ AS CENAS DO MÉTODO — "imagem 16:9, nessa pegada, gera na Magnific, mesma
+   paleta de acordo com o processo" (12/09). Cinco frames de filme gerados no
+   Seedream 5 Pro em 2k, uma bible comum (50 mm f/2, a tela como única luz,
+   pretos #0c0a08, creme #efe7d6, âmbar na pele, lâmpada quente e planta na
+   borda) e só a cena mudando por etapa. Sem rosto, sem texto legível. Os PNGs
+   originais e os contact sheets ficam em `_refs/metodo-cenas/`. */
+const CENAS_METODO = [
+  { src: metodo01, src2x: metodo01x, alt: "A primeira noite com o briefing — caderno de notas sob a luz do laptop" },
+  { src: metodo02, src2x: metodo02x, alt: "O mapa de posicionamento, impresso e na tela" },
+  { src: metodo03, src2x: metodo03x, alt: "O board de direção visual tomando forma na mesa" },
+  { src: metodo04, src2x: metodo04x, alt: "O símbolo em construção na tela, a mão no mouse" },
+  { src: metodo05, src2x: metodo05x, alt: "A entrega — o manual encadernado, o pendrive, a caixa" },
+];
 import { TIERS } from "../sections/Pricing";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger } from "../../lib/gsap";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { useRevelar } from "./useRevelar";
-import { Prancha, useHora } from "./sistema";
+import { Prancha } from "./sistema";
 import { LEAD, PROCESSO_MANCHETE, PROCESSO, FERRAMENTAS } from "../../content/about";
 import { WORK } from "../../content/work";
 import { RECONHECIMENTO } from "../../content/reconhecimento";
@@ -35,31 +59,8 @@ export default function AboutV2() {
      anterior. Um gatilho único revelaria tudo na primeira rolagem, e as folhas
      de baixo chegariam já prontas — o gesto some. */
   const folhaMetodo = useRevelar<HTMLElement>();
-  /* ⭐ O ÍNDICE QUE ATRAVESSA. "não ficar muito blocado" (12/09): cinco folhas
-     com a mesma anatomia — fio no topo, "0X RÓTULO" no mesmo canto — liam como
-     cinco caixas. O numeral sai de dentro de cada folha e vira UM elemento fixo
-     no canto, que troca quando a folha seguinte chega: o mesmo índice cruzando
-     todas as fronteiras é o que faz a página ler como um documento contínuo, e
-     não como blocos. Régua do uau: um elemento cruzando a fronteira. */
-  const [folhaAtual, setFolhaAtual] = useState(0);
-  const hora = useHora();
   const trilho = useRef<HTMLDivElement | null>(null);
   const percurso = useRef<HTMLElement | null>(null);
-  useEffect(() => {
-    const folhas = [...document.querySelectorAll<HTMLElement>("[data-folha]")];
-    if (!folhas.length) return;
-    const io = new IntersectionObserver(
-      (es) =>
-        es.forEach((e) => {
-          /* `data-folha` é 1-based (é o número que a página mostra); o estado é
-             o índice do array de rótulos — medido: sem o −1 a capa dizia "02" */
-          if (e.isIntersecting) setFolhaAtual(Number((e.target as HTMLElement).dataset.folha) - 1);
-        }),
-      { rootMargin: "-40% 0px -55% 0px", threshold: 0 },
-    );
-    folhas.forEach((f) => io.observe(f));
-    return () => io.disconnect();
-  }, []);
   /* ⭐ O MÉTODO CORRE NA HORIZONTAL COM A SEÇÃO PRESA — o gesto que consertou o
      miolo em 18/08 e que a lista vertical de 11/09 tinha desfeito. A folha ganha
      percurso (altura de tela + o comprimento do trilho) e fica grudada; o scroll
@@ -180,16 +181,7 @@ export default function AboutV2() {
         </p>
       </section>
 
-      {/* o índice que atravessa: um só, fixo no canto, trocando por folha */}
-      {/* ⚠ na hero o índice SOME: ela tem a própria hierarquia (o nome gigante
-          é o índice) e o "01" colidia com "Brazil based" no mesmo canto. Ele
-          aparece a partir da segunda folha, quando o topo já é papel. */}
-      <p className="p-secao-indice p-indice-vivo" aria-hidden="true" style={{ opacity: folhaAtual === 0 ? 0 : 1 }}>
-        <span>{String(folhaAtual + 1).padStart(2, "0")}</span>
-        <span className="p-rotulo">
-          {["About", "Method", "Services", "Published", "Selected"][folhaAtual] ?? ""}
-        </span>
-      </p>
+      {/* o índice vivo saiu — "remover" (12/09, print do "02 METHOD" sobre a hero) */}
       {/* ══ O MIOLO, REFEITO EM 11/09/2026 — "princípios de design mesmo" ════
           Diagnóstico medido antes de mexer: a capa era o ÚNICO momento da
           página. Da segunda tela ao rodapé tudo caía para 13/9,5/8,5px em
@@ -236,6 +228,20 @@ export default function AboutV2() {
           <div className="p-trilho" ref={trilho}>
             {PROCESSO.map((e, i) => (
               <article key={e.titulo} className="p-trilho-etapa">
+                {/* a cena em 16:9 ocupa o vazio que havia acima do título —
+                    o slot que ele apontou no print */}
+                <img
+                  className="p-trilho-foto"
+                  src={CENAS_METODO[i].src}
+                  srcSet={`${CENAS_METODO[i].src} 1400w, ${CENAS_METODO[i].src2x} 2200w`}
+                  sizes="62vw"
+                  alt={CENAS_METODO[i].alt}
+                  width={2560}
+                  height={1440}
+                  loading={i === 0 ? undefined : "lazy"}
+                  decoding="async"
+                  draggable={false}
+                />
                 <span className="p-metodo-n">{String(i + 1).padStart(2, "0")}</span>
                 <span className="p-metodo-nome">{e.titulo}</span>
                 <p className="p-corpo p-metodo-corpo">{e.corpo}</p>
