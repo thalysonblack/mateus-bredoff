@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { gsap, ScrollTrigger } from "../../lib/gsap";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { useRevelar } from "./useRevelar";
-import { Prancha } from "./sistema";
+import { Prancha, useHora } from "./sistema";
 import { LEAD, PROCESSO_MANCHETE, PROCESSO, FERRAMENTAS } from "../../content/about";
 import { WORK } from "../../content/work";
 import { RECONHECIMENTO } from "../../content/reconhecimento";
@@ -42,6 +42,7 @@ export default function AboutV2() {
      todas as fronteiras é o que faz a página ler como um documento contínuo, e
      não como blocos. Régua do uau: um elemento cruzando a fronteira. */
   const [folhaAtual, setFolhaAtual] = useState(0);
+  const hora = useHora();
   const trilho = useRef<HTMLDivElement | null>(null);
   const percurso = useRef<HTMLElement | null>(null);
   useEffect(() => {
@@ -132,13 +133,26 @@ export default function AboutV2() {
 
           O manifesto fica no alto, ancorado no topo da foto: as duas coisas que
           apresentam a pessoa começam na mesma linha. */}
-      {/* ⭐ "a hero que gosto dela, full" (12/09). A mesma capa — retrato +
-          manifesto — mas cobrindo a viewport inteira, com o header da Prancha
-          e o manifesto flutuando POR CIMA da foto, como no visor. O retrato
-          deixa de ser uma coluna de 5 e vira a superfície; o manifesto desce
-          para a base, sobre véu, onde a foto é escura e ele lê. */}
-      <section className="p-folha-sec p-papel p-capa p-capa-full" data-folha="1">
-        <figure className="p-retrato">
+      {/* ⭐ A HERO — "gostei, mantém a hero assim" + o node 433:103 do Figma
+          (12/09). É a hero da home original dele: o retrato em tela cheia,
+          MATEUS BREDOFF gigante na base à esquerda, BRAND DESIGNER na base à
+          direita, os dois em `exclusion` atravessados pela camisa, e os
+          metadados de 15px no alto. As classes `.p-hero` já eram esta anatomia
+          (AboutC/D, agosto) — reusadas, com os valores acertados pelo node:
+          128px em 1920 (6,67vw), tracking −0,03em, entrelinha 0,89.
+
+          ⚠ "faz igual" + "mas aí tu adapta ao lugar": a barra do Figma tem
+          Brazil based · hora · Currently available · CONTACT. O header da
+          Prancha já ocupa o topo com nome, nav e "Available for projects" —
+          então a barra desce para baixo dele e traz só o que é desta página:
+          onde ele está, a hora viva, e o contato. Repetir "available" a 30px
+          de distância seria dizer a mesma coisa duas vezes.
+
+          ⚠ Sem véu: o blend precisa da foto crua. O gradiente da própria foto
+          (petróleo no alto, quase branco na base) é o que faz o nome sair
+          escuro no fundo claro e claro sobre a camisa — pixel a pixel. */}
+      <section className="p-folha-sec p-papel p-hero p-capa-full" data-folha="1">
+        <figure className="p-hero-foto">
           <img
             src={retrato}
             srcSet={`${retrato} 1600w, ${retrato2x} 3200w`}
@@ -151,17 +165,40 @@ export default function AboutV2() {
             draggable={false}
           />
         </figure>
-        <div className="p-capa-texto">
-          <p className="p-manifesto">{LEAD[0]}</p>
-          <p className="p-marca p-capa-pe">
-            <span>Mateus Bredoff</span>
-            <span>Brand designer &amp; art director · Brazil</span>
+        <div className="p-hero-fichas" aria-hidden="true">
+          <p>
+            <span>Brazil based</span>
+            <span>Working globally</span>
+          </p>
+          <p>
+            <span>{hora} BRT</span>
+            <span>{new Date().toLocaleDateString("en-GB")}</span>
+          </p>
+          <p>
+            <span>Currently</span>
+            <span>Available for work</span>
+          </p>
+          <p className="p-hero-fichas-fim">
+            <a href="mailto:hello@mateusbredoff.com">Contact</a>
           </p>
         </div>
+        <p className="p-hero-marca p-hero-marca--esq">
+          Mateus
+          <br />
+          Bredoff
+        </p>
+        <p className="p-hero-marca p-hero-marca--dir">
+          Brand
+          <br />
+          Designer
+        </p>
       </section>
 
       {/* o índice que atravessa: um só, fixo no canto, trocando por folha */}
-      <p className="p-secao-indice p-indice-vivo" aria-hidden="true">
+      {/* ⚠ na hero o índice SOME: ela tem a própria hierarquia (o nome gigante
+          é o índice) e o "01" colidia com "Brazil based" no mesmo canto. Ele
+          aparece a partir da segunda folha, quando o topo já é papel. */}
+      <p className="p-secao-indice p-indice-vivo" aria-hidden="true" style={{ opacity: folhaAtual === 0 ? 0 : 1 }}>
         <span>{String(folhaAtual + 1).padStart(2, "0")}</span>
         <span className="p-rotulo">
           {["About", "Method", "Services", "Published", "Selected"][folhaAtual] ?? ""}

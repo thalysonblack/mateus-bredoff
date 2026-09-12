@@ -1512,12 +1512,15 @@
   z-index: 2;
   font-family: 'Geist', ui-sans-serif, sans-serif;
   font-weight: 400;
-  font-size: clamp(34px, 6.2vw, 112px);
-  line-height: 0.9;
-  letter-spacing: -0.045em;
+  /* ⚠ acertado pelo node 433:103 do Figma (12/09): 128px em 1920 = 6,67vw,
+     tracking −3,84px = −0,03em, entrelinha 0,89, e o blend é EXCLUSION (o que
+     ele desenhou; difference é mais dura nos meios-tons da camisa) */
+  font-size: clamp(34px, 6.67vw, 128px);
+  line-height: 0.89;
+  letter-spacing: -0.03em;
   text-transform: uppercase;
   color: #ffffff;
-  mix-blend-mode: difference;
+  mix-blend-mode: exclusion;
   pointer-events: none;
 }
 .p-hero-marca--esq { left: var(--p-margem); }
@@ -3102,70 +3105,43 @@ a.pz-materia:hover { color: var(--p-acento); }
    "caixa" de cada bloco. A aresta da folha que sobe já é a fronteira. */
 .p-tela:has(.p-capa-full) .p-folha-sec { border-top: 0; }
 
-/* ── a capa full ────────────────────────────────────────────────────────── */
-.p-capa-full {
-  display: block;
-  position: sticky;
-  top: 0;
-  /* ⚠ começa em y=0, POR BAIXO do header da Prancha: desfaz o padding-block
-     do wrapper (margem-y) e a altura do header (18px em 1440). O header é
-     `relative z-10` e continua por cima. */
-  margin-top: calc(-1 * (var(--p-margem-y) + 18px));
-  height: 100svh;
-  padding: 0;
-  overflow: hidden;
-}
-.p-capa-full > .p-retrato {
-  position: absolute;
-  inset: 0;
-  margin: 0;
-  height: auto;
-}
-.p-capa-full > .p-retrato img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 22%;
-}
-/* o véu: só na base e à direita, onde o manifesto vive — a foto é clara do
-   lado direito, e texto sobre ela sem campo não lê */
-.p-capa-full::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(to top, rgba(20, 32, 31, 0.84) 0%, rgba(20, 32, 31, 0.5) 30%, transparent 58%),
-    linear-gradient(to left, rgba(20, 32, 31, 0.36), transparent 50%);
-  pointer-events: none;
-}
-.p-capa-full > .p-capa-texto {
+/* ── a capa: é a `.p-hero` (anatomia do node 433:103), e `p-capa-full` fica só
+   como MARCADOR para os `:has()` desta about (header creme, fios de topo). As
+   regras próprias da capa-full saíram: a `.p-hero` já é sticky, 100svh, sangria
+   e margin-top sob o header. */
+.p-capa-full { padding: 0; }
+/* a barra de fichas — Geist Medium 15px, como no node — vive ABAIXO do header
+   da Prancha (que ocupa margem-y + 18px), nunca colada nele */
+.p-hero-fichas {
   position: absolute;
   z-index: 2;
+  top: calc(var(--p-margem-y) + 18px + 26px);
   left: var(--p-margem);
   right: var(--p-margem);
-  bottom: calc(var(--p-margem-y) + 12px);
-  height: auto;
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: var(--p-gap-x);
-  color: #eceae5;
-  padding: 0;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
 }
-.p-capa-full .p-manifesto {
-  grid-column: 6 / span 7;
-  font-size: clamp(26px, 3.1vw, 46px);
-  line-height: 1.04;
-  margin: 0 0 22px;
+.p-hero-fichas p {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 1.09;
+  letter-spacing: -0.03em;
+  color: #e9e3e1;
 }
-.p-capa-full .p-capa-pe {
-  grid-column: 1 / span 12;
-  border-top: 1px solid rgba(236, 234, 229, 0.22);
-  padding-top: 12px;
-  color: rgba(236, 234, 229, 0.72);
-}
+.p-hero-fichas p > span:last-child,
+.p-hero-fichas p > span:nth-child(2) { color: rgba(233, 227, 225, 0.5); font-weight: 300; }
+.p-hero-fichas a { color: inherit; text-decoration: none; }
+.p-hero-fichas-fim { text-align: right; align-items: flex-end; }
 @media (max-width: 860px) {
-  .p-capa-full { margin-top: calc(-1 * (var(--p-margem-y) + 62px)); }
-  .p-capa-full .p-manifesto { grid-column: 1 / span 12; font-size: clamp(22px, 5.6vw, 30px); }
+  .p-hero-fichas { grid-template-columns: repeat(2, 1fr); top: calc(var(--p-margem-y) + 62px + 18px); }
+  .p-hero-fichas-fim { text-align: left; align-items: flex-start; }
 }
 
 /* ── o índice que atravessa ─────────────────────────────────────────────── */
@@ -3245,3 +3221,42 @@ a.pz-materia:hover { color: var(--p-acento); }
 .p-indice-vivo::after { display: none; content: none; }
 .p-indice-vivo { border: 0; background: none; width: auto; }
 .p-indice-vivo > * { border: 0; background: none; flex: 0 0 auto; }
+
+/* ══ "a fonte departure, sempre usar maiúscula" (12/09/2026) ═══════════════
+   Regra de sistema dele. A régua da casa já dizia "mono, caixa alta, 10–12px";
+   quinze seletores deste arquivo declaravam a Departure em caixa mista — o
+   `.p-marca` inclusive, que é o metadado do site inteiro. Uma regra, todos. */
+.p-marca,
+.p-numero,
+.p-numero-big,
+.p-sumario-valor,
+.p-precos-valor,
+.p-catalogo-n,
+.p-catalogo-valor,
+.ab-f-preco,
+.pz-premio-n,
+.ab-h-preco,
+.p-dois-txt,
+.p-dois-lista,
+.p-mesa-nota-txt,
+.p-visorpg-txt { text-transform: uppercase; }
+
+/* a barra de fichas da hero recua com o scroll, como a foto e os nomes — parada,
+   ela ficava sozinha no topo enquanto a folha seguinte subia, e colidia com o
+   índice vivo. Mesma timeline dos outros três gestos da hero. */
+.p-indice-vivo { transition: opacity 0.35s ease; }
+@supports (animation-timeline: scroll()) {
+  .p-hero-fichas {
+    animation-name: p-hero-fichas-some;
+    animation-timeline: scroll(root block);
+    animation-range: 0 55vh;
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+  }
+}
+@keyframes p-hero-fichas-some {
+  to { opacity: 0; transform: translateY(-8px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .p-hero-fichas { animation: none; }
+}
