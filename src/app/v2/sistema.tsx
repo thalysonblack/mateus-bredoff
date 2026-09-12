@@ -26,7 +26,6 @@ export const PRANCHAS = [
   { n: "01", nome: "Index", to: "/" },
   { n: "02", nome: "Work", to: "/work" },
   { n: "03", nome: "About", to: "/about" },
-  { n: "04", nome: "Lab", to: "/lab" },
 ] as const;
 
 /** hora dele, viva — o mesmo fato que o corentin põe na base ("05:16 (UTC+1)") */

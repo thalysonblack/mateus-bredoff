@@ -85,13 +85,6 @@ const FIXAS: Record<string, MetaRota> = {
     descricao:
       "Selected work by Mateus Bredoff — visual identities, branding and art direction for companies building a clear and memorable presence.",
   },
-  /* Rota que o original não tem: entrou com a direção nova, e por isso o
-     título ganha nome próprio em vez de repetir só o nome do site. */
-  "/lab": {
-    titulo: "Lab",
-    descricao:
-      "AI Lab — visual research by Mateus Bredoff, where brand systems are explored through generative image and 3D before they become identity work.",
-  },
 };
 
 /**

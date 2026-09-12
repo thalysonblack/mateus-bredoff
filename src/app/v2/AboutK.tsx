@@ -63,7 +63,7 @@ export default function AboutK() {
           <Link to="/" className="p5-meta-vivo">
             Index
           </Link>{" "}
-          · <Link to="/work">Work</Link> · <Link to="/lab">Lab</Link>
+          · <Link to="/work">Work</Link>
         </p>
       </div>
 

@@ -65,7 +65,6 @@ const SUPERFICIE: Record<string, "papel" | "branco" | "tinta"> = {
   "/": "papel",
   "/work": "branco",
   "/about": "papel",
-  "/lab": "tinta",
 };
 function superficieDaRota(p: string) {
   /* ⚠ A V4 é BRANCO ABSOLUTO em todas as rotas. Sem esta linha ela caía no
@@ -79,7 +78,7 @@ function superficieDaRota(p: string) {
 }
 
 /* o índice da rota dentro do site, no vernáculo de [01] que o resto usa */
-const ORDEM = ["/", "/work", "/about", "/lab"];
+const ORDEM = ["/", "/work", "/about"];
 function indiceDaRota(p: string) {
   const i = ORDEM.indexOf(p);
   if (i >= 0) return `[${String(i + 1).padStart(2, "0")}]`;

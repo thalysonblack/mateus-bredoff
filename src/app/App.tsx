@@ -202,7 +202,6 @@ export default function App() {
           <Route path="/about" element={<PranchaAbout />} />
           <Route path="/work" element={<PranchaWork />} />
           <Route path="/work/:slug" element={<PranchaCase />} />
-          <Route path="/lab" element={<PranchaLab />} />
 
           {/* ── ARQUIVO ───────────────────────────────────────────────────
               O que sobra aqui tem função ATIVA, não sentimental.
