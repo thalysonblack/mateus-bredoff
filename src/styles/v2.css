@@ -3066,7 +3066,8 @@ a.pz-materia:hover { color: var(--p-acento); }
   border: 0;
   padding: 3px 0;
   cursor: pointer;
-  color: rgba(236, 234, 229, 0.5);
+  /* piso 0,62 — a 0,5 mediu 4,45:1 sobre a tinta, a 0,05 do alvo */
+  color: rgba(236, 234, 229, 0.62);
   font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
   font-size: 9.5px;
   letter-spacing: 0.06em;
