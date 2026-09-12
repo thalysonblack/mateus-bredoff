@@ -3258,7 +3258,7 @@ a.pz-materia:hover { color: var(--p-acento); }
 }
 .p-menu-campo { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .p-menu-campo > span:last-child,
-.p-menu-campo > nav + span { color: var(--p-quieto); font-weight: 300; }
+.p-menu-campo > nav + span { color: var(--p-quieto); font-weight: 500; }
 .p-menu-campo a { color: inherit; text-decoration: none; }
 .p-menu-fim { align-items: flex-end; text-align: right; }
 .p-menu .p-link { color: inherit; }
@@ -3290,7 +3290,8 @@ a.pz-materia:hover { color: var(--p-acento); }
   flex-direction: column;
   align-items: flex-end;
   gap: 4px;
-  text-transform: uppercase;
+  /* "apenas primeira letra maiúscula" — sem uppercase; o JSX já vem Work/About */
+  text-transform: none;
   justify-self: end;
 }
 .p-menu-nav a {
@@ -3358,13 +3359,24 @@ a.pz-materia:hover { color: var(--p-acento); }
 .p-trilho-etapa .p-metodo-n { grid-row: 2; }
 .p-trilho-etapa .p-metodo-nome { grid-row: 2; }
 .p-trilho-etapa .p-metodo-corpo { grid-column: 2; grid-row: 3; }
-/* a etapa "Tools" não tem cena — o numeral/título sobem para a linha 1 */
-.p-trilho-fim { grid-template-rows: auto; align-self: end; }
-.p-trilho-fim .p-metodo-n, .p-trilho-fim .p-metodo-nome { grid-row: 1; }
-.p-trilho-fim .p-metodo-corpo { grid-row: 2; }
-/* o trilho alinha pela BASE: a foto define a altura, o texto pendura embaixo */
-.p-trilho { align-items: end; }
-.p-metodo-fixo { justify-content: flex-end; padding-bottom: clamp(48px, 7vh, 88px); }
+/* a etapa "Tools" não tem cena — mas o numeral/título ficam NA MESMA LINHA
+   das outras: a linha 1 é um espaçador com a altura exata da foto (a mesma
+   conta de .p-trilho-foto: largura da etapa × 9/16, com teto de 40svh). Antes
+   era `align-self: end`, que a deixava 37px abaixo das demais. */
+.p-trilho-fim { align-self: start; }
+.p-trilho-fim::before { content: ""; grid-column: 1 / -1; grid-row: 1; height: min(calc(min(62vw, 720px) * 9 / 16), 40svh); }
+.p-trilho-fim .p-metodo-n, .p-trilho-fim .p-metodo-nome { grid-row: 2; }
+.p-trilho-fim .p-metodo-corpo { grid-row: 3; }
+/* ⚠ "ficou desalinhado" (12/09): alinhado pela BASE, o corpo de 3 linhas da 03
+   e o de 4 da 04 empurravam as fotos para alturas diferentes. O trilho alinha
+   pelo TOPO — as fotos têm a mesma largura e a mesma razão, então ficam na
+   mesma linha, e numeral+título também; só o corpo varia embaixo. */
+.p-trilho { align-items: start; }
+.p-metodo-fixo { justify-content: center; }
+/* ⚠ e a foto se limita pela ALTURA da tela: em 2000×800 (a tela dele) a foto
+   de 720px mais o texto empurravam a manchete para fora da folha — o vazio do
+   print. Com teto de 40svh, manchete + foto + texto cabem em qualquer tela. */
+.p-trilho-foto { max-height: 40svh; }
 @media (max-width: 860px) {
   .p-trilho-etapa { grid-template-columns: 2.4rem minmax(0, 1fr); }
   .p-trilho-foto { grid-column: 1 / -1; }
