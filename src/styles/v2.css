@@ -3132,7 +3132,11 @@ a.pz-materia:hover { color: var(--p-acento); }
   gap: 3px;
   font-family: 'Geist', ui-sans-serif, sans-serif;
   font-weight: 500;
-  font-size: 15px;
+  /* "ajustar tamanho da fonte do menu para fazer sentido com o site" (12/09):
+     o node dizia 15px, mas o corpo do site é 13px e os rótulos 8,5–9,5 —
+     15 deixava o menu como o único texto acima do corpo fora dos títulos.
+     O menu entra no token do corpo. */
+  font-size: var(--p-corpo);
   line-height: 1.09;
   letter-spacing: -0.03em;
   color: #e9e3e1;
@@ -3305,7 +3309,7 @@ a.pz-materia:hover { color: var(--p-acento); }
 .p-menu-nav a:not([aria-current]) { color: var(--p-quieto); }
 .p-menu-nav a:hover { color: inherit; }
 /* o quadrado do ativo: 7px, na cor do texto, à direita do item — como no print */
-.p-menu-ponto { display: inline-block; width: 7px; height: 7px; background: currentColor; }
+.p-menu-ponto { display: inline-block; width: 6px; height: 6px; background: currentColor; }
 .p-tinta > div > .p-menu .p-menu-nav a:not([aria-current]),
 .p-tela:has(.p-capa-full) > div > .p-menu .p-menu-nav a:not([aria-current]) { color: rgba(233, 227, 225, 0.5); }
 .p-tinta > div > .p-menu .p-menu-nav a[aria-current],
