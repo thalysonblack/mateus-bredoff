@@ -36,11 +36,22 @@ import { TIERS } from "../sections/Pricing";
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger } from "../../lib/gsap";
 import { getLenis } from "../../lib/lenis";
+import { Hexagon, Layers, LayoutGrid } from "lucide-react";
+import logoBehance from "../../assets/logos/logo-behance.svg";
+import logoWbd from "../../assets/optimized/logo-worldbranddesign.webp";
+
+/* os logos dos veículos (máscara na cor da tinta); quem não tem, entra tipográfico */
+const LOGOS_VEICULO: Record<string, { src: string; ratio: string }> = {
+  Behance: { src: logoBehance, ratio: "152.5 / 28.2" },
+  "World Brand Design": { src: logoWbd, ratio: "350 / 102" },
+};
+
+/* os ícones dos tiers: um símbolo (a marca), as camadas (as aplicações), a grade (o sistema) */
+const ICONES_TIER = [Hexagon, Layers, LayoutGrid];
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { useRevelar } from "./useRevelar";
 import { Prancha } from "./sistema";
 import { LEAD, PROCESSO_MANCHETE, PROCESSO, FERRAMENTAS, NUMEROS } from "../../content/about";
-import { WORK } from "../../content/work";
 import { RECONHECIMENTO } from "../../content/reconhecimento";
 
 /**
@@ -72,12 +83,9 @@ export default function AboutV2() {
   const folhaStack = useRevelar<HTMLElement>();
   const tamborSec = useRef<HTMLElement | null>(null);
   const tamborLista = useRef<HTMLOListElement | null>(null);
-  const obraSec = useRef<HTMLElement | null>(null);
-  const obraTrilho = useRef<HTMLDivElement | null>(null);
   const marquee = useRef<HTMLDivElement | null>(null);
   const folhaServicos = useRevelar<HTMLElement>();
   const folhaProva = useRevelar<HTMLElement>();
-  const folhaPecas = useRevelar<HTMLElement>();
 
   /* os veículos onde o trabalho saiu, sem repetir: três das cinco matérias são
      do mesmo lugar, e o nome em corpo de cartaz três vezes seguidas mata a
@@ -119,25 +127,6 @@ export default function AboutV2() {
           onUpdate: (self) => acende(Math.min(n - 1, Math.round(self.progress * (n - 1)))),
         },
       },
-    );
-    return () => {
-      tween.scrollTrigger?.kill();
-      tween.kill();
-    };
-  }, []);
-
-  /* ⭐ O TRILHO DA OBRA: o mesmo scrub do método, em 70vw. */
-  useEffect(() => {
-    const sec = obraSec.current;
-    const tr = obraTrilho.current;
-    if (!sec || !tr) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (window.matchMedia("(max-width: 860px)").matches) return;
-    const dist = () => Math.max(0, tr.scrollWidth - tr.clientWidth);
-    const tween = gsap.fromTo(
-      tr,
-      { x: 0 },
-      { x: () => -dist(), ease: "none", scrollTrigger: { trigger: sec, start: "top top", end: () => `+=${dist()}`, scrub: 0.6, invalidateOnRefresh: true } },
     );
     return () => {
       tween.scrollTrigger?.kill();
@@ -362,6 +351,9 @@ export default function AboutV2() {
               absolutos: cena e corpo dentro dela saíam com 117px, presos à
               coluna. Fora dela, ancoram no centro do fixo. */}
           <div className="p-tambor" aria-hidden="true">
+            {/* "o method ficou ruim, deve ocupar tela toda": a cena é o FUNDO
+                full-bleed (com véu para o texto), as etapas em escala extrema
+                à esquerda girando pela altura inteira, o corpo à direita. */}
             <div className="p-tambor-cenas">
               {PROCESSO.map((e, i) => (
                 <img
@@ -420,50 +412,10 @@ export default function AboutV2() {
           herda os gestos que ele aprovou (o trilho, a hero full, escala
           extrema) em vez de somar animação: um palco escuro contínuo. */}
 
-      {/* ─ SELECTED WORK — trilho full-bleed: as capas a 70vw passando com o
-          scroll, o nome em escala grande. O mesmo gesto do método em OUTRA
-          escala — um gesto em duas escalas lê como sistema. */}
-      <section
-        ref={(el) => {
-          (folhaPecas as React.MutableRefObject<HTMLElement | null>).current = el;
-          obraSec.current = el;
-        }}
-        className="p-folha-sec p-tinta p-obra"
-        data-folha="4"
-      >
-        <div className="p-obra-fixo">
-          <p className="p-rotulo p-obra-carimbo p-sobe">
-            Selected work <span style={{ color: "var(--p-quieto)" }}>{String(WORK.length).padStart(2, "0")}</span>
-          </p>
-          <div className="p-obra-trilho" ref={obraTrilho}>
-            {WORK.map((w, k) => (
-              <a key={w.slug} href={`/work/${w.slug}`} className="p-obra-item">
-                <img
-                  src={w.cover.src}
-                  srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
-                  sizes="70vw"
-                  alt={w.cover.alt}
-                  width={w.cover.w}
-                  height={w.cover.h}
-                  loading={k < 2 ? undefined : "lazy"}
-                  decoding="async"
-                  draggable={false}
-                />
-                <span className="p-obra-nome">
-                  <span className="p-marca" style={{ color: "var(--p-quieto)" }}>{String(k + 1).padStart(2, "0")}</span>
-                  <span>{w.title}</span>
-                  <span className="p-marca" style={{ color: "var(--p-quieto)" }}>{w.year}</span>
-                </span>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ─ MY STACK — sete palavras gigantes que ACENDEM ao cruzar o centro da
           tela (ScrollTrigger com toggleClass, sem scrub): movimento como
           protagonista, nada de lista. */}
-      <section ref={folhaStack} className="p-folha-sec p-tinta p-stack" data-folha="5">
+      <section ref={folhaStack} className="p-folha-sec p-tinta p-stack" data-folha="4">
         <p className="p-rotulo p-carimbo p-sobe">My stack</p>
         <ul className="p-stack-lista">
           {FERRAMENTAS.map((f) => (
@@ -474,44 +426,47 @@ export default function AboutV2() {
         </ul>
       </section>
 
-      {/* ─ SERVICES — o CAMPO CHAPADO: o acento azul da tinta gasto de uma vez,
-          num bloco só, com os três tiers em escala extrema — nome à esquerda,
-          preço à direita. Sobre o azul só a tinta passa no contraste, então o
-          campo tem UMA cor de texto (ver `.p-campo`). */}
-      <section ref={folhaServicos} className="p-folha-sec p-campo p-servicos" data-folha="6">
+      {/* ─ SERVICES — três colunas com ícone (12/09): "o azul não usaremos,
+          ícones em cada item, preço completo em tudo e outro layout".
+          ⚠ Preço é fato do cliente: só o Essential tem valor (US$ 2.500, o que
+          ele publica no Behance). Os outros dois têm o slot do preço no mesmo
+          corpo e ficam "on request" até os números chegarem — nunca inventados. */}
+      <section ref={folhaServicos} className="p-folha-sec p-tinta p-servicos" data-folha="5">
         <p className="p-rotulo p-carimbo p-sobe">Services</p>
         <ul className="p-tiers">
-          {TIERS.map((tier, i) => (
-            <li key={tier.name} className="p-tier p-sobe">
-              <div className="p-tier-linha">
-                <span className="p-tier-nome">{tier.name}</span>
-                <span className="p-tier-preco">
-                  {tier.priceFrom === null ? (
-                    "On request"
-                  ) : (
-                    <>
-                      <span className="p-tier-de">from </span>
-                      {`$${tier.priceFrom.toLocaleString("en-US")}`}
-                    </>
-                  )}
+          {TIERS.map((tier, i) => {
+            const Icone = ICONES_TIER[i] ?? Hexagon;
+            return (
+              <li key={tier.name} className="p-tier p-sobe">
+                <span className="p-tier-icone" aria-hidden="true">
+                  <Icone strokeWidth={1.25} />
                 </span>
-              </div>
-              <div className="p-tier-ficha">
-                <span className="p-marca">{String(i + 1).padStart(2, "0")}</span>
+                <p className="p-tier-nome">{tier.name}</p>
+                {tier.priceFrom === null ? (
+                  <p className="p-tier-preco p-tier-preco--aberto">On request</p>
+                ) : (
+                  <p className="p-tier-preco">
+                    <span className="p-tier-de">from</span>
+                    {`$${tier.priceFrom.toLocaleString("en-US")}`}
+                  </p>
+                )}
                 <p className="p-corpo">{tier.description}</p>
-                <p className="p-marca p-tier-escopo">
-                  {tier.scope.join(" · ")} — {tier.timeline}
-                </p>
-              </div>
-            </li>
-          ))}
+                <ul className="p-tier-escopo p-marca">
+                  {tier.scope.map((s) => (
+                    <li key={s}>{s}</li>
+                  ))}
+                </ul>
+                <p className="p-marca p-tier-prazo">{tier.timeline}</p>
+              </li>
+            );
+          })}
         </ul>
       </section>
 
       {/* ─ PUBLISHED IN — os veículos em MARQUEE de 9vw atravessando a tela
           (anda no ticker do GSAP, acelera com o scroll do Lenis — um relógio
           só), e as cinco matérias em tabela por baixo. */}
-      <section ref={folhaProva} className="p-folha-sec p-tinta p-prova" data-folha="7">
+      <section ref={folhaProva} className="p-folha-sec p-tinta p-prova" data-folha="6">
         <p className="p-rotulo p-carimbo p-sobe">Published in</p>
         <div className="p-marquee" aria-hidden="true">
           <div className="p-marquee-faixa" ref={marquee}>
@@ -519,7 +474,11 @@ export default function AboutV2() {
               <span key={rep} className="p-marquee-bloco">
                 {veiculos.map((v) => (
                   <span key={v} className="p-marquee-nome">
-                    {v}
+                    {LOGOS_VEICULO[v] ? (
+                      <span className="p-marquee-logo" style={{ ["--logo" as string]: `url("${LOGOS_VEICULO[v].src}")`, aspectRatio: LOGOS_VEICULO[v].ratio }} /* aspas: o svg pequeno vem como data URI */ role="img" aria-label={v} />
+                    ) : (
+                      <span className="p-marquee-abz">{v}</span>
+                    )}
                     <span className="p-marquee-ponto">·</span>
                   </span>
                 ))}

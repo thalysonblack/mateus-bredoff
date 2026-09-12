@@ -216,37 +216,43 @@ export function Prancha({
                 direita, como a nav do frame. A régua de baixo é do sistema e fica. */}
             <div className="p-rodape-grade">
               <p className="p-rotulo">Contact</p>
-              <nav className="p-rodape-indice" aria-label="Site">
-                <ul>
-                  {PRANCHAS.map((p) => (
-                    <li key={p.to}>
-                      <Link to={p.to} className="p-corpo p-link">
-                        <span className="p-marca">{p.n}</span> {p.nome}
-                      </Link>
+              <div className="p-rodape-miolo">
+                <ul className="p-rodape-canais">
+                  <li>
+                    <a href="mailto:hello@mateusbredoff.com" className="p-servico-nome p-rodape-canal p-rodape-canal--aceso">
+                      Let's talk
+                    </a>
+                  </li>
+                  {CONTATO.map((c) => (
+                    <li key={c.label}>
+                      {c.href ? (
+                        <a
+                          href={c.href}
+                          target={c.href.startsWith("http") ? "_blank" : undefined}
+                          rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                          className="p-servico-nome p-rodape-canal"
+                        >
+                          {c.label === "Email" ? "E-mail" : c.label}
+                        </a>
+                      ) : (
+                        <span className="p-servico-nome p-rodape-canal">{c.label}</span>
+                      )}
                     </li>
                   ))}
                 </ul>
-              </nav>
+                <nav className="p-rodape-indice" aria-label="Site">
+                  <ul>
+                    {PRANCHAS.map((p) => (
+                      <li key={p.to}>
+                        <Link to={p.to} className="p-corpo p-link">
+                          <span className="p-marca">{p.n}</span> {p.nome}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              </div>
             </div>
-            {/* "de lá pra baixo… imersivo" (12/09): o e-mail em ESCALA DE LARGURA,
-                de borda a borda como um wordmark — a única ação que a página
-                pede, no tamanho da página. Os canais ficam em display quieto. */}
-            <a href="mailto:hello@mateusbredoff.com" className="p-rodape-mail">
-              hello@mateusbredoff.com
-            </a>
-            <ul className="p-rodape-canais">
-              {CONTATO.filter((c) => c.label !== "Email").map((c) => (
-                <li key={c.label}>
-                  {c.href ? (
-                    <a href={c.href} target="_blank" rel="noopener noreferrer" className="p-servico-nome p-rodape-canal">
-                      {c.label}
-                    </a>
-                  ) : (
-                    <span className="p-servico-nome p-rodape-canal">{c.label}</span>
-                  )}
-                </li>
-              ))}
-            </ul>
 
             <p className="p-marca p-rodape-regua">
               <span>Brazil</span>

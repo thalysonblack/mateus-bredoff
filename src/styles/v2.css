@@ -1863,35 +1863,28 @@
   border-top: 1px solid var(--p-fio);
 }
 .p-rodape-grade {
+  /* o rodapé vive fora das folhas (só a margem da tela): a grade ganha a
+     margem de folha para a coluna do conteúdo bater com as de cima */
   padding-inline: var(--p-margem);
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  column-gap: var(--p-gap-x);
   align-items: start;
-  padding-bottom: clamp(24px, 4vh, 56px);
+  padding-bottom: clamp(48px, 7vh, 96px);
 }
 .p-rodape-grade .p-rotulo { padding-top: 0.5em; }
-.p-rodape-indice ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 22px; }
-.p-rodape-indice .p-marca { color: var(--p-quieto); margin-right: 6px; }
-/* o e-mail em escala de LARGURA: 23 caracteres da Geist ≈ 12em; 7,9vw enche a
-   tela com as margens. `nowrap`: se a webfont falhar a linha estoura, não quebra. */
-.p-rodape-mail {
-  display: block;
-  font-family: 'Geist', ui-sans-serif, sans-serif;
-  font-weight: 400;
-  font-size: clamp(28px, 7.9vw, 150px);
-  line-height: 0.95;
-  letter-spacing: -0.045em;
-  white-space: nowrap;
-  color: var(--p-ink);
-  text-decoration: none;
-  padding: 0 var(--p-margem) clamp(24px, 4vh, 56px);
-}
-.p-rodape-canais { list-style: none; margin: 0; padding: 0 var(--p-margem) clamp(40px, 6vh, 80px); display: flex; flex-wrap: wrap; gap: 0.2em 1em; }
+.p-rodape-miolo { display: flex; justify-content: space-between; gap: var(--p-gap-x); align-items: start; }
+.p-rodape-canais, .p-rodape-indice ul { list-style: none; margin: 0; padding: 0; }
+.p-rodape-canais { display: flex; flex-direction: column; gap: 0.18em; }
+.p-rodape-canais li:first-child { padding-bottom: 0.5em; }
 .p-rodape-canal { color: var(--p-quieto); text-decoration: none; transition: color 0.25s ease; }
-.p-rodape-canal:hover { color: var(--p-ink); }
+.p-rodape-canal--aceso, .p-rodape-canal:hover { color: var(--p-ink); }
+.p-rodape-indice ul { display: flex; flex-direction: column; gap: 6px; text-align: right; }
+.p-rodape-indice .p-marca { color: var(--p-quieto); margin-right: 6px; }
 @media (max-width: 860px) {
-  .p-rodape-grade { flex-direction: column; gap: 14px; }
-  .p-rodape-mail { font-size: 7.6vw; }
+  .p-rodape-grade { grid-template-columns: 1fr; row-gap: 14px; }
+  .p-rodape-miolo { flex-direction: column; gap: 32px; }
+  .p-rodape-indice ul { text-align: left; }
 }
 .p-rodape-regua {
   display: grid;
@@ -3426,33 +3419,6 @@ a.pz-materia:hover { color: var(--p-acento); }
 }
 .p-stack-item--aceso { color: var(--p-ink); }
 
-/* ── Services: o campo chapado ─────────────────────────────────────────── */
-.p-campo {
-  background: #34a1cb; /* o acento da tinta, gasto de uma vez */
-  color: #14201f;
-  --p-ink: #14201f;
-  --p-quieto: #14201f; /* ⚠ sobre o azul só a tinta cheia passa (5,4:1); o quieto não */
-  --p-fio: rgba(20, 32, 31, 0.28);
-  --p-acento: #14201f;
-}
-.p-servicos { padding-top: 40px; padding-bottom: clamp(56px, 9vh, 112px); }
-.p-tiers { list-style: none; margin: clamp(24px, 6vh, 64px) 0 0; padding: 0 var(--p-margem); }
-.p-tier { border-top: 1px solid var(--p-fio); padding: clamp(18px, 3vh, 36px) 0 clamp(22px, 3.6vh, 44px); }
-.p-tier-linha { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; }
-.p-tier-nome, .p-tier-preco {
-  font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 400;
-  font-size: clamp(34px, 6.2vw, 118px); line-height: 1; letter-spacing: -0.04em; white-space: nowrap;
-}
-.p-tier-de { font-size: 0.34em; letter-spacing: 0; margin-right: 0.3em; }
-.p-tier-ficha { display: grid; grid-template-columns: 2.6rem minmax(0, 38em) minmax(0, 1fr); column-gap: var(--p-gap-x); align-items: start; padding-top: clamp(14px, 2vh, 22px); }
-.p-tier-ficha .p-corpo { margin: 0; }
-.p-tier-escopo { text-align: right; }
-@media (max-width: 860px) {
-  .p-tier-linha { flex-direction: column; align-items: start; gap: 4px; }
-  .p-tier-nome, .p-tier-preco { white-space: normal; }
-  .p-tier-ficha { grid-template-columns: 2.4rem minmax(0, 1fr); }
-  .p-tier-escopo { grid-column: 2; text-align: left; }
-}
 
 /* ── Published in: o marquee ───────────────────────────────────────────── */
 .p-prova { padding-top: 40px; }
@@ -3468,63 +3434,95 @@ a.pz-materia:hover { color: var(--p-acento); }
 .p-prova-tabela { margin-top: 0; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* ── O TAMBOR do método (12/09) ────────────────────────────────────────── */
+/* ── O TAMBOR do método (12/09) — em TELA CHEIA ─────────────────────────
+   "deve ocupar tela toda": a cena da etapa acesa é o FUNDO (full-bleed, cover,
+   com véu mais denso à esquerda, onde está o texto); a lista gira pela altura
+   inteira em escala extrema; o corpo do ativo à direita; manchete no topo
+   direito; rótulo no canto. Três grupos irmãos ancorados no fixo. */
 .p-tambor-sec { height: calc(100svh + 280svh); padding-bottom: 0; }
-.p-tambor-fixo { justify-content: flex-start; gap: 0; padding-top: calc(var(--p-margem-y) + var(--p-menu-h, 60px) + 24px); }
-.p-tambor-fixo .p-metodo-manchete { font-size: clamp(15px, 1.4vw, 22px); line-height: 1.2; max-width: 34ch; } /* medido: a 1,9vw ela descia até 2px do corpo centrado */
-/* três colunas ancoradas no centro da TELA (o fixo é o containing block):
-   cena | lista | corpo, em 1 : 1,25 : 1 da largura útil */
-.p-tambor-fixo { --p-passo: clamp(64px, 8.4vh, 112px); --p-col: calc((100% - 2 * var(--p-margem) - 2 * var(--p-gap-x)) / 3.25); }
-.p-tambor-cenas, .p-tambor-corpos { position: absolute; top: 50%; width: var(--p-col); transform: translateY(-50%); }
-.p-tambor-cenas { left: var(--p-margem); aspect-ratio: 16 / 9; }
-.p-tambor-corpos { right: var(--p-margem); max-width: 34em; }
-.p-tambor-cena { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
-.p-tambor-corpo { position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 100%; margin: 0; opacity: 0; transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.08s; }
-.p-tambor-corpos { height: 1px; } /* só um ponto de ancoragem: os corpos se centram nele */
-/* ⚠ a JANELA: cinco passos de altura, centrada na tela, com máscara nas
-   bordas — os itens apagados esvanecem antes de alcançar o cabeçalho (medido:
-   sem ela, "Immersion" subia por cima da manchete quando a última etapa
-   estava acesa). A lista dentro começa com o item 0 no centro da janela. */
+.p-tambor-fixo {
+  justify-content: flex-start; gap: 0;
+  padding-top: calc(var(--p-margem-y) + var(--p-menu-h, 60px) + 24px);
+  --p-passo: clamp(88px, 13vh, 150px);
+  --p-col: calc((100% - 2 * var(--p-margem) - var(--p-gap-x)) * 0.3);
+}
+.p-tambor-fixo .p-metodo-cab { position: relative; z-index: 3; display: flex; justify-content: space-between; align-items: start; gap: var(--p-gap-x); }
+.p-tambor-fixo .p-metodo-manchete { font-size: clamp(15px, 1.4vw, 22px); line-height: 1.2; text-indent: 0; width: var(--p-col); max-width: none; }
+.p-tambor-cenas { position: absolute; inset: 0; z-index: 0; }
+.p-tambor-cena { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+.p-tambor-cenas::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(20, 32, 31, 0.86) 0%, rgba(20, 32, 31, 0.62) 55%, rgba(20, 32, 31, 0.7) 100%);
+}
 .p-tambor-janela {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  left: calc(var(--p-margem) + var(--p-col) + var(--p-gap-x));
-  width: calc(var(--p-col) * 1.25);
-  height: calc(var(--p-passo) * 5);
+  position: absolute; top: 0; bottom: 0; z-index: 2;
+  left: var(--p-margem); width: calc(100% - var(--p-col) - 2 * var(--p-margem) - var(--p-gap-x));
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
-  mask-image: linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
 }
-.p-tambor-lista {
-  list-style: none; margin: 0; padding: 0;
-  position: absolute; top: calc(var(--p-passo) * 2); left: 0; width: 100%;
-  will-change: transform;
-}
-/* o cabeçalho do tambor: rótulo no canto esquerdo, a manchete no TOPO DA
-   COLUNA DIREITA (como o título da referência) — na coluna da cena ela
-   descia até 330px e a cena começa em 250. À direita, o corpo do ativo fica
-   centrado (≈307–397) e a manchete termina antes. */
-.p-tambor-fixo .p-metodo-cab { display: flex; justify-content: space-between; align-items: start; gap: var(--p-gap-x); }
-.p-tambor-fixo .p-metodo-cab .p-metodo-manchete { text-indent: 0; width: var(--p-col, 34ch); max-width: none; }
+.p-tambor-lista { list-style: none; margin: 0; padding: 0; position: absolute; top: calc(50% - var(--p-passo) / 2); left: 0; width: 100%; will-change: transform; }
 .p-tambor-etapa { height: var(--p-passo); display: flex; align-items: center; }
 .p-tambor-nome {
-  display: flex; align-items: baseline; gap: 14px;
+  display: flex; align-items: baseline; gap: 0.25em;
   font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 400;
-  font-size: clamp(26px, 3.3vw, 58px); line-height: 1; letter-spacing: -0.035em;
-  color: rgba(236, 234, 229, 0.22);
+  font-size: clamp(36px, 6.2vw, 112px); line-height: 0.95; letter-spacing: -0.04em; /* medido: a 7vw "Visual identity creation" passava da janela */
+  color: rgba(236, 234, 229, 0.26);
   transition: color 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   white-space: nowrap;
 }
-.p-tambor-n { color: inherit; }
+.p-tambor-n { color: inherit; font-size: clamp(9px, 0.8vw, 13px); }
 .p-tambor-etapa.p-tambor-acesa .p-tambor-nome { color: var(--p-ink); }
+.p-tambor-corpos { position: absolute; z-index: 2; right: var(--p-margem); top: 50%; width: var(--p-col); height: 1px; }
+.p-tambor-corpo { position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 100%; margin: 0; opacity: 0; transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.08s; }
 .p-tambor-cena.p-tambor-acesa, .p-tambor-corpo.p-tambor-acesa { opacity: 1; }
 .p-tambor-mob { display: none; }
 @media (max-width: 860px) {
   .p-tambor-sec { height: auto; padding-bottom: 56px; }
   .p-tambor-fixo { position: static; height: auto; overflow: visible; padding-top: 0; }
+  .p-tambor-fixo .p-metodo-cab { flex-direction: column; }
+  .p-tambor-fixo .p-metodo-manchete { width: auto; }
   .p-tambor { display: none; }
   .p-tambor-mob { list-style: none; margin: 0; padding: 32px var(--p-margem) 0; display: flex; flex-direction: column; gap: 40px; }
   .p-tambor-mob li { display: grid; gap: 12px; }
   .p-tambor-mob-cena { width: 100%; height: auto; display: block; }
-  .p-tambor-mob .p-tambor-nome { color: var(--p-ink); white-space: normal; }
+  .p-tambor-mob .p-tambor-nome { color: var(--p-ink); white-space: normal; font-size: clamp(28px, 9vw, 40px); }
   .p-tambor-mob .p-corpo { margin: 0; }
 }
+
+/* ── Services: três colunas com ícone (12/09, "o azul não usaremos, ícones em
+   cada item, preço completo em tudo e outro layout") ──────────────────── */
+.p-servicos { padding-top: 40px; padding-bottom: clamp(56px, 9vh, 112px); }
+.p-tiers { list-style: none; margin: clamp(24px, 6vh, 64px) 0 0; padding: 0 var(--p-margem); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--p-gap-x); }
+.p-tier { border-top: 1px solid var(--p-fio); padding-top: clamp(18px, 3vh, 32px); display: flex; flex-direction: column; gap: clamp(14px, 2.4vh, 28px); }
+.p-tier-icone { width: clamp(28px, 2.6vw, 40px); height: clamp(28px, 2.6vw, 40px); color: var(--p-ink); }
+.p-tier-icone svg { width: 100%; height: 100%; }
+.p-tier-nome { font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 400; font-size: clamp(22px, 2.2vw, 40px); line-height: 1.05; letter-spacing: -0.03em; margin: 0; }
+.p-tier-preco { font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 300; font-size: clamp(34px, 4.2vw, 76px); line-height: 1; letter-spacing: -0.04em; margin: 0; }
+.p-tier-de { font-size: 0.34em; letter-spacing: 0; font-weight: 400; color: var(--p-quieto); margin-right: 0.35em; }
+.p-tier-preco--aberto { color: var(--p-quieto); font-size: clamp(22px, 2.2vw, 40px); }
+.p-tier .p-corpo { margin: 0; max-width: 32em; }
+.p-tier-escopo { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.p-tier-escopo li { padding-top: 6px; border-top: 1px solid var(--p-fio); color: var(--p-quieto); }
+.p-tier-escopo li:first-child { border-top: 0; padding-top: 0; }
+.p-tier-prazo { color: var(--p-quieto); margin-top: auto; padding-top: 8px; }
+@media (max-width: 860px) {
+  .p-tiers { grid-template-columns: 1fr; row-gap: 40px; }
+}
+
+/* ── Published in: os LOGOS dos veículos no marquee (12/09) ─────────────
+   Behance (wordmark svg do repo) e WBDS (webp com alpha do repo) entram por
+   máscara na cor da tinta — um arquivo, qualquer superfície. O Abduzeedo usa
+   só o nome numa grotesca pesada no próprio site: entra tipográfico. */
+.p-marquee-logo {
+  display: inline-block; height: clamp(30px, 4.4vw, 76px); width: auto;
+  background: currentColor;
+  -webkit-mask: var(--logo) no-repeat center / contain; mask: var(--logo) no-repeat center / contain;
+  vertical-align: middle;
+}
+.p-marquee-abz {
+  font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 700; text-transform: uppercase;
+  font-size: clamp(26px, 3.6vw, 62px); letter-spacing: 0.02em; line-height: 1;
+}
+.p-marquee-nome { align-items: center; gap: 0.5em; padding-right: 0.5em; line-height: 1; }
+.p-marquee-ponto { font-family: 'Geist', ui-sans-serif, sans-serif; font-size: clamp(30px, 4.4vw, 76px); }
