@@ -38,7 +38,7 @@ import { gsap, ScrollTrigger } from "../../lib/gsap";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { useRevelar } from "./useRevelar";
 import { Prancha } from "./sistema";
-import { LEAD, PROCESSO_MANCHETE, PROCESSO, FERRAMENTAS } from "../../content/about";
+import { LEAD, PROCESSO_MANCHETE, PROCESSO, FERRAMENTAS, NUMEROS } from "../../content/about";
 import { WORK } from "../../content/work";
 import { RECONHECIMENTO } from "../../content/reconhecimento";
 
@@ -101,6 +101,7 @@ export default function AboutV2() {
       tween.kill();
     };
   }, []);
+  const folhaSobre = useRevelar<HTMLElement>();
   const folhaServicos = useRevelar<HTMLElement>();
   const folhaProva = useRevelar<HTMLElement>();
   const folhaPecas = useRevelar<HTMLElement>();
@@ -212,7 +213,37 @@ export default function AboutV2() {
           O que saiu: os big numbers (ordem dele), a ficha de três colunas
           (Tools vira metadado da capa; Contact já mora no rodapé). */}
 
-      {/* ─ 2. O MÉTODO, EM ESCALA ────────────────────────────────────────
+      {/* ─ 2. SOBRE ELE — "antes dessa section deveria falar dele", node 433:217
+          (12/09). A anatomia do frame About do Figma: rótulo na coluna da
+          esquerda, o texto a partir de um terço da largura, em corpo de
+          leitura grande; depois "By the numbers", quatro colunas com fio em
+          cima, o número em Light e o rótulo quieto. Em tinta, como lá — a
+          hero escura desce para esta folha sem troca de superfície.
+          ⚠ Os números são os do CONTEÚDO (content/about.ts, apurado do site
+          publicado); o Figma mostra 46 · 100+ · 14 · 46 — divergência
+          reportada, não decidida aqui. */}
+      <section ref={folhaSobre} className="p-folha-sec p-tinta p-sobre" data-folha="2">
+        <div style={{ paddingInline: "var(--p-margem)" }}>
+          <div className="p-sobre-grade">
+            <p className="p-rotulo p-sobe">About me</p>
+            <div>
+              <p className="p-sobre-txt p-sobre-txt--abre p-sobe">{LEAD[0]}</p>
+              <p className="p-sobre-txt p-sobe">{LEAD[1]}</p>
+            </div>
+          </div>
+          <p className="p-rotulo p-sobe p-numeros-rotulo">By the numbers</p>
+          <ul className="p-numeros">
+            {NUMEROS.map((n) => (
+              <li key={n.rotulo} className="p-fio p-sobe">
+                <span className="p-numero-valor">{n.valor}</span>
+                <span className="p-numero-rotulo">{n.rotulo}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* ─ 3. O MÉTODO, EM ESCALA ────────────────────────────────────────
           É o argumento comercial dele — cinco etapas que dizem como o
           trabalho acontece — e estava em 13px cinza, lendo como planilha.
           Agora cada etapa tem o numeral no corpo de índice do sistema, o nome
@@ -225,10 +256,14 @@ export default function AboutV2() {
           percurso.current = el;
         }}
         className="p-folha-sec p-papel p-metodo p-metodo-trilho"
-        data-folha="2"
+        data-folha="3"
       >
         <div className="p-metodo-fixo">
-          <div style={{ paddingInline: "var(--p-margem)" }}>
+          {/* "faltou título da section e o texto" (12/09): o rótulo da seção na
+              coluna da esquerda e a manchete a um terço — a mesma grade da
+              folha Sobre, para as duas lerem como partes de um documento */}
+          <div className="p-metodo-cab" style={{ paddingInline: "var(--p-margem)" }}>
+            <p className="p-rotulo p-sobe">Method</p>
             <p className="p-servico-nome p-sobe p-metodo-manchete">{PROCESSO_MANCHETE}</p>
           </div>
           {/* o trilho: as cinco etapas lado a lado, cada uma uma tela de 62vw;
@@ -272,7 +307,7 @@ export default function AboutV2() {
           ⚠ Só o Essential tem preço — é o que ele publica no Behance (US$
           2.500). Os outros dois seguem "On request" porque preço é fato do
           cliente e não se inventa. */}
-      <section ref={folhaServicos} className="p-folha-sec p-tinta p-servicos" data-folha="3">
+      <section ref={folhaServicos} className="p-folha-sec p-tinta p-servicos" data-folha="4">
         <div style={{ paddingInline: "var(--p-margem)" }}>
           <ul>
             {TIERS.map((t, i) => (
@@ -312,7 +347,7 @@ export default function AboutV2() {
           ⚠ Superfície BRANCA, a terceira da página: depois da tinta, o branco
           absoluto é o que faz a prova ler como outro capítulo e não como
           continuação dos serviços. */}
-      <section ref={folhaProva} className="p-folha-sec p-papel p-prova" data-folha="4">
+      <section ref={folhaProva} className="p-folha-sec p-papel p-prova" data-folha="5">
         <div style={{ paddingInline: "var(--p-margem)" }}>
           <p className="p-prova-nomes p-sobe">
             {veiculos.map((v, i) => (
@@ -350,7 +385,7 @@ export default function AboutV2() {
           começa na margem da prancha e SANGRA pela direita, com altura fixa e
           largura livre por capa: é a única forma de manter a altura sem
           recortar nenhuma. Rola na horizontal; a página não cresce. */}
-      <section ref={folhaPecas} className="p-folha-sec p-papel p-pecas" data-folha="5">
+      <section ref={folhaPecas} className="p-folha-sec p-papel p-pecas" data-folha="6">
         <div className="p-pecas-faixa p-sobe">
           {WORK.map((w) => (
             <a key={w.slug} href={`/work/${w.slug}`} className="p-pecas-item">
