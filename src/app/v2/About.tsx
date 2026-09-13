@@ -39,6 +39,7 @@ import { getLenis } from "../../lib/lenis";
 import { Hexagon, Layers, LayoutGrid } from "lucide-react";
 import logoBehance from "../../assets/logos/logo-behance.svg";
 import logoWbd from "../../assets/optimized/logo-worldbranddesign.webp";
+import logoWbdSimbolo from "../../assets/logos/wbds-simbolo.png";
 
 import logoFigma from "../../assets/logos/stack/figma.svg";
 import logoGemini from "../../assets/logos/stack/gemini.svg";
@@ -62,9 +63,11 @@ const LOGOS_STACK: Record<string, string> = {
 };
 
 /* os logos dos veículos (máscara na cor da tinta); quem não tem, entra tipográfico */
-const LOGOS_VEICULO: Record<string, { src: string; ratio: string }> = {
+const LOGOS_VEICULO: Record<string, { src: string; ratio: string; simbolo?: string }> = {
   Behance: { src: logoBehance, ratio: "152.5 / 28.2" },
-  "World Brand Design": { src: logoWbd, ratio: "350 / 102" },
+  /* na LINHA da tabela o logo composto (brasão + wordmark em duas linhas) não
+     lê a 15px: entra o SÍMBOLO + o nome em versalete */
+  "World Brand Design": { src: logoWbd, ratio: "350 / 102", simbolo: logoWbdSimbolo },
 };
 
 /* os ícones dos tiers: um símbolo (a marca), as camadas (as aplicações), a grade (o sistema) */
@@ -437,7 +440,12 @@ export default function AboutV2() {
                   <span className="p-item">{r.projeto}</span>
                   {/* "logos aqui" (12/09): o veículo entra como logo na linha */}
                   <span className="pn-tabela-veiculo">
-                    {LOGOS_VEICULO[r.veiculo] ? (
+                    {LOGOS_VEICULO[r.veiculo]?.simbolo ? (
+                      <>
+                        <span className="pn-logo pn-logo--simbolo" style={{ ["--logo" as string]: `url("${LOGOS_VEICULO[r.veiculo].simbolo}")` }} aria-hidden="true" />
+                        <span className="pn-logo-abz pn-logo-abz--linha">{r.veiculo}</span>
+                      </>
+                    ) : LOGOS_VEICULO[r.veiculo] ? (
                       <span className="pn-logo pn-logo--linha" style={{ ["--logo" as string]: `url("${LOGOS_VEICULO[r.veiculo].src}")`, aspectRatio: LOGOS_VEICULO[r.veiculo].ratio }} role="img" aria-label={r.veiculo} />
                     ) : (
                       <span className="pn-logo-abz pn-logo-abz--linha">{r.veiculo}</span>

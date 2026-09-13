@@ -3583,7 +3583,7 @@ a.pz-materia:hover { color: var(--p-acento); }
 .pn-bloco-cab { /* "sem número" (12/09): a calha fica vazia, o título segue na coluna do texto */
   display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); column-gap: var(--p-gap-x); row-gap: 16px; align-items: baseline; padding-top: 16px; border-top: 1px solid var(--p-ink); margin-bottom: 32px; }
 .pn-bloco-n { color: var(--p-quieto); }
-.pn-bloco-titulo { margin: 0; }
+.pn-bloco-titulo { margin: 0; grid-column: 2; } /* sem o numeral, o título caía na calha e quebrava ("My / stack") */
 .pn-bloco-lead { grid-column: 2; margin: 0; max-width: 40em; font-size: 15px; line-height: 1.45; }
 .pn-registros { list-style: none; margin: 0; padding: 0; }
 .pn-registro { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr) minmax(0, 30%); column-gap: var(--p-gap-x); align-items: start; padding: 24px 0; border-top: 1px solid var(--p-fio); }
@@ -3627,3 +3627,5 @@ a.pz-materia:hover { color: var(--p-acento); }
 /* "logos" na stack: o ícone da ferramenta antes do nome, na altura do corpo */
 .pn-stack-item { display: inline-flex; align-items: center; gap: 10px; }
 .pn-stack-logo { display: inline-block; width: 18px; height: 18px; background: currentColor; -webkit-mask: var(--logo) no-repeat center / contain; mask: var(--logo) no-repeat center / contain; }
+.pn-tabela-veiculo { gap: 8px; }
+.pn-logo--simbolo { width: 16px; height: 16px; }
