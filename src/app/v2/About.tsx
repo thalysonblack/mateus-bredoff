@@ -41,24 +41,7 @@ import logoBehance from "../../assets/logos/logo-behance.svg";
 import logoWbd from "../../assets/optimized/logo-worldbranddesign.webp";
 import logoWbdSimbolo from "../../assets/logos/wbds-simbolo.png";
 
-import logoFigma from "../../assets/logos/stack/figma.svg";
-import logoGemini from "../../assets/logos/stack/gemini.svg";
-import logoBytedance from "../../assets/logos/stack/bytedance.svg";
-import logoGpt from "../../assets/logos/stack/gpt.svg";
-import logoPhotoshop from "../../assets/logos/stack/photoshop.svg";
-import logoIllustrator from "../../assets/logos/stack/illustrator.svg";
 
-/* os logos das ferramentas (Simple Icons, 24×24, por máscara na cor da tinta).
-   Nano Banana Pro é o modelo de imagem do Gemini e Seedream é da ByteDance —
-   entram com o logo da casa que os publica. Quem não tem logo fica só no nome. */
-const LOGOS_STACK: Record<string, string> = {
-  "Figma": logoFigma,
-  "Nano Banana Pro": logoGemini,
-  "Seedream": logoBytedance,
-  "GPT": logoGpt,
-  "Photoshop": logoPhotoshop,
-  "Illustrator": logoIllustrator,
-};
 
 /* os logos dos veículos (máscara na cor da tinta); quem não tem, entra tipográfico */
 const LOGOS_VEICULO: Record<string, { src: string; ratio: string; simbolo?: string }> = {
@@ -367,7 +350,7 @@ export default function AboutV2() {
         <aside className="pn-indice" aria-label="Contents">
           <p className="p-rotulo">Contents</p>
           <ol className="pn-indice-lista">
-            {[["method", "Method"], ["stack", "My stack"], ["services", "Services"], ["published", "Published in"]].map(([id, nome], k) => (
+            {[["method", "Method"], ["services", "Services"], ["published", "Published in"]].map(([id, nome], k) => (
               <li key={id} className="pn-indice-item" data-indice={id}>
                 <a href={`#${id}`} className="p-item"><span className="p-marca pn-indice-n">{String(k + 1).padStart(2, "0")}</span> {nome}</a>
               </li>
@@ -393,21 +376,13 @@ export default function AboutV2() {
                 </li>
               ))}
             </ol>
+            {/* as ferramentas como METADADO do método, não como seção: "My stack"
+                em bloco próprio era a seção mais fraca da página (12/09) */}
+            <p className="p-marca pn-tools">
+              <span style={{ color: "var(--p-quieto)" }}>Tools</span> {FERRAMENTAS.join(" · ")}
+            </p>
           </article>
 
-          <article id="stack" className="pn-bloco" data-bloco="stack">
-            <header className="pn-bloco-cab">
-              <h2 className="p-servico-nome pn-bloco-titulo">My stack</h2>
-            </header>
-            <ul className="pn-stack p-sobe">
-              {FERRAMENTAS.map((f) => (
-                <li key={f} className="p-item pn-stack-item">
-                  {LOGOS_STACK[f] && <span className="pn-stack-logo" style={{ ["--logo" as string]: `url("${LOGOS_STACK[f]}")` }} aria-hidden="true" />}
-                  {f}
-                </li>
-              ))}
-            </ul>
-          </article>
 
           <article id="services" className="pn-bloco" data-bloco="services">
             <header className="pn-bloco-cab">
@@ -422,7 +397,7 @@ export default function AboutV2() {
                     <span className="p-marca pn-recibo-prazo">{tier.timeline}</span>
                   </span>
                   <span className="p-corpo pn-recibo-desc">{tier.description}</span>
-                  <span className="pn-recibo-preco">{tier.priceFrom === null ? "On request" : <><span className="pn-recibo-de">from </span>{`$${tier.priceFrom.toLocaleString("en-US")}`}</>}</span>
+                  {tier.priceFrom === null ? <span className="pn-recibo-preco pn-recibo-preco--aberto">On request</span> : <span className="pn-recibo-preco"><span className="pn-recibo-de">from</span>{`$${tier.priceFrom.toLocaleString("en-US")}`}</span>}
                 </li>
               ))}
             </ul>

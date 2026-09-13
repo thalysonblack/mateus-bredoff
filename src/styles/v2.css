@@ -3586,7 +3586,7 @@ a.pz-materia:hover { color: var(--p-acento); }
 .pn-bloco-titulo { margin: 0; grid-column: 2; } /* sem o numeral, o título caía na calha e quebrava ("My / stack") */
 .pn-bloco-lead { grid-column: 2; margin: 0; max-width: 40em; font-size: 15px; line-height: 1.45; }
 .pn-registros { list-style: none; margin: 0; padding: 0; }
-.pn-registro { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr) minmax(0, 30%); column-gap: var(--p-gap-x); align-items: start; padding: 24px 0; border-top: 1px solid var(--p-fio); }
+.pn-registro { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr) minmax(0, 40%); /* 30% → 40%: a 281px o dither virava mancha */ column-gap: var(--p-gap-x); align-items: start; padding: 24px 0; border-top: 1px solid var(--p-fio); }
 .pn-registro-n { color: var(--p-quieto); padding-top: 6px; }
 .pn-registro-titulo { margin: 0 0 8px; font-weight: 400; font-size: clamp(16px, 1.5vw, 20px); line-height: 1.2; letter-spacing: -0.02em; }
 .pn-registro-corpo { margin: 0; max-width: 40em; }
@@ -3605,8 +3605,11 @@ a.pz-materia:hover { color: var(--p-acento); }
 .pn-tabela .p-prova-linha { padding: 16px 0; }
 .pn-recibo-escopo, .pn-recibo-prazo { color: var(--p-quieto); }
 .pn-recibo-meta { display: flex; flex-direction: column; gap: 6px; }
-.pn-recibo-preco { font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 400; font-size: clamp(22px, 2vw, 34px); line-height: 1; letter-spacing: -0.03em; text-align: right; white-space: nowrap; }
-.pn-recibo-de { font-size: 0.5em; color: var(--p-quieto); letter-spacing: 0; }
+/* o PREÇO em escala de página (12/09): a única informação comercial da página
+   leva a tinta; "on request" recua em quieto e corpo menor */
+.pn-recibo-preco { font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 300; font-size: clamp(40px, 5.5vw, 100px); line-height: 0.95; letter-spacing: -0.045em; text-align: right; white-space: nowrap; }
+.pn-recibo-preco--aberto { font-weight: 400; font-size: clamp(18px, 1.6vw, 26px); color: var(--p-quieto); letter-spacing: -0.02em; }
+.pn-recibo-de { font-size: 0.3em; font-weight: 400; color: var(--p-quieto); letter-spacing: 0; margin-right: 0.4em; }
 .pn-tabela .p-prova-ano { text-align: right; }
 .pn-logos { grid-column: 2; margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 24px; }
 .pn-logo { display: inline-block; width: clamp(96px, 9vw, 150px); height: auto; background: currentColor; -webkit-mask: var(--logo) no-repeat center / contain; mask: var(--logo) no-repeat center / contain; }
@@ -3629,3 +3632,8 @@ a.pz-materia:hover { color: var(--p-acento); }
 .pn-stack-logo { display: inline-block; width: 18px; height: 18px; background: currentColor; -webkit-mask: var(--logo) no-repeat center / contain; mask: var(--logo) no-repeat center / contain; }
 .pn-tabela-veiculo { gap: 8px; }
 .pn-logo--simbolo { width: 16px; height: 16px; }
+.pn-tools { margin: 24px 0 0; padding: 16px 0 0 var(--pn-calha); border-top: 1px solid var(--p-fio); }
+.pn-tools > span { margin-right: 12px; }
+/* o preço grande em LINHA PRÓPRIA, à direita: na 4ª coluna ele empurrava as
+   colunas do recibo para longe das da tabela (633/764 contra 669/843) */
+.pn-recibo-linha .pn-recibo-preco { grid-column: 1 / -1; grid-row: 2; justify-self: end; margin-top: 16px; }
