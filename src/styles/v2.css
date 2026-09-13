@@ -3595,14 +3595,19 @@ a.pz-materia:hover { color: var(--p-acento); }
 .pn-stack { list-style: none; margin: 0; padding: 0 0 0 var(--pn-calha); display: flex; flex-wrap: wrap; gap: 8px 0; }
 .pn-stack li { padding: 8px 16px 8px 0; margin-right: 16px; border-right: 1px solid var(--p-fio); }
 .pn-stack li:last-child { border-right: 0; }
-.pn-recibo, .pn-tabela { list-style: none; margin: 0; padding: 0 0 0 var(--pn-calha); }
+/* ⚠ "o grid tá desalinhado" (12/09): o recuo da calha estava no <ul>, então os
+   FIOS do recibo e da tabela começavam em 518 enquanto os do cabeçalho e dos
+   registros começam em 451. O recuo desce para a linha: fio inteiro, texto na
+   coluna. */
+.pn-recibo, .pn-tabela { list-style: none; margin: 0; padding: 0; }
+.pn-recibo-linha, .pn-tabela .p-prova-linha { padding-left: var(--pn-calha); }
 .pn-recibo-linha, .pn-tabela .p-prova-linha {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) minmax(0, 2.4fr) minmax(7rem, auto);
   column-gap: var(--p-gap-x); align-items: baseline; border-top: 1px solid var(--p-fio);
 }
-.pn-recibo-linha { padding: 24px 0; }
-.pn-tabela .p-prova-linha { padding: 16px 0; }
+.pn-recibo-linha { padding: 24px 0 24px var(--pn-calha); }
+.pn-tabela .p-prova-linha { padding: 16px 0 16px var(--pn-calha); }
 .pn-recibo-escopo, .pn-recibo-prazo { color: var(--p-quieto); }
 .pn-recibo-meta { display: flex; flex-direction: column; gap: 6px; }
 /* o PREÇO em escala de página (12/09): a única informação comercial da página
