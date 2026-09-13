@@ -47,7 +47,6 @@ import logoBytedance from "../../assets/logos/stack/bytedance.svg";
 import logoGpt from "../../assets/logos/stack/gpt.svg";
 import logoPhotoshop from "../../assets/logos/stack/photoshop.svg";
 import logoIllustrator from "../../assets/logos/stack/illustrator.svg";
-import logoJitter from "../../assets/logos/stack/jitter.svg";
 
 /* os logos das ferramentas (Simple Icons, 24×24, por máscara na cor da tinta).
    Nano Banana Pro é o modelo de imagem do Gemini e Seedream é da ByteDance —
@@ -59,7 +58,6 @@ const LOGOS_STACK: Record<string, string> = {
   "GPT": logoGpt,
   "Photoshop": logoPhotoshop,
   "Illustrator": logoIllustrator,
-  "Jitter": logoJitter,
 };
 
 /* os logos dos veículos (máscara na cor da tinta); quem não tem, entra tipográfico */
