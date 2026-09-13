@@ -831,7 +831,7 @@
   flex: 1;
   min-height: 0;
   gap: var(--p-gap-x);
-  padding-top: 26px;
+  padding-top: 0; /* "sem os padding em cima" (12/09) */
   /* ⚠ a trilha tem 24 peças; sem cortar aqui, ela ESTICA a página (medido:
      documento de 8560px numa tela de 963) e o gesto vira scroll de documento */
   overflow: hidden;

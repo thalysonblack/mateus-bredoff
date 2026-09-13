@@ -36,9 +36,13 @@
 import { Renderer, Camera, Transform, Program, Mesh, Plane, Texture, RenderTarget } from "ogl";
 
 /* ── constantes, lidas do original ─────────────────────────────────────── */
-const CARD_W = 2.25;
-const CARD_H = 1.8;
-const CARD_SPACING = 1.81;   /* vão quase zero: os cards se encostam */
+/* ⚠ 12/09: "16:9 e full width, sem os padding em cima". O card ocupa a
+   largura VISÍVEL da tela curva (≈2,84 do frustum de 4,27 — a 2ª passada só
+   mostra o miolo do FBO) e sangra um pouco; 16:9 fixo, a capa entra por COVER
+   no shader (uRatio), nunca esticada. Vão quase zero: os cards se encostam. */
+const CARD_W = 2.9;
+const CARD_H = CARD_W * 9 / 16;
+const CARD_SPACING = CARD_H + 0.01;
 const ACTIVE_SCALE = 1.0;
 const INACTIVE_SCALE = 0.95;
 const ACTIVE_OPACITY = 1.0;
@@ -74,9 +78,12 @@ const FRAG_CARD = /* glsl */ `
 precision highp float;
 uniform sampler2D uTexture;
 uniform float uOpacity;
+uniform float uRatio; /* (largura/altura da textura) ÷ (largura/altura do card): >1 = textura mais larga */
 varying vec2 vUv;
 void main() {
-  vec4 color = texture2D(uTexture, vUv);
+  vec2 uv = vUv;
+  if (uRatio > 1.0) { uv.x = (uv.x - 0.5) / uRatio + 0.5; } else { uv.y = (uv.y - 0.5) * uRatio + 0.5; }
+  vec4 color = texture2D(uTexture, uv);
   color.rgb = pow(color.rgb, vec3(1.05));
   color.rgb = color.rgb * 1.05 - 0.025;
   color.a = uOpacity;
@@ -184,7 +191,7 @@ export function criarArquivoWebGL(alvo: HTMLElement, fontes: string[]): ArquivoW
     const program = new Program(gl, {
       vertex: VERT_CARD,
       fragment: FRAG_CARD,
-      uniforms: { uTexture: { value: tex }, uOpacity: { value: i === 0 ? ACTIVE_OPACITY : INACTIVE_OPACITY } },
+      uniforms: { uTexture: { value: tex }, uOpacity: { value: i === 0 ? ACTIVE_OPACITY : INACTIVE_OPACITY }, uRatio: { value: 1 } },
       transparent: true,
     });
     const mesh = new Mesh(gl, { geometry: geoCard, program });
@@ -220,6 +227,8 @@ export function criarArquivoWebGL(alvo: HTMLElement, fontes: string[]): ArquivoW
     im.onload = () => {
       cards[i].tex.image = im;
       cards[i].tex.needsUpdate = true;
+      /* cover: a razão da imagem sobre a do card 16:9 */
+      cards[i].program.uniforms.uRatio.value = (im.naturalWidth / im.naturalHeight) / (CARD_W / CARD_H);
       carregadas[i] = `${im.naturalWidth}x${im.naturalHeight}`;
     };
     im.onerror = () => {
