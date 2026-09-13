@@ -3609,7 +3609,7 @@ a.pz-materia:hover { color: var(--p-acento); }
 
 .pn-recibo-linha, .pn-tabela .p-prova-linha {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) minmax(0, 2.4fr) minmax(7rem, auto);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) minmax(0, 2.4fr) minmax(11rem, auto); /* 11rem: o preço cabe sem empurrar as colunas */
   column-gap: var(--p-gap-x); align-items: baseline; border-top: 1px solid var(--p-fio);
 }
 .pn-recibo-linha { padding: 24px 0; }
@@ -3618,9 +3618,11 @@ a.pz-materia:hover { color: var(--p-acento); }
 .pn-recibo-meta { display: flex; flex-direction: column; gap: 6px; }
 /* o PREÇO em escala de página (12/09): a única informação comercial da página
    leva a tinta; "on request" recua em quieto e corpo menor */
-.pn-recibo-preco { font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 300; font-size: clamp(40px, 5.5vw, 100px); line-height: 0.95; letter-spacing: -0.045em; text-align: right; white-space: nowrap; }
+/* "preço grande demais" (12/09): três vezes o gesto de escala vira gritaria — um degrau
+   abaixo do título de bloco (41), acima do nome do tier (14,5); volta à linha do nome */
+.pn-recibo-preco { font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 300; font-size: clamp(26px, 2.6vw, 44px); line-height: 1; letter-spacing: -0.035em; text-align: right; white-space: nowrap; }
 .pn-recibo-preco--aberto { font-weight: 400; font-size: clamp(18px, 1.6vw, 26px); color: var(--p-quieto); letter-spacing: -0.02em; }
-.pn-recibo-de { font-size: 0.3em; font-weight: 400; color: var(--p-quieto); letter-spacing: 0; margin-right: 0.4em; }
+.pn-recibo-de { font-size: 0.42em; font-weight: 400; color: var(--p-quieto); letter-spacing: 0; margin-right: 0.35em; }
 .pn-tabela .p-prova-ano { text-align: right; }
 .pn-logos { grid-column: 1; margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 24px; }
 .pn-logo { display: inline-block; width: clamp(96px, 9vw, 150px); height: auto; background: currentColor; -webkit-mask: var(--logo) no-repeat center / contain; mask: var(--logo) no-repeat center / contain; }
@@ -3648,5 +3650,5 @@ a.pz-materia:hover { color: var(--p-acento); }
 .pn-tools > span { margin-right: 12px; }
 /* o preço grande em LINHA PRÓPRIA, à direita: na 4ª coluna ele empurrava as
    colunas do recibo para longe das da tabela (633/764 contra 669/843) */
-.pn-recibo-linha .pn-recibo-preco { grid-column: 1 / -1; grid-row: 2; justify-self: end; margin-top: 16px; }
+.pn-recibo-linha .pn-recibo-preco { grid-column: 4; grid-row: 1; justify-self: end; align-self: baseline; }
 .pn-tabela .p-prova-titulo a { color: inherit; }
