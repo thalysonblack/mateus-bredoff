@@ -3580,14 +3580,17 @@ a.pz-materia:hover { color: var(--p-acento); }
 .pn-indice-item.pn-on a { color: var(--p-ink); }
 .pn-indice-n { margin-right: 8px; }
 .pn-corpo { display: flex; flex-direction: column; gap: clamp(64px, 9vh, 120px); }
-.pn-bloco-cab { /* "sem número" (12/09): a calha fica vazia, o título segue na coluna do texto */
-  display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); column-gap: var(--p-gap-x); row-gap: 16px; align-items: baseline; padding-top: 16px; border-top: 1px solid var(--p-ink); margin-bottom: 32px; }
+/* ⚠ "desalinhado de acordo com todos os textos" (12/09): a calha do numeral
+   empurrava o texto do dossiê para 518 enquanto o texto da Sobre nasce em 451.
+   Agora TODO texto nasce em 451; o numeral fica PENDURADO à esquerda da coluna,
+   como nota de margem (position absolute, fora do fio). */
+.pn-bloco-cab { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: 16px; align-items: baseline; padding-top: 16px; border-top: 1px solid var(--p-ink); margin-bottom: 32px; }
 .pn-bloco-n { color: var(--p-quieto); }
-.pn-bloco-titulo { margin: 0; grid-column: 2; } /* sem o numeral, o título caía na calha e quebrava ("My / stack") */
-.pn-bloco-lead { grid-column: 2; margin: 0; max-width: 40em; font-size: 15px; line-height: 1.45; }
+.pn-bloco-titulo { margin: 0; grid-column: 1; }
+.pn-bloco-lead { grid-column: 1; margin: 0; max-width: 40em; font-size: 15px; line-height: 1.45; }
 .pn-registros { list-style: none; margin: 0; padding: 0; }
-.pn-registro { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr) minmax(0, 40%); /* 30% → 40%: a 281px o dither virava mancha */ column-gap: var(--p-gap-x); align-items: start; padding: 24px 0; border-top: 1px solid var(--p-fio); }
-.pn-registro-n { color: var(--p-quieto); padding-top: 6px; }
+.pn-registro { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 40%); /* figura 40%: a 281px o dither virava mancha */ column-gap: var(--p-gap-x); align-items: start; padding: 24px 0; border-top: 1px solid var(--p-fio); }
+.pn-registro-n { position: absolute; left: calc(-1 * var(--pn-calha)); top: 30px; color: var(--p-quieto); }
 .pn-registro-titulo { margin: 0 0 8px; font-weight: 400; font-size: clamp(16px, 1.5vw, 20px); line-height: 1.2; letter-spacing: -0.02em; }
 .pn-registro-corpo { margin: 0; max-width: 40em; }
 .pn-figura { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
@@ -3600,14 +3603,14 @@ a.pz-materia:hover { color: var(--p-acento); }
    registros começam em 451. O recuo desce para a linha: fio inteiro, texto na
    coluna. */
 .pn-recibo, .pn-tabela { list-style: none; margin: 0; padding: 0; }
-.pn-recibo-linha, .pn-tabela .p-prova-linha { padding-left: var(--pn-calha); }
+
 .pn-recibo-linha, .pn-tabela .p-prova-linha {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) minmax(0, 2.4fr) minmax(7rem, auto);
   column-gap: var(--p-gap-x); align-items: baseline; border-top: 1px solid var(--p-fio);
 }
-.pn-recibo-linha { padding: 24px 0 24px var(--pn-calha); }
-.pn-tabela .p-prova-linha { padding: 16px 0 16px var(--pn-calha); }
+.pn-recibo-linha { padding: 24px 0; }
+.pn-tabela .p-prova-linha { padding: 16px 0; }
 .pn-recibo-escopo, .pn-recibo-prazo { color: var(--p-quieto); }
 .pn-recibo-meta { display: flex; flex-direction: column; gap: 6px; }
 /* o PREÇO em escala de página (12/09): a única informação comercial da página
@@ -3616,15 +3619,16 @@ a.pz-materia:hover { color: var(--p-acento); }
 .pn-recibo-preco--aberto { font-weight: 400; font-size: clamp(18px, 1.6vw, 26px); color: var(--p-quieto); letter-spacing: -0.02em; }
 .pn-recibo-de { font-size: 0.3em; font-weight: 400; color: var(--p-quieto); letter-spacing: 0; margin-right: 0.4em; }
 .pn-tabela .p-prova-ano { text-align: right; }
-.pn-logos { grid-column: 2; margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 24px; }
+.pn-logos { grid-column: 1; margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 24px; }
 .pn-logo { display: inline-block; width: clamp(96px, 9vw, 150px); height: auto; background: currentColor; -webkit-mask: var(--logo) no-repeat center / contain; mask: var(--logo) no-repeat center / contain; }
 .pn-logo-abz { font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 700; text-transform: uppercase; font-size: clamp(14px, 1.3vw, 22px); letter-spacing: 0.04em; }
 @media (max-width: 860px) {
   .pn-dossie { grid-template-columns: 1fr; }
   .pn-indice { position: static; margin-bottom: 40px; }
   .pn-indice-lista { flex-direction: row; flex-wrap: wrap; gap: 8px 16px; }
-  .pn-registro { grid-template-columns: 2.6rem minmax(0, 1fr); }
-  .pn-figura { grid-column: 2; margin-top: 12px; }
+  .pn-registro { grid-template-columns: minmax(0, 1fr); }
+  .pn-registro-n { position: static; display: block; margin-bottom: 6px; }
+  .pn-figura { grid-column: 1; margin-top: 12px; }
   .pn-recibo-linha, .pn-tabela .p-prova-linha { grid-template-columns: minmax(0, 1fr) auto; row-gap: 6px; }
   .pn-recibo-desc, .pn-recibo-meta, .pn-tabela .p-prova-titulo { grid-column: 1 / -1; }
 }
@@ -3637,7 +3641,7 @@ a.pz-materia:hover { color: var(--p-acento); }
 .pn-stack-logo { display: inline-block; width: 18px; height: 18px; background: currentColor; -webkit-mask: var(--logo) no-repeat center / contain; mask: var(--logo) no-repeat center / contain; }
 .pn-tabela-veiculo { gap: 8px; }
 .pn-logo--simbolo { width: 16px; height: 16px; }
-.pn-tools { margin: 24px 0 0; padding: 16px 0 0 var(--pn-calha); border-top: 1px solid var(--p-fio); }
+.pn-tools { margin: 24px 0 0; padding: 16px 0 0; border-top: 1px solid var(--p-fio); }
 .pn-tools > span { margin-right: 12px; }
 /* o preço grande em LINHA PRÓPRIA, à direita: na 4ª coluna ele empurrava as
    colunas do recibo para longe das da tabela (633/764 contra 669/843) */
