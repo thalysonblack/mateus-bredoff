@@ -3574,13 +3574,10 @@ a.pz-materia:hover { color: var(--p-acento); }
   align-items: start;
   --pn-calha: calc(2.6rem + var(--p-gap-x));
 }
-/* ⚠ "essa linha ainda precisa, analisar" (12/09): os FIOS do dossiê iam só da
-   coluna do texto à margem (451 → 1256); os das folhas de cima vão de margem a
-   margem. Índice e corpo ocupam a MESMA célula da grade: o corpo toma a largura
-   toda (fios inteiros, 24 → 1256) e recua o texto por padding para 451; o
-   índice fica por cima, sticky, na coluna da esquerda. */
-.pn-indice { grid-column: 1 / -1; grid-row: 1; width: calc((100% - var(--p-gap-x)) / 3); position: sticky; top: calc(var(--p-margem-y) + var(--p-menu-h, 60px) + 24px); z-index: 2; align-self: start; }
-.pn-corpo { grid-column: 1 / -1; grid-row: 1; --pn-recuo: calc((100% - var(--p-gap-x)) / 3 + var(--p-gap-x)); }
+/* "essa linha ainda precisa?" (12/09) era PERGUNTA, não ordem: os fios finos
+   ficam na coluna do texto (451 → 1256), como os registros; o índice na
+   coluna da esquerda, sticky. */
+.pn-indice { position: sticky; top: calc(var(--p-margem-y) + var(--p-menu-h, 60px) + 24px); }
 .pn-indice-lista { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .pn-indice-item a { color: var(--p-quieto); text-decoration: none; transition: color 0.25s ease; }
 .pn-indice-item.pn-on a { color: var(--p-ink); }
@@ -3590,7 +3587,7 @@ a.pz-materia:hover { color: var(--p-acento); }
    empurrava o texto do dossiê para 518 enquanto o texto da Sobre nasce em 451.
    Agora TODO texto nasce em 451; o numeral fica PENDURADO à esquerda da coluna,
    como nota de margem (position absolute, fora do fio). */
-.pn-bloco-cab { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: 16px; align-items: baseline; padding-top: 16px; border-top: 1px solid var(--p-ink); margin-bottom: 32px; }
+.pn-bloco-cab { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: 16px; align-items: baseline; padding-top: 0; border-top: 0; margin-bottom: 32px; } /* sem o fio escuro: o vão e o título já marcam o capítulo */
 .pn-bloco-n { color: var(--p-quieto); }
 .pn-bloco-titulo { margin: 0; grid-column: 1; }
 .pn-bloco-lead { grid-column: 1; margin: 0; max-width: 40em; font-size: 15px; line-height: 1.45; }
@@ -3653,10 +3650,3 @@ a.pz-materia:hover { color: var(--p-acento); }
    colunas do recibo para longe das da tabela (633/764 contra 669/843) */
 .pn-recibo-linha .pn-recibo-preco { grid-column: 1 / -1; grid-row: 2; justify-self: end; margin-top: 16px; }
 .pn-tabela .p-prova-titulo a { color: inherit; }
-/* o recuo do texto entra em cada elemento com fio, para o fio ficar inteiro */
-.pn-bloco-cab, .pn-registro, .pn-recibo-linha, .pn-tabela .p-prova-linha, .pn-tools { padding-left: var(--pn-recuo, 0px); }
-.pn-registro-n { left: calc(var(--pn-recuo, 0px) - var(--pn-calha)); }
-@media (max-width: 860px) {
-  .pn-corpo { --pn-recuo: 0px; }
-  .pn-indice { position: static; width: auto; }
-}
