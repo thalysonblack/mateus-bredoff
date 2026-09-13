@@ -65,7 +65,7 @@ export const TIERS: Tier[] = [
     description:
       "The identity applied to the places it actually lives, so the brand holds together across every surface.",
     timeline: "5 weeks",
-    priceFrom: null,
+    priceFrom: 4500 /* ⚠ 12/09: escada proporcional ao prazo, escolhida pelo Thalyson — a confirmar com o Mateus */,
   },
   {
     name: "Brand System",
@@ -73,7 +73,7 @@ export const TIERS: Tier[] = [
     description:
       "Strategy, name and language included — for brands that need to be reproduced by other people without losing themselves.",
     timeline: "8 weeks",
-    priceFrom: null,
+    priceFrom: 7500 /* ⚠ 12/09: escada proporcional ao prazo, escolhida pelo Thalyson — a confirmar com o Mateus */,
   },
 ];
 

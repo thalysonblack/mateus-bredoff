@@ -410,8 +410,9 @@ export default function AboutV2() {
             <ul className="p-prova-tabela pn-tabela">
               {RECONHECIMENTO.map((r, i) => (
                 <li key={i} className="p-fio p-sobe p-prova-linha">
-                  <span className="p-item">{r.projeto}</span>
-                  {/* "logos aqui" (12/09): o veículo entra como logo na linha */}
+                  {/* "melhorar" (12/09): o que a pessoa procura aqui é ONDE saiu e O QUÊ —
+                      o logo e o título levam a tinta; o projeto recua para quieto */}
+                  <span className="p-corpo" style={{ color: "var(--p-quieto)" }}>{r.projeto}</span>
                   <span className="pn-tabela-veiculo">
                     {LOGOS_VEICULO[r.veiculo]?.simbolo ? (
                       <>
@@ -424,7 +425,7 @@ export default function AboutV2() {
                       <span className="pn-logo-abz pn-logo-abz--linha">{r.veiculo}</span>
                     )}
                   </span>
-                  <span className="p-corpo p-prova-titulo" style={{ color: "var(--p-quieto)" }}>{r.href ? <a href={r.href} target="_blank" rel="noopener noreferrer" className="p-link">{r.titulo}</a> : r.titulo}</span>
+                  <span className="p-item p-prova-titulo">{r.href ? <a href={r.href} target="_blank" rel="noopener noreferrer" className="p-link">{r.titulo}</a> : r.titulo}</span>
                   <span className="p-marca p-prova-ano" style={{ color: "var(--p-quieto)" }}>{r.ano}</span>
                 </li>
               ))}

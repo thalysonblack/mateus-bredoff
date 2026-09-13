@@ -3574,12 +3574,18 @@ a.pz-materia:hover { color: var(--p-acento); }
   align-items: start;
   --pn-calha: calc(2.6rem + var(--p-gap-x));
 }
-.pn-indice { position: sticky; top: calc(var(--p-margem-y) + var(--p-menu-h, 60px) + 24px); }
+/* ⚠ "essa linha ainda precisa, analisar" (12/09): os FIOS do dossiê iam só da
+   coluna do texto à margem (451 → 1256); os das folhas de cima vão de margem a
+   margem. Índice e corpo ocupam a MESMA célula da grade: o corpo toma a largura
+   toda (fios inteiros, 24 → 1256) e recua o texto por padding para 451; o
+   índice fica por cima, sticky, na coluna da esquerda. */
+.pn-indice { grid-column: 1 / -1; grid-row: 1; width: calc((100% - var(--p-gap-x)) / 3); position: sticky; top: calc(var(--p-margem-y) + var(--p-menu-h, 60px) + 24px); z-index: 2; align-self: start; }
+.pn-corpo { grid-column: 1 / -1; grid-row: 1; --pn-recuo: calc((100% - var(--p-gap-x)) / 3 + var(--p-gap-x)); }
 .pn-indice-lista { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .pn-indice-item a { color: var(--p-quieto); text-decoration: none; transition: color 0.25s ease; }
 .pn-indice-item.pn-on a { color: var(--p-ink); }
 .pn-indice-n { margin-right: 8px; }
-.pn-corpo { display: flex; flex-direction: column; gap: clamp(64px, 9vh, 120px); }
+.pn-corpo { display: flex; flex-direction: column; gap: clamp(64px, 9vh, 120px); position: relative; }
 /* ⚠ "desalinhado de acordo com todos os textos" (12/09): a calha do numeral
    empurrava o texto do dossiê para 518 enquanto o texto da Sobre nasce em 451.
    Agora TODO texto nasce em 451; o numeral fica PENDURADO à esquerda da coluna,
@@ -3610,7 +3616,7 @@ a.pz-materia:hover { color: var(--p-acento); }
   column-gap: var(--p-gap-x); align-items: baseline; border-top: 1px solid var(--p-fio);
 }
 .pn-recibo-linha { padding: 24px 0; }
-.pn-tabela .p-prova-linha { padding: 16px 0; }
+.pn-tabela .p-prova-linha { padding: 20px 0; }
 .pn-recibo-escopo, .pn-recibo-prazo { color: var(--p-quieto); }
 .pn-recibo-meta { display: flex; flex-direction: column; gap: 6px; }
 /* o PREÇO em escala de página (12/09): a única informação comercial da página
@@ -3634,8 +3640,8 @@ a.pz-materia:hover { color: var(--p-acento); }
 }
 /* "logos aqui": o veículo como logo dentro da linha da tabela, na altura do corpo */
 .pn-tabela-veiculo { display: flex; align-items: center; min-height: 1.3em; }
-.pn-logo--linha { height: 15px; width: auto; transform: translateY(2px); } /* medido: 3px acima do centro do texto */
-.pn-logo-abz--linha { font-size: 11px; letter-spacing: 0.06em; }
+.pn-logo--linha { height: 13px; width: auto; transform: translateY(1px); } /* peso óptico igual aos versaletes */
+.pn-logo-abz--linha { font-size: 11.5px; letter-spacing: 0.06em; }
 /* "logos" na stack: o ícone da ferramenta antes do nome, na altura do corpo */
 .pn-stack-item { display: inline-flex; align-items: center; gap: 10px; }
 .pn-stack-logo { display: inline-block; width: 18px; height: 18px; background: currentColor; -webkit-mask: var(--logo) no-repeat center / contain; mask: var(--logo) no-repeat center / contain; }
@@ -3646,3 +3652,11 @@ a.pz-materia:hover { color: var(--p-acento); }
 /* o preço grande em LINHA PRÓPRIA, à direita: na 4ª coluna ele empurrava as
    colunas do recibo para longe das da tabela (633/764 contra 669/843) */
 .pn-recibo-linha .pn-recibo-preco { grid-column: 1 / -1; grid-row: 2; justify-self: end; margin-top: 16px; }
+.pn-tabela .p-prova-titulo a { color: inherit; }
+/* o recuo do texto entra em cada elemento com fio, para o fio ficar inteiro */
+.pn-bloco-cab, .pn-registro, .pn-recibo-linha, .pn-tabela .p-prova-linha, .pn-tools { padding-left: var(--pn-recuo, 0px); }
+.pn-registro-n { left: calc(var(--pn-recuo, 0px) - var(--pn-calha)); }
+@media (max-width: 860px) {
+  .pn-corpo { --pn-recuo: 0px; }
+  .pn-indice { position: static; width: auto; }
+}
