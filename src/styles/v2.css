@@ -3528,3 +3528,72 @@ a.pz-materia:hover { color: var(--p-acento); }
 }
 .p-marquee-nome { align-items: center; gap: 0.5em; padding-right: 0.5em; line-height: 1; }
 .p-marquee-ponto { font-family: 'Geist', ui-sans-serif, sans-serif; font-size: clamp(30px, 4.4vw, 76px); }
+
+/* ══ ABOUT-M — O FILME (12/09) ═════════════════════════════════════════════ */
+.pm-cap { min-height: 100svh; padding: calc(var(--p-margem-y) + var(--p-menu-h, 60px) + 24px) 0 clamp(40px, 6vh, 72px); display: flex; overflow: hidden; }
+.pm-cap--cena .pm-fundo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.pm-cap--cena::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(20,32,31,0.55) 0%, rgba(20,32,31,0.35) 45%, rgba(20,32,31,0.82) 100%); }
+.pm-fantasma { position: absolute; right: var(--p-margem); top: 50%; transform: translateY(-50%); z-index: 1; font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 300; font-size: clamp(160px, 34vw, 640px); line-height: 1; letter-spacing: -0.06em; color: rgba(236, 234, 229, 0.06); pointer-events: none; }
+.pm-miolo { position: relative; z-index: 2; width: 100%; padding: 0 var(--p-margem); display: flex; flex-direction: column; justify-content: space-between; gap: clamp(24px, 4vh, 48px); }
+.pm-titulo { margin: auto 0; font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 400; font-size: clamp(48px, 11vw, 210px); line-height: 0.9; letter-spacing: -0.045em; max-width: 9em; }
+.pm-corpo { max-width: 36em; margin: 0; }
+.pm-cap--cena .pm-corpo { align-self: flex-end; }
+.pm-stack { margin: auto 0; display: flex; flex-wrap: wrap; gap: 0.15em 0.5em; font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 300; font-size: clamp(36px, 7.2vw, 140px); line-height: 1; letter-spacing: -0.04em; }
+.pm-stack-item { color: rgba(236, 234, 229, 0.3); transition: color 0.3s ease; }
+.pm-stack-item--aceso, .pm-stack-item:hover { color: var(--p-ink); }
+.pm-preco { margin: 0; font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 300; font-size: clamp(44px, 9vw, 170px); line-height: 1; letter-spacing: -0.045em; }
+.pm-preco-de { font-size: 0.32em; font-weight: 400; color: var(--p-quieto); margin-right: 0.4em; }
+.pm-preco--aberto { color: var(--p-quieto); }
+.pm-tier-pe { display: flex; justify-content: space-between; align-items: end; gap: var(--p-gap-x); }
+.pm-escopo { text-align: right; max-width: 34em; color: var(--p-quieto); }
+.pm-logos { margin: auto 0; display: flex; flex-wrap: wrap; align-items: center; gap: clamp(24px, 4vw, 72px); }
+.pm-logo { display: inline-block; width: clamp(160px, 26vw, 420px); height: auto; background: currentColor; -webkit-mask: var(--logo) no-repeat center / contain; mask: var(--logo) no-repeat center / contain; }
+.pm-logo-abz { font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 700; text-transform: uppercase; font-size: clamp(26px, 4vw, 66px); letter-spacing: 0.02em; }
+.pm-tabela { margin: 0; }
+@media (max-width: 860px) {
+  .pm-cap { padding-top: 24px; }
+  .pm-fantasma { top: auto; bottom: 8vh; transform: none; }
+  .pm-tier-pe { flex-direction: column; align-items: start; }
+  .pm-escopo { text-align: left; }
+}
+
+/* ══ ABOUT-N — O DOSSIÊ (12/09) ════════════════════════════════════════════ */
+.pn-dossie { padding-top: 40px; padding-bottom: clamp(72px, 10vh, 140px); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--p-gap-x); align-items: start; }
+.pn-indice { grid-column: 1 / span 3; position: sticky; top: calc(var(--p-margem-y) + var(--p-menu-h, 60px) + 24px); }
+.pn-indice-lista { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.pn-indice-item a { color: var(--p-quieto); text-decoration: none; transition: color 0.25s ease; }
+.pn-indice-item.pn-on a { color: var(--p-ink); }
+.pn-indice-n { margin-right: 8px; }
+.pn-corpo { grid-column: 4 / -1; display: flex; flex-direction: column; gap: clamp(64px, 10vh, 140px); }
+.pn-bloco-cab { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); column-gap: var(--p-gap-x); row-gap: 14px; align-items: baseline; padding-top: 14px; border-top: 1px solid var(--p-ink); margin-bottom: clamp(24px, 4vh, 48px); }
+.pn-bloco-n { color: var(--p-quieto); }
+.pn-bloco-titulo { margin: 0; }
+.pn-bloco-lead { grid-column: 2; margin: 0; max-width: 44em; }
+.pn-registros { list-style: none; margin: 0; padding: 0; }
+.pn-registro { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr) minmax(0, 30%); column-gap: var(--p-gap-x); align-items: start; padding: 22px 0; border-top: 1px solid var(--p-fio); }
+.pn-registro-n { color: var(--p-quieto); padding-top: 4px; }
+.pn-registro-titulo { margin: 0 0 8px; font-weight: 400; }
+.pn-registro-corpo { margin: 0; max-width: 40em; }
+.pn-figura { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
+.pn-stack { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 0; }
+.pn-stack li { padding: 8px 18px 8px 0; margin-right: 18px; border-right: 1px solid var(--p-fio); }
+.pn-stack li:last-child { border-right: 0; }
+.pn-recibo { list-style: none; margin: 0; padding: 0; }
+.pn-recibo-linha { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 2fr) minmax(0, 1.4fr) 5.5rem auto; column-gap: var(--p-gap-x); align-items: baseline; padding: 20px 0; border-top: 1px solid var(--p-fio); }
+.pn-recibo-escopo, .pn-recibo-prazo { color: var(--p-quieto); }
+.pn-recibo-preco { font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 400; font-size: clamp(22px, 2vw, 34px); line-height: 1; letter-spacing: -0.03em; text-align: right; white-space: nowrap; }
+.pn-recibo-de { font-size: 0.5em; color: var(--p-quieto); letter-spacing: 0; }
+.pn-logos { grid-column: 2; margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 28px; }
+.pn-logo { display: inline-block; width: clamp(96px, 9vw, 150px); height: auto; background: currentColor; -webkit-mask: var(--logo) no-repeat center / contain; mask: var(--logo) no-repeat center / contain; }
+.pn-logo-abz { font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 700; text-transform: uppercase; font-size: clamp(14px, 1.3vw, 22px); letter-spacing: 0.04em; }
+.pn-tabela { margin: 0; }
+@media (max-width: 860px) {
+  .pn-dossie { grid-template-columns: 1fr; }
+  .pn-indice { grid-column: 1; position: static; margin-bottom: 40px; }
+  .pn-indice-lista { flex-direction: row; flex-wrap: wrap; gap: 6px 18px; }
+  .pn-corpo { grid-column: 1; }
+  .pn-registro { grid-template-columns: 2.4rem minmax(0, 1fr); }
+  .pn-figura { grid-column: 2; margin-top: 12px; }
+  .pn-recibo-linha { grid-template-columns: minmax(0, 1fr) auto; row-gap: 6px; }
+  .pn-recibo-desc, .pn-recibo-escopo, .pn-recibo-prazo { grid-column: 1 / -1; }
+}

@@ -42,6 +42,8 @@ import LabV4 from "./v4/Lab";
 import HomeV5 from "./v5/Home";
 import CaseV5 from "./v5/Case";
 import AboutV5 from "./v5/About";
+import AboutM from "./v2/AboutM";
+import AboutN from "./v2/AboutN";
 import HomeV3 from "./pages/HomeV3";
 import AboutV3 from "./pages/AboutV3";
 import WorkIndexV3 from "./pages/WorkIndexV3";
@@ -272,6 +274,8 @@ export default function App() {
           {/* 12/09 — "não gostei" nas três; a resposta desenhada foi MOVIMENTO
               COMO PROTAGONISTA. O visor fluido da home em tela cheia. */}
           <Route path="/v2/about-l" element={<AboutL />} />
+          <Route path="/v2/about-m" element={<AboutM />} />
+          <Route path="/v2/about-n" element={<AboutN />} />
           {/* a mesma about com as outras duas mecânicas de serviços */}
           <Route path="/v2/about-c-fita" element={<AboutC servicos="fita" />} />
           <Route path="/v2/about-c-cortina" element={<AboutC servicos="cortina" />} />
