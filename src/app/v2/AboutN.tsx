@@ -395,9 +395,11 @@ export default function AboutN() {
               {TIERS.map((tier) => (
                 <li key={tier.name} className="pn-recibo-linha p-sobe">
                   <span className="p-item pn-recibo-nome">{tier.name}</span>
+                  <span className="pn-recibo-meta">
+                    <span className="p-marca pn-recibo-escopo">{tier.scope.join(" · ")}</span>
+                    <span className="p-marca pn-recibo-prazo">{tier.timeline}</span>
+                  </span>
                   <span className="p-corpo pn-recibo-desc">{tier.description}</span>
-                  <span className="p-marca pn-recibo-escopo">{tier.scope.join(" · ")}</span>
-                  <span className="p-marca pn-recibo-prazo">{tier.timeline}</span>
                   <span className="pn-recibo-preco">{tier.priceFrom === null ? "On request" : <><span className="pn-recibo-de">from </span>{`$${tier.priceFrom.toLocaleString("en-US")}`}</>}</span>
                 </li>
               ))}

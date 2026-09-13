@@ -164,6 +164,17 @@ export default function AboutV2() {
     return () => gsap.ticker.remove(anda);
   }, []);
 
+  /* ⭐ O ÍNDICE DO DOSSIÊ acende com o bloco que está na tela. */
+  useEffect(() => {
+    const blocos = Array.from(document.querySelectorAll<HTMLElement>("[data-bloco]"));
+    if (!blocos.length) return;
+    const trs = blocos.map((b) => {
+      const alvo = document.querySelector<HTMLElement>(`[data-indice="${b.dataset.bloco}"]`);
+      return ScrollTrigger.create({ trigger: b, start: "top 45%", end: "bottom 45%", toggleClass: alvo ? { targets: alvo, className: "pn-on" } : undefined });
+    });
+    return () => trs.forEach((s) => s.kill());
+  }, []);
+
   /* ⭐ PROFUNDIDADE — a coreografia entre folhas (12/09). Para cada folha que
      tem uma seguinte: enquanto a seguinte sobe da base ao topo da viewport, a
      que sai anda +0,4·vh para baixo (= 0,6× do scroll) e o véu vai a 0,4. A
@@ -324,190 +335,100 @@ export default function AboutV2() {
         </div>
       </section>
 
-      {/* ─ 3. O MÉTODO — O TAMBOR (12/09, referência apontada: a features
-          section da United Carriers no details.so). A seção fica PINADA e o
-          scroll gira a lista das cinco etapas pelo centro: a ativa acende no
-          meio, o corpo dela à direita e a CENA 16:9 à esquerda (no lugar do
-          ícone circular da referência — a matéria é dele). Herda o conceito,
-          não a montagem: sem círculo, sem caixa alta, o numeral do sistema.
-          Um markup por etapa: no desktop a cena e o corpo saem do fluxo por
-          `position: absolute` e só o nome fica na lista; no mobile tudo volta
-          ao fluxo e vira cinco blocos. O scrub move a lista; `onUpdate` acende. */}
-      <section
-        ref={(el) => {
-          (folhaMetodo as React.MutableRefObject<HTMLElement | null>).current = el;
-          tamborSec.current = el;
-        }}
-        className="p-folha-sec p-tinta p-metodo p-tambor-sec"
-        data-folha="3"
-      >
-        <div className="p-metodo-fixo p-tambor-fixo">
-          <div className="p-metodo-cab" style={{ paddingInline: "var(--p-margem)" }}>
-            <p className="p-rotulo p-sobe">Method</p>
-            <p className="p-servico-nome p-sobe p-metodo-manchete">{PROCESSO_MANCHETE}</p>
-          </div>
-          {/* ⚠ desktop: TRÊS grupos irmãos — cenas, lista, corpos. A lista se
-              move por transform, e transform vira containing block dos
-              absolutos: cena e corpo dentro dela saíam com 117px, presos à
-              coluna. Fora dela, ancoram no centro do fixo. */}
-          <div className="p-tambor" aria-hidden="true">
-            {/* "o method ficou ruim, deve ocupar tela toda": a cena é o FUNDO
-                full-bleed (com véu para o texto), as etapas em escala extrema
-                à esquerda girando pela altura inteira, o corpo à direita. */}
-            <div className="p-tambor-cenas">
-              {PROCESSO.map((e, i) => (
-                <img
-                  key={e.titulo}
-                  className={i === 0 ? "p-tambor-cena p-tambor-acesa" : "p-tambor-cena"}
-                  data-etapa={i}
-                  src={CENAS_METODO[i].src}
-                  alt=""
-                  width={1440}
-                  height={810}
-                  loading={i === 0 ? undefined : "lazy"}
-                  decoding="async"
-                  draggable={false}
-                />
-              ))}
-            </div>
-            <div className="p-tambor-janela">
-            <ol className="p-tambor-lista" ref={tamborLista}>
-              {PROCESSO.map((e, i) => (
-                <li key={e.titulo} className={i === 0 ? "p-tambor-etapa p-tambor-acesa" : "p-tambor-etapa"} data-etapa={i}>
-                  <span className="p-tambor-nome">
-                    <span className="p-marca p-tambor-n">{String(i + 1).padStart(2, "0")}</span>
-                    <span>{e.titulo}</span>
-                  </span>
-                </li>
-              ))}
-            </ol>
-            </div>
-            <div className="p-tambor-corpos">
-              {PROCESSO.map((e, i) => (
-                <p key={e.titulo} className={i === 0 ? "p-corpo p-tambor-corpo p-tambor-acesa" : "p-corpo p-tambor-corpo"} data-etapa={i}>
-                  {e.corpo}
-                </p>
-              ))}
-            </div>
-          </div>
-          {/* mobile e leitor de tela: um bloco por etapa, em fluxo */}
-          <ol className="p-tambor-mob">
-            {PROCESSO.map((e, i) => (
-              <li key={e.titulo}>
-                <img className="p-tambor-mob-cena" src={CENAS_METODO[i].src} alt={CENAS_METODO[i].alt} width={1440} height={810} loading="lazy" decoding="async" draggable={false} />
-                <span className="p-tambor-nome">
-                  <span className="p-marca p-tambor-n">{String(i + 1).padStart(2, "0")}</span>
-                  <span>{e.titulo}</span>
-                </span>
-                <p className="p-corpo">{e.corpo}</p>
+      {/* ═══ O DOSSIÊ (about-n, 12/09) — "preciso de uma mudança completa no
+          method até o final". Postura oposta ao filme: de Method ao fim, UM
+          documento só, em papel, sem nenhuma superfície trocando. Índice
+          lateral fixo que acende conforme se rola; método, stack, serviços e
+          matérias como registros numerados numa grade única. A tipografia é a
+          arquitetura; as cenas entram pequenas, como figuras de um relatório. */}
+      <section ref={folhaMetodo} className="p-folha-sec p-papel pn-dossie" data-folha="3">
+        <aside className="pn-indice" aria-label="Contents">
+          <p className="p-rotulo">Contents</p>
+          <ol className="pn-indice-lista">
+            {[["method", "Method"], ["stack", "My stack"], ["services", "Services"], ["published", "Published in"]].map(([id, nome], k) => (
+              <li key={id} className="pn-indice-item" data-indice={id}>
+                <a href={`#${id}`} className="p-item"><span className="p-marca pn-indice-n">{String(k + 1).padStart(2, "0")}</span> {nome}</a>
               </li>
             ))}
           </ol>
-        </div>
-      </section>
+        </aside>
 
-      {/* ═══ DE MÉTODO PARA BAIXO — "de lá pra baixo é boring, bora algo
-          imersivo e não blocado" (12/09). O defeito era de REGISTRO: cinco
-          blocos em grade rótulo | conteúdo, alternando papel e tinta. A troca
-          herda os gestos que ele aprovou (o trilho, a hero full, escala
-          extrema) em vez de somar animação: um palco escuro contínuo. */}
+        <div className="pn-corpo">
+          <article id="method" className="pn-bloco" data-bloco="method">
+            <header className="pn-bloco-cab">
+              <span className="p-marca pn-bloco-n">01</span>
+              <h2 className="p-servico-nome pn-bloco-titulo">Method</h2>
+              <p className="p-corpo pn-bloco-lead">{PROCESSO_MANCHETE}</p>
+            </header>
+            <ol className="pn-registros">
+              {PROCESSO.map((e, i) => (
+                <li key={e.titulo} className="pn-registro p-sobe">
+                  <span className="p-marca pn-registro-n">{String(i + 1).padStart(2, "0")}</span>
+                  <div className="pn-registro-txt">
+                    <h3 className="p-item pn-registro-titulo">{e.titulo}</h3>
+                    <p className="p-corpo pn-registro-corpo">{e.corpo}</p>
+                  </div>
+                  <img className="pn-figura" src={CENAS_METODO[i].src} alt={CENAS_METODO[i].alt} width={1440} height={810} loading="lazy" decoding="async" draggable={false} />
+                </li>
+              ))}
+            </ol>
+          </article>
 
-      {/* ─ MY STACK — sete palavras gigantes que ACENDEM ao cruzar o centro da
-          tela (ScrollTrigger com toggleClass, sem scrub): movimento como
-          protagonista, nada de lista. */}
-      <section ref={folhaStack} className="p-folha-sec p-tinta p-stack" data-folha="4">
-        <p className="p-rotulo p-carimbo p-sobe">My stack</p>
-        <ul className="p-stack-lista">
-          {FERRAMENTAS.map((f) => (
-            <li key={f} className="p-stack-item" data-stack>
-              {f}
-            </li>
-          ))}
-        </ul>
-      </section>
+          <article id="stack" className="pn-bloco" data-bloco="stack">
+            <header className="pn-bloco-cab">
+              <span className="p-marca pn-bloco-n">02</span>
+              <h2 className="p-servico-nome pn-bloco-titulo">My stack</h2>
+            </header>
+            <ul className="pn-stack p-sobe">
+              {FERRAMENTAS.map((f) => (
+                <li key={f} className="p-item">{f}</li>
+              ))}
+            </ul>
+          </article>
 
-      {/* ─ SERVICES — três colunas com ícone (12/09): "o azul não usaremos,
-          ícones em cada item, preço completo em tudo e outro layout".
-          ⚠ Preço é fato do cliente: só o Essential tem valor (US$ 2.500, o que
-          ele publica no Behance). Os outros dois têm o slot do preço no mesmo
-          corpo e ficam "on request" até os números chegarem — nunca inventados. */}
-      <section ref={folhaServicos} className="p-folha-sec p-tinta p-servicos" data-folha="5">
-        <p className="p-rotulo p-carimbo p-sobe">Services</p>
-        <ul className="p-tiers">
-          {TIERS.map((tier, i) => {
-            const Icone = ICONES_TIER[i] ?? Hexagon;
-            return (
-              <li key={tier.name} className="p-tier p-sobe">
-                <span className="p-tier-icone" aria-hidden="true">
-                  <Icone strokeWidth={1.25} />
-                </span>
-                <p className="p-tier-nome">{tier.name}</p>
-                {tier.priceFrom === null ? (
-                  <p className="p-tier-preco p-tier-preco--aberto">On request</p>
-                ) : (
-                  <p className="p-tier-preco">
-                    <span className="p-tier-de">from</span>
-                    {`$${tier.priceFrom.toLocaleString("en-US")}`}
-                  </p>
-                )}
-                <p className="p-corpo">{tier.description}</p>
-                <ul className="p-tier-escopo p-marca">
-                  {tier.scope.map((s) => (
-                    <li key={s}>{s}</li>
-                  ))}
-                </ul>
-                <p className="p-marca p-tier-prazo">{tier.timeline}</p>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
-
-      {/* ─ PUBLISHED IN — os veículos em MARQUEE de 9vw atravessando a tela
-          (anda no ticker do GSAP, acelera com o scroll do Lenis — um relógio
-          só), e as cinco matérias em tabela por baixo. */}
-      <section ref={folhaProva} className="p-folha-sec p-tinta p-prova" data-folha="6">
-        <p className="p-rotulo p-carimbo p-sobe">Published in</p>
-        <div className="p-marquee" aria-hidden="true">
-          <div className="p-marquee-faixa" ref={marquee}>
-            {[0, 1].map((rep) => (
-              <span key={rep} className="p-marquee-bloco">
-                {veiculos.map((v) => (
-                  <span key={v} className="p-marquee-nome">
-                    {LOGOS_VEICULO[v] ? (
-                      <span className="p-marquee-logo" style={{ ["--logo" as string]: `url("${LOGOS_VEICULO[v].src}")`, aspectRatio: LOGOS_VEICULO[v].ratio }} /* aspas: o svg pequeno vem como data URI */ role="img" aria-label={v} />
-                    ) : (
-                      <span className="p-marquee-abz">{v}</span>
-                    )}
-                    <span className="p-marquee-ponto">·</span>
+          <article id="services" className="pn-bloco" data-bloco="services">
+            <header className="pn-bloco-cab">
+              <span className="p-marca pn-bloco-n">03</span>
+              <h2 className="p-servico-nome pn-bloco-titulo">Services</h2>
+            </header>
+            <ul className="pn-recibo">
+              {TIERS.map((tier) => (
+                <li key={tier.name} className="pn-recibo-linha p-sobe">
+                  <span className="p-item pn-recibo-nome">{tier.name}</span>
+                  <span className="pn-recibo-meta">
+                    <span className="p-marca pn-recibo-escopo">{tier.scope.join(" · ")}</span>
+                    <span className="p-marca pn-recibo-prazo">{tier.timeline}</span>
                   </span>
+                  <span className="p-corpo pn-recibo-desc">{tier.description}</span>
+                  <span className="pn-recibo-preco">{tier.priceFrom === null ? "On request" : <><span className="pn-recibo-de">from </span>{`$${tier.priceFrom.toLocaleString("en-US")}`}</>}</span>
+                </li>
+              ))}
+            </ul>
+          </article>
+
+          <article id="published" className="pn-bloco" data-bloco="published">
+            <header className="pn-bloco-cab">
+              <span className="p-marca pn-bloco-n">04</span>
+              <h2 className="p-servico-nome pn-bloco-titulo">Published in</h2>
+              <p className="pn-logos p-sobe">
+                {veiculos.map((v) => LOGOS_VEICULO[v] ? (
+                  <span key={v} className="pn-logo" style={{ ["--logo" as string]: `url("${LOGOS_VEICULO[v].src}")`, aspectRatio: LOGOS_VEICULO[v].ratio }} role="img" aria-label={v} />
+                ) : (
+                  <span key={v} className="pn-logo-abz">{v}</span>
                 ))}
-              </span>
-            ))}
-          </div>
-        </div>
-        <p className="sr-only">{veiculos.join(", ")}</p>
-        <div style={{ paddingInline: "var(--p-margem)" }}>
-          <ul className="p-prova-tabela">
-            {RECONHECIMENTO.map((r, i) => (
-              <li key={i} className="p-fio p-sobe p-prova-linha">
-                <span className="p-item">{r.projeto}</span>
-                <span className="p-corpo">{r.veiculo}</span>
-                <span className="p-corpo p-prova-titulo" style={{ color: "var(--p-quieto)" }}>
-                  {r.href ? (
-                    <a href={r.href} target="_blank" rel="noopener noreferrer" className="p-link">
-                      {r.titulo}
-                    </a>
-                  ) : (
-                    r.titulo
-                  )}
-                </span>
-                <span className="p-marca p-prova-ano" style={{ color: "var(--p-quieto)" }}>
-                  {r.ano}
-                </span>
-              </li>
-            ))}
-          </ul>
+              </p>
+            </header>
+            <ul className="p-prova-tabela pn-tabela">
+              {RECONHECIMENTO.map((r, i) => (
+                <li key={i} className="p-fio p-sobe p-prova-linha">
+                  <span className="p-item">{r.projeto}</span>
+                  <span className="p-corpo">{r.veiculo}</span>
+                  <span className="p-corpo p-prova-titulo" style={{ color: "var(--p-quieto)" }}>{r.href ? <a href={r.href} target="_blank" rel="noopener noreferrer" className="p-link">{r.titulo}</a> : r.titulo}</span>
+                  <span className="p-marca p-prova-ano" style={{ color: "var(--p-quieto)" }}>{r.ano}</span>
+                </li>
+              ))}
+            </ul>
+          </article>
         </div>
       </section>
     </Prancha>
