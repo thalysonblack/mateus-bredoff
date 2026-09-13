@@ -40,6 +40,27 @@ import { Hexagon, Layers, LayoutGrid } from "lucide-react";
 import logoBehance from "../../assets/logos/logo-behance.svg";
 import logoWbd from "../../assets/optimized/logo-worldbranddesign.webp";
 
+import logoFigma from "../../assets/logos/stack/figma.svg";
+import logoGemini from "../../assets/logos/stack/gemini.svg";
+import logoBytedance from "../../assets/logos/stack/bytedance.svg";
+import logoGpt from "../../assets/logos/stack/gpt.svg";
+import logoPhotoshop from "../../assets/logos/stack/photoshop.svg";
+import logoIllustrator from "../../assets/logos/stack/illustrator.svg";
+import logoJitter from "../../assets/logos/stack/jitter.svg";
+
+/* os logos das ferramentas (Simple Icons, 24×24, por máscara na cor da tinta).
+   Nano Banana Pro é o modelo de imagem do Gemini e Seedream é da ByteDance —
+   entram com o logo da casa que os publica. Quem não tem logo fica só no nome. */
+const LOGOS_STACK: Record<string, string> = {
+  "Figma": logoFigma,
+  "Nano Banana Pro": logoGemini,
+  "Seedream": logoBytedance,
+  "GPT": logoGpt,
+  "Photoshop": logoPhotoshop,
+  "Illustrator": logoIllustrator,
+  "Jitter": logoJitter,
+};
+
 /* os logos dos veículos (máscara na cor da tinta); quem não tem, entra tipográfico */
 const LOGOS_VEICULO: Record<string, { src: string; ratio: string }> = {
   Behance: { src: logoBehance, ratio: "152.5 / 28.2" },
@@ -356,7 +377,6 @@ export default function AboutV2() {
         <div className="pn-corpo">
           <article id="method" className="pn-bloco" data-bloco="method">
             <header className="pn-bloco-cab">
-              <span className="p-marca pn-bloco-n">01</span>
               <h2 className="p-servico-nome pn-bloco-titulo">Method</h2>
               <p className="p-corpo pn-bloco-lead">{PROCESSO_MANCHETE}</p>
             </header>
@@ -376,19 +396,20 @@ export default function AboutV2() {
 
           <article id="stack" className="pn-bloco" data-bloco="stack">
             <header className="pn-bloco-cab">
-              <span className="p-marca pn-bloco-n">02</span>
               <h2 className="p-servico-nome pn-bloco-titulo">My stack</h2>
             </header>
             <ul className="pn-stack p-sobe">
               {FERRAMENTAS.map((f) => (
-                <li key={f} className="p-item">{f}</li>
+                <li key={f} className="p-item pn-stack-item">
+                  {LOGOS_STACK[f] && <span className="pn-stack-logo" style={{ ["--logo" as string]: `url("${LOGOS_STACK[f]}")` }} aria-hidden="true" />}
+                  {f}
+                </li>
               ))}
             </ul>
           </article>
 
           <article id="services" className="pn-bloco" data-bloco="services">
             <header className="pn-bloco-cab">
-              <span className="p-marca pn-bloco-n">03</span>
               <h2 className="p-servico-nome pn-bloco-titulo">Services</h2>
             </header>
             <ul className="pn-recibo">
@@ -408,21 +429,20 @@ export default function AboutV2() {
 
           <article id="published" className="pn-bloco" data-bloco="published">
             <header className="pn-bloco-cab">
-              <span className="p-marca pn-bloco-n">04</span>
               <h2 className="p-servico-nome pn-bloco-titulo">Published in</h2>
-              <p className="pn-logos p-sobe">
-                {veiculos.map((v) => LOGOS_VEICULO[v] ? (
-                  <span key={v} className="pn-logo" style={{ ["--logo" as string]: `url("${LOGOS_VEICULO[v].src}")`, aspectRatio: LOGOS_VEICULO[v].ratio }} role="img" aria-label={v} />
-                ) : (
-                  <span key={v} className="pn-logo-abz">{v}</span>
-                ))}
-              </p>
             </header>
             <ul className="p-prova-tabela pn-tabela">
               {RECONHECIMENTO.map((r, i) => (
                 <li key={i} className="p-fio p-sobe p-prova-linha">
                   <span className="p-item">{r.projeto}</span>
-                  <span className="p-corpo">{r.veiculo}</span>
+                  {/* "logos aqui" (12/09): o veículo entra como logo na linha */}
+                  <span className="pn-tabela-veiculo">
+                    {LOGOS_VEICULO[r.veiculo] ? (
+                      <span className="pn-logo pn-logo--linha" style={{ ["--logo" as string]: `url("${LOGOS_VEICULO[r.veiculo].src}")`, aspectRatio: LOGOS_VEICULO[r.veiculo].ratio }} role="img" aria-label={r.veiculo} />
+                    ) : (
+                      <span className="pn-logo-abz pn-logo-abz--linha">{r.veiculo}</span>
+                    )}
+                  </span>
                   <span className="p-corpo p-prova-titulo" style={{ color: "var(--p-quieto)" }}>{r.href ? <a href={r.href} target="_blank" rel="noopener noreferrer" className="p-link">{r.titulo}</a> : r.titulo}</span>
                   <span className="p-marca p-prova-ano" style={{ color: "var(--p-quieto)" }}>{r.ano}</span>
                 </li>

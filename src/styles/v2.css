@@ -3580,7 +3580,8 @@ a.pz-materia:hover { color: var(--p-acento); }
 .pn-indice-item.pn-on a { color: var(--p-ink); }
 .pn-indice-n { margin-right: 8px; }
 .pn-corpo { display: flex; flex-direction: column; gap: clamp(64px, 9vh, 120px); }
-.pn-bloco-cab { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); column-gap: var(--p-gap-x); row-gap: 16px; align-items: baseline; padding-top: 16px; border-top: 1px solid var(--p-ink); margin-bottom: 32px; }
+.pn-bloco-cab { /* "sem número" (12/09): a calha fica vazia, o título segue na coluna do texto */
+  display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); column-gap: var(--p-gap-x); row-gap: 16px; align-items: baseline; padding-top: 16px; border-top: 1px solid var(--p-ink); margin-bottom: 32px; }
 .pn-bloco-n { color: var(--p-quieto); }
 .pn-bloco-titulo { margin: 0; }
 .pn-bloco-lead { grid-column: 2; margin: 0; max-width: 40em; font-size: 15px; line-height: 1.45; }
@@ -3619,3 +3620,10 @@ a.pz-materia:hover { color: var(--p-acento); }
   .pn-recibo-linha, .pn-tabela .p-prova-linha { grid-template-columns: minmax(0, 1fr) auto; row-gap: 6px; }
   .pn-recibo-desc, .pn-recibo-meta, .pn-tabela .p-prova-titulo { grid-column: 1 / -1; }
 }
+/* "logos aqui": o veículo como logo dentro da linha da tabela, na altura do corpo */
+.pn-tabela-veiculo { display: flex; align-items: center; min-height: 1.3em; }
+.pn-logo--linha { height: 15px; width: auto; transform: translateY(2px); } /* medido: 3px acima do centro do texto */
+.pn-logo-abz--linha { font-size: 11px; letter-spacing: 0.06em; }
+/* "logos" na stack: o ícone da ferramenta antes do nome, na altura do corpo */
+.pn-stack-item { display: inline-flex; align-items: center; gap: 10px; }
+.pn-stack-logo { display: inline-block; width: 18px; height: 18px; background: currentColor; -webkit-mask: var(--logo) no-repeat center / contain; mask: var(--logo) no-repeat center / contain; }
