@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router";
-import Cases, { type CaseCard } from "../sections/Cases";
+import { Link, useSearchParams } from "react-router";
+import { WorkCartoes } from "./WorkCartoes";
 import { WORK } from "../../content/work";
 import { corDe } from "../../content/cores";
 import { useMetaRota } from "../../hooks/useMetaRota";
@@ -41,15 +41,8 @@ import { Prancha } from "./sistema";
  *
  * A página não rola: o gesto é todo da coluna, como na home.
  */
-/* os cards vêm do MESMO acervo da tabela; os filtros são as disciplinas que
-   existem nele, por frequência — sem categoria inventada */
-const CARTOES: CaseCard[] = WORK.map((w) => ({
-  slug: w.slug,
-  name: w.title,
-  image: w.cover.src,
-  srcSet: w.cover.src2x ? `${w.cover.src} ${w.cover.w}w, ${w.cover.src2x} ${w.cover.w * 2}w` : undefined,
-  tags: w.disciplines,
-}));
+/* os filtros são as disciplinas que existem no acervo, por frequência — sem
+   categoria inventada */
 const FILTROS = [
   "All",
   ...[...WORK.flatMap((w) => w.disciplines).reduce((m, d) => m.set(d, (m.get(d) ?? 0) + 1), new Map<string, number>())]
@@ -61,12 +54,13 @@ export default function WorkV2() {
   useMetaRota();
   const [ativo, setAtivo] = useState(0);
   /* ⭐ DOIS MODOS (16/09): "vamos poder ver em lista ou como esse [/cases do
-     Framer dele], só que scroll lateral". `?view=cards` para o link viajar. */
+     Framer dele], só que scroll lateral" → e depois "nesse efeito
+     [/naughtyduk] no works, e deixar como padrão". CARDS é o padrão; a lista
+     viaja em `?view=list`. */
   const [params, setParams] = useSearchParams();
-  const modo: "list" | "cards" = params.get("view") === "cards" ? "cards" : "list";
-  const setModo = (m: "list" | "cards") => setParams(m === "cards" ? { view: "cards" } : {}, { replace: true });
+  const modo: "list" | "cards" = params.get("view") === "list" ? "list" : "cards";
+  const setModo = (m: "list" | "cards") => setParams(m === "list" ? { view: "list" } : {}, { replace: true });
   const [filtro, setFiltro] = useState("All");
-  const navigate = useNavigate();
   const peca = WORK[ativo];
   const janela = useRef<HTMLDivElement | null>(null);
   const pilha = useRef<HTMLDivElement | null>(null);
@@ -145,7 +139,7 @@ export default function WorkV2() {
           (as disciplinas que existem no acervo, não uma lista inventada) */}
       <div className="p-work-modo">
         <div className="p-work-modo-grupo" role="tablist" aria-label="View">
-          {(["list", "cards"] as const).map((m) => (
+          {(["cards", "list"] as const).map((m) => (
             <button key={m} type="button" role="tab" aria-selected={modo === m} className={`p-corpo p-work-chip${modo === m ? " on" : ""}`} onClick={() => setModo(m)}>
               {modo === m ? <span className="p-work-quad" aria-hidden="true" /> : null}
               {m === "list" ? "List" : "Cards"}
@@ -165,7 +159,7 @@ export default function WorkV2() {
       </div>
 
       {modo === "cards" ? (
-        <Cases projects={CARTOES.filter((c) => filtro === "All" || c.tags.includes(filtro))} onView={(c) => navigate(`/work/${c.slug}`)} />
+        <WorkCartoes itens={WORK.filter((w) => filtro === "All" || w.disciplines.includes(filtro))} />
       ) : (
       <section className="p-arquivo">
         {/* ─ a tabela, À ESQUERDA ────────────────────────────────────────

@@ -844,6 +844,15 @@
   .p-work-modo { flex-wrap: wrap; gap: 12px; }
   .p-work-filtros { position: static; transform: none; flex-wrap: wrap; row-gap: 8px; }
 }
+/* os cards WebGL (16/09): o palco toma a altura que sobra; a legenda do card
+   do centro fica na linha do corpo, centrada, sem roubar altura do palco */
+.p-cartoes { position: relative; display: flex; flex: 1; min-height: 0; flex-direction: column; }
+.p-cartoes-palco { position: relative; flex: 1; min-height: 0; overflow: hidden; margin-inline: calc(var(--p-margem) * -1); }
+.p-cartoes-legenda { display: flex; justify-content: center; gap: 20px; margin: 0; padding: 16px 0 0; text-align: center; }
+.p-cartoes-meta { color: var(--p-quieto); }
+.p-cartoes-plano { list-style: none; margin: 0; padding: 0; display: flex; gap: 16px; height: 100%; align-items: center; overflow-x: auto; padding-inline: var(--p-margem); }
+.p-cartoes-plano li { flex: 0 0 min(72vw, 560px); }
+.p-cartoes-plano img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
 .p-arquivo {
   display: flex;
   flex: 1;
