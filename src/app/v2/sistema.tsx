@@ -168,13 +168,14 @@ export function Prancha({
             A cor obedece à superfície (ver `.p-menu` no CSS): tinta sólida no
             papel e no branco; branco em `difference` na tinta e sobre foto. */}
         <header ref={menu} className="p-menu relative z-10">
-          {/* os campos são os do node 630:1721, LITERAIS — "o menu não tá como
-              pedi" (12/09): eu tinha trocado o primeiro pela marca. A marca não
-              está no node (o nome vive gigante na hero); a home se alcança
-              pelo rodapé. Medium em tudo, só a primeira letra maiúscula. */}
+          {/* campos do node 630:1721, exceto o primeiro: em 12/09 ele pediu o
+              node literal ("Brazil based · Working globally"); em 16/09 pediu
+              a marca nesse campo — "Mateus Bredoff / Brand Designer". A home
+              continua se alcançando pelo rodapé. Medium em tudo, só a
+              primeira letra maiúscula. */}
           <div className="p-menu-campo">
-            <span>Brazil based</span>
-            <span>Working globally</span>
+            <span>Mateus Bredoff</span>
+            <span>Brand Designer</span>
           </div>
           <div className="p-menu-campo">
             <span>{hora} BRT</span>
