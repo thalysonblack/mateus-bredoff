@@ -1876,9 +1876,10 @@
    AÇÃO que ela pede, e quem chegou até aqui já viu o trabalho. Escala é
    hierarquia de intenção, não de decoração. */
 .p-rodape {
-  margin-top: 96px;
-  padding-top: 34px;
-  /* "tirar linha" (16/09): sem fio no topo — o vão já separa */
+  /* "tirar linha" e "diminuir o espaço de cima" (16/09): sem fio e sem a
+     margem de 96 — a folha de cima já traz o próprio respiro na base */
+  margin-top: 0;
+  padding-top: 32px;
 }
 /* rodapé completo = rota que ROLA (about, case). Na /work, que é tela, ele
    deitado roubava a janela da coluna e ele mandou tirar (16/09): fica a régua. */
