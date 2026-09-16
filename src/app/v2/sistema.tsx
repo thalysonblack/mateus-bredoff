@@ -173,13 +173,14 @@ export function Prancha({
         <header ref={menu} className="p-menu sticky top-[var(--p-margem-y)] z-10">
           {/* campos do node 630:1721, exceto o primeiro: em 12/09 ele pediu o
               node literal ("Brazil based · Working globally"); em 16/09 pediu
-              a marca nesse campo — "Mateus Bredoff / Brand Designer". A home
-              continua se alcançando pelo rodapé. Medium em tudo, só a
+              a marca nesse campo — "Mateus Bredoff / Brand Designer". O nome
+              leva pra home. Medium em tudo, só a
               primeira letra maiúscula. */}
-          <div className="p-menu-campo">
+          {/* o nome é o caminho de volta pra home (16/09) */}
+          <Link to="/" className="p-menu-campo">
             <span>Mateus Bredoff</span>
             <span>Brand Designer</span>
-          </div>
+          </Link>
           <div className="p-menu-campo">
             <span>{hora} BRT</span>
             <span>{new Date().toLocaleDateString("en-GB")}</span>

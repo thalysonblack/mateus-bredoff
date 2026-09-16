@@ -3244,7 +3244,7 @@ a.pz-materia:hover { color: var(--p-acento); }
 .p-menu-campo { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .p-menu-campo > span:last-child,
 .p-menu-campo > nav + span { color: var(--p-quieto); font-weight: 500; }
-.p-menu-campo a { color: inherit; text-decoration: none; }
+.p-menu-campo a, a.p-menu-campo { color: inherit; text-decoration: none; }
 .p-menu-fim { align-items: flex-end; text-align: right; }
 .p-menu .p-link { color: inherit; }
 
