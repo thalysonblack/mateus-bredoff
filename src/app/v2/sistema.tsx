@@ -167,7 +167,10 @@ export function Prancha({
             marca+ofício · nav+página atual · hora+disponível · contato.
             A cor obedece à superfície (ver `.p-menu` no CSS): tinta sólida no
             papel e no branco; branco em `difference` na tinta e sobre foto. */}
-        <header ref={menu} className="p-menu relative z-10">
+        {/* `sticky` e não `fixed` ("fixar", 16/09): fica no fluxo, então a hero
+            continua subindo por baixo dele via `--p-menu-h`, e o `top` é a
+            própria margem — ele não pula ao grudar. */}
+        <header ref={menu} className="p-menu sticky top-[var(--p-margem-y)] z-10">
           {/* campos do node 630:1721, exceto o primeiro: em 12/09 ele pediu o
               node literal ("Brazil based · Working globally"); em 16/09 pediu
               a marca nesse campo — "Mateus Bredoff / Brand Designer". A home
