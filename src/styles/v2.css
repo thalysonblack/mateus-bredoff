@@ -840,6 +840,12 @@
 .p-work-chip { display: inline-flex; align-items: center; gap: 8px; padding: 0; border: 0; background: transparent; cursor: pointer; color: var(--p-quieto); transition: color 0.25s ease; white-space: nowrap; }
 .p-work-chip.on, .p-work-chip:hover { color: var(--p-ink); }
 .p-work-quad { width: 6px; height: 6px; background: currentColor; display: inline-block; }
+/* pílulas do filtro — medidas do Framer dele: Geist Medium 14, −0,03em, 8×10, raio 2,
+   ativa em tinta cheia (#19272d no original; aqui o --p-ink da superfície) */
+.p-work-filtros { gap: 6px; }
+.p-work-pilula { font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 500; font-size: 14px; letter-spacing: -0.03em; line-height: 1; padding: 8px 10px; border: 0; border-radius: 2px; background: transparent; color: var(--p-quieto); cursor: pointer; white-space: nowrap; transition: color 0.2s ease, background-color 0.2s ease; }
+.p-work-pilula:hover { color: var(--p-ink); }
+.p-work-pilula.on { background: var(--p-ink); color: #ffffff; } /* a /work é a superfície branca */
 @media (max-width: 860px) {
   .p-work-modo { flex-wrap: wrap; gap: 12px; }
   .p-work-filtros { position: static; transform: none; flex-wrap: wrap; row-gap: 8px; }

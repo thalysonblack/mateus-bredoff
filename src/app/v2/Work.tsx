@@ -146,11 +146,12 @@ export default function WorkV2() {
             </button>
           ))}
         </div>
+        {/* os filtros na FORMA do Framer original dele (16/09, "os filtros eu
+            não gostei da forma"): pílulas, a ativa em tinta cheia */}
         {modo === "cards" ? (
           <div className="p-work-modo-grupo p-work-filtros" role="tablist" aria-label="Filter">
             {FILTROS.map((f) => (
-              <button key={f} type="button" role="tab" aria-selected={filtro === f} className={`p-corpo p-work-chip${filtro === f ? " on" : ""}`} onClick={() => setFiltro(f)}>
-                {filtro === f ? <span className="p-work-quad" aria-hidden="true" /> : null}
+              <button key={f} type="button" role="tab" aria-selected={filtro === f} className={`p-work-pilula${filtro === f ? " on" : ""}`} onClick={() => setFiltro(f)}>
                 {f}
               </button>
             ))}

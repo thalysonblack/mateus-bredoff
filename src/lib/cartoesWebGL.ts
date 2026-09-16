@@ -46,10 +46,11 @@ const LERP = 0.1;
 const SNAP_DUR = 1.2;
 const SLOTS = 13;
 const FOV = 45;
-/* o card do original mede 480 px numa tela de ~1440: um terço da largura */
-const CARD_FRAC = 1 / 3;
-const CARD_MIN = 260;
-const CARD_MAX = 620;
+/* o card do original mede 480 px numa tela de ~1440 (um terço); "maior"
+   (16/09): 44% da largura, com teto para não estourar a altura do palco */
+const CARD_FRAC = 0.44;
+const CARD_MIN = 280;
+const CARD_MAX = 900;
 
 const VERT = /* glsl */ `
 #define PI 3.141592653589793
@@ -207,6 +208,11 @@ export function criarCartoesWebGL(
       },
     });
     const mesh = new Mesh(gl, { geometry: geo, program });
+    /* ⚠ o OGL faz frustum culling pela geometria — que aqui é 1×1 px, porque o
+       tamanho real entra por uniform. Sem desligar, o card que só ENTRA pela
+       borda da tela era cortado inteiro ("bugou na direita e na esquerda, ele
+       some"): o centro dele está fora do frustum, o corpo não. */
+    mesh.frustumCulled = false;
     mesh.setParent(cena);
     return { mesh, program, proj: 0 };
   });
@@ -220,7 +226,7 @@ export function criarCartoesWebGL(
     camera.perspective({ aspect: w / h });
     camera.position.z = h / 2 / Math.tan((FOV / 2) * (Math.PI / 180));
     halfW = w / 2;
-    card.w = Math.min(CARD_MAX, Math.max(CARD_MIN, w * CARD_FRAC));
+    card.w = Math.min(CARD_MAX, Math.max(CARD_MIN, w * CARD_FRAC), (h * 0.78) / (9 / 16));
     card.h = card.w * (9 / 16);
     slots.forEach((s) => (s.program.uniforms.uCard.value = [card.w, card.h]));
   };
@@ -361,6 +367,13 @@ export function criarCartoesWebGL(
       aoMudarAtivo(ativo);
     }
     renderer.render({ scene: cena, camera });
+    if (import.meta.env.DEV || (window as unknown as { __sonda?: boolean }).__sonda) {
+      (window as unknown as Record<string, unknown>).__cartoes = {
+        halfW,
+        card: { ...card },
+        slots: slots.map((k) => ({ proj: k.proj, x: +k.mesh.position.x.toFixed(0), sc: +(k.program.uniforms.uScale.value as number).toFixed(3), op: +(k.program.uniforms.uOpacity.value as number).toFixed(2), vis: k.mesh.visible, tex: !!(k.program.uniforms.uTexture.value as Texture).image })),
+      };
+    }
   };
   gsap.ticker.add(tick);
 

@@ -15,10 +15,10 @@ console.log('canvas', canvas, '| legenda', await legenda());
 await pg.mouse.move(720,450); for(let i=0;i<8;i++){await pg.mouse.wheel({deltaY:120}); await new Promise(r=>setTimeout(r,40));}
 await new Promise(r=>setTimeout(r,1600));
 console.log('após roda', await legenda());
-await pg.$$eval('.p-work-chip',els=>els.find(e=>e.textContent.trim()==='3D').click());
+await pg.$$eval('.p-work-pilula',els=>els.find(e=>e.textContent.trim()==='3D').click());
 await new Promise(r=>setTimeout(r,900));
 console.log('filtro 3D →', await legenda());
-await pg.$$eval('.p-work-chip',els=>els.find(e=>e.textContent.trim()==='All').click());
+await pg.$$eval('.p-work-pilula',els=>els.find(e=>e.textContent.trim()==='All').click());
 await new Promise(r=>setTimeout(r,900));
 await pg.mouse.move(720,450); await new Promise(r=>setTimeout(r,200)); await pg.mouse.down(); await pg.mouse.up(); await new Promise(r=>setTimeout(r,900));
 console.log('após clique:', pg.url());
