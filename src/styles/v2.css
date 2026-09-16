@@ -1870,12 +1870,11 @@
   border-top: 1px solid var(--p-fio);
 }
 .p-rodape-grade {
-  /* o rodapé vive fora das folhas (só a margem da tela): a grade ganha a
-     margem de folha para a coluna do conteúdo bater com as de cima */
-  padding-inline: var(--p-margem);
+  /* "ajustar o footer ao grid" (16/09): a grade é a do menu — rótulo em 12,
+     "Let's talk" na coluna da hora. A margem de folha saiu junto com a das folhas. */
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-  column-gap: var(--p-gap-x);
+  grid-template-columns: var(--p-grade-col1) minmax(0, 1fr);
+  column-gap: var(--p-grade-vao);
   align-items: start;
   padding-bottom: clamp(48px, 7vh, 96px);
 }
@@ -1893,17 +1892,23 @@
   .p-rodape-miolo { flex-direction: column; gap: 32px; }
   .p-rodape-indice ul { text-align: left; }
 }
+/* a régua de baixo espelha o menu de cima: as MESMAS quatro colunas —
+   lugar · hora · crédito · página (16/09) */
 .p-rodape-regua {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: var(--p-gap-x);
+  grid-template-columns: var(--p-grade-col1) 28.8% minmax(0, 1fr) auto;
+  column-gap: var(--p-grade-vao);
   padding-top: 16px;
   border-top: 1px solid var(--p-fio);
   padding-bottom: 4px;
 }
-.p-rodape-regua > :nth-child(1) { grid-column: 1 / span 4; }
-.p-rodape-regua > :nth-child(2) { grid-column: 6 / span 4; }
-.p-rodape-regua > :nth-child(3) { grid-column: 10 / span 3; text-align: right; }
+.p-rodape-regua > :nth-child(4) { text-align: right; }
+.p-rodape-regua a { color: inherit; text-decoration: none; }
+.p-rodape-regua a:hover { color: var(--p-ink); }
+@media (max-width: 860px) {
+  .p-rodape-regua { grid-template-columns: 1fr 1fr; row-gap: 12px; }
+  .p-rodape-regua > :nth-child(2) { text-align: right; }
+}
 @media (max-width: 1024px) {
   .p-rodape-topo > :first-child,
   .p-rodape-canais,
@@ -3631,7 +3636,8 @@ a.pz-materia:hover { color: var(--p-acento); }
 .pn-recibo-linha { padding: 24px 0; }
 .pn-tabela .p-prova-linha { padding: 20px 0; }
 .pn-recibo-escopo, .pn-recibo-prazo { color: var(--p-quieto); }
-.pn-recibo-meta { display: flex; flex-direction: column; gap: 6px; }
+.pn-recibo-escopo { list-style: none; margin: 0; padding: 0; }
+.pn-recibo-meta { display: flex; flex-direction: column; gap: 12px; }
 /* o PREÇO em escala de página (12/09): a única informação comercial da página
    leva a tinta; "on request" recua em quieto e corpo menor */
 /* "preço grande demais" (12/09): três vezes o gesto de escala vira gritaria — um degrau

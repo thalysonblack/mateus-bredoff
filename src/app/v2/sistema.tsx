@@ -264,6 +264,13 @@ export function Prancha({
               <span>
                 {hora} (UTC−3)
               </span>
+              {/* crédito do estúdio ("no rodapé colocar créditos", 16/09) */}
+              <span>
+                Site by{" "}
+                <a href="https://thegoodtaste.cc/" target="_blank" rel="noopener noreferrer">
+                  Goodtaste®
+                </a>
+              </span>
               <span>
                 {n} / {nome.toUpperCase()}
               </span>

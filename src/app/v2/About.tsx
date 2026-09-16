@@ -410,8 +410,16 @@ export default function AboutV2() {
               {TIERS.map((tier) => (
                 <li key={tier.name} className="pn-recibo-linha p-sobe">
                   <span className="p-item pn-recibo-nome">{tier.name}</span>
+                  {/* "ruim" (16/09): o escopo era os 4 itens emendados por "·" em mono
+                      CAIXA ALTA, quebrando em duas linhas com entrelinha 1 — lia como dump
+                      de código. Escopo é LISTA: um item por linha, no corpo, em quieto; só o
+                      prazo fica em mono, que é rótulo curto. */}
                   <span className="pn-recibo-meta">
-                    <span className="p-marca pn-recibo-escopo">{tier.scope.join(" · ")}</span>
+                    <ul className="p-corpo pn-recibo-escopo">
+                      {tier.scope.map((x) => (
+                        <li key={x}>{x}</li>
+                      ))}
+                    </ul>
                     <span className="p-marca pn-recibo-prazo">{tier.timeline}</span>
                   </span>
                   <span className="p-corpo pn-recibo-desc">{tier.description}</span>
