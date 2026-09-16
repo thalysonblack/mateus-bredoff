@@ -3601,11 +3601,18 @@ a.pz-materia:hover { color: var(--p-acento); }
 .pn-bloco-titulo { margin: 0; grid-column: 1; }
 .pn-bloco-lead { grid-column: 1; margin: 0; max-width: 40em; font-size: 15px; line-height: 1.45; }
 .pn-registros { list-style: none; margin: 0; padding: 0; }
-.pn-registro { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 40%); /* figura 40%: a 281px o dither virava mancha */ column-gap: var(--p-gap-x); align-items: start; padding: 24px 0; border-top: 1px solid var(--p-fio); }
+/* ⭐ "review de tchan" (16/09): a figura era 40% da coluna, ao lado do texto —
+   miniatura. A escultura é o único MATERIAL da página depois da hero, então
+   ela vira o gesto: título e corpo em duas colunas no alto, e a figura embaixo
+   em ESCALA DE PÁGINA, da coluna da hora até SANGRAR na borda direita da tela.
+   Uma etapa ≈ uma tela. (A régua do uau: um elemento levado ao extremo, não
+   vários bem resolvidos.) */
+.pn-registro { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); column-gap: var(--p-gap-x); align-items: start; padding: 24px 0 40px; border-top: 1px solid var(--p-fio); }
+.pn-registro-txt { display: contents; }
 .pn-registro-n { position: absolute; left: calc(-1 * var(--pn-calha)); top: 30px; color: var(--p-quieto); }
-.pn-registro-titulo { margin: 0 0 8px; font-weight: 400; font-size: clamp(16px, 1.5vw, 20px); line-height: 1.2; letter-spacing: -0.02em; }
+.pn-registro-titulo { margin: 0; font-weight: 400; font-size: clamp(16px, 1.5vw, 20px); line-height: 1.2; letter-spacing: -0.02em; }
 .pn-registro-corpo { margin: 0; max-width: 40em; }
-.pn-figura { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
+.pn-figura { grid-column: 1 / -1; width: calc(100% + var(--p-margem)); max-width: none; /* o preflight põe max-width:100% em img e come a sangria */ margin-top: 32px; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
 /* stack, recibo e tabela entram na COLUNA DO TEXTO: a calha é só do numeral */
 .pn-stack { list-style: none; margin: 0; padding: 0 0 0 var(--pn-calha); display: flex; flex-wrap: wrap; gap: 8px 0; }
 .pn-stack li { padding: 8px 16px 8px 0; margin-right: 16px; border-right: 1px solid var(--p-fio); }
@@ -3642,7 +3649,8 @@ a.pz-materia:hover { color: var(--p-acento); }
   .pn-indice-lista { flex-direction: row; flex-wrap: wrap; gap: 8px 16px; }
   .pn-registro { grid-template-columns: minmax(0, 1fr); }
   .pn-registro-n { position: static; display: block; margin-bottom: 6px; }
-  .pn-figura { grid-column: 1; margin-top: 12px; }
+  .pn-figura { margin-top: 16px; }
+  .pn-registro-titulo { margin-bottom: 8px; }
   .pn-recibo-linha, .pn-tabela .p-prova-linha { grid-template-columns: minmax(0, 1fr) auto; row-gap: 6px; }
   .pn-recibo-desc, .pn-recibo-meta, .pn-tabela .p-prova-titulo { grid-column: 1 / -1; }
 }

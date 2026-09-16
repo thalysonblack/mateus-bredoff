@@ -6,7 +6,18 @@ import metodo03 from "../../assets/optimized/metodo-03-1440.webp";
 import metodo04 from "../../assets/optimized/metodo-04-1440.webp";
 import metodo05 from "../../assets/optimized/metodo-05-1440.webp";
 
-/* ⭐ AS CENAS DO MÉTODO — refeitas em 12/09 por três ordens dele, na sequência:
+/* ⭐ AS CENAS DO MÉTODO — ILUSTRAÇÃO ABSTRATA (16/09: "preciso que gere outra,
+   como ilustra abstrata"). A cena fotográfica (mão, mesa, monitor) saiu; entrou
+   uma série de esculturas de gesso fosco, uma FORMA-EVENTO por etapa:
+   o mergulho (esfera afundando) · a que se aparta (grade de cubos e um só
+   fora) · o leque (lâminas abrindo de um pivô, uma em pé) · o corte (bloco
+   com círculo vazado e o disco ao lado) · a pilha (folhas esquadrejadas).
+   Mesma bíblia de luz da hero (fonte grande alta à esquerda FORA do quadro,
+   sweep petróleo → cinza), 85 mm, assunto cortado pela borda; Seedream 5 Pro
+   2k, 2 por cena, escolha em `_refs/metodo-cenas/abstrata/sheet.png`. O
+   pipeline de dither abaixo continua igual — é ele que casa a série com a
+   hero. Histórico da versão fotográfica (12/09), que segue valendo como
+   método:
    "refazer a foto de acordo com o que ele faz que é marcas, uso de ia.. e
    fotografia de acordo com a hero" · "veja que ele é negro" · "botar efeitos
    de dither". O que cada uma mudou:
@@ -26,11 +37,11 @@ import metodo05 from "../../assets/optimized/metodo-05-1440.webp";
      e o dither fica nítido; em tela 1x vira textura fina. Sem srcSet.
    Originais e folhas de contato em `_refs/metodo-cenas/` (PNGs fora do git). */
 const CENAS_METODO = [
-  { src: metodo01, alt: "The brief under his hand, a board of brand marks on the laptop" },
-  { src: metodo02, alt: "The positioning map — printed in his hand, and on the screen" },
-  { src: metodo03, alt: "The direction board: printed cards on the desk, generated variations on the screen" },
-  { src: metodo04, alt: "The wordmark under construction on the screen, the pencil sketch under his hand" },
-  { src: metodo05, alt: "The delivery — the brand book open on the symbol, the cards and the drive" },
+  { src: metodo01, alt: "A plaster sphere sinking into a still surface, one frozen ripple around it" },
+  { src: metodo02, alt: "A grid of identical plaster cubes, and one cube set apart on its own" },
+  { src: metodo03, alt: "Thin plaster slabs fanned open from one pivot, one of them standing upright" },
+  { src: metodo04, alt: "A plaster block with a circle cut clean through it, the disc standing beside it" },
+  { src: metodo05, alt: "A squared stack of plaster sheets, the top corner just lifted" },
 ];
 import { TIERS } from "../sections/Pricing";
 import { useEffect, useRef } from "react";
