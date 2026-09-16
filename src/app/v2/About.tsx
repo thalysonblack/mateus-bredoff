@@ -55,6 +55,7 @@ const LOGOS_VEICULO: Record<string, { src: string; ratio: string; simbolo?: stri
 const ICONES_TIER = [Hexagon, Layers, LayoutGrid];
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { useRevelar } from "./useRevelar";
+import { useRevelacaoPalavra } from "../sections/framer/useRevelacaoPalavra";
 import { Prancha } from "./sistema";
 import { LEAD, PROCESSO_MANCHETE, PROCESSO, FERRAMENTAS, NUMEROS } from "../../content/about";
 import { RECONHECIMENTO } from "../../content/reconhecimento";
@@ -85,6 +86,8 @@ export default function AboutV2() {
      de baixo chegariam já prontas — o gesto some. */
   const folhaMetodo = useRevelar<HTMLElement>();
   const folhaSobre = useRevelar<HTMLElement>();
+  /* apagada = a tinta da folha a 25%; acesa = o --p-ink da .p-tinta */
+  const leadRef = useRevelacaoPalavra<HTMLDivElement>("rgba(236, 234, 229, 0.25)", "#eceae5");
   const folhaStack = useRevelar<HTMLElement>();
   const tamborSec = useRef<HTMLElement | null>(null);
   const tamborLista = useRef<HTMLOListElement | null>(null);
@@ -320,12 +323,16 @@ export default function AboutV2() {
           publicado); o Figma mostra 46 · 100+ · 14 · 46 — divergência
           reportada, não decidida aqui. */}
       <section ref={folhaSobre} className="p-folha-sec p-tinta p-sobre" data-folha="2">
-        <div style={{ paddingInline: "var(--p-margem)" }}>
+        {/* sem a margem de folha: a grade é a do menu (ver --p-grade-col1) */}
+        <div>
           <div className="p-sobre-grade">
             <p className="p-rotulo p-sobe">About me</p>
-            <div>
-              <p className="p-sobre-txt p-sobre-txt--abre p-sobe">{LEAD[0]}</p>
-              <p className="p-sobre-txt p-sobe">{LEAD[1]}</p>
+            {/* o texto ACENDE palavra a palavra com o scroll ("scroll reveal no
+                texto", 16/09) — o gesto da about original, mesmo hook. Sem
+                `p-sobe` nos parágrafos: a entrada é a própria leitura. */}
+            <div ref={leadRef}>
+              <p className="p-sobre-txt p-sobre-txt--abre">{LEAD[0]}</p>
+              <p className="p-sobre-txt">{LEAD[1]}</p>
             </div>
           </div>
           <p className="p-rotulo p-sobe p-numeros-rotulo">By the numbers</p>

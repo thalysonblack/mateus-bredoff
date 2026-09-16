@@ -99,6 +99,13 @@
      das colunas; em cima e embaixo ela só empurra o cabeçalho e o rodapé de
      metadado para dentro, roubando altura da trama, que é quem precisa de tela. */
   --p-margem-y: calc(var(--p-u) * 2.1);
+  /* ⭐ A GRADE DA PÁGINA É A DO MENU (16/09, "alinhar ao grid da hora"): a
+     primeira coluna do node 630:1721 e o vão dele. Toda coluna de texto da
+     about (Sobre, Dossiê) nasce onde nasce a hora — e o container de quem usa
+     estes tokens tem de ser o MESMO do menu (margem 12, não 24), senão a
+     porcentagem resolve contra outra largura e erra 6px. */
+  --p-grade-col1: 27.6%;
+  --p-grade-vao: 16px;
   /* vão de n colunas, na fórmula medida lá: 11,85n − 1 */
   --p-col-4: calc(var(--p-u) * 46.4);
   --p-col-5: calc(var(--p-u) * 58.2);
@@ -3225,8 +3232,8 @@ a.pz-materia:hover { color: var(--p-acento); }
    x = 14 · 530 · 1083 · direita → colunas 0 · 27,6% · 56,4% · fim. */
 .p-menu {
   display: grid;
-  grid-template-columns: 27.6% 28.8% minmax(0, 1fr) auto;
-  column-gap: 16px;
+  grid-template-columns: var(--p-grade-col1) 28.8% minmax(0, 1fr) auto;
+  column-gap: var(--p-grade-vao);
   align-items: start;
   font-family: 'Geist', ui-sans-serif, sans-serif;
   font-weight: 500;
@@ -3334,8 +3341,8 @@ a.pz-materia:hover { color: var(--p-acento); }
 .p-metodo-cab,
 .p-grade-secao {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-  column-gap: var(--p-gap-x);
+  grid-template-columns: var(--p-grade-col1) minmax(0, 1fr);
+  column-gap: var(--p-grade-vao);
   align-items: start;
 }
 .p-sobre-grade .p-rotulo, .p-metodo-cab .p-rotulo, .p-grade-secao .p-rotulo { padding-top: 0.5em; }
@@ -3567,10 +3574,12 @@ a.pz-materia:hover { color: var(--p-acento); }
 .pn-dossie {
   /* a folha já tem a margem da tela; a grade ganha a margem de folha (24) para
      bater com Sobre e Método — medido: em 12 o conteúdo caía em 447, não 451 */
-  padding: 40px calc(var(--p-margem) * 2) clamp(72px, 10vh, 140px);
+  /* 16/09: a margem de folha (24) saiu — a grade agora é a do menu, e o menu
+     vive em 12. Texto nasce na coluna da hora. */
+  padding: 40px var(--p-margem) clamp(72px, 10vh, 140px);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-  column-gap: var(--p-gap-x);
+  grid-template-columns: var(--p-grade-col1) minmax(0, 1fr);
+  column-gap: var(--p-grade-vao);
   align-items: start;
   --pn-calha: calc(2.6rem + var(--p-gap-x));
 }
