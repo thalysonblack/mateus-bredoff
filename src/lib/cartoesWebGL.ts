@@ -51,6 +51,9 @@ const FOV = 45;
 const CARD_FRAC = 0.44;
 const CARD_MIN = 280;
 const CARD_MAX = 900;
+/* 16/09: "card nessa proporção" — o card do Framer original dele mede
+   1103×728 (≈3:2), não 16:9 */
+const ASPECTO = 3 / 2;
 
 const VERT = /* glsl */ `
 #define PI 3.141592653589793
@@ -118,7 +121,7 @@ float snoise(vec2 v) {
   g.yz = a0.yz * x12.xz + h.yz * x12.yw;
   return 130.0 * dot(m, g);
 }
-const float CARD_ASPECT = 16.0 / 9.0;
+const float CARD_ASPECT = 1.5;
 vec2 coverUV(vec2 uv, float texAspect) {
   vec2 s = vec2(1.0);
   if (texAspect > CARD_ASPECT) s.x = CARD_ASPECT / texAspect; else s.y = texAspect / CARD_ASPECT;
@@ -126,7 +129,7 @@ vec2 coverUV(vec2 uv, float texAspect) {
 }
 void main() {
   vec2 uv = coverUV(vUv, uTexAspect);
-  float ar = 9.0 / 16.0;
+  float ar = 1.0 / 1.5;
   float circle = 1.0 - distance(vec2(uMouse.x, (1.0 - uMouse.y) * ar), vec2(vUv.x, vUv.y * ar)) * 12.0;
   float noise = snoise(gl_FragCoord.xy + uTime * 0.5);
   float intensity = uMouseEnter + abs(uVel) * 0.08;
@@ -144,13 +147,23 @@ export type CartoesWebGL = {
   /** leva a fita até o projeto i (índice da lista) */
   irPara(i: number): void;
 };
+/** um card na tela, neste quadro: projeto, centro em px a partir do meio, escala, opacidade */
+export type QuadroCard = { proj: number; x: number; sc: number; op: number };
+export type Ponteiro = { centro: boolean; x: number; y: number } | null;
 
 export function criarCartoesWebGL(
   alvo: HTMLElement,
   fontes: string[],
-  aoMudarAtivo: (i: number) => void,
-  aoAbrir: (i: number) => void,
+  ganchos: {
+    aoMudarAtivo: (i: number) => void;
+    aoAbrir: (i: number) => void;
+    /** a cada quadro: onde cada card está — quem desenha rótulo em DOM lê daqui */
+    aoQuadro?: (cards: QuadroCard[], card: { w: number; h: number }) => void;
+    /** o ponteiro sobre um card (centro ou não) ou fora de todos */
+    aoPonteiro?: (p: Ponteiro) => void;
+  },
 ): CartoesWebGL | null {
+  const { aoMudarAtivo, aoAbrir, aoQuadro, aoPonteiro } = ganchos;
   let renderer: Renderer;
   try {
     renderer = new Renderer({ alpha: true, antialias: true, dpr: Math.min(window.devicePixelRatio || 1, 2) });
@@ -166,7 +179,7 @@ export function criarCartoesWebGL(
   const n = fontes.length;
   const camera = new Camera(gl, { fov: FOV, near: 1, far: 6000 });
   const cena = new Transform();
-  /* geometria UNITÁRIA (1 × 1); o tamanho em px (16:9) entra por uniform e
+  /* geometria UNITÁRIA (1 × 1); o tamanho em px (3:2) entra por uniform e
      multiplica x e y, então o resize não recria geometria */
   const geo = new Plane(gl, { width: 1, height: 1, widthSegments: 64, heightSegments: 32 });
 
@@ -191,7 +204,7 @@ export function criarCartoesWebGL(
       cullFace: null,
       uniforms: {
         uTexture: { value: texturas[0] },
-        uTexAspect: { value: 16 / 9 },
+        uTexAspect: { value: ASPECTO },
         uCard: { value: [card.w, card.h] },
         uDist: { value: 0 },
         uHover: { value: 0 },
@@ -226,9 +239,11 @@ export function criarCartoesWebGL(
     camera.perspective({ aspect: w / h });
     camera.position.z = h / 2 / Math.tan((FOV / 2) * (Math.PI / 180));
     halfW = w / 2;
-    card.w = Math.min(CARD_MAX, Math.max(CARD_MIN, w * CARD_FRAC), (h * 0.78) / (9 / 16));
-    card.h = card.w * (9 / 16);
+    card.w = Math.min(CARD_MAX, Math.max(CARD_MIN, w * CARD_FRAC), (h * 0.78) * ASPECTO);
+    card.h = card.w / ASPECTO;
     slots.forEach((s) => (s.program.uniforms.uCard.value = [card.w, card.h]));
+    /* a legenda em DOM se pendura logo abaixo do card do centro */
+    alvo.style.setProperty("--card-h", `${Math.round(card.h)}px`);
   };
   const ro = new ResizeObserver(dimensionar);
   ro.observe(alvo);
@@ -366,6 +381,10 @@ export function criarCartoesWebGL(
       ativo = maisPerto;
       aoMudarAtivo(ativo);
     }
+    aoQuadro?.(
+      slots.filter((k) => k.mesh.visible).map((k) => ({ proj: k.proj, x: k.mesh.position.x, sc: k.program.uniforms.uScale.value as number, op: k.program.uniforms.uOpacity.value as number })),
+      card,
+    );
     renderer.render({ scene: cena, camera });
     if (import.meta.env.DEV || (window as unknown as { __sonda?: boolean }).__sonda) {
       (window as unknown as Record<string, unknown>).__cartoes = {
@@ -447,8 +466,12 @@ export function criarCartoesWebGL(
       }
     }
     if (hover && sob?.uv) (hover.program.uniforms.uMouse.value as Vec2).set(sob.uv.x, sob.uv.y);
-    canvas.style.cursor = hover ? "pointer" : "grab";
+    const noCentro = !!hover && Math.abs(hover.mesh.position.x) < card.w / 2;
+    /* no centro o cursor nativo some: o "View Case" em DOM é o cursor */
+    canvas.style.cursor = noCentro ? "none" : hover ? "pointer" : "grab";
+    aoPonteiro?.(hover ? { centro: noCentro, x: e.clientX, y: e.clientY } : null);
   };
+  const onLeave = () => aoPonteiro?.(null);
   const onUp = (e: PointerEvent) => {
     if (!arrastando) return;
     arrastando = false;
@@ -493,6 +516,7 @@ export function criarCartoesWebGL(
   canvas.addEventListener("pointermove", onMove);
   canvas.addEventListener("pointerup", onUp);
   canvas.addEventListener("pointercancel", onUp);
+  canvas.addEventListener("pointerleave", onLeave);
   canvas.addEventListener("wheel", onWheel, { passive: false });
 
   return {
@@ -518,6 +542,7 @@ export function criarCartoesWebGL(
       canvas.removeEventListener("pointermove", onMove);
       canvas.removeEventListener("pointerup", onUp);
       canvas.removeEventListener("pointercancel", onUp);
+      canvas.removeEventListener("pointerleave", onLeave);
       canvas.removeEventListener("wheel", onWheel);
       canvas.remove();
       gl.getExtension("WEBGL_lose_context")?.loseContext();

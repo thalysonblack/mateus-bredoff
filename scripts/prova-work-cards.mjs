@@ -1,4 +1,4 @@
-// prova do modo CARDS (WebGL, padrão) da /work: a fita nasce, a roda troca o card do centro, o filtro reduz, o clique no centro abre o case
+// prova do modo CARDS (WebGL, padrão) da /work: fita nasce, rótulo dentro do card acompanha, roda troca o centro, filtro reduz, View Case aparece no centro, clique abre o case
 import puppeteer from 'puppeteer-core';
 const CHROME='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const URL=process.argv[2]||'http://localhost:4181/work';
@@ -6,20 +6,17 @@ const b=await puppeteer.launch({executablePath:CHROME,headless:'new',args:['--no
 const pg=await b.newPage(); pg.on('pageerror',e=>console.log('PAGEERROR',e.message)); pg.on('console',m=>{if(m.type()==='error')console.log('CONSOLE',m.text().slice(0,300))});
 await pg.setViewport({width:1440,height:900});
 await pg.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'no-preference'}]);
-await pg.goto(URL,{waitUntil:'networkidle0'});
-await new Promise(r=>setTimeout(r,800));
-const legenda=()=>pg.$eval('.p-cartoes-legenda',e=>e.innerText.replace(/\n/g,' · ')).catch(()=>null);
-const canvas=await pg.$eval('.p-cartoes-palco canvas',c=>({w:c.width,h:c.height})).catch(()=>null);
-console.log('canvas', canvas, '| legenda', await legenda());
-// pixel do centro do canvas não pode ser transparente (a fita desenhou)
-await pg.mouse.move(720,450); for(let i=0;i<8;i++){await pg.mouse.wheel({deltaY:120}); await new Promise(r=>setTimeout(r,40));}
-await new Promise(r=>setTimeout(r,1600));
-console.log('após roda', await legenda());
-await pg.$$eval('.p-work-pilula',els=>els.find(e=>e.textContent.trim()==='3D').click());
-await new Promise(r=>setTimeout(r,900));
-console.log('filtro 3D →', await legenda());
-await pg.$$eval('.p-work-pilula',els=>els.find(e=>e.textContent.trim()==='All').click());
-await new Promise(r=>setTimeout(r,900));
+await pg.goto(URL,{waitUntil:'networkidle0'}); await new Promise(r=>setTimeout(r,900));
+const centro=()=>pg.$$eval('.p-cartao-rotulo',els=>{const vis=els.filter(e=>+e.style.opacity>0.5).map(e=>{const b=e.getBoundingClientRect();return {n:e.querySelector('.p-cartao-nome').textContent,x:Math.round(b.x),w:Math.round(b.width),h:Math.round(b.height)}});return vis.sort((a,b)=>Math.abs(a.x+a.w/2-720)-Math.abs(b.x+b.w/2-720))});
+console.log('rótulos visíveis', JSON.stringify(await centro()));
+await pg.mouse.move(720,450); await new Promise(r=>setTimeout(r,300));
+console.log('View Case opac', await pg.$eval('.p-cartao-view',e=>e.style.opacity), '| cursor', await pg.$eval('.p-cartoes-palco canvas',c=>c.style.cursor));
+for(let i=0;i<8;i++){await pg.mouse.wheel({deltaY:120}); await new Promise(r=>setTimeout(r,40));} await new Promise(r=>setTimeout(r,1600));
+console.log('após roda', JSON.stringify((await centro())[0]));
+await pg.$$eval('.p-work-pilula',els=>els.find(e=>e.textContent.trim()==='3D').click()); await new Promise(r=>setTimeout(r,900));
+console.log('filtro 3D →', JSON.stringify((await centro())[0]));
+await pg.$$eval('.p-work-pilula',els=>els.find(e=>e.textContent.trim()==='All').click()); await new Promise(r=>setTimeout(r,900));
+await pg.screenshot({path:process.env.SHOT||'/tmp/work-cards.png'});
 await pg.mouse.move(720,450); await new Promise(r=>setTimeout(r,200)); await pg.mouse.down(); await pg.mouse.up(); await new Promise(r=>setTimeout(r,900));
 console.log('após clique:', pg.url());
 await b.close();
