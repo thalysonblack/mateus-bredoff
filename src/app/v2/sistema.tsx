@@ -266,7 +266,7 @@ export function Prancha({
               </span>
               {/* crédito do estúdio ("no rodapé colocar créditos", 16/09) */}
               <span>
-                Site by{" "}
+                UI & Dev{" "}
                 <a href="https://thegoodtaste.cc/" target="_blank" rel="noopener noreferrer">
                   Goodtaste®
                 </a>
