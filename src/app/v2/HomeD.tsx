@@ -401,6 +401,28 @@ export default function HomeD({
 
   /* o player do reel, aberto pelo clique na capa */
   const [reelAberto, setReelAberto] = useState(false);
+
+  /* ⭐ A HOME RESPIRA SEM O MOUSE (16/09: "o efeito legal é só quando passa o
+     mouse" + "fazer um gif dos projetos enquanto não tem showreel"). Um gesto
+     só resolve os dois: enquanto nada está sob o cursor, a trama ACENDE um
+     projeto por vez, na cor dele, e o slot do reel mostra a capa desse mesmo
+     projeto — a página sempre tem UMA peça "ligada". O hover interrompe; 1,5 s
+     depois de sair, o ciclo retoma de onde parou. Com movimento reduzido,
+     nada anda. */
+  const [ocioso, setOcioso] = useState(-1);
+  useEffect(() => {
+    if (sob || prefersReducedMotion()) return;
+    let iv: ReturnType<typeof setInterval> | undefined;
+    const t = setTimeout(() => {
+      setOcioso((i) => (i + 1) % WORK.length);
+      iv = setInterval(() => setOcioso((i) => (i + 1) % WORK.length), 1800);
+    }, 1500);
+    return () => {
+      clearTimeout(t);
+      if (iv) clearInterval(iv);
+    };
+  }, [sob]);
+  const aceso = !sob && ocioso >= 0 ? WORK[ocioso] : null;
   useEffect(() => {
     if (!reelAberto) return;
     const fecha = (e: KeyboardEvent) => e.key === "Escape" && setReelAberto(false);
@@ -457,7 +479,7 @@ export default function HomeD({
                         data-peca={w.slug}
                         onFocus={() => setSob(w)}
                         onBlur={() => setSob(null)}
-                        className="p-trama-nome"
+                        className={`p-trama-nome${aceso?.slug === w.slug ? " p-trama-nome--aceso" : ""}`}
                         /* ⭐ cada nome acende na COR DO PROJETO, amostrada da
                            capa dele — ver `content/cores.ts`. A cor entra como
                            variável no nó, e o CSS decide QUANDO usá-la. */
@@ -507,8 +529,10 @@ export default function HomeD({
               /* ⚠ sem arquivo, a capa NÃO finge que abre: um play que não toca
                  nada é pior que play nenhum. Mesma regra que mantém os cases
                  magros em vez de preenchidos com arte de template. */
+              /* enquanto não há filme, o slot é o "gif" dos projetos: a capa do
+                 projeto que está aceso na trama, em corte seco */
               <span className="p-reel p-reel--mudo">
-                <img src={REEL.capa.src} alt="" decoding="async" draggable={false} />
+                <img src={(aceso ?? WORK[0]).cover.src} alt="" decoding="async" draggable={false} />
               </span>
             )}
             <p className="p-marca pt-2" style={{ color: "var(--p-quieto)" }}>

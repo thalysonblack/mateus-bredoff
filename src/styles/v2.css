@@ -546,6 +546,9 @@
 .p-trama-campo:hover .p-trama-nome,
 .p-trama-campo:focus-within .p-trama-nome { opacity: 0.46; }
 .p-trama--peca .p-trama-nome { cursor: none; }
+/* o nome ACESO pelo ciclo ocioso (sem mouse): só a cor, sem pausar a fita nem
+   apagar os vizinhos — é um pulso atravessando a trama, não um hover fingido */
+.p-trama-campo:not(:hover) .p-trama-nome--aceso { --p-trama-cor: var(--cor, var(--p-acento)); }
 /* ⚠ `:focus-visible` junto do `:hover`: o nome é um LINK, e quem navega por
    teclado tem de ver o mesmo destaque que o cursor produz. */
 .p-trama-campo .p-trama-nome:hover,
