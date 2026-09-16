@@ -43,11 +43,6 @@ const MAX_CARD_VIEWPORT_FRACTION = 0.92;
 // translateX(-50%), and a transform creates a stacking context that isolates the
 // blend — so the labels rendered as #f7f7f7 on #f6f6f6 (measured 1.01:1, invisible).
 // The nav sits over the light section, so it is painted dark outright, at AA.
-const NAV_COLOR_ACTIVE = "var(--p-ink)";
-const NAV_COLOR_IDLE = "var(--p-quieto)";
-const NAV_FONT = { fontFamily: "'Geist:Regular', Geist, sans-serif", fontWeight: 400, fontSize: 20, lineHeight: "0.78", letterSpacing: "-0.6px" } as const;
-const NAV_GAP = 19;
-const NAV_OFFSET_Y = 40;
 
 const CURSOR_SIZE = 32;
 
@@ -197,24 +192,6 @@ function CursorZone({ onLeft, onRight, onView }: { onLeft: () => void; onRight: 
   );
 }
 
-// ── Bottom-center nav labels ─────────────────────────────────────────────────
-function NavItem({ name, isActive, onClick }: { name: string; isActive: boolean; onClick: () => void }) {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <span
-      role="button"
-      aria-current={isActive ? "true" : undefined}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onClick={(e) => { e.stopPropagation(); onClick(); }}
-      style={{ display: "block", ...NAV_FONT, textAlign: "center", color: isActive || hovered ? NAV_COLOR_ACTIVE : NAV_COLOR_IDLE, transition: "color 0.3s ease", whiteSpace: "nowrap", cursor: "pointer", pointerEvents: "auto" }}
-    >
-      {name}
-    </span>
-  );
-}
-
-// ── Top filter tabs ──────────────────────────────────────────────────────────
 export default function Cases({ projects, onView }: { projects: CaseCard[]; onView: (p: CaseCard) => void }) {
   /* o filtro é de quem chama (a /work): aqui só chega a lista já filtrada;
      a chave dos tiles muda com ela para o DOM e os refs nascerem de novo */
@@ -240,7 +217,6 @@ export default function Cases({ projects, onView }: { projects: CaseCard[]; onVi
   const idleRef = useRef({ frames: 0, snapped: false });
 
   const [tiles, setTiles] = useState<Tile[]>([]);
-  const [activeIndex, setActiveIndex] = useState(0);
   const [activeTileIndex, setActiveTileIndex] = useState(0);
   const activeRef = useRef(0);
   const activeTileRef = useRef(0);
@@ -316,7 +292,7 @@ export default function Cases({ projects, onView }: { projects: CaseCard[]; onVi
       if (dist < minDist) { minDist = dist; newActive = tile.projectIndex; newActiveTile = i; closestDelta = posY + cardH / 2 - mid; }
     }
 
-    if (newActive !== activeRef.current) { activeRef.current = newActive; startTransition(() => setActiveIndex(newActive)); }
+    if (newActive !== activeRef.current) activeRef.current = newActive;
     if (newActiveTile !== activeTileRef.current) { activeTileRef.current = newActiveTile; startTransition(() => setActiveTileIndex(newActiveTile)); }
 
     if (!dragRef.current.active) {
@@ -444,24 +420,6 @@ export default function Cases({ projects, onView }: { projects: CaseCard[]; onVi
     idleRef.current = { frames: 0, snapped: false };
   }, []);
 
-  const handleNavClick = useCallback((index: number) => {
-    const cardH = cardHRef.current;
-    const winH = winHRef.current;
-    const totalH = totalHRef.current;
-    const s = scrollRef.current;
-    const mid = winH / 2;
-    let bestDelta = 0, bestDist = Infinity;
-    for (const tile of tilesRef.current) {
-      if (tile.projectIndex !== index) continue;
-      const tapeY = tile.baseY + s.current;
-      const posY = tapeY + Math.round((mid - tapeY - cardH / 2) / totalH) * totalH;
-      const dist = Math.abs(posY + cardH / 2 - mid);
-      if (dist < bestDist) { bestDist = dist; bestDelta = posY + cardH / 2 - mid; }
-    }
-    s.target -= bestDelta;
-    idleRef.current = { frames: 0, snapped: false };
-  }, []);
-
   return (
     <section className="relative h-full min-h-0 w-full flex-1 overflow-hidden">
       <style>{SHIMMER_CSS}</style>
@@ -508,12 +466,9 @@ export default function Cases({ projects, onView }: { projects: CaseCard[]; onVi
           })}
         </div>
 
-        {/* Bottom-center nav labels */}
-        <div className="pointer-events-none absolute z-50 flex flex-row items-center" style={{ bottom: NAV_OFFSET_Y, left: "50%", transform: "translateX(-50%)", gap: NAV_GAP }}>
-          {projects.map((p, i) => (
-            <NavItem key={p.name + i} name={p.name} isActive={i === activeIndex} onClick={() => handleNavClick(i)} />
-          ))}
-        </div>
+        {/* a nav de nomes embaixo SAIU ("tirar, deixar só o de cima", 16/09):
+            a linha de controle no topo já nomeia o modo e o filtro; o nome do
+            projeto vive no próprio card */}
       </div>
     </section>
   );

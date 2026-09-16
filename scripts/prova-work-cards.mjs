@@ -7,7 +7,7 @@ const pg=await b.newPage(); pg.on('pageerror',e=>console.log('PAGEERROR',e.messa
 await pg.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'no-preference'}]);
 await pg.goto(URL,{waitUntil:'networkidle0'});
 const pos=()=>pg.$$eval('[role=listitem]',els=>els.map(t=>({n:t.getAttribute('aria-label'),x:Math.round(t.getBoundingClientRect().x)})).sort((a,b)=>a.x-b.x).filter(t=>t.x>-700&&t.x<1440));
-const ativo=()=>pg.$eval('span[role=button][aria-current]',e=>e.textContent);
+const ativo=()=>pg.evaluate(()=>{const t=[...document.querySelectorAll('[role=listitem]')];return t.sort((a,b)=>Math.abs(a.getBoundingClientRect().x+a.getBoundingClientRect().width/2-720)-Math.abs(b.getBoundingClientRect().x+b.getBoundingClientRect().width/2-720))[0]?.getAttribute('aria-label')});
 const a=await pos(); const a0=await ativo();
 await pg.mouse.move(720,450); for(let i=0;i<10;i++){await pg.mouse.wheel({deltaY:120}); await new Promise(r=>setTimeout(r,40));}
 await new Promise(r=>setTimeout(r,1200));
@@ -16,7 +16,7 @@ console.log('antes ', a0, JSON.stringify(a)); console.log('depois', c0, JSON.str
 // filtro
 await pg.$$eval('.p-work-chip',els=>els.find(e=>e.textContent.trim()==='3D').click());
 await new Promise(r=>setTimeout(r,600));
-console.log('filtro 3D → tiles', await pg.$$eval('[role=listitem]',e=>e.length), 'nav', await pg.$$eval('span[role=button]',e=>e.map(x=>x.textContent)));
+console.log('filtro 3D → tiles', await pg.$$eval('[role=listitem]',e=>e.length), 'ativo', await ativo());
 const chips=await pg.$$eval('.p-work-chip',els=>els.map(e=>e.textContent.trim())); console.log('chips agora',chips); if(chips.includes('All')) await pg.$$eval('.p-work-chip',els=>els.find(e=>e.textContent.trim()==='All').click());
 await new Promise(r=>setTimeout(r,600));
 // clique no centro do card ativo abre o case
