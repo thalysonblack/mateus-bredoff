@@ -1880,16 +1880,8 @@
   padding-top: 34px;
   /* "tirar linha" (16/09): sem fio no topo — o vão já separa */
 }
-/* ⭐ "estender o rodapé por todo site, menos home" (16/09). Na /work, que é
-   ROTA DE TELA (a roda do mouse é da coluna de peças, a página não rola), o
-   rodapé completo entra DENTRO da tela e deita: "Let's talk" e os canais numa
-   linha só, em display menor, para tirar o mínimo de altura da janela de
-   peças. Mesmo componente, mesma grade, mesma régua embaixo. */
-.p-rodape--tela { margin-top: 0; padding-top: 20px; }
-.p-rodape--tela .p-rodape-grade { padding-bottom: 20px; }
-.p-rodape--tela .p-rodape-canais { flex-direction: row; flex-wrap: wrap; column-gap: 0.7em; row-gap: 0; align-items: baseline; }
-.p-rodape--tela .p-rodape-canais li:first-child { padding-bottom: 0; margin-right: 0.5em; }
-.p-rodape--tela .p-rodape-canal { font-size: clamp(20px, 1.9vw, 30px); }
+/* rodapé completo = rota que ROLA (about, case). Na /work, que é tela, ele
+   deitado roubava a janela da coluna e ele mandou tirar (16/09): fica a régua. */
 .p-rodape-grade {
   /* "ajustar o footer ao grid" (16/09): a grade é a do menu — rótulo em 12,
      "Let's talk" na coluna da hora. A margem de folha saiu junto com a das folhas. */

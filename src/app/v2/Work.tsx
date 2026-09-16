@@ -137,7 +137,7 @@ export default function WorkV2() {
   };
 
   return (
-    <Prancha n="02" nome="Work" superficie="branco" tela status={`${WORK.length} projects`} rodape="completo">
+    <Prancha n="02" nome="Work" superficie="branco" tela status={`${WORK.length} projects`}>
       {/* ⚠ A ROTA CABE NA TELA e não rola — igual à referência
           (`.archive-page` é `fixed inset:0; overflow:hidden`) e igual à home
           deste site. O gesto é todo da coluna. */}
