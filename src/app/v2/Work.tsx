@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
+import Cases, { type CaseCard } from "../sections/Cases";
 import { WORK } from "../../content/work";
 import { corDe } from "../../content/cores";
 import { useMetaRota } from "../../hooks/useMetaRota";
@@ -40,9 +41,32 @@ import { Prancha } from "./sistema";
  *
  * A página não rola: o gesto é todo da coluna, como na home.
  */
+/* os cards vêm do MESMO acervo da tabela; os filtros são as disciplinas que
+   existem nele, por frequência — sem categoria inventada */
+const CARTOES: CaseCard[] = WORK.map((w) => ({
+  slug: w.slug,
+  name: w.title,
+  image: w.cover.src,
+  srcSet: w.cover.src2x ? `${w.cover.src} ${w.cover.w}w, ${w.cover.src2x} ${w.cover.w * 2}w` : undefined,
+  tags: w.disciplines,
+}));
+const FILTROS = [
+  "All",
+  ...[...WORK.flatMap((w) => w.disciplines).reduce((m, d) => m.set(d, (m.get(d) ?? 0) + 1), new Map<string, number>())]
+    .sort((a, b) => b[1] - a[1])
+    .map(([d]) => d),
+];
+
 export default function WorkV2() {
   useMetaRota();
   const [ativo, setAtivo] = useState(0);
+  /* ⭐ DOIS MODOS (16/09): "vamos poder ver em lista ou como esse [/cases do
+     Framer dele], só que scroll lateral". `?view=cards` para o link viajar. */
+  const [params, setParams] = useSearchParams();
+  const modo: "list" | "cards" = params.get("view") === "cards" ? "cards" : "list";
+  const setModo = (m: "list" | "cards") => setParams(m === "cards" ? { view: "cards" } : {}, { replace: true });
+  const [filtro, setFiltro] = useState("All");
+  const navigate = useNavigate();
   const peca = WORK[ativo];
   const janela = useRef<HTMLDivElement | null>(null);
   const pilha = useRef<HTMLDivElement | null>(null);
@@ -98,7 +122,7 @@ export default function WorkV2() {
       v.destruir();
       gl.current = null;
     };
-  }, []);
+  }, [modo]);
 
   /* percorrer a tabela leva a coluna até a peça — pelo caminho MAIS CURTO, que
      numa lista circular nem sempre é a diferença bruta de índices */
@@ -117,6 +141,32 @@ export default function WorkV2() {
       {/* ⚠ A ROTA CABE NA TELA e não rola — igual à referência
           (`.archive-page` é `fixed inset:0; overflow:hidden`) e igual à home
           deste site. O gesto é todo da coluna. */}
+      {/* a linha de controle: o modo à esquerda; em cards, os filtros ao centro
+          (as disciplinas que existem no acervo, não uma lista inventada) */}
+      <div className="p-work-modo">
+        <div className="p-work-modo-grupo" role="tablist" aria-label="View">
+          {(["list", "cards"] as const).map((m) => (
+            <button key={m} type="button" role="tab" aria-selected={modo === m} className={`p-corpo p-work-chip${modo === m ? " on" : ""}`} onClick={() => setModo(m)}>
+              {modo === m ? <span className="p-work-quad" aria-hidden="true" /> : null}
+              {m === "list" ? "List" : "Cards"}
+            </button>
+          ))}
+        </div>
+        {modo === "cards" ? (
+          <div className="p-work-modo-grupo p-work-filtros" role="tablist" aria-label="Filter">
+            {FILTROS.map((f) => (
+              <button key={f} type="button" role="tab" aria-selected={filtro === f} className={`p-corpo p-work-chip${filtro === f ? " on" : ""}`} onClick={() => setFiltro(f)}>
+                {filtro === f ? <span className="p-work-quad" aria-hidden="true" /> : null}
+                {f}
+              </button>
+            ))}
+          </div>
+        ) : null}
+      </div>
+
+      {modo === "cards" ? (
+        <Cases projects={CARTOES.filter((c) => filtro === "All" || c.tags.includes(filtro))} onView={(c) => navigate(`/work/${c.slug}`)} />
+      ) : (
       <section className="p-arquivo">
         {/* ─ a tabela, À ESQUERDA ────────────────────────────────────────
             Medido na referência: 48% da largura, com fio vertical separando.
@@ -177,6 +227,7 @@ export default function WorkV2() {
               imagem era o mesmo dado dito duas vezes. */}
         </div>
       </section>
+      )}
     </Prancha>
   );
 }

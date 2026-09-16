@@ -1,41 +1,26 @@
 import { useCallback, useEffect, useRef, useState, startTransition } from "react";
-import imgFerraciGem from "../../assets/optimized/case-ferraci-1400.webp";
-import imgFerraciGem2x from "../../assets/optimized/case-ferraci-2200.webp";
-import imgTrivoCart from "../../assets/optimized/case-trivo-1400.webp";
-import imgTrivoCart2x from "../../assets/optimized/case-trivo-2200.webp";
-import imgFerraciBook from "../../assets/optimized/case-stag-1400.webp";
-import imgFerraciBook2x from "../../assets/optimized/case-stag-2200.webp";
 
 /**
- * Cases — Framer "CasesScroll / Cases Showcase" rebuild (projects mode,
- * horizontal). Self-contained requestAnimationFrame lerp engine: infinite
- * virtual loop, one active card centred (scale 1) with neighbours falling off
- * to 0.85, smooth lerp + snap, drag w/ momentum, arrows, cursor zones, nav.
+ * Cases — o carrossel HORIZONTAL do Framer original dele ("CasesScroll / Cases
+ * Showcase"), reconstruído: fita virtual infinita, um card ativo centrado
+ * (escala 1) com os vizinhos caindo a 0,745, lerp + snap, drag com inércia,
+ * setas nas bordas, cursor "View Case" no centro, nav de nomes embaixo.
  *
- * Styled to match the reference: top filter tabs, a large landscape active card
- * with project name + category tags + "View Case", and the bottom project nav.
- * (Stag/Votare reuse available art as placeholders until real images are added.)
+ * 16/09: deixou de ser órfão. Virou o modo CARDS da /work ("vamos poder ver em
+ * lista ou como esse [/cases], só que scroll lateral"): recebe os projetos por
+ * prop, a RODA DO MOUSE anda a fita (deltaY e deltaX), os filtros filtram de
+ * verdade e o card abre o case. Cor e tipo vêm dos tokens da prancha.
  */
 
-type Project = {
+export type CaseCard = {
+  slug: string;
   name: string;
   image: string;
-  srcSet: string;
+  srcSet?: string;
   tags: string[];
-  bg: string;
-  fit: "cover" | "contain";
 };
 
-const FILTERS = ["All", "Visual Identity", "Packaging", "UI Design", "AI"] as const;
-
-const srcSetOf = (small: string, large: string) => `${small} 1400w, ${large} 2200w`;
-
-const PROJECTS: Project[] = [
-  { name: "Stag", image: imgFerraciBook, srcSet: srcSetOf(imgFerraciBook, imgFerraciBook2x), tags: ["Visual Identity"], bg: "#0d0d0d", fit: "cover" },
-  { name: "Trivo", image: imgTrivoCart, srcSet: srcSetOf(imgTrivoCart, imgTrivoCart2x), tags: ["Visual Identity", "3D"], bg: "#000000", fit: "cover" },
-  { name: "Ferraci", image: imgFerraciGem, srcSet: srcSetOf(imgFerraciGem, imgFerraciGem2x), tags: ["Visual Identity", "3D"], bg: "linear-gradient(150deg,#c79a6a 0%,#e8d4b8 55%,#f5ead8 100%)", fit: "contain" },
-  { name: "Votare", image: imgFerraciBook, srcSet: srcSetOf(imgFerraciBook, imgFerraciBook2x), tags: ["Packaging"], bg: "#0d0d0d", fit: "cover" },
-];
+type Project = CaseCard;
 
 // ── DEFAULTS (projects/horizontal) ───────────────────────────────────────────
 // Figma: active card 1103×728 (≈1.51:1 landscape); neighbours 851×542 → 0.745 of
@@ -51,7 +36,6 @@ const CARD_CROSS_PCT = 74; // % of root height used by the card row (cross axis)
 // Keeps the active card (and its label) fully on screen in portrait.
 const MAX_CARD_VIEWPORT_FRACTION = 0.92;
 
-const SECTION_BG = "#f6f6f6";
 
 // Bottom nav — Figma: Geist Regular 20px, gap 19, tracking -0.6px, leading 0.78.
 // The Figma spec paints it #fff with mix-blend-exclusion, which only inverts if the
@@ -59,8 +43,8 @@ const SECTION_BG = "#f6f6f6";
 // translateX(-50%), and a transform creates a stacking context that isolates the
 // blend — so the labels rendered as #f7f7f7 on #f6f6f6 (measured 1.01:1, invisible).
 // The nav sits over the light section, so it is painted dark outright, at AA.
-const NAV_COLOR_ACTIVE = "#141414";              // 14.6:1 on #f6f6f6
-const NAV_COLOR_IDLE = "rgba(20, 20, 20, 0.66)"; // ~5.1:1 — AA for 20px body text
+const NAV_COLOR_ACTIVE = "var(--p-ink)";
+const NAV_COLOR_IDLE = "var(--p-quieto)";
 const NAV_FONT = { fontFamily: "'Geist:Regular', Geist, sans-serif", fontWeight: 400, fontSize: 20, lineHeight: "0.78", letterSpacing: "-0.6px" } as const;
 const NAV_GAP = 19;
 const NAV_OFFSET_Y = 40;
@@ -76,9 +60,7 @@ function makeArrowCursorSvg(direction: "left" | "right", size: number, color = "
 }
 
 const SHIMMER_CSS = `@keyframes cases-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-.cases-filters{scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x proximity}
-.cases-filters::-webkit-scrollbar{display:none}
-.cases-filters > button{scroll-snap-align:center}`;
+`;
 
 // ── Card visual (image + per-project background) ─────────────────────────────
 function CardVisual({ project, visualRef }: { project: Project; visualRef: (el: HTMLDivElement | null) => void }) {
@@ -91,7 +73,7 @@ function CardVisual({ project, visualRef }: { project: Project; visualRef: (el: 
         inset: 0,
         overflow: "hidden",
         borderRadius: CARD_RADIUS,
-        background: project.bg,
+        background: "var(--p-fio)",
         willChange: "transform, filter, opacity",
         transform: "translateZ(0)",
         backfaceVisibility: "hidden",
@@ -104,17 +86,17 @@ function CardVisual({ project, visualRef }: { project: Project; visualRef: (el: 
       <img
         src={project.image}
         srcSet={project.srcSet}
-        sizes="(max-width: 900px) 90vw, 74vh"
+        sizes="(max-width: 900px) 90vw, 111vh"
         alt={project.name}
         draggable={false}
         decoding="async"
         onLoad={() => startTransition(() => setLoaded(true))}
         style={{
           position: "absolute",
-          inset: project.fit === "contain" ? "10%" : 0,
-          width: project.fit === "contain" ? "80%" : "100%",
-          height: project.fit === "contain" ? "80%" : "100%",
-          objectFit: project.fit,
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
           display: "block",
           pointerEvents: "none",
         }}
@@ -130,16 +112,13 @@ function CardVisual({ project, visualRef }: { project: Project; visualRef: (el: 
 // ── Per-card label: name (bottom-left) + tags (bottom-right) — Figma 84:73 ────
 function CardLabel({ project }: { project: Project }) {
   return (
-    // No z-index here on purpose. A positioned element with z-index opens a
-    // stacking context, which would trap the name's mix-blend-difference and make
-    // it paint flat white — unreadable on the light cards (measured 1.42:1).
-    // Without it the blend reaches the artwork and inverts against it, so the name
-    // reads white on dark cards and near-black on light ones. DOM order already
-    // paints the label above the image.
+    // O nome era branco em `difference`: sobre a capa vermelha da Ginga virava
+    // CIANO (16/09). Agora é branco sólido com sombra difusa — lê em capa escura
+    // e em capa clara sem mudar de cor.
     <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between" style={{ padding: 12 }}>
       {/* Project name */}
       <p
-        style={{ margin: 0, fontFamily: "'Inter_Display:Medium', 'Inter Tight', sans-serif", fontWeight: 500, fontSize: 24.428, lineHeight: 1.25, color: "#ffffff", mixBlendMode: "difference", whiteSpace: "nowrap" }}
+        style={{ margin: 0, fontFamily: "'Geist', ui-sans-serif, sans-serif", fontWeight: 500, fontSize: 20, lineHeight: 1.25, letterSpacing: "-0.02em", color: "#ffffff", textShadow: "0 1px 14px rgba(0,0,0,0.45)", whiteSpace: "nowrap" }}
       >
         {project.name}
       </p>
@@ -151,7 +130,7 @@ function CardLabel({ project }: { project: Project }) {
             key={t}
             // The 15% scrim of the Figma spec only holds up over dark artwork; on the
             // light cards white-on-chip fell to 1.4:1. Denser scrim, same glass look.
-            style={{ background: "rgba(0,0,0,0.54)", backdropFilter: "blur(11.75px)", WebkitBackdropFilter: "blur(11.75px)", color: "#ffffff", fontFamily: "'Inter_Display:Medium', 'Inter Tight', sans-serif", fontWeight: 500, fontSize: 12, lineHeight: 1.25, padding: "4.653px 8.143px", borderRadius: 3, whiteSpace: "nowrap" }}
+            style={{ background: "rgba(0,0,0,0.54)", backdropFilter: "blur(11.75px)", WebkitBackdropFilter: "blur(11.75px)", color: "#ffffff", fontFamily: "'Geist', ui-sans-serif, sans-serif", fontWeight: 500, fontSize: 12, lineHeight: 1.25, padding: "4.653px 8.143px", borderRadius: 3, whiteSpace: "nowrap" }}
           >
             {t}
           </span>
@@ -236,48 +215,10 @@ function NavItem({ name, isActive, onClick }: { name: string; isActive: boolean;
 }
 
 // ── Top filter tabs ──────────────────────────────────────────────────────────
-function FilterTabs({ active, onPick }: { active: string; onPick: (f: string) => void }) {
-  return (
-    <div
-      className="cases-filters pointer-events-auto absolute left-1/2 z-50 flex max-w-[calc(100vw-24px)] -translate-x-1/2 flex-nowrap items-center justify-start gap-[6px] overflow-x-auto sm:justify-center sm:overflow-visible"
-      style={{ top: 24 }}
-    >
-      {FILTERS.map((f) => {
-        const on = f === active;
-        return (
-          <button
-            key={f}
-            type="button"
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={(e) => { e.stopPropagation(); onPick(f); }}
-            style={{
-              fontFamily: "'Geist:Medium', Geist, sans-serif",
-              fontSize: 14,
-              letterSpacing: "-0.03em",
-              lineHeight: 0.78,
-              color: on ? "#fff" : "#b0b0b0",
-              background: on ? "#19272d" : "transparent",
-              padding: "8px 10px",
-              borderRadius: 2,
-              border: "none",
-              cursor: "pointer",
-              backdropFilter: "blur(26px)",
-              WebkitBackdropFilter: "blur(26px)",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {f}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-type Tile = { baseY: number; h: number; projectIndex: number };
-
-export default function Cases() {
-  const projects = PROJECTS;
+export default function Cases({ projects, onView }: { projects: CaseCard[]; onView: (p: CaseCard) => void }) {
+  /* o filtro é de quem chama (a /work): aqui só chega a lista já filtrada;
+     a chave dos tiles muda com ela para o DOM e os refs nascerem de novo */
+  const chave = projects.map((p) => p.slug).join("|");
   const itemCount = projects.length;
   const [arW, arH] = ASPECT;
 
@@ -301,7 +242,6 @@ export default function Cases() {
   const [tiles, setTiles] = useState<Tile[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeTileIndex, setActiveTileIndex] = useState(0);
-  const [filter, setFilter] = useState<string>("All");
   const activeRef = useRef(0);
   const activeTileRef = useRef(0);
 
@@ -337,7 +277,7 @@ export default function Cases() {
     const newTiles: Tile[] = Array.from({ length: count }, (_, i) => ({ baseY: i * rowH, h: cardH, projectIndex: i % itemCount }));
     tilesRef.current = newTiles;
     startTransition(() => setTiles(newTiles));
-  }, [itemCount, arW, arH]);
+  }, [itemCount, arW, arH, chave]);
 
   // ── Render loop ──────────────────────────────────────────────────────────
   const render = useCallback(() => {
@@ -417,6 +357,10 @@ export default function Cases() {
     const root = rootRef.current;
     if (!root) return;
     const onDown = (e: PointerEvent) => {
+      /* ⚠ o clique nas zonas do card ativo (setas e "View Case") não inicia
+         arrasto: com `setPointerCapture` o pointerup vira do root e o `click`
+         nunca chega ao botão — era por isso que "View Case" não abria nada */
+      if ((e.target as Element | null)?.closest?.("button")) return;
       e.preventDefault();
       root.setPointerCapture(e.pointerId);
       dragRef.current = { active: true, start: e.clientX, startScroll: scrollRef.current.target, last: e.clientX, lastTime: performance.now(), velocity: 0 };
@@ -455,6 +399,19 @@ export default function Cases() {
       root.removeEventListener("pointercancel", onUp);
       root.removeEventListener("pointermove", onMove);
     };
+  }, []);
+
+  // ── Roda do mouse: "scroll lateral" — deltaY e deltaX andam a fita ─────────
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const onWheel = (e: WheelEvent) => {
+      const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      scrollRef.current.target -= d * 0.8;
+      idleRef.current = { frames: 0, snapped: false };
+    };
+    root.addEventListener("wheel", onWheel, { passive: true });
+    return () => root.removeEventListener("wheel", onWheel);
   }, []);
 
   // ── Keyboard navigation ────────────────────────────────────────────────────
@@ -506,11 +463,8 @@ export default function Cases() {
   }, []);
 
   return (
-    <section className="relative h-[62dvh] w-full overflow-hidden sm:h-[100dvh]" style={{ background: SECTION_BG }}>
+    <section className="relative h-full min-h-0 w-full flex-1 overflow-hidden">
       <style>{SHIMMER_CSS}</style>
-
-      {/* Top filter tabs */}
-      <FilterTabs active={filter} onPick={setFilter} />
 
       {/* Showcase root */}
       <div
@@ -524,10 +478,13 @@ export default function Cases() {
         <div ref={cardsRef} style={{ position: "absolute", left: 0, width: "100%", height: `${CARD_CROSS_PCT}%`, top: `${(100 - CARD_CROSS_PCT) / 2}%` }}>
           {tiles.map((tile, i) => {
             const pi = tile.projectIndex;
+            /* entre a troca de filtro e o rebuild, os tiles velhos apontam para
+               índices que a lista nova não tem — um frame sem eles, sem quebrar */
+            if (!projects[pi]) return null;
             const isActiveCard = i === activeTileIndex;
             return (
               <div
-                key={i}
+                key={`${chave}-${i}`}
                 role="listitem"
                 aria-label={projects[pi]?.name ?? `Item ${pi + 1}`}
                 ref={(el) => { tileElsRef.current[i] = el; }}
@@ -545,7 +502,7 @@ export default function Cases() {
                 style={{ position: "absolute", left: 0, top: 0, width: tile.h, height: "100%", willChange: "transform", transform: "translateZ(0)", backfaceVisibility: "hidden", pointerEvents: "auto", overflow: "visible", cursor: "ew-resize" }}
               >
                 <CardVisual project={projects[pi]} visualRef={(el) => { tileVisualElsRef.current[i] = el; }} />
-                {isActiveCard && <CursorZone onLeft={goPrev} onRight={goNext} onView={() => { /* TODO: open the case */ }} />}
+                {isActiveCard && <CursorZone onLeft={goPrev} onRight={goNext} onView={() => onView(projects[pi])} />}
               </div>
             );
           })}
