@@ -214,7 +214,7 @@ export function Prancha({
                       elemento porque é a ÚNICA ação que a página pede — quem
                       chegou ao fim já viu o trabalho. */}
         {rodape === "completo" ? (
-          <footer className="p-rodape">
+          <footer className={`p-rodape${tela ? " p-rodape--tela" : ""}`}>
             {/* ⭐ O RODAPÉ no registro do Figma (Contact, 12/09): rótulo à esquerda,
                 "Let's talk" aceso e os canais em display quietos a partir de um
                 terço — a mesma grade das folhas da about — e o índice do site à
