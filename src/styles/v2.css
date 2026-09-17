@@ -837,9 +837,16 @@
    ⚠ Da referência veio a ANATOMIA. O percurso continua INFINITO, ao contrário
    dela — lá é clamped e trava no último item. */
 /* a linha de controle da /work (16/09): modo à esquerda, filtros ao centro */
-.p-work-modo { position: relative; display: flex; align-items: center; justify-content: space-between; padding-bottom: 20px; }
+.p-work-modo { position: relative; display: grid; grid-template-columns: var(--p-grade-col1) minmax(0, 1fr); column-gap: var(--p-grade-vao); align-items: center; padding-bottom: 20px; }
 .p-work-modo-grupo { display: flex; align-items: center; gap: 20px; }
-.p-work-filtros { position: absolute; left: 50%; transform: translateX(-50%); }
+.p-work-filtros { flex-wrap: wrap; }
+/* em cards a linha vive dentro do palco (que sangra 12 de cada lado — o padding
+   devolve a origem da grade a 12), pendurada 40px acima do card do centro */
+.p-work-modo--cards { position: absolute; left: 0; right: 0; top: calc(50% - var(--card-h, 356px) / 2 - 30px - 24px); padding: 0 var(--p-margem); z-index: 2; grid-template-columns: calc(50% - var(--card-w, 634px) / 2 - var(--p-grade-vao)) minmax(0, 1fr); } /* 50% do content box (já sem as margens) */
+/* ↑ os filtros nascem RENTES à borda esquerda do card do centro (legenda do
+   objeto), 24px acima dele; o modo fica na coluna do nome (12). A coluna da
+   hora e a borda do card quase coincidem a 1440 (419 × 403) — a borda vence,
+   porque é dela que o olho cobra o alinhamento. */
 .p-work-chip { display: inline-flex; align-items: center; gap: 8px; padding: 0; border: 0; background: transparent; cursor: pointer; color: var(--p-quieto); transition: color 0.25s ease; white-space: nowrap; }
 .p-work-chip.on, .p-work-chip:hover { color: var(--p-ink); }
 .p-work-quad { width: 6px; height: 6px; background: currentColor; display: inline-block; }
@@ -850,8 +857,8 @@
 .p-work-pilula:hover { color: var(--p-ink); }
 .p-work-pilula.on { background: var(--p-ink); color: #ffffff; } /* a /work é a superfície branca */
 @media (max-width: 860px) {
-  .p-work-modo { flex-wrap: wrap; gap: 12px; }
-  .p-work-filtros { position: static; transform: none; flex-wrap: wrap; row-gap: 8px; }
+  .p-work-modo { grid-template-columns: 1fr; row-gap: 12px; }
+  .p-work-modo--cards { top: 0; }
 }
 /* os cards WebGL (16/09): o palco toma a altura que sobra; a legenda do card
    do centro fica na linha do corpo, centrada, sem roubar altura do palco */

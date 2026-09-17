@@ -135,33 +135,37 @@ export default function WorkV2() {
       {/* ⚠ A ROTA CABE NA TELA e não rola — igual à referência
           (`.archive-page` é `fixed inset:0; overflow:hidden`) e igual à home
           deste site. O gesto é todo da coluna. */}
-      {/* a linha de controle: o modo à esquerda; em cards, os filtros ao centro
-          (as disciplinas que existem no acervo, não uma lista inventada) */}
-      <div className="p-work-modo">
-        <div className="p-work-modo-grupo" role="tablist" aria-label="View">
-          {(["cards", "list"] as const).map((m) => (
-            <button key={m} type="button" role="tab" aria-selected={modo === m} className={`p-corpo p-work-chip${modo === m ? " on" : ""}`} onClick={() => setModo(m)}>
-              {modo === m ? <span className="p-work-quad" aria-hidden="true" /> : null}
-              {m === "list" ? "List" : "Cards"}
-            </button>
-          ))}
-        </div>
-        {/* os filtros na FORMA do Framer original dele (16/09, "os filtros eu
-            não gostei da forma"): pílulas, a ativa em tinta cheia */}
-        {modo === "cards" ? (
-          <div className="p-work-modo-grupo p-work-filtros" role="tablist" aria-label="Filter">
-            {FILTROS.map((f) => (
-              <button key={f} type="button" role="tab" aria-selected={filtro === f} className={`p-work-pilula${filtro === f ? " on" : ""}`} onClick={() => setFiltro(f)}>
-                {f}
-              </button>
-            ))}
+      {/* a linha de controle NA GRADE DO MENU (17/09, "me incomoda o alinhamento
+          no menu"): o modo na coluna do nome (12), os filtros nascendo na coluna
+          da hora — a mesma régua do cabeçalho. Em cards ela vive dentro do palco,
+          pendurada logo acima do card do centro ("mais próximo ao projeto"). */}
+      {(() => {
+        const controles = (
+          <div className={`p-work-modo${modo === "cards" ? " p-work-modo--cards" : ""}`}>
+            <div className="p-work-modo-grupo" role="tablist" aria-label="View">
+              {(["cards", "list"] as const).map((m) => (
+                <button key={m} type="button" role="tab" aria-selected={modo === m} className={`p-corpo p-work-chip${modo === m ? " on" : ""}`} onClick={() => setModo(m)}>
+                  {modo === m ? <span className="p-work-quad" aria-hidden="true" /> : null}
+                  {m === "list" ? "List" : "Cards"}
+                </button>
+              ))}
+            </div>
+            {modo === "cards" ? (
+              <div className="p-work-modo-grupo p-work-filtros" role="tablist" aria-label="Filter">
+                {FILTROS.map((f) => (
+                  <button key={f} type="button" role="tab" aria-selected={filtro === f} className={`p-work-pilula${filtro === f ? " on" : ""}`} onClick={() => setFiltro(f)}>
+                    {f}
+                  </button>
+                ))}
+              </div>
+            ) : null}
           </div>
-        ) : null}
-      </div>
-
-      {modo === "cards" ? (
-        <WorkCartoes itens={WORK.filter((w) => filtro === "All" || w.disciplines.includes(filtro))} />
-      ) : (
+        );
+        return modo === "cards" ? (
+          <WorkCartoes itens={WORK.filter((w) => filtro === "All" || w.disciplines.includes(filtro))} controles={controles} />
+        ) : (
+          <>
+            {controles}
       <section className="p-arquivo">
         {/* ─ a tabela, À ESQUERDA ────────────────────────────────────────
             Medido na referência: 48% da largura, com fio vertical separando.
@@ -222,7 +226,9 @@ export default function WorkV2() {
               imagem era o mesmo dado dito duas vezes. */}
         </div>
       </section>
-      )}
+          </>
+        );
+      })()}
     </Prancha>
   );
 }

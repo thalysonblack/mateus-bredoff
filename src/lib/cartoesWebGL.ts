@@ -302,6 +302,7 @@ export function criarCartoesWebGL(
     slots.forEach((s) => (s.program.uniforms.uCard.value = [card.w, card.h]));
     /* a legenda em DOM se pendura logo abaixo do card do centro */
     alvo.style.setProperty("--card-h", `${Math.round(card.h)}px`);
+    alvo.style.setProperty("--card-w", `${Math.round(card.w)}px`);
   };
   const ro = new ResizeObserver(dimensionar);
   ro.observe(alvo);

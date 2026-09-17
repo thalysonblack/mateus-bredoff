@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router";
 import type { WorkItem } from "../../content/work";
 import { criarCartoesWebGL, type CartoesWebGL, type Ponteiro } from "../../lib/cartoesWebGL";
@@ -17,7 +17,7 @@ import { prefersReducedMotion } from "../../lib/gsap";
  * ⚠ sem WebGL (ou com movimento reduzido) a fita vira uma fileira simples de
  * capas com scroll nativo — a peça continua acessível.
  */
-export function WorkCartoes({ itens }: { itens: WorkItem[] }) {
+export function WorkCartoes({ itens, controles }: { itens: WorkItem[]; controles?: ReactNode }) {
   const palco = useRef<HTMLDivElement | null>(null);
   const motor = useRef<CartoesWebGL | null>(null);
   const pilula = useRef<HTMLDivElement | null>(null);
@@ -59,6 +59,7 @@ export function WorkCartoes({ itens }: { itens: WorkItem[] }) {
   return (
     <div className="p-cartoes">
       <div ref={palco} className="p-cartoes-palco">
+        {controles}
         {semGL ? (
           <ul className="p-cartoes-plano">
             {itens.map((w) => (
