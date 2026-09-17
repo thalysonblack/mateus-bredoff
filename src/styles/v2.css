@@ -857,12 +857,8 @@
    do centro fica na linha do corpo, centrada, sem roubar altura do palco */
 .p-cartoes { position: relative; display: flex; flex: 1; min-height: 0; flex-direction: column; }
 .p-cartoes-palco { position: relative; flex: 1; min-height: 0; overflow: hidden; margin-inline: calc(var(--p-margem) * -1); }
-/* o rótulo DENTRO do card (medidas do Framer dele, nó 84:73): nome embaixo à
-   esquerda, chips embaixo à direita com scrim de vidro; padding 12 */
-.p-cartao-rotulo { position: absolute; left: 0; top: 0; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding: 12px; box-sizing: border-box; pointer-events: none; will-change: transform, opacity; opacity: 0; }
-.p-cartao-nome { font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 500; font-size: 20px; line-height: 1.25; letter-spacing: -0.02em; color: #fff; text-shadow: 0 1px 14px rgba(0, 0, 0, 0.45); white-space: nowrap; }
-.p-cartao-tags { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
-.p-cartao-tag { font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 500; font-size: 12px; line-height: 1.25; color: #fff; background: rgba(0, 0, 0, 0.54); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 5px 8px; border-radius: 3px; white-space: nowrap; }
+/* o rótulo (nome + chips) é ASSADO na textura do card, em `lib/cartoesWebGL.ts` —
+   em DOM ele escapava do card quando o shader entortava (17/09) */
 /* o cursor "View Case" do original: segue o ponteiro sobre o card do centro */
 .p-cartao-view { position: absolute; left: 0; top: 0; padding: 21px 34px; background: var(--p-ink); color: #fff; font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 400; font-size: 20px; letter-spacing: -0.03em; line-height: 0.78; border-radius: 2px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.18s ease; will-change: transform; z-index: 2; }
 .p-cartoes-plano { list-style: none; margin: 0; padding: 0; display: flex; gap: 16px; height: 100%; align-items: center; overflow-x: auto; padding-inline: var(--p-margem); }

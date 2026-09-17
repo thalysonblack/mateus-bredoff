@@ -10,10 +10,9 @@ import { prefersReducedMotion } from "../../lib/gsap";
  * (16/09, "título e tag dentro"): nome embaixo à esquerda, disciplinas em
  * chips embaixo à direita, e o cursor "View Case" sobre o card do centro.
  *
- * Os rótulos são DOM por cima do canvas: um por projeto, posicionado a cada
- * quadro pelo motor (`aoQuadro`) — sem re-render do React, só style. O card
- * é WebGL e o texto é texto: nítido em qualquer dpr, selecionável por leitor
- * de tela, e não passa pelo shader de grão.
+ * ⚠ O rótulo é ASSADO NA TEXTURA, não DOM (17/09, "a tag e o nome saem"): o
+ * card entorta no shader e um rótulo plano por cima escapava dele. O único
+ * DOM que sobra é o cursor "View Case", que segue o ponteiro e não o card.
  *
  * ⚠ sem WebGL (ou com movimento reduzido) a fita vira uma fileira simples de
  * capas com scroll nativo — a peça continua acessível.
@@ -21,7 +20,6 @@ import { prefersReducedMotion } from "../../lib/gsap";
 export function WorkCartoes({ itens }: { itens: WorkItem[] }) {
   const palco = useRef<HTMLDivElement | null>(null);
   const motor = useRef<CartoesWebGL | null>(null);
-  const rotulos = useRef<(HTMLDivElement | null)[]>([]);
   const pilula = useRef<HTMLDivElement | null>(null);
   const [semGL, setSemGL] = useState(false);
   const navigate = useNavigate();
@@ -34,34 +32,9 @@ export function WorkCartoes({ itens }: { itens: WorkItem[] }) {
       setSemGL(true);
       return;
     }
-    const v = criarCartoesWebGL(el, itens.map((w) => w.cover.src), {
+    const v = criarCartoesWebGL(el, itens.map((w) => ({ src: w.cover.src, nome: w.title, tags: w.disciplines })), {
       aoMudarAtivo: () => {},
       aoAbrir: (i) => navigate(`/work/${itens[i].slug}`),
-      aoQuadro: (cards, card) => {
-        const r = el.getBoundingClientRect();
-        const cx = r.width / 2;
-        const cy = r.height / 2;
-        /* cada projeto ganha o slot dele mais perto do centro; os outros somem */
-        const melhor = new Map<number, (typeof cards)[number]>();
-        for (const c of cards) {
-          const m = melhor.get(c.proj);
-          if (!m || Math.abs(c.x) < Math.abs(m.x)) melhor.set(c.proj, c);
-        }
-        rotulos.current.forEach((box, i) => {
-          if (!box) return;
-          const c = melhor.get(i);
-          if (!c || c.op <= 0) {
-            box.style.opacity = "0";
-            return;
-          }
-          const w = card.w * c.sc;
-          const h = card.h * c.sc;
-          box.style.opacity = String(c.op);
-          box.style.width = `${w}px`;
-          box.style.height = `${h}px`;
-          box.style.transform = `translate3d(${cx + c.x - w / 2}px, ${cy - h / 2}px, 0)`;
-        });
-      },
       aoPonteiro: (p: Ponteiro) => {
         const pil = pilula.current;
         if (!pil) return;
@@ -98,25 +71,6 @@ export function WorkCartoes({ itens }: { itens: WorkItem[] }) {
           </ul>
         ) : (
           <>
-            {itens.map((w, i) => (
-              <div
-                key={w.slug}
-                ref={(n) => {
-                  rotulos.current[i] = n;
-                }}
-                className="p-cartao-rotulo"
-                aria-hidden="true"
-              >
-                <span className="p-cartao-nome">{w.title}</span>
-                <span className="p-cartao-tags">
-                  {w.disciplines.map((d) => (
-                    <span key={d} className="p-cartao-tag">
-                      {d}
-                    </span>
-                  ))}
-                </span>
-              </div>
-            ))}
             <div ref={pilula} className="p-cartao-view" aria-hidden="true">
               View Case
             </div>

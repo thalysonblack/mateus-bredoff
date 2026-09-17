@@ -151,9 +151,61 @@ export type CartoesWebGL = {
 export type QuadroCard = { proj: number; x: number; sc: number; op: number };
 export type Ponteiro = { centro: boolean; x: number; y: number } | null;
 
+export type Carta = { src: string; nome: string; tags: string[] };
+
+/* ⭐ O RÓTULO É ASSADO NA TEXTURA (17/09: "a tag e o nome saem"). O card
+   entorta no shader (barril, tigela, onda) e um rótulo em DOM fica plano —
+   na primeira curva ele escapava do card. Desenhando nome e chips no MESMO
+   bitmap da capa, eles entortam junto, sempre colados. Medidas do Framer dele
+   (nó 84:73) escaladas do card de 634 px para a textura de 1800: padding 12,
+   nome Geist 500 20px, chip 12px com 5×8 de padding e raio 3, gap 8. */
+const TEX_W = 1800;
+const TEX_H = TEX_W / ASPECTO;
+const K = TEX_W / 634;
+function assarCarta(im: HTMLImageElement, carta: Carta): HTMLCanvasElement {
+  const c = document.createElement("canvas");
+  c.width = TEX_W;
+  c.height = TEX_H;
+  const ctx = c.getContext("2d")!;
+  /* a capa em cover */
+  const ia = im.naturalWidth / im.naturalHeight;
+  let dw = TEX_W;
+  let dh = TEX_H;
+  if (ia > ASPECTO) dw = TEX_H * ia;
+  else dh = TEX_W / ia;
+  ctx.drawImage(im, (TEX_W - dw) / 2, (TEX_H - dh) / 2, dw, dh);
+  const pad = 12 * K;
+  /* chips, da direita para a esquerda */
+  ctx.font = `500 ${12 * K}px Geist, ui-sans-serif, sans-serif`;
+  ctx.textBaseline = "middle";
+  const chipH = (12 * 1.25 + 10) * K;
+  let x = TEX_W - pad;
+  const cy = TEX_H - pad - chipH / 2;
+  for (const t of [...carta.tags].reverse()) {
+    const tw = ctx.measureText(t).width + 16 * K;
+    x -= tw;
+    ctx.fillStyle = "rgba(0,0,0,0.54)";
+    ctx.beginPath();
+    ctx.roundRect(x, cy - chipH / 2, tw, chipH, 3 * K);
+    ctx.fill();
+    ctx.fillStyle = "#fff";
+    ctx.fillText(t, x + 8 * K, cy + 0.5 * K);
+    x -= 8 * K;
+  }
+  /* o nome, com a sombra difusa que lê em capa clara e escura */
+  ctx.font = `500 ${20 * K}px Geist, ui-sans-serif, sans-serif`;
+  ctx.textBaseline = "alphabetic";
+  ctx.shadowColor = "rgba(0,0,0,0.45)";
+  ctx.shadowBlur = 14 * K;
+  ctx.shadowOffsetY = 1 * K;
+  ctx.fillStyle = "#fff";
+  ctx.fillText(carta.nome, pad, TEX_H - pad - 6 * K);
+  return c;
+}
+
 export function criarCartoesWebGL(
   alvo: HTMLElement,
-  fontes: string[],
+  fontes: Carta[],
   ganchos: {
     aoMudarAtivo: (i: number) => void;
     aoAbrir: (i: number) => void;
@@ -183,15 +235,21 @@ export function criarCartoesWebGL(
      multiplica x e y, então o resize não recria geometria */
   const geo = new Plane(gl, { width: 1, height: 1, widthSegments: 64, heightSegments: 32 });
 
-  const texturas = fontes.map((src) => {
-    const tex = new Texture(gl, { generateMipmaps: false, wrapS: gl.CLAMP_TO_EDGE, wrapT: gl.CLAMP_TO_EDGE, minFilter: gl.LINEAR, magFilter: gl.LINEAR, flipY: true });
+  /* ⚠ mipmaps ligados: a textura de 1800 cai para 280–900 px na tela e, sem
+     eles, o texto do rótulo cintila. O OGL abre WebGL2 quando há, e lá
+     mipmap não exige potência de dois. */
+  const fontePronta = document.fonts.load("500 20px Geist").catch(() => []);
+  const texturas = fontes.map((carta) => {
+    const tex = new Texture(gl, { generateMipmaps: true, wrapS: gl.CLAMP_TO_EDGE, wrapT: gl.CLAMP_TO_EDGE, minFilter: gl.LINEAR_MIPMAP_LINEAR, magFilter: gl.LINEAR, flipY: true });
     const im = new Image();
     im.onload = () => {
-      tex.image = im;
-      tex.needsUpdate = true;
-      (tex as Texture & { aspecto?: number }).aspecto = im.naturalWidth / im.naturalHeight;
+      fontePronta.then(() => {
+        tex.image = assarCarta(im, carta);
+        tex.needsUpdate = true;
+        (tex as Texture & { aspecto?: number }).aspecto = ASPECTO;
+      });
     };
-    im.src = src;
+    im.src = carta.src;
     return tex;
   });
 
