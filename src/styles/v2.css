@@ -3726,3 +3726,50 @@ a.pz-materia:hover { color: var(--p-acento); }
    colunas do recibo para longe das da tabela (633/764 contra 669/843) */
 .pn-recibo-linha .pn-recibo-preco { grid-column: 4; grid-row: 1; justify-self: end; align-self: baseline; }
 .pn-tabela .p-prova-titulo a { color: inherit; }
+
+/* ── RECOGNITION (17/09, "assim" — ref: features + awards de portfólio) ────
+   Dois sub-blocos com rótulo miúdo em versalete mono (o `.p-marca` da casa),
+   separados por vão, não por fio. */
+.pn-sub { display: grid; row-gap: 20px; }
+.pn-sub + .pn-sub { margin-top: 64px; }
+.pn-sub-rotulo { text-transform: uppercase; }
+
+/* 1) as fitas do Behance: a mesma fita do perfil (entalhe em V, sigla em peso
+   alto), na escala da referência (34×58), com a contagem em mono embaixo.
+   Desenhada em CSS — sem raster, sem webfont de terceiro. */
+.pn-fitas { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 14px; }
+.pn-fita-item { display: grid; justify-items: center; row-gap: 6px; }
+.pn-fita {
+  display: grid; place-items: start center;
+  width: 34px; height: 58px; padding-top: 12px;
+  color: #fff;
+  font-family: 'Geist', ui-sans-serif, sans-serif; font-style: normal; font-weight: 700;
+  font-size: 15px; line-height: 1; letter-spacing: -0.01em;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+}
+.pn-fita-n { font-size: 12px; }
+
+/* 2) published in: uma linha por projeto — nome em escala de página (o degrau
+   do preço, 2,6vw, peso 300), logos à direita em quieto, na altura dos
+   versaletes da linha. Cada logo é o link da matéria. */
+.pn-publicado { list-style: none; margin: 0; padding: 0; }
+.pn-publicado-linha {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--p-gap-x);
+  align-items: center; padding: 26px 0;
+}
+.pn-publicado-linha:last-child { border-bottom: 1px solid var(--p-fio); }
+.pn-publicado-nome {
+  font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 300;
+  font-size: clamp(26px, 2.6vw, 44px); line-height: 1; letter-spacing: -0.035em;
+}
+.pn-publicado-logos { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 12px 28px; color: var(--p-quieto); }
+.pn-publicado-logo { display: inline-flex; align-items: center; color: inherit; text-decoration: none; transition: color 0.2s ease-out; }
+a.pn-publicado-logo:hover { color: var(--p-ink); }
+.pn-logo--publicado { width: auto; height: 22px; }
+.pn-logo-abz--publicado { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; }
+@media (max-width: 860px) {
+  .pn-sub + .pn-sub { margin-top: 48px; }
+  .pn-publicado-linha { grid-template-columns: minmax(0, 1fr); row-gap: 14px; padding: 20px 0; }
+  .pn-publicado-logos { justify-content: flex-start; }
+  .pn-logo--publicado { height: auto; max-height: 26px; }
+}

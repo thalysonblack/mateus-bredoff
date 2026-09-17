@@ -55,12 +55,38 @@ import logoWbdSimbolo from "../../assets/logos/wbds-simbolo.png";
 
 
 /* os logos dos veículos (máscara na cor da tinta); quem não tem, entra tipográfico */
-const LOGOS_VEICULO: Record<string, { src: string; ratio: string; simbolo?: string }> = {
-  Behance: { src: logoBehance, ratio: "152.5 / 28.2" },
+const LOGOS_VEICULO: Record<string, { src: string; ratio: string; simbolo?: string; altura?: number }> = {
+  /* `altura`: peso óptico na linha do Recognition — o wordmark do Behance é
+     largo e lê a 20; o logo composto da WBDS (brasão + duas linhas) só lê a 34 */
+  Behance: { src: logoBehance, ratio: "152.5 / 28.2", altura: 20 },
   /* na LINHA da tabela o logo composto (brasão + wordmark em duas linhas) não
      lê a 15px: entra o SÍMBOLO + o nome em versalete */
-  "World Brand Design": { src: logoWbd, ratio: "350 / 102", simbolo: logoWbdSimbolo },
+  "World Brand Design": { src: logoWbd, ratio: "350 / 102", simbolo: logoWbdSimbolo, altura: 34 },
 };
+
+/* As fitas do Behance, derivadas do que está em reconhecimento.ts (selo por
+   galeria). Dourado do Behance escurecido para passar em contraste — mesma
+   decisão do `.v3-selo`. Só existe fita para curadoria com `selo`. */
+const FITAS = (() => {
+  const gal: Record<string, { sigla: string; nome: string; cor: string; n: number }> = {};
+  for (const r of RECONHECIMENTO) {
+    if (r.selo === "behance-gr") {
+      gal.gr ??= { sigla: "Gr", nome: "Graphic Design", cor: "#8c7137", n: 0 };
+      gal.gr.n += 1;
+    }
+  }
+  return Object.values(gal);
+})();
+
+/* Published in, por PROJETO (o Trivo tem dois veículos): ordem = ano mais
+   recente primeiro, e dentro do projeto a ordem do arquivo. */
+const POR_PROJETO = (() => {
+  const m = new Map<string, typeof RECONHECIMENTO[number][]>();
+  for (const r of RECONHECIMENTO) m.set(r.projeto, [...(m.get(r.projeto) ?? []), r]);
+  return [...m.entries()]
+    .map(([projeto, itens]) => ({ projeto, itens, ano: Math.max(...itens.map((i) => i.ano)) }))
+    .sort((a, b) => b.ano - a.ano);
+})();
 
 /* os ícones dos tiers: um símbolo (a marca), as camadas (as aplicações), a grade (o sistema) */
 const ICONES_TIER = [Hexagon, Layers, LayoutGrid];
@@ -368,7 +394,7 @@ export default function AboutV2() {
         <aside className="pn-indice" aria-label="Contents">
           <p className="p-rotulo">Contents</p>
           <ol className="pn-indice-lista">
-            {[["method", "Method"], ["services", "Services"], ["published", "Published in"]].map(([id, nome], k) => (
+            {[["method", "Method"], ["services", "Services"], ["published", "Recognition"]].map(([id, nome], k) => (
               <li key={id} className="pn-indice-item" data-indice={id}>
                 <a href={`#${id}`} className="p-item"><span className="p-marca pn-indice-n">{String(k + 1).padStart(2, "0")}</span> {nome}</a>
               </li>
@@ -431,31 +457,56 @@ export default function AboutV2() {
 
           <article id="published" className="pn-bloco" data-bloco="published">
             <header className="pn-bloco-cab">
-              <h2 className="p-servico-nome pn-bloco-titulo">Published in</h2>
+              <h2 className="p-servico-nome pn-bloco-titulo">Recognition</h2>
             </header>
-            <ul className="p-prova-tabela pn-tabela">
-              {RECONHECIMENTO.map((r, i) => (
-                <li key={i} className="p-fio p-sobe p-prova-linha">
-                  {/* "melhorar" (12/09): o que a pessoa procura aqui é ONDE saiu e O QUÊ —
-                      o logo e o título levam a tinta; o projeto recua para quieto */}
-                  <span className="p-corpo" style={{ color: "var(--p-quieto)" }}>{r.projeto}</span>
-                  <span className="pn-tabela-veiculo">
-                    {LOGOS_VEICULO[r.veiculo]?.simbolo ? (
-                      <>
-                        <span className="pn-logo pn-logo--simbolo" style={{ ["--logo" as string]: `url("${LOGOS_VEICULO[r.veiculo].simbolo}")` }} aria-hidden="true" />
-                        <span className="pn-logo-abz pn-logo-abz--linha">{r.veiculo}</span>
-                      </>
-                    ) : LOGOS_VEICULO[r.veiculo] ? (
-                      <span className="pn-logo pn-logo--linha" style={{ ["--logo" as string]: `url("${LOGOS_VEICULO[r.veiculo].src}")`, aspectRatio: LOGOS_VEICULO[r.veiculo].ratio }} role="img" aria-label={r.veiculo} />
-                    ) : (
-                      <span className="pn-logo-abz pn-logo-abz--linha">{r.veiculo}</span>
-                    )}
-                  </span>
-                  <span className="p-item p-prova-titulo">{r.href ? <a href={r.href} target="_blank" rel="noopener noreferrer" className="p-link">{r.titulo}</a> : r.titulo}</span>
-                  <span className="p-marca p-prova-ano" style={{ color: "var(--p-quieto)" }}>{r.ano}</span>
-                </li>
-              ))}
-            </ul>
+
+            {/* "assim" (17/09, ref: features + awards de um portfólio): dois sub-blocos
+                com rótulo miúdo. 1) BEHANCE FEATURES — a fita como o Behance a mostra
+                no perfil, com a contagem embaixo (só o que está em reconhecimento.ts:
+                hoje uma curadoria, uma fita, "1"). */}
+            <div className="pn-sub">
+              <span className="p-marca pn-sub-rotulo">Behance features</span>
+              <ul className="pn-fitas">
+                {FITAS.map((f) => (
+                  <li key={f.sigla} className="pn-fita-item" title={f.nome}>
+                    <i className="pn-fita" style={{ background: f.cor }} aria-hidden="true">{f.sigla}</i>
+                    <span className="p-marca pn-fita-n">{f.n}</span>
+                    <span className="sr-only">{f.nome}: {f.n}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* 2) PUBLISHED IN — uma linha por projeto, o nome em escala de página à
+                esquerda e, à direita, o logo de cada veículo que o publicou (o logo É
+                o link da matéria; o título vai no title/aria). Sem ano, sem título:
+                a linha diz "quem escolheu mostrar isto". */}
+            <div className="pn-sub">
+              <span className="p-marca pn-sub-rotulo">Published in</span>
+              <ul className="pn-publicado">
+                {POR_PROJETO.map(({ projeto, itens }) => (
+                  <li key={projeto} className="p-fio p-sobe pn-publicado-linha">
+                    <span className="pn-publicado-nome">{projeto}</span>
+                    <span className="pn-publicado-logos">
+                      {itens.map((r, i) => {
+                        const L = LOGOS_VEICULO[r.veiculo];
+                        const rotulo = `${r.veiculo} — ${r.titulo}`;
+                        const miolo = L ? (
+                          <span className="pn-logo pn-logo--publicado" style={{ ["--logo" as string]: `url("${L.src}")`, aspectRatio: L.ratio, height: L.altura ?? 22 }} role="img" aria-label={r.veiculo} />
+                        ) : (
+                          <span className="pn-logo-abz pn-logo-abz--publicado">{r.veiculo}</span>
+                        );
+                        return r.href ? (
+                          <a key={i} href={r.href} target="_blank" rel="noopener noreferrer" className="pn-publicado-logo" title={rotulo} aria-label={rotulo}>{miolo}</a>
+                        ) : (
+                          <span key={i} className="pn-publicado-logo" title={rotulo}>{miolo}</span>
+                        );
+                      })}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </article>
         </div>
       </section>
