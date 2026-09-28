@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router";
 import { prefersReducedMotion } from "../../lib/gsap";
 import { WORK } from "../../content/work";
 import { REEL, REELS } from "../../content/reel";
+import { PECAS } from "../../content/pecas";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha } from "./sistema";
 
@@ -42,6 +43,9 @@ export default function HomeFundo() {
   /* três montagens temporárias do reel, para comparar: ?reel=a|b|c */
   const [params] = useSearchParams();
   const reel = REELS[(params.get("reel") ?? "a") as keyof typeof REELS] ?? REEL.video;
+  /* como o projeto se apresenta no hover (28/09, "outro modelo, diagramação"):
+     prancha (padrão) · sequencia · capa (a tela cheia de antes) */
+  const hover = (params.get("hover") ?? "prancha") as "prancha" | "sequencia" | "capa";
 
   useEffect(() => {
     WORK.forEach((w) => {
@@ -64,7 +68,7 @@ export default function HomeFundo() {
         {WORK.map((w) => w.title).join(", ")}.
       </h1>
 
-      <div className={`p-capa-full p-fundo${sob ? " p-fundo--projeto" : ""}`} aria-hidden="true">
+      <div className={`p-capa-full p-fundo${sob ? (hover === "capa" ? " p-fundo--projeto" : " p-fundo--diagrama") : ""}`} aria-hidden="true">
         {/* camada 1 — o reel */}
         <div className="p-fundo-reel">
           {REEL.video ? (
@@ -90,10 +94,33 @@ export default function HomeFundo() {
           )}
         </div>
         {/* camada 2 — o projeto sob o cursor, por cima do reel */}
-        {sob ? (
+        {sob && hover === "capa" ? (
           <img key={`p-${sob.slug}`} className="p-fundo-projeto p-fundo-entra" src={sob.cover.src2x ?? sob.cover.src} alt="" draggable={false} />
         ) : null}
       </div>
+
+      {/* A DIAGRAMAÇÃO — o projeto se monta sobre o reel apagado. Cada peça
+          sobe pela máscara em cascata (--i), o mesmo gesto de entrada do site. */}
+      {sob && hover !== "capa" ? (
+        <div key={`${hover}-${sob.slug}`} className={`p-diag p-diag--${hover}`} aria-hidden="true">
+          <div className="p-diag-ficha">
+            <span className="p-marca">
+              {String(WORK.indexOf(sob) + 1).padStart(2, "0")} / {String(n).padStart(2, "0")}
+            </span>
+            <span className="p-diag-nome">{sob.title}</span>
+            <span className="p-marca">
+              {sob.disciplines.join(", ")} · {sob.year}
+            </span>
+          </div>
+          <div className="p-diag-pecas">
+            {(hover === "prancha" ? PECAS[sob.slug].slice(0, 3) : PECAS[sob.slug].slice(0, 4)).map((src, i) => (
+              <span key={src + i} className="p-diag-peca" style={{ ["--i" as string]: i }}>
+                <img src={src} alt="" draggable={false} />
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       <section className="p-fundo-base">
         <div className="p-fundo-rotulo">
