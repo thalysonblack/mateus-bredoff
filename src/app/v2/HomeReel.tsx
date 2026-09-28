@@ -3,10 +3,10 @@ import { Link } from "react-router";
 import { prefersReducedMotion } from "../../lib/gsap";
 import { WORK } from "../../content/work";
 import { REEL } from "../../content/reel";
-import { corDe } from "../../content/cores";
 import { RECONHECIMENTO } from "../../content/reconhecimento";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha, Bloco } from "./sistema";
+import { WorkLista } from "./WorkLista";
 
 /**
  * HOME — O REEL ABRE A CASA (28/09, áudios do Mateus de 16–17/09).
@@ -16,7 +16,8 @@ import { Prancha, Bloco } from "./sistema";
  * trama, *"de Boreal pra Alex Archer é só um tracinho — onde termina um,
  * começa outro?"*. Como índice, a fita de nomes pedia leitura; como abertura,
  * ela escondia a matéria. Então a ordem virou a de quem chega sem saber nada:
- * o filme (quem é), o trabalho em cartões com borda (o que fez), a prova.
+ * o filme (quem é), a prova, e o trabalho na LISTA da /work — um projeto por
+ * linha (28/09: "reel + lista da /work", escolhido por ele entre 4 montagens).
  *
  * A trama não morreu — ele pediu para guardar: virou a chamada de "próximo
  * projeto" no fim de cada case (`Case.tsx`), onde ela é convite e não índice.
@@ -119,40 +120,16 @@ export default function HomeReel() {
         </div>
       </section>
 
-      {/* ─ o trabalho: um cartão por projeto, com borda — nunca dúvida de onde
-          um termina e o outro começa ──────────────────────────────────── */}
-      <section className="pt-24 max-md:pt-14">
+      {/* ─ o trabalho: a LISTA da /work (tabela + coluna), uma tela de altura.
+          A tabela dá a fronteira que a trama não dava — um projeto por linha. ─ */}
+      <section className="p-home-lista pt-24 max-md:pt-14">
         <div className="flex items-baseline justify-between pb-4">
           <p className="p-rotulo">Selected work — {String(n).padStart(2, "0")}</p>
           <Link to="/work" className="p-corpo p-link">
             All work →
           </Link>
         </div>
-        <ul className="p-hobras">
-          {WORK.map((w, i) => (
-            <li key={w.slug}>
-              <Link to={`/work/${w.slug}`} className="p-hobra" style={{ ["--cor" as string]: corDe(w.slug) }}>
-                <span className="p-hobra-arte">
-                  <img
-                    src={w.cover.src}
-                    srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
-                    sizes="(max-width: 768px) 92vw, 46vw"
-                    alt={w.cover.alt}
-                    loading={i > 1 ? "lazy" : undefined}
-                    decoding="async"
-                    draggable={false}
-                  />
-                </span>
-                <span className="p-hobra-ficha">
-                  <span className="p-item p-hobra-nome">{w.title}</span>
-                  <span className="p-marca" style={{ color: "var(--p-quieto)" }}>
-                    {w.disciplines.slice(0, 2).join(", ")} · {w.year}
-                  </span>
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <WorkLista dirigePelaRoda={false} />
       </section>
 
       {aberto && REEL.video ? (

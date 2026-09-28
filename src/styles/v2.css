@@ -3825,44 +3825,14 @@ button.p-abre-palco { cursor: pointer; }
   .p-abre-entra { animation: none; }
 }
 
-/* o trabalho em cartões: duas colunas, a arte em 3:2 (a proporção dos cards
-   do Framer dele), a ficha embaixo — nome à esquerda, disciplina e ano à
-   direita. A borda do cartão é a resposta ao "onde termina um?" */
-.p-hobras {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: var(--p-gap-x);
-  row-gap: calc(var(--p-gap-y) * 1.5);
-}
+/* a lista da /work dentro da home: altura de uma tela, e a coluna NÃO sobe
+   por baixo do menu nem desce sob a régua (lá ela é rota de tela; aqui é
+   seção de uma página que rola) */
+.p-home-lista { display: flex; flex-direction: column; height: calc(100svh - var(--p-menu-h, 77px)); min-height: 560px; }
+.p-home-lista .p-arquivo-visor { margin-top: 0; margin-bottom: 0; }
 @media (max-width: 768px) {
-  .p-hobras { grid-template-columns: 1fr; }
+  .p-home-lista { height: auto; min-height: 0; }
 }
-.p-hobra { display: block; }
-.p-hobra-arte {
-  display: block;
-  aspect-ratio: 3 / 2;
-  overflow: hidden;
-  background: var(--p-fio);
-}
-.p-hobra-arte img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.p-hobra:hover .p-hobra-arte img,
-.p-hobra:focus-visible .p-hobra-arte img { transform: scale(1.03); }
-.p-hobra-ficha {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  padding-top: 12px;
-}
-.p-hobra-nome { transition: color 0.3s ease-out; }
-.p-hobra:hover .p-hobra-nome,
-.p-hobra:focus-visible .p-hobra-nome { color: var(--cor, var(--p-acento)); }
 
 /* ── CASE: A TRAMA NO FIM, COMO "PRÓXIMO PROJETO" (28/09) ─────────────────── */
 .p-segue {
