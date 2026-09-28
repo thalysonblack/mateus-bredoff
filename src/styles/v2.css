@@ -3773,3 +3773,149 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
   .pn-publicado-logos { justify-content: flex-start; }
   .pn-logo--publicado { height: auto; max-height: 26px; }
 }
+
+/* ── HOME: O REEL DE FUNDO (28/09) ─────────────────────────────────────────
+   Ver `v2/HomeFundo.tsx`. Medidas do frame "BNB - Home" (1920): cartão
+   200×155 = 10,42vw × 8,07vw, vão 12, nome 12px acima, respiro de 12 nas
+   bordas. A frase e a faixa dividem a mesma base. */
+.p-fundo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: #0d0f0f;
+}
+.p-fundo img,
+.p-fundo video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+/* a troca de capa: a nova assenta por cima, sem corte seco */
+.p-fundo-entra { animation: p-fundo-entra 1s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes p-fundo-entra {
+  from { opacity: 0; transform: scale(1.04); }
+  to { opacity: 1; transform: scale(1); }
+}
+/* só o terço de baixo escurece, para a frase e os nomes lerem sobre qualquer
+   capa — o resto do quadro fica como o filme é */
+.p-fundo::after {
+  content: "";
+  position: absolute;
+  inset: 55% 0 0 0;
+  background: linear-gradient(to bottom, transparent, rgba(8, 10, 10, 0.62));
+  pointer-events: none;
+}
+.p-tela:has(.p-fundo) > div > footer { display: none; }
+.p-tela:has(.p-fundo) > div > .p-menu { z-index: 3; }
+
+.p-fundo-base {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: var(--p-margem-y);
+  color: #e9e3e1;
+}
+.p-fundo-frase {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: clamp(22px, 2.08vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  flex: none;
+}
+.p-fundo-faixa {
+  display: flex;
+  gap: 12px;
+  min-width: 0;
+}
+.p-fundo-cartao {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: clamp(120px, 10.42vw, 200px);
+  color: inherit;
+  text-decoration: none;
+}
+.p-fundo-nome {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-size: 12px;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: rgba(233, 227, 225, 0.62);
+  transition: color 0.3s ease-out;
+}
+.p-fundo-arte {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 200 / 155;
+  overflow: hidden;
+  border-radius: 2px;
+  background: rgba(233, 227, 225, 0.14);
+  outline: 1px solid transparent;
+  outline-offset: 3px;
+  transition: outline-color 0.3s ease-out;
+}
+.p-fundo-arte img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.p-fundo-cartao:hover .p-fundo-arte img,
+.p-fundo-cartao:focus-visible .p-fundo-arte img { transform: scale(1.04); }
+/* o projeto que está no fundo: nome aceso e o fio em volta do cartão */
+.p-fundo-cartao.on .p-fundo-nome,
+.p-fundo-cartao:hover .p-fundo-nome,
+.p-fundo-cartao:focus-visible .p-fundo-nome { color: #e9e3e1; }
+.p-fundo-cartao.on .p-fundo-arte { outline-color: rgba(233, 227, 225, 0.7); }
+.p-fundo-mais .p-fundo-arte {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 300;
+  font-size: clamp(28px, 2.6vw, 48px);
+  backdrop-filter: blur(12px);
+}
+.p-fundo-mais:hover .p-fundo-arte { background: rgba(233, 227, 225, 0.24); }
+
+/* nove cartões não cabem ao lado da frase: a faixa ocupa o resto da base e
+   ROLA de lado (roda ou arraste), apagando na borda direita — mostra que
+   continua, como a coluna de peças do frame */
+.p-fundo-faixa {
+  flex: 1;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  margin-right: calc(var(--p-margem) * -1);
+  padding: 4px var(--p-margem) 4px 4px;
+  mask-image: linear-gradient(90deg, #000 88%, transparent);
+}
+.p-fundo-faixa::-webkit-scrollbar { display: none; }
+.p-fundo-faixa > li { flex: none; }
+@media (max-width: 860px) {
+  .p-fundo-base { flex-direction: column; align-items: stretch; }
+}
+/* ⚠ o menu NÃO usa `difference` aqui: o fundo troca de capa, e sobre campo
+   chapado saturado (a Ginga) o blend devolvia o menu em turquesa. Sólido, e
+   um véu curto no topo para ler sobre capa clara. */
+.p-tela:has(.p-fundo) > div > .p-menu { mix-blend-mode: normal; }
+.p-fundo::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 22%;
+  z-index: 1;
+  background: linear-gradient(to top, transparent, rgba(8, 10, 10, 0.45));
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .p-fundo-entra { animation: none; }
+}
