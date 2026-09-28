@@ -3773,3 +3773,131 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
   .pn-publicado-logos { justify-content: flex-start; }
   .pn-logo--publicado { height: auto; max-height: 26px; }
 }
+
+/* ── HOME: O REEL ABRE A CASA (28/09) ──────────────────────────────────────
+   Ver o cabeçalho de `v2/HomeReel.tsx`. O palco sangra a tela e começa rente
+   ao menu; a legenda fica FORA da imagem (texto sobre foto não entra). */
+.p-abre {
+  margin-inline: calc(var(--p-margem) * -1);
+}
+.p-abre-palco {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: calc(100svh - var(--p-menu-h, 77px) - 40px);
+  min-height: 320px;
+  overflow: hidden;
+  background: var(--p-ink);
+  padding: 0;
+  border: 0;
+}
+button.p-abre-palco { cursor: pointer; }
+/* no celular a tela é retrato e o reel é 16:9 — em altura cheia o corte
+   comia a peça; aqui o palco assume a proporção do filme */
+@media (max-width: 768px) {
+  .p-abre-palco { height: auto; min-height: 0; aspect-ratio: 16 / 9; }
+}
+.p-abre-palco img,
+.p-abre-palco video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+/* a capa que entra sobe pela máscara — o mesmo gesto de abertura do visor da
+   home D, para o site ter um vocabulário de entrada só */
+.p-abre-entra {
+  animation: p-abre-entra 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes p-abre-entra {
+  from { clip-path: inset(100% 0 0 0); transform: scale(1.06); }
+  to { clip-path: inset(0 0 0 0); transform: scale(1); }
+}
+.p-abre-legenda {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px var(--p-margem) 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .p-abre-entra { animation: none; }
+}
+
+/* o trabalho em cartões: duas colunas, a arte em 3:2 (a proporção dos cards
+   do Framer dele), a ficha embaixo — nome à esquerda, disciplina e ano à
+   direita. A borda do cartão é a resposta ao "onde termina um?" */
+.p-hobras {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--p-gap-x);
+  row-gap: calc(var(--p-gap-y) * 1.5);
+}
+@media (max-width: 768px) {
+  .p-hobras { grid-template-columns: 1fr; }
+}
+.p-hobra { display: block; }
+.p-hobra-arte {
+  display: block;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--p-fio);
+}
+.p-hobra-arte img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.p-hobra:hover .p-hobra-arte img,
+.p-hobra:focus-visible .p-hobra-arte img { transform: scale(1.03); }
+.p-hobra-ficha {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 12px;
+}
+.p-hobra-nome { transition: color 0.3s ease-out; }
+.p-hobra:hover .p-hobra-nome,
+.p-hobra:focus-visible .p-hobra-nome { color: var(--cor, var(--p-acento)); }
+
+/* ── CASE: A TRAMA NO FIM, COMO "PRÓXIMO PROJETO" (28/09) ─────────────────── */
+.p-segue {
+  padding-top: calc(var(--p-gap-y) * 4);
+  margin-inline: calc(var(--p-margem) * -1);
+}
+.p-segue > div:first-child { padding-inline: var(--p-margem); }
+.p-segue-linha .p-trama-fita { gap: 0; }
+.p-segue-linha + .p-segue-linha .p-trama-fita { animation-duration: 83s; }
+.p-segue-item {
+  display: inline-flex;
+  align-items: center;
+}
+.p-segue-nome {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: clamp(44px, 8.4vw, 132px);
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+  color: var(--p-ink);
+  transition: color 0.3s ease-out, opacity 0.3s ease-out;
+}
+/* o separador: um quadrado cheio com ar dos dois lados — o "·" colado lia
+   como parte do nome e as marcas se emendavam */
+.p-segue-sep {
+  width: 0.14em;
+  height: 0.14em;
+  margin-inline: 0.42em;
+  font-size: clamp(44px, 8.4vw, 132px);
+  background: var(--p-quieto);
+}
+.p-segue-linha:hover .p-segue-nome { opacity: 0.4; }
+.p-segue-linha .p-segue-nome:hover,
+.p-segue-linha .p-segue-nome:focus-visible {
+  opacity: 1;
+  color: var(--cor, var(--p-acento));
+}

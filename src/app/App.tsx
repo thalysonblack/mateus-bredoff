@@ -29,6 +29,7 @@ import HomeA from "./v2/HomeA";
 import HomeB from "./v2/HomeB";
 import HomeC from "./v2/HomeC";
 import HomeD from "./v2/HomeD";
+import HomeReel from "./v2/HomeReel";
 import HomeE from "./v2/HomeE";
 import HomeF from "./v2/HomeF";
 import HomeG from "./v2/HomeG";
@@ -200,7 +201,7 @@ export default function App() {
               `/`, `/about`, `/work`, `/work/:slug`, `/lab` são as do CMS dele e
               do original, muda só quem as monta. Por isso `content/meta.ts` e o
               pré-render seguem valendo sem uma linha alterada. */}
-          <Route path="/" element={<HomeD fluidoModo={4} />} />
+          <Route path="/" element={<HomeReel />} />
           <Route path="/about" element={<PranchaAbout />} />
           <Route path="/work" element={<PranchaWork />} />
           <Route path="/work/:slug" element={<PranchaCase />} />
