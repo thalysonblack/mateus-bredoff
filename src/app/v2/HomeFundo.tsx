@@ -45,7 +45,9 @@ export default function HomeFundo() {
   const reel = REELS[(params.get("reel") ?? "a") as keyof typeof REELS] ?? REEL.video;
   /* como o projeto se apresenta no hover (28/09, "outro modelo, diagramação"):
      prancha (padrão) · sequencia · capa (a tela cheia de antes) */
-  const hover = (params.get("hover") ?? "prancha") as "prancha" | "sequencia" | "capa";
+  const hover = (params.get("hover") ?? "prancha") as "prancha" | "sequencia" | "metade" | "cartaz" | "pilha" | "capa";
+  /* quantas peças cada modelo monta */
+  const quantas = { prancha: 3, sequencia: 4, metade: 1, cartaz: 1, pilha: 4, capa: 0 }[hover] ?? 3;
 
   useEffect(() => {
     WORK.forEach((w) => {
@@ -113,7 +115,7 @@ export default function HomeFundo() {
             </span>
           </div>
           <div className="p-diag-pecas">
-            {(hover === "prancha" ? PECAS[sob.slug].slice(0, 3) : PECAS[sob.slug].slice(0, 4)).map((src, i) => (
+            {PECAS[sob.slug].slice(hover === "cartaz" && PECAS[sob.slug].length > 1 ? 1 : 0).slice(0, quantas).map((src, i) => (
               <span key={src + i} className="p-diag-peca" style={{ ["--i" as string]: i }}>
                 <img src={src} alt="" draggable={false} />
               </span>
