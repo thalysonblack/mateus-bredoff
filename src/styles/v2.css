@@ -3805,8 +3805,8 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
 .p-fundo::after {
   content: "";
   position: absolute;
-  inset: 55% 0 0 0;
-  background: linear-gradient(to bottom, transparent, rgba(8, 10, 10, 0.62));
+  inset: 40% 0 0 0;
+  background: linear-gradient(to bottom, transparent, rgba(8, 10, 10, 0.78));
   pointer-events: none;
 }
 .p-tela:has(.p-fundo) > div > footer { display: none; }
@@ -3832,17 +3832,21 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
   align-items: end;
   padding-bottom: var(--p-margem-y);
   color: #e9e3e1;
-  --p-quieto: rgba(233, 227, 225, 0.62);
-  --p-fio: rgba(233, 227, 225, 0.22);
+  --p-quieto: rgba(233, 227, 225, 0.74);
+  --p-fio: rgba(233, 227, 225, 0.16);
 }
+/* 28/09: "diminui a largura, tira o ano, melhora leitura" — a tabela nasce na
+   coluna da hora e para antes da metade da tela: nome e disciplina lado a
+   lado, sem o vão de meia tela que separava um do outro */
+.p-fundo-tabela { width: min(100%, 620px); }
 .p-fundo-base .p-rotulo { color: var(--p-quieto); }
 .p-fundo-tabela { border-bottom: 1px solid var(--p-fio); }
 .p-fundo-linha {
   display: grid;
-  grid-template-columns: 3rem minmax(0, 1.4fr) minmax(0, 1fr) 4rem;
+  grid-template-columns: 2.4rem minmax(0, 1fr) minmax(0, 1.25fr);
   column-gap: var(--p-grade-vao);
   align-items: baseline;
-  padding: 9px 0;
+  padding: 11px 0;
   border-top: 1px solid var(--p-fio);
   color: inherit;
   text-decoration: none;
@@ -3858,8 +3862,8 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
 .p-fundo-todos:hover .p-item { color: #e9e3e1; }
 @media (max-width: 860px) {
   .p-fundo-base { grid-template-columns: 1fr; row-gap: 20px; }
-  .p-fundo-linha { grid-template-columns: 2.2rem minmax(0, 1fr) auto; }
-  .p-fundo-linha .p-fundo-meta:not(.text-right) { display: none; }
+  .p-fundo-linha { grid-template-columns: 2.2rem minmax(0, 1fr); }
+  .p-fundo-linha .p-fundo-meta { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .p-fundo-entra { animation: none; }

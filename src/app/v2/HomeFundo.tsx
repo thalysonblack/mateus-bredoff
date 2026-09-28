@@ -97,7 +97,6 @@ export default function HomeFundo() {
                 <span className="p-marca">{String(i + 1).padStart(2, "0")}</span>
                 <span className="p-item">{w.title}</span>
                 <span className="p-corpo p-fundo-meta">{w.disciplines.join(", ")}</span>
-                <span className="p-corpo p-fundo-meta text-right">{w.year}</span>
               </Link>
             </li>
           ))}
