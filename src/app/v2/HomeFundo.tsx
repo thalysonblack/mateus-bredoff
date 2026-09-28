@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { prefersReducedMotion } from "../../lib/gsap";
 import { WORK } from "../../content/work";
-import { REEL } from "../../content/reel";
+import { REEL, REELS } from "../../content/reel";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha } from "./sistema";
 
@@ -39,6 +39,9 @@ export default function HomeFundo() {
   const [k, setK] = useState(0);
   const [sob, setSob] = useState<(typeof WORK)[number] | null>(null);
   const n = WORK.length;
+  /* três montagens temporárias do reel, para comparar: ?reel=a|b|c */
+  const [params] = useSearchParams();
+  const reel = REELS[(params.get("reel") ?? "a") as keyof typeof REELS] ?? REEL.video;
 
   useEffect(() => {
     WORK.forEach((w) => {
@@ -65,7 +68,23 @@ export default function HomeFundo() {
         {/* camada 1 — o reel */}
         <div className="p-fundo-reel">
           {REEL.video ? (
-            <video src={REEL.video} autoPlay muted loop playsInline poster={REEL.capa.src} />
+            <video
+              key={reel}
+              src={reel}
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster={REEL.capa.src}
+              /* ⚠ o `muted` do React vira PROPRIEDADE, não atributo — no HTML
+                 pré-renderizado o vídeo nasce sem ele e o navegador pode barrar
+                 o autoplay. Garante mudo e manda tocar ao montar. */
+              ref={(el) => {
+                if (!el) return;
+                el.muted = true;
+                void el.play().catch(() => {});
+              }}
+            />
           ) : (
             <img key={WORK[k].slug} className="p-fundo-entra" src={WORK[k].cover.src2x ?? WORK[k].cover.src} alt="" draggable={false} />
           )}
