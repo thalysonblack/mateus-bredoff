@@ -3841,11 +3841,12 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
   position: relative;
   z-index: 2;
   margin-top: auto;
-  /* "alinha à esquerda" (28/09): rótulo, frase e tabela numa coluna só,
-     rente à margem — a borda do nome no menu */
+  /* 28/09: o texto fica à ESQUERDA (na borda do nome do menu) e a tabela
+     encosta na DIREITA (a borda da nav) — as duas pela mesma base */
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  justify-content: space-between;
+  align-items: flex-end;
+  column-gap: 40px;
   row-gap: 20px;
   padding-bottom: var(--p-margem-y);
   color: #e9e3e1;
@@ -3878,6 +3879,8 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
 .p-fundo-todos .p-item { color: var(--p-quieto); }
 .p-fundo-todos:hover .p-item { color: #e9e3e1; }
 @media (max-width: 860px) {
+  .p-fundo-base { flex-direction: column; align-items: stretch; row-gap: 20px; }
+  .p-fundo-tabela { width: 100%; }
   .p-fundo-linha { grid-template-columns: 2.2rem minmax(0, 1fr); }
   .p-fundo-linha .p-fundo-meta { display: none; }
 }
