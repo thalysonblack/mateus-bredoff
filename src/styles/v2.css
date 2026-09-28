@@ -3812,109 +3812,54 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
 .p-tela:has(.p-fundo) > div > footer { display: none; }
 .p-tela:has(.p-fundo) > div > .p-menu { z-index: 3; }
 
+/* as duas camadas do fundo: o REEL recua (P&B, apagado) quando há projeto
+   sob o cursor — sem vídeo ele já roda assim, apagado, para o projeto em cor
+   cheia se distinguir dele */
+.p-fundo-reel { position: absolute; inset: 0; transition: filter 0.6s ease-out, opacity 0.6s ease-out; }
+.p-fundo-reel img { filter: grayscale(1) brightness(0.55); }
+.p-fundo--projeto .p-fundo-reel { opacity: 0; }
+.p-fundo-projeto { z-index: 0; }
+
+/* a base na GRADE DO MENU: rótulo e frase na coluna do nome, a tabela
+   nascendo na coluna da hora — a mesma régua do cabeçalho */
 .p-fundo-base {
   position: relative;
   z-index: 2;
   margin-top: auto;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
+  display: grid;
+  grid-template-columns: var(--p-grade-col1) minmax(0, 1fr);
+  column-gap: var(--p-grade-vao);
+  align-items: end;
   padding-bottom: var(--p-margem-y);
   color: #e9e3e1;
+  --p-quieto: rgba(233, 227, 225, 0.62);
+  --p-fio: rgba(233, 227, 225, 0.22);
 }
-.p-fundo-frase {
-  font-family: 'Geist', ui-sans-serif, sans-serif;
-  font-weight: 400;
-  font-size: clamp(22px, 2.08vw, 40px);
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-  flex: none;
-}
-.p-fundo-faixa {
-  display: flex;
-  gap: 12px;
-  min-width: 0;
-}
-.p-fundo-cartao {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: clamp(120px, 10.42vw, 200px);
+.p-fundo-base .p-rotulo { color: var(--p-quieto); }
+.p-fundo-tabela { border-bottom: 1px solid var(--p-fio); }
+.p-fundo-linha {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1.4fr) minmax(0, 1fr) 4rem;
+  column-gap: var(--p-grade-vao);
+  align-items: baseline;
+  padding: 9px 0;
+  border-top: 1px solid var(--p-fio);
   color: inherit;
   text-decoration: none;
+  transition: opacity 0.3s ease-out;
 }
-.p-fundo-nome {
-  font-family: 'Geist', ui-sans-serif, sans-serif;
-  font-size: 12px;
-  line-height: 1.15;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: rgba(233, 227, 225, 0.62);
-  transition: color 0.3s ease-out;
-}
-.p-fundo-arte {
-  display: grid;
-  place-items: center;
-  aspect-ratio: 200 / 155;
-  overflow: hidden;
-  border-radius: 2px;
-  background: rgba(233, 227, 225, 0.14);
-  outline: 1px solid transparent;
-  outline-offset: 3px;
-  transition: outline-color 0.3s ease-out;
-}
-.p-fundo-arte img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.p-fundo-cartao:hover .p-fundo-arte img,
-.p-fundo-cartao:focus-visible .p-fundo-arte img { transform: scale(1.04); }
-/* o projeto que está no fundo: nome aceso e o fio em volta do cartão */
-.p-fundo-cartao.on .p-fundo-nome,
-.p-fundo-cartao:hover .p-fundo-nome,
-.p-fundo-cartao:focus-visible .p-fundo-nome { color: #e9e3e1; }
-.p-fundo-cartao.on .p-fundo-arte { outline-color: rgba(233, 227, 225, 0.7); }
-.p-fundo-mais .p-fundo-arte {
-  font-family: 'Geist', ui-sans-serif, sans-serif;
-  font-weight: 300;
-  font-size: clamp(28px, 2.6vw, 48px);
-  backdrop-filter: blur(12px);
-}
-.p-fundo-mais:hover .p-fundo-arte { background: rgba(233, 227, 225, 0.24); }
-
-/* nove cartões não cabem ao lado da frase: a faixa ocupa o resto da base e
-   ROLA de lado (roda ou arraste), apagando na borda direita — mostra que
-   continua, como a coluna de peças do frame */
-.p-fundo-faixa {
-  flex: 1;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-  margin-right: calc(var(--p-margem) * -1);
-  padding: 4px var(--p-margem) 4px 4px;
-  mask-image: linear-gradient(90deg, #000 88%, transparent);
-}
-.p-fundo-faixa::-webkit-scrollbar { display: none; }
-.p-fundo-faixa > li { flex: none; }
+.p-fundo-linha .p-marca,
+.p-fundo-meta { color: var(--p-quieto); }
+/* pousar numa linha recua as outras (piso 0,62 — atenuar não é apagar) */
+.p-fundo-tabela:hover .p-fundo-linha:not(.aceso) { opacity: 0.62; }
+.p-fundo-linha.aceso .p-marca,
+.p-fundo-linha.aceso .p-fundo-meta { color: #e9e3e1; }
+.p-fundo-todos .p-item { color: var(--p-quieto); }
+.p-fundo-todos:hover .p-item { color: #e9e3e1; }
 @media (max-width: 860px) {
-  .p-fundo-base { flex-direction: column; align-items: stretch; }
-}
-/* ⚠ o menu NÃO usa `difference` aqui: o fundo troca de capa, e sobre campo
-   chapado saturado (a Ginga) o blend devolvia o menu em turquesa. Sólido, e
-   um véu curto no topo para ler sobre capa clara. */
-.p-tela:has(.p-fundo) > div > .p-menu { mix-blend-mode: normal; }
-.p-fundo::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 22%;
-  z-index: 1;
-  background: linear-gradient(to top, transparent, rgba(8, 10, 10, 0.45));
-  pointer-events: none;
+  .p-fundo-base { grid-template-columns: 1fr; row-gap: 20px; }
+  .p-fundo-linha { grid-template-columns: 2.2rem minmax(0, 1fr) auto; }
+  .p-fundo-linha .p-fundo-meta:not(.text-right) { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .p-fundo-entra { animation: none; }

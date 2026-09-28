@@ -21,16 +21,24 @@ import { Prancha } from "./sistema";
  * cartão é um "+" que leva ao índice inteiro. O menu dele fica por cima em
  * branco `difference` — o mesmo modo que já vale sobre a capa da about.
  *
- * ⚠ SEM O ARQUIVO DO REEL, o fundo é a capa do projeto em foco: roda sozinha
- * e o hover num cartão a troca. Quando `REEL.video` existir, o fundo vira o
- * filme mudo em loop e o hover deixa de trocar o fundo.
+ * ⭐ 28/09 (tarde) — "algo mais dentro da IDV": a faixa de miniaturas era a
+ * gramática do Goodtaste, não a deste site. Ficou o CONCEITO (reel atrás,
+ * hover mostra o projeto) e a matéria voltou a ser a da casa: a TABELA da
+ * /work (nº · projeto · disciplina · ano, fio de 1px, mono nos metadados) na
+ * grade do menu — rótulo na coluna do nome, tabela nascendo na coluna da hora.
+ * Imagem enorme, tipo pequeno: o registro editorial que o site já tem.
+ *
+ * DOIS ESTADOS DO FUNDO, e a diferença entre eles é o gesto:
+ *   REEL     — o filme (ou, sem arquivo, as capas rodando em P&B e apagadas)
+ *   PROJETO  — o hover numa linha acende a capa DAQUELE projeto, em cor cheia
+ * Sem essa diferença de valor, "mostrar o projeto" num fundo que já mostra
+ * capas não se veria.
  */
 export default function HomeFundo() {
   useMetaRota();
   const [k, setK] = useState(0);
-  const [pausa, setPausa] = useState(false);
+  const [sob, setSob] = useState<(typeof WORK)[number] | null>(null);
   const n = WORK.length;
-  const atual = WORK[k];
 
   useEffect(() => {
     WORK.forEach((w) => {
@@ -39,11 +47,12 @@ export default function HomeFundo() {
     });
   }, []);
 
+  /* o "reel" provisório: as capas passando enquanto o filme não existe */
   useEffect(() => {
-    if (REEL.video || pausa || prefersReducedMotion()) return;
-    const iv = setInterval(() => setK((i) => (i + 1) % n), 3200);
+    if (REEL.video || prefersReducedMotion()) return;
+    const iv = setInterval(() => setK((i) => (i + 1) % n), 2600);
     return () => clearInterval(iv);
-  }, [pausa, n]);
+  }, [n]);
 
   return (
     <Prancha n="01" nome="Index" superficie="tinta" status="Available for projects" tela>
@@ -52,58 +61,50 @@ export default function HomeFundo() {
         {WORK.map((w) => w.title).join(", ")}.
       </h1>
 
-      {/* o chão: o reel (ou a capa em foco), sangrando a tela inteira */}
-      <div className="p-capa-full p-fundo" aria-hidden="true">
-        {REEL.video ? (
-          <video src={REEL.video} autoPlay muted loop playsInline poster={REEL.capa.src} />
-        ) : (
-          <img key={atual.slug} className="p-fundo-entra" src={atual.cover.src2x ?? atual.cover.src} alt="" draggable={false} />
-        )}
+      <div className={`p-capa-full p-fundo${sob ? " p-fundo--projeto" : ""}`} aria-hidden="true">
+        {/* camada 1 — o reel */}
+        <div className="p-fundo-reel">
+          {REEL.video ? (
+            <video src={REEL.video} autoPlay muted loop playsInline poster={REEL.capa.src} />
+          ) : (
+            <img key={WORK[k].slug} className="p-fundo-entra" src={WORK[k].cover.src2x ?? WORK[k].cover.src} alt="" draggable={false} />
+          )}
+        </div>
+        {/* camada 2 — o projeto sob o cursor, por cima do reel */}
+        {sob ? (
+          <img key={`p-${sob.slug}`} className="p-fundo-projeto p-fundo-entra" src={sob.cover.src2x ?? sob.cover.src} alt="" draggable={false} />
+        ) : null}
       </div>
 
       <section className="p-fundo-base">
-        <p className="p-fundo-frase">
-          Brand designer and art director,
-          <br />
-          based in Brazil, working worldwide.
-        </p>
+        <div className="p-fundo-rotulo">
+          <p className="p-rotulo">Selected work — {String(n).padStart(2, "0")}</p>
+          <p className="p-corpo pt-3" style={{ maxWidth: "30ch" }}>
+            Brand designer and art director, based in Brazil, working worldwide.
+          </p>
+        </div>
 
-        <ul
-          className="p-fundo-faixa"
-          data-lenis-prevent
-          onMouseLeave={() => setPausa(false)}
-          /* a página não rola (é uma tela): a roda vertical anda a faixa */
-          onWheel={(e) => {
-            if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) e.currentTarget.scrollLeft += e.deltaY;
-          }}
-        >
+        <ul className="p-fundo-tabela" onMouseLeave={() => setSob(null)}>
           {WORK.map((w, i) => (
             <li key={w.slug}>
               <Link
                 to={`/work/${w.slug}`}
-                className={`p-fundo-cartao${!REEL.video && i === k ? " on" : ""}`}
-                onMouseEnter={() => {
-                  setPausa(true);
-                  setK(i);
-                }}
-                onFocus={() => {
-                  setPausa(true);
-                  setK(i);
-                }}
+                className={`p-fundo-linha${sob?.slug === w.slug ? " aceso" : ""}`}
+                onMouseEnter={() => setSob(w)}
+                onFocus={() => setSob(w)}
+                onBlur={() => setSob(null)}
               >
-                <span className="p-fundo-nome">{w.title}</span>
-                <span className="p-fundo-arte">
-                  <img src={w.cover.src} alt={w.cover.alt} decoding="async" draggable={false} />
-                </span>
+                <span className="p-marca">{String(i + 1).padStart(2, "0")}</span>
+                <span className="p-item">{w.title}</span>
+                <span className="p-corpo p-fundo-meta">{w.disciplines.join(", ")}</span>
+                <span className="p-corpo p-fundo-meta text-right">{w.year}</span>
               </Link>
             </li>
           ))}
           <li>
-            <Link to="/work" className="p-fundo-cartao p-fundo-mais" aria-label="All work">
-              <span className="p-fundo-nome">All work</span>
-              <span className="p-fundo-arte">
-                <span aria-hidden="true">+</span>
-              </span>
+            <Link to="/work" className="p-fundo-linha p-fundo-todos">
+              <span className="p-marca">→</span>
+              <span className="p-item">All work</span>
             </Link>
           </li>
         </ul>
