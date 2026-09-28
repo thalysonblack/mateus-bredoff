@@ -17,6 +17,10 @@
  * Brand Design — e o rótulo diz "Cover" em vez de fingir que é um frame.
  */
 import { WORK } from "./work";
+/* ⚠ TEMPORÁRIO (28/09): montado no Figma Motion com as 8 capas, 16 s em loop —
+   arquivo "Bredoff — Showreel temporário" (Vox Projetos), frame 1:2. Sai quando
+   o reel da Made by Six chegar: troque o import e nada mais muda. */
+import reelTemporario from "../assets/reel-temporario.mp4";
 
 const alexArcher = WORK.find((w) => w.slug === "alex-archer")!;
 
@@ -24,7 +28,7 @@ export const REEL = {
   titulo: "Showreel",
   ano: 2026,
   /** ⚠ pendente do Mateus: o arquivo do reel */
-  video: null as string | null,
+  video: reelTemporario as string | null,
   /** ⚠ pendente do Mateus: o frame de capa que ELE escolher */
   capa: alexArcher.cover,
   capaProvisoria: true,
