@@ -6,6 +6,7 @@ import { REEL, REELS } from "../../content/reel";
 import { PECAS } from "../../content/pecas";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha } from "./sistema";
+import { HoverFluido } from "./HoverFluido";
 
 /**
  * HOME — O REEL DE FUNDO (28/09).
@@ -45,9 +46,9 @@ export default function HomeFundo() {
   const reel = REELS[(params.get("reel") ?? "a") as keyof typeof REELS] ?? REEL.video;
   /* como o projeto se apresenta no hover (28/09, "outro modelo, diagramação"):
      prancha (padrão) · sequencia · capa (a tela cheia de antes) */
-  const hover = (params.get("hover") ?? "prancha") as "prancha" | "sequencia" | "metade" | "cartaz" | "pilha" | "capa";
+  const hover = (params.get("hover") ?? "prancha") as "prancha" | "sequencia" | "metade" | "cartaz" | "pilha" | "liquido" | "lente" | "capa";
   /* quantas peças cada modelo monta */
-  const quantas = { prancha: 3, sequencia: 4, metade: 1, cartaz: 1, pilha: 4, capa: 0 }[hover] ?? 3;
+  const quantas = { prancha: 3, sequencia: 4, metade: 1, cartaz: 1, pilha: 4, liquido: 0, lente: 0, capa: 0 }[hover] ?? 3;
 
   useEffect(() => {
     WORK.forEach((w) => {
@@ -103,7 +104,10 @@ export default function HomeFundo() {
 
       {/* A DIAGRAMAÇÃO — o projeto se monta sobre o reel apagado. Cada peça
           sobe pela máscara em cascata (--i), o mesmo gesto de entrada do site. */}
-      {sob && hover !== "capa" ? (
+      {/* os modelos em WebGL: o renderer fica montado, quem abre e fecha é a caixa */}
+      {hover === "liquido" || hover === "lente" ? <HoverFluido sob={sob} modo={hover} /> : null}
+
+      {sob && hover !== "capa" && hover !== "lente" ? (
         <div key={`${hover}-${sob.slug}`} className={`p-diag p-diag--${hover}`} aria-hidden="true">
           <div className="p-diag-ficha">
             <span className="p-marca">
