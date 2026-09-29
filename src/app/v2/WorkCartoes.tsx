@@ -62,7 +62,7 @@ export function WorkCartoes({
         pil.style.opacity = "1";
         pil.style.transform = `translate3d(${p.x - r.left}px, ${p.y - r.top}px, 0) translate(-50%, -50%)`;
       },
-    }, plano ? { destaque: false, tags: false, fracao: 0.16 } : {});
+    }, plano ? { destaque: false, tags: false, fracao: 0.16, rodaGlobal: true, curva: 0.15 } : {});
     motor.current = v;
     setSemGL(!v);
     return () => {

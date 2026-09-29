@@ -151,7 +151,7 @@ export default function HomeFundo() {
       <section className={`p-fundo-base p-fundo-base--${layout}`}>
         <div className="p-fundo-rotulo">
           <p className="p-rotulo">Selected work — {String(n).padStart(2, "0")}</p>
-          <p className="p-corpo pt-3" style={{ maxWidth: "30ch" }}>
+          <p className="p-fundo-frase-nova pt-3">
             Brand designer and art director, based in Brazil, working worldwide.
           </p>
         </div>

@@ -159,6 +159,10 @@ export type OpcoesCartoes = {
   tags?: boolean;
   /** fração da largura que um card ocupa (padrão 0,44) */
   fracao?: number;
+  /** a roda em QUALQUER ponto da janela anda a fita (home, que não rola) */
+  rodaGlobal?: boolean;
+  /** multiplica o barril e a tigela — a CURVATURA dos cards (padrão 1) */
+  curva?: number;
 };
 
 export type Carta = { src: string; nome: string; tags: string[] };
@@ -230,6 +234,7 @@ export function criarCartoesWebGL(
   const destaque = opcoes.destaque ?? true;
   const comTags = opcoes.tags ?? true;
   const fracao = opcoes.fracao ?? CARD_FRAC;
+  const curva = opcoes.curva ?? 1;
   let renderer: Renderer;
   try {
     renderer = new Renderer({ alpha: true, antialias: true, dpr: Math.min(window.devicePixelRatio || 1, 2) });
@@ -438,12 +443,12 @@ export function criarCartoesWebGL(
       const borda = Math.abs(x) / halfW;
       const op = borda < 1.2 ? 1 : borda > 2 ? 0 : 1 - (borda - 1.2) / 0.8;
       u.uOpacity.value = tex.image ? op : 0;
-      u.uBarrel.value = barril.v;
+      u.uBarrel.value = barril.v * curva;
       u.uWorldX.value = x;
       u.uHalfView.value = halfW * 1.2;
       u.uTime.value = tempo;
       u.uVel.value = velSuave;
-      u.uBowl.value = tigela.v;
+      u.uBowl.value = tigela.v * curva;
       mesh.visible = op > 0;
       if (Math.abs(x) < distMin) {
         distMin = Math.abs(x);
@@ -591,7 +596,8 @@ export function criarCartoesWebGL(
   canvas.addEventListener("pointerup", onUp);
   canvas.addEventListener("pointercancel", onUp);
   canvas.addEventListener("pointerleave", onLeave);
-  canvas.addEventListener("wheel", onWheel, { passive: false });
+  const alvoRoda: HTMLElement | Window = opcoes.rodaGlobal ? window : canvas;
+  alvoRoda.addEventListener("wheel", onWheel as EventListener, { passive: false });
 
   return {
     irPara(i) {
@@ -617,7 +623,7 @@ export function criarCartoesWebGL(
       canvas.removeEventListener("pointerup", onUp);
       canvas.removeEventListener("pointercancel", onUp);
       canvas.removeEventListener("pointerleave", onLeave);
-      canvas.removeEventListener("wheel", onWheel);
+      alvoRoda.removeEventListener("wheel", onWheel as EventListener);
       canvas.remove();
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     },
