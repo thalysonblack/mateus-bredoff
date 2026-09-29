@@ -196,7 +196,6 @@ export default function CaseV2() {
  * o enter/leave assenta no nome parado.
  */
 function ProximoProjeto({ item, i }: { item: WorkItem; i: number }) {
-  const proximo = WORK[(i + 1) % WORK.length];
   const [sob, setSob] = useState<WorkItem | null>(null);
   const thumb = useRef<HTMLDivElement | null>(null);
 
@@ -219,13 +218,9 @@ function ProximoProjeto({ item, i }: { item: WorkItem; i: number }) {
 
   return (
     <>
-      <section className="p-segue" aria-label="More work">
-          <div className="flex items-baseline justify-between pb-6">
-            <p className="p-rotulo">Next project</p>
-            <Link to={`/work/${proximo.slug}`} className="p-corpo p-link">
-              {proximo.title} →
-            </Link>
-          </div>
+      {/* 29/09: "esse componente vai substituir o next project" — a trama É a
+          chamada; o cabeçalho "Next project → X" dizia o mesmo duas vezes */}
+      <section className="p-segue" aria-label="Next project">
           {[0, 1].map((li) => {
             const volta = [...WORK.slice(i + 1), ...WORK.slice(0, i + 1)].filter((w) => w.slug !== item.slug);
             const linha = li === 0 ? volta : [...volta].reverse();

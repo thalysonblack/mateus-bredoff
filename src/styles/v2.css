@@ -4194,7 +4194,6 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
   padding-top: calc(var(--p-gap-y) * 4);
   margin-inline: calc(var(--p-margem) * -1);
 }
-.p-segue > div:first-child { padding-inline: var(--p-margem); }
 .p-segue-linha .p-trama-fita { gap: 0; }
 .p-segue-linha + .p-segue-linha .p-trama-fita { animation-duration: 83s; }
 .p-segue-item {
@@ -4232,8 +4231,7 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
    rótulo → fita 24 (0,19× o corpo, colava), fita → rodapé 0 (o "g" encostava
    no "Let's talk"). Agora 160 · 48 · 96. */
 .p-segue { padding-top: 160px; padding-bottom: 96px; }
-.p-segue > div:first-child { padding-bottom: 48px; }
-@media (max-width: 768px) { .p-segue { padding-top: 96px; padding-bottom: 64px; } .p-segue > div:first-child { padding-bottom: 32px; } }
+@media (max-width: 768px) { .p-segue { padding-top: 96px; padding-bottom: 64px; } }
 
 .p-segue-thumb {
   position: fixed; left: 0; top: 0; z-index: 30;
