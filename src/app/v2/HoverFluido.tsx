@@ -21,7 +21,9 @@ import { corDe } from "../../content/cores";
  * renderer montado uma vez; `garantir` separado de `iniciar`; o tween anterior
  * é MORTO e `resolver()` fecha o que ficou no meio antes de instalar a nova.
  */
-export function HoverFluido({ sob, modo }: { sob: WorkItem | null; modo: "liquido" | "lente" }) {
+export type ModoGL = "liquido" | "lente" | "metade" | "cartaz";
+/* receita do visorFluido: 1 Maré · 2 Onda · 3 Turbilhão · 4 Arco */
+export function HoverFluido({ sob, modo, receita = 4 }: { sob: WorkItem | null; modo: ModoGL; receita?: 1 | 2 | 3 | 4 }) {
   const caixa = useRef<HTMLDivElement | null>(null);
   const anel = useRef<HTMLDivElement | null>(null);
   const quadro = useRef<HTMLDivElement | null>(null);
@@ -38,7 +40,7 @@ export function HoverFluido({ sob, modo }: { sob: WorkItem | null; modo: "liquid
   useEffect(() => {
     const el = quadro.current;
     if (!el) return;
-    const v = criarVisorFluido(el, 4);
+    const v = criarVisorFluido(el, receita);
     fluido.current = v;
     setSemGL(!v);
     if (!v) return;
@@ -56,7 +58,7 @@ export function HoverFluido({ sob, modo }: { sob: WorkItem | null; modo: "liquid
       v.destruir();
       fluido.current = null;
     };
-  }, []);
+  }, [receita]);
 
   /* a lente segue o cursor com atraso (quickTo), sempre à esquerda dele */
   useEffect(() => {

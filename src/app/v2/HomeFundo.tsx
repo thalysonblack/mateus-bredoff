@@ -7,6 +7,7 @@ import { PECAS } from "../../content/pecas";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha } from "./sistema";
 import { HoverFluido } from "./HoverFluido";
+import { HoverColuna } from "./HoverColuna";
 
 /**
  * HOME — O REEL DE FUNDO (28/09).
@@ -46,9 +47,9 @@ export default function HomeFundo() {
   const reel = REELS[(params.get("reel") ?? "a") as keyof typeof REELS] ?? REEL.video;
   /* como o projeto se apresenta no hover (28/09, "outro modelo, diagramação"):
      prancha (padrão) · sequencia · capa (a tela cheia de antes) */
-  const hover = (params.get("hover") ?? "prancha") as "prancha" | "sequencia" | "metade" | "cartaz" | "pilha" | "liquido" | "lente" | "capa";
+  const hover = (params.get("hover") ?? "prancha") as "prancha" | "sequencia" | "metade" | "cartaz" | "pilha" | "liquido" | "lente" | "onda" | "turbilhao" | "mare" | "cartazgl" | "coluna" | "capa";
   /* quantas peças cada modelo monta */
-  const quantas = { prancha: 3, sequencia: 4, metade: 1, cartaz: 1, pilha: 4, liquido: 0, lente: 0, capa: 0 }[hover] ?? 3;
+  const quantas = { prancha: 3, sequencia: 4, metade: 1, cartaz: 1, pilha: 4, liquido: 0, lente: 0, onda: 0, turbilhao: 0, mare: 0, cartazgl: 0, coluna: 0, capa: 0 }[hover] ?? 3;
 
   useEffect(() => {
     WORK.forEach((w) => {
@@ -105,10 +106,23 @@ export default function HomeFundo() {
       {/* A DIAGRAMAÇÃO — o projeto se monta sobre o reel apagado. Cada peça
           sobe pela máscara em cascata (--i), o mesmo gesto de entrada do site. */}
       {/* os modelos em WebGL: o renderer fica montado, quem abre e fecha é a caixa */}
-      {hover === "liquido" || hover === "lente" ? <HoverFluido sob={sob} modo={hover} /> : null}
+      {(() => {
+        /* modelo → (layout, receita do fluido) */
+        const gl = {
+          liquido: ["liquido", 4], lente: ["lente", 4], onda: ["liquido", 2],
+          turbilhao: ["liquido", 3], mare: ["metade", 1], cartazgl: ["cartaz", 4],
+        } as const;
+        if (hover === "coluna") return <HoverColuna sob={sob} />;
+        const m = gl[hover as keyof typeof gl];
+        return m ? <HoverFluido key={hover} sob={sob} modo={m[0]} receita={m[1]} /> : null;
+      })()}
 
-      {sob && hover !== "capa" && hover !== "lente" ? (
-        <div key={`${hover}-${sob.slug}`} className={`p-diag p-diag--${hover}`} aria-hidden="true">
+      {sob && !["capa", "lente", "coluna"].includes(hover) ? (
+        <div
+          key={`${hover}-${sob.slug}`}
+          className={`p-diag p-diag--${{ onda: "liquido", turbilhao: "liquido", mare: "metade-gl", cartazgl: "cartaz" }[hover as string] ?? hover}`}
+          aria-hidden="true"
+        >
           <div className="p-diag-ficha">
             <span className="p-marca">
               {String(WORK.indexOf(sob) + 1).padStart(2, "0")} / {String(n).padStart(2, "0")}
