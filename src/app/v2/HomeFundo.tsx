@@ -50,7 +50,9 @@ export default function HomeFundo() {
      prancha (padrão) · sequencia · capa (a tela cheia de antes) */
   /* layout da base (28/09, "mais 5 heros com layout diferente"):
      padrao · central · nomes · rodape · painel · grade */
-  const layout = params.get("layout") ?? "padrao";
+  /* 29/09: "a home era a do carrossel" — o carrossel é o padrão; a tabela
+     vive em ?layout=padrao */
+  const layout = params.get("layout") ?? "carrossel";
   /* nos layouts novos a tabela sai do canto direito, onde a prancha foi
      desenhada — o hover padrão deles é o líquido, que cabe em qualquer um */
   const hover = (params.get("hover") ?? (layout === "padrao" ? "prancha" : "liquido")) as "prancha" | "sequencia" | "metade" | "cartaz" | "pilha" | "liquido" | "lente" | "onda" | "turbilhao" | "mare" | "cartazgl" | "coluna" | "capa";
