@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { prefersReducedMotion } from "../../lib/gsap";
 import { WORK } from "../../content/work";
@@ -42,12 +42,6 @@ export default function HomeFundo() {
   useMetaRota();
   const [k, setK] = useState(0);
   const [sob, setSob] = useState<(typeof WORK)[number] | null>(null);
-  /* layout carrossel: o card do centro, e se o cursor está na faixa */
-  const [ativo, setAtivo] = useState(0);
-  const [naFaixa, setNaFaixa] = useState(false);
-  /* o callback do WebGL é criado uma vez: lê a faixa por ref, não por estado */
-  const naFaixaRef = useRef(false);
-  naFaixaRef.current = naFaixa;
   const n = WORK.length;
   /* três montagens temporárias do reel, para comparar: ?reel=a|b|c */
   const [params] = useSearchParams();
@@ -165,24 +159,11 @@ export default function HomeFundo() {
         {layout === "carrossel" ? (
           /* o carrossel da /work na base: enquanto o cursor está na faixa, o
              card do centro acende o fundo; fora dela, o reel volta */
-          <div
-            className="p-fundo-carrossel"
-            onMouseEnter={() => {
-              setNaFaixa(true);
-              setSob(WORK[ativo]);
-            }}
-            onMouseLeave={() => {
-              setNaFaixa(false);
-              setSob(null);
-            }}
-          >
-            <WorkCartoes
-              itens={WORK}
-              aoAtivo={(i) => {
-                setAtivo(i);
-                if (naFaixaRef.current) setSob(WORK[i]);
-              }}
-            />
+          <div className="p-fundo-carrossel">
+            {/* 28/09: "menor, sem card destaque, ao passar o mouse o fundo muda
+                pro projeto, sem tags" — fita plana; o card SOB O CURSOR acende
+                o fundo, e sair da fita devolve o reel */}
+            <WorkCartoes itens={WORK} plano aoSob={(i) => setSob(i == null ? null : WORK[i])} />
           </div>
         ) : (
         <ul className="p-fundo-tabela" onMouseLeave={() => setSob(null)}>

@@ -17,7 +17,21 @@ import { prefersReducedMotion } from "../../lib/gsap";
  * ⚠ sem WebGL (ou com movimento reduzido) a fita vira uma fileira simples de
  * capas com scroll nativo — a peça continua acessível.
  */
-export function WorkCartoes({ itens, controles, aoAtivo }: { itens: WorkItem[]; controles?: ReactNode; aoAtivo?: (i: number) => void }) {
+export function WorkCartoes({
+  itens,
+  controles,
+  aoAtivo,
+  aoSob,
+  plano = false,
+}: {
+  itens: WorkItem[];
+  controles?: ReactNode;
+  aoAtivo?: (i: number) => void;
+  /** o projeto sob o cursor (qualquer card), ou null fora da fita */
+  aoSob?: (i: number | null) => void;
+  /** fita "plana" da home: sem card de destaque, sem tags, sem o cursor View Case */
+  plano?: boolean;
+}) {
   const palco = useRef<HTMLDivElement | null>(null);
   const motor = useRef<CartoesWebGL | null>(null);
   const pilula = useRef<HTMLDivElement | null>(null);
@@ -37,6 +51,7 @@ export function WorkCartoes({ itens, controles, aoAtivo }: { itens: WorkItem[]; 
       aoMudarAtivo: (i) => aoAtivo?.(i),
       aoAbrir: (i) => navigate(`/work/${itens[i].slug}`),
       aoPonteiro: (p: Ponteiro) => {
+        aoSob?.(p ? p.proj : null);
         const pil = pilula.current;
         if (!pil) return;
         if (!p || !p.centro) {
@@ -47,7 +62,7 @@ export function WorkCartoes({ itens, controles, aoAtivo }: { itens: WorkItem[]; 
         pil.style.opacity = "1";
         pil.style.transform = `translate3d(${p.x - r.left}px, ${p.y - r.top}px, 0) translate(-50%, -50%)`;
       },
-    });
+    }, plano ? { destaque: false, tags: false, fracao: 0.16 } : {});
     motor.current = v;
     setSemGL(!v);
     return () => {

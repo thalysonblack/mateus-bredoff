@@ -149,7 +149,17 @@ export type CartoesWebGL = {
 };
 /** um card na tela, neste quadro: projeto, centro em px a partir do meio, escala, opacidade */
 export type QuadroCard = { proj: number; x: number; sc: number; op: number };
-export type Ponteiro = { centro: boolean; x: number; y: number } | null;
+export type Ponteiro = { centro: boolean; x: number; y: number; proj: number } | null;
+
+/** opções da fita — o padrão é a /work; a home (28/09) liga a faixa "plana" */
+export type OpcoesCartoes = {
+  /** o card do centro em escala 1 e os outros menores (padrão: sim) */
+  destaque?: boolean;
+  /** chips de disciplina assados na textura (padrão: sim) */
+  tags?: boolean;
+  /** fração da largura que um card ocupa (padrão 0,44) */
+  fracao?: number;
+};
 
 export type Carta = { src: string; nome: string; tags: string[] };
 
@@ -162,7 +172,7 @@ export type Carta = { src: string; nome: string; tags: string[] };
 const TEX_W = 1800;
 const TEX_H = TEX_W / ASPECTO;
 const K = TEX_W / 634;
-function assarCarta(im: HTMLImageElement, carta: Carta): HTMLCanvasElement {
+function assarCarta(im: HTMLImageElement, carta: Carta, comTags = true): HTMLCanvasElement {
   const c = document.createElement("canvas");
   c.width = TEX_W;
   c.height = TEX_H;
@@ -181,7 +191,7 @@ function assarCarta(im: HTMLImageElement, carta: Carta): HTMLCanvasElement {
   const chipH = (12 * 1.25 + 10) * K;
   let x = TEX_W - pad;
   const cy = TEX_H - pad - chipH / 2;
-  for (const t of [...carta.tags].reverse()) {
+  for (const t of comTags ? [...carta.tags].reverse() : []) {
     const tw = ctx.measureText(t).width + 16 * K;
     x -= tw;
     ctx.fillStyle = "rgba(0,0,0,0.54)";
@@ -214,8 +224,12 @@ export function criarCartoesWebGL(
     /** o ponteiro sobre um card (centro ou não) ou fora de todos */
     aoPonteiro?: (p: Ponteiro) => void;
   },
+  opcoes: OpcoesCartoes = {},
 ): CartoesWebGL | null {
   const { aoMudarAtivo, aoAbrir, aoQuadro, aoPonteiro } = ganchos;
+  const destaque = opcoes.destaque ?? true;
+  const comTags = opcoes.tags ?? true;
+  const fracao = opcoes.fracao ?? CARD_FRAC;
   let renderer: Renderer;
   try {
     renderer = new Renderer({ alpha: true, antialias: true, dpr: Math.min(window.devicePixelRatio || 1, 2) });
@@ -244,7 +258,7 @@ export function criarCartoesWebGL(
     const im = new Image();
     im.onload = () => {
       fontePronta.then(() => {
-        tex.image = assarCarta(im, carta);
+        tex.image = assarCarta(im, carta, comTags);
         tex.needsUpdate = true;
         (tex as Texture & { aspecto?: number }).aspecto = ASPECTO;
       });
@@ -297,7 +311,7 @@ export function criarCartoesWebGL(
     camera.perspective({ aspect: w / h });
     camera.position.z = h / 2 / Math.tan((FOV / 2) * (Math.PI / 180));
     halfW = w / 2;
-    card.w = Math.min(CARD_MAX, Math.max(CARD_MIN, w * CARD_FRAC), (h * 0.78) * ASPECTO);
+    card.w = Math.min(CARD_MAX, Math.max(destaque ? CARD_MIN : 120, w * fracao), (h * (destaque ? 0.78 : 0.96)) * ASPECTO);
     card.h = card.w / ASPECTO;
     slots.forEach((s) => (s.program.uniforms.uCard.value = [card.w, card.h]));
     /* a legenda em DOM se pendura logo abaixo do card do centro */
@@ -400,7 +414,7 @@ export function criarCartoesWebGL(
       slots[s].proj = (((slotCentro + so) % n) + n) % n;
       const rawX = so * tw - offset;
       const d = Math.min(Math.abs(rawX) / (halfW * 0.8), 1);
-      escalas[s] = 1 - d * HIGHLIGHT;
+      escalas[s] = destaque ? 1 - d * HIGHLIGHT : 1;
     }
     /* borda a borda a partir do centro: o gap é visual, não de passo */
     const pos: number[] = new Array(SLOTS);
@@ -525,10 +539,11 @@ export function criarCartoesWebGL(
       }
     }
     if (hover && sob?.uv) (hover.program.uniforms.uMouse.value as Vec2).set(sob.uv.x, sob.uv.y);
-    const noCentro = !!hover && Math.abs(hover.mesh.position.x) < card.w / 2;
+    /* sem destaque não existe "o do centro": todo card é igual e abre no clique */
+    const noCentro = destaque && !!hover && Math.abs(hover.mesh.position.x) < card.w / 2;
     /* no centro o cursor nativo some: o "View Case" em DOM é o cursor */
     canvas.style.cursor = noCentro ? "none" : hover ? "pointer" : "grab";
-    aoPonteiro?.(hover ? { centro: noCentro, x: e.clientX, y: e.clientY } : null);
+    aoPonteiro?.(hover ? { centro: noCentro, x: e.clientX, y: e.clientY, proj: hover.proj } : null);
   };
   const onLeave = () => aoPonteiro?.(null);
   const onUp = (e: PointerEvent) => {
@@ -540,7 +555,7 @@ export function criarCartoesWebGL(
       const sob = slotSob(e);
       if (sob) {
         const x = sob.slot.mesh.position.x;
-        if (Math.abs(x) < card.w / 2) {
+        if (!destaque || Math.abs(x) < card.w / 2) {
           barrilDesce();
           aoAbrir(sob.slot.proj);
           return;

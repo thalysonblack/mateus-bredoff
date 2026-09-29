@@ -4164,10 +4164,10 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
 
 /* ── LAYOUT CARROSSEL (28/09): o carrossel WebGL da /work numa faixa na base ── */
 .p-fundo-base--carrossel { flex-direction: column; align-items: stretch; row-gap: 12px; }
-.p-fundo-carrossel { display: flex; height: 44vh; min-height: 300px; }
+.p-fundo-carrossel { display: flex; height: 23vh; min-height: 170px; }
 .p-fundo-carrossel .p-cartoes { flex: 1; }
 .p-fundo-carrossel .p-cartao-view { background: #e9e3e1; color: #14201f; }
-@media (max-width: 860px) { .p-fundo-carrossel { height: 34vh; min-height: 220px; } }
+@media (max-width: 860px) { .p-fundo-carrossel { height: 22vh; min-height: 150px; } }
 /* com um projeto aceso no fundo (qualquer hover que não seja a capa), a frase
    do canto recua — o projeto é o assunto, e ela brigava com a peça */
 .p-tela:has(.p-fundo--diagrama) .p-fundo-rotulo { opacity: 0; }
