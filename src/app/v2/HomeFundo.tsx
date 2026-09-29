@@ -47,7 +47,12 @@ export default function HomeFundo() {
   const reel = REELS[(params.get("reel") ?? "a") as keyof typeof REELS] ?? REEL.video;
   /* como o projeto se apresenta no hover (28/09, "outro modelo, diagramação"):
      prancha (padrão) · sequencia · capa (a tela cheia de antes) */
-  const hover = (params.get("hover") ?? "prancha") as "prancha" | "sequencia" | "metade" | "cartaz" | "pilha" | "liquido" | "lente" | "onda" | "turbilhao" | "mare" | "cartazgl" | "coluna" | "capa";
+  /* layout da base (28/09, "mais 5 heros com layout diferente"):
+     padrao · central · nomes · rodape · painel · grade */
+  const layout = params.get("layout") ?? "padrao";
+  /* nos layouts novos a tabela sai do canto direito, onde a prancha foi
+     desenhada — o hover padrão deles é o líquido, que cabe em qualquer um */
+  const hover = (params.get("hover") ?? (layout === "padrao" ? "prancha" : "liquido")) as "prancha" | "sequencia" | "metade" | "cartaz" | "pilha" | "liquido" | "lente" | "onda" | "turbilhao" | "mare" | "cartazgl" | "coluna" | "capa";
   /* quantas peças cada modelo monta */
   const quantas = { prancha: 3, sequencia: 4, metade: 1, cartaz: 1, pilha: 4, liquido: 0, lente: 0, onda: 0, turbilhao: 0, mare: 0, cartazgl: 0, coluna: 0, capa: 0 }[hover] ?? 3;
 
@@ -142,7 +147,7 @@ export default function HomeFundo() {
         </div>
       ) : null}
 
-      <section className="p-fundo-base">
+      <section className={`p-fundo-base p-fundo-base--${layout}`}>
         <div className="p-fundo-rotulo">
           <p className="p-rotulo">Selected work — {String(n).padStart(2, "0")}</p>
           <p className="p-corpo pt-3" style={{ maxWidth: "30ch" }}>

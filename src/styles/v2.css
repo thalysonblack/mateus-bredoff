@@ -4075,3 +4075,89 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
   left: 18vw; width: 38vw;
 }
 .p-gl--coluna canvas { display: block; width: 100%; height: 100%; }
+
+/* ── CINCO LAYOUTS DA BASE (28/09) — mesma matéria, outra diagramação ────────
+   O markup é um só (rótulo + tabela de nº · nome · disciplina); cada layout é
+   CSS. Assim os 13 hovers e os 3 reels combinam com qualquer um. */
+
+/* 1 · CENTRAL — o índice numa coluna estreita no meio; a frase sobe ao topo */
+.p-fundo-base--central { align-self: center; flex-direction: column; align-items: center; row-gap: 28px; margin-top: auto; margin-bottom: auto; }
+.p-fundo-base--central .p-fundo-rotulo { text-align: center; width: auto; }
+.p-fundo-base--central .p-fundo-rotulo .p-corpo { margin-inline: auto; }
+.p-fundo-base--central .p-fundo-tabela { width: min(100%, 460px); }
+.p-fundo-base--central .p-fundo-linha { grid-template-columns: 2.2rem minmax(0, 1fr) auto; }
+.p-fundo-base--central .p-fundo-meta { text-align: right; }
+
+/* 2 · NOMES — os projetos em corpo de display, empilhados; a ficha em mono na borda */
+.p-fundo-base--nomes { flex-direction: column; align-items: stretch; row-gap: 18px; }
+.p-fundo-base--nomes .p-fundo-tabela { width: 100%; border-bottom: 0; }
+.p-fundo-base--nomes .p-fundo-linha {
+  grid-template-columns: 3rem minmax(0, 1fr) auto;
+  padding: 2px 0; border-top: 0; align-items: baseline;
+}
+.p-fundo-base--nomes .p-fundo-linha .p-item {
+  font-size: clamp(30px, 3.7vw, 70px); line-height: 1.02; letter-spacing: -0.04em;
+}
+.p-fundo-base--nomes .p-fundo-meta {
+  font-family: 'Departure Mono', 'Martian Mono', ui-monospace, monospace;
+  font-size: var(--p-marca, 10px); text-transform: uppercase; letter-spacing: 0.04em; text-align: right;
+}
+.p-fundo-base--nomes .p-fundo-rotulo { order: -1; }
+
+/* 3 · RODAPÉ — uma régua horizontal de oito células na base */
+.p-fundo-base--rodape { flex-direction: column; align-items: stretch; row-gap: 24px; }
+.p-fundo-base--rodape .p-fundo-tabela {
+  width: 100%; display: grid; grid-template-columns: repeat(9, minmax(0, 1fr));
+  border-bottom: 0; border-top: 1px solid var(--p-fio);
+}
+.p-fundo-base--rodape .p-fundo-linha {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+  padding: 14px 12px 4px 0; border-top: 0; height: 100%;
+}
+.p-fundo-base--rodape li + li .p-fundo-linha { padding-left: 12px; border-left: 1px solid var(--p-fio); }
+.p-fundo-base--rodape .p-fundo-meta { font-size: 11px; line-height: 1.3; }
+
+/* 4 · PAINEL — o índice num painel de vidro fosco, na lateral direita, de cima a baixo */
+.p-fundo-base--painel {
+  position: absolute; z-index: 2; top: 0; right: 0; bottom: 0;
+  width: min(34vw, 540px);
+  flex-direction: column; justify-content: flex-end; align-items: stretch; row-gap: 32px;
+  padding: calc(var(--p-margem-y) + var(--p-menu-h, 77px) + 24px) var(--p-margem) var(--p-margem-y) 28px;
+  background: rgba(10, 12, 12, 0.42);
+  backdrop-filter: blur(22px) saturate(1.2);
+  -webkit-backdrop-filter: blur(22px) saturate(1.2);
+  border-left: 1px solid rgba(233, 227, 225, 0.12);
+}
+.p-fundo-base--painel .p-fundo-tabela { width: 100%; }
+.p-fundo-base--painel .p-fundo-linha { grid-template-columns: 2.2rem minmax(0, 1fr); padding: 13px 0; }
+.p-fundo-base--painel .p-fundo-meta { display: none; }
+.p-fundo-base--painel .p-fundo-linha .p-item { font-size: clamp(16px, 1.25vw, 22px); }
+.p-fundo-base--painel .p-fundo-rotulo { order: -1; margin-bottom: auto; }
+.p-tela:has(.p-fundo-base--painel) > div > .p-menu { position: relative; z-index: 4; }
+
+/* 5 · GRADE — oito células de texto numa grade 4×2 com fios, na metade de baixo */
+.p-fundo-base--grade { flex-direction: column; align-items: stretch; row-gap: 24px; }
+.p-fundo-base--grade .p-fundo-tabela {
+  width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-bottom: 0;
+}
+.p-fundo-base--grade .p-fundo-tabela > li { border-top: 1px solid var(--p-fio); }
+.p-fundo-base--grade .p-fundo-tabela > li:not(:nth-child(4n + 1)) { border-left: 1px solid var(--p-fio); }
+.p-fundo-base--grade .p-fundo-linha {
+  display: grid; grid-template-columns: 1fr; grid-template-rows: auto 1fr auto;
+  min-height: clamp(110px, 13vh, 150px); padding: 12px 14px 14px; border-top: 0; row-gap: 10px;
+}
+.p-fundo-base--grade .p-fundo-linha .p-item { font-size: clamp(18px, 1.6vw, 30px); letter-spacing: -0.03em; align-self: end; }
+.p-fundo-base--grade .p-fundo-meta { font-size: 11px; }
+.p-fundo-base--grade .p-fundo-tabela > li:last-child { grid-column: span 4; }
+.p-fundo-base--grade .p-fundo-todos { min-height: 0; grid-template-rows: auto; grid-template-columns: 2.2rem 1fr; }
+
+@media (max-width: 860px) {
+  .p-fundo-base--rodape .p-fundo-tabela, .p-fundo-base--grade .p-fundo-tabela { grid-template-columns: 1fr 1fr; }
+  .p-fundo-base--painel { position: relative; width: auto; padding: 0; background: none; backdrop-filter: none; border: 0; }
+  .p-fundo-base--nomes .p-fundo-linha .p-item { font-size: 30px; }
+}
+/* central e nomes põem o texto no MEIO do quadro, não na base: o véu cobre a
+   tela inteira e o filme desce mais um degrau */
+.p-tela:has(.p-fundo-base--central, .p-fundo-base--nomes) .p-fundo::after { inset: 0; background: rgba(8, 10, 10, 0.5); }
+.p-tela:has(.p-fundo-base--central, .p-fundo-base--nomes) .p-fundo-reel video { filter: brightness(0.7); }
