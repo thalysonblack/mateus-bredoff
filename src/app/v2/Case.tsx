@@ -1,5 +1,8 @@
+import { useEffect, useRef, useState } from "react";
 import { useParams, Link } from "react-router";
-import { findWork, WORK } from "../../content/work";
+import { gsap } from "../../lib/gsap";
+import { PECAS } from "../../content/pecas";
+import { findWork, WORK, type WorkItem } from "../../content/work";
 import { corDe } from "../../content/cores";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha, Bloco } from "./sistema";
@@ -53,7 +56,6 @@ export default function CaseV2() {
 
   /* navegação circular: o índice não tem fim, ele dá a volta */
   const i = WORK.findIndex((w) => w.slug === item.slug);
-  const proximo = WORK[(i + 1) % WORK.length];
 
   return (
     <Prancha n={String(i + 1).padStart(2, "0")} nome={item.title} superficie="papel" rodape="completo">
@@ -181,37 +183,86 @@ export default function CaseV2() {
           Duas fitas em sentidos opostos, abrindo pelo PRÓXIMO projeto; o
           separador é um quadrado cheio, não um ponto — era o "tracinho" entre
           Boreal e Alex Archer que fazia os nomes se emendarem. */}
-      <section className="p-segue" aria-label="More work">
-        <div className="flex items-baseline justify-between pb-6">
-          <p className="p-rotulo">Next project</p>
-          <Link to={`/work/${proximo.slug}`} className="p-corpo p-link">
-            {proximo.title} →
-          </Link>
-        </div>
-        {[0, 1].map((li) => {
-          const volta = [...WORK.slice(i + 1), ...WORK.slice(0, i + 1)].filter((w) => w.slug !== item.slug);
-          const linha = li === 0 ? volta : [...volta].reverse();
-          return (
-            <div key={li} className="p-trama p-segue-linha">
-              <div className={`p-trama-fita${li === 1 ? " p-trama-fita--volta" : ""}`}>
-                {[...linha, ...linha].map((w, k) => (
-                  <span key={`${w.slug}-${k}`} className="p-segue-item">
-                    <Link
-                      to={`/work/${w.slug}`}
-                      className="p-segue-nome"
-                      style={{ ["--cor" as string]: corDe(w.slug) }}
-                      tabIndex={k >= linha.length || li === 1 ? -1 : undefined}
-                    >
-                      {w.title}
-                    </Link>
-                    <span className="p-segue-sep" aria-hidden="true" />
-                  </span>
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </section>
+      <ProximoProjeto item={item} i={i} />
     </Prancha>
+  );
+}
+
+/**
+ * O FIM DO CASE: a trama como convite ao próximo projeto.
+ * 29/09 — "ajustar espaçamento e botar hover com thumb": passar o mouse num
+ * nome mostra a peça daquele projeto colada ao cursor, acima e à direita (a
+ * peça nunca cobre o nome que se está lendo). A fita já pausa no hover, então
+ * o enter/leave assenta no nome parado.
+ */
+function ProximoProjeto({ item, i }: { item: WorkItem; i: number }) {
+  const proximo = WORK[(i + 1) % WORK.length];
+  const [sob, setSob] = useState<WorkItem | null>(null);
+  const thumb = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const el = thumb.current;
+    if (!el) return;
+    const x = gsap.quickTo(el, "x", { duration: 0.45, ease: "power3.out" });
+    const y = gsap.quickTo(el, "y", { duration: 0.45, ease: "power3.out" });
+    const mover = (e: PointerEvent) => {
+      const w = el.offsetWidth;
+      const h = el.offsetHeight;
+      x(Math.min(e.clientX + 24, window.innerWidth - w - 16));
+      /* acima do cursor; sem espaço em cima, abre embaixo — nunca sobre o nome */
+      const acima = e.clientY - h - 24;
+      y(acima >= 16 ? acima : Math.min(e.clientY + 40, window.innerHeight - h - 16));
+    };
+    window.addEventListener("pointermove", mover, { passive: true });
+    return () => window.removeEventListener("pointermove", mover);
+  }, []);
+
+  return (
+    <>
+      <section className="p-segue" aria-label="More work">
+          <div className="flex items-baseline justify-between pb-6">
+            <p className="p-rotulo">Next project</p>
+            <Link to={`/work/${proximo.slug}`} className="p-corpo p-link">
+              {proximo.title} →
+            </Link>
+          </div>
+          {[0, 1].map((li) => {
+            const volta = [...WORK.slice(i + 1), ...WORK.slice(0, i + 1)].filter((w) => w.slug !== item.slug);
+            const linha = li === 0 ? volta : [...volta].reverse();
+            return (
+              <div key={li} className="p-trama p-segue-linha">
+                <div className={`p-trama-fita${li === 1 ? " p-trama-fita--volta" : ""}`}>
+                  {[...linha, ...linha].map((w, k) => (
+                    <span key={`${w.slug}-${k}`} className="p-segue-item">
+                      <Link
+                        to={`/work/${w.slug}`}
+                        className="p-segue-nome"
+                        onMouseEnter={() => setSob(w)}
+                        onMouseLeave={() => setSob(null)}
+                        style={{ ["--cor" as string]: corDe(w.slug) }}
+                        tabIndex={k >= linha.length || li === 1 ? -1 : undefined}
+                      >
+                        {w.title}
+                      </Link>
+                      <span className="p-segue-sep" aria-hidden="true" />
+                    </span>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </section>
+        <div ref={thumb} className={`p-segue-thumb${sob ? " on" : ""}`} aria-hidden="true">
+        {WORK.map((w) => (
+          <img
+            key={w.slug}
+            src={PECAS[w.slug][0]}
+            alt=""
+            draggable={false}
+            className={sob?.slug === w.slug ? "on" : ""}
+          />
+        ))}
+      </div>
+    </>
   );
 }
