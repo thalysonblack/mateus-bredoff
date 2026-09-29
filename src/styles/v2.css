@@ -4237,7 +4237,7 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
 
 .p-segue-thumb {
   position: fixed; left: 0; top: 0; z-index: 30;
-  width: min(22vw, 360px); aspect-ratio: 4 / 3;
+  width: min(13vw, 220px); aspect-ratio: 4 / 3;
   overflow: hidden; border-radius: 2px; pointer-events: none;
   clip-path: inset(100% 0 0 0);
   transition: clip-path 0.5s cubic-bezier(0.16, 1, 0.3, 1);
