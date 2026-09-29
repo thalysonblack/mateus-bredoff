@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router";
 import { findWork, WORK } from "../../content/work";
+import { corDe } from "../../content/cores";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha, Bloco } from "./sistema";
 
@@ -169,14 +170,48 @@ export default function CaseV2() {
               )}
             </Bloco>
 
-            <Bloco rotulo="Next">
-              <Link to={`/work/${proximo.slug}`} className="p-corpo p-link">
-                {proximo.title} →
-              </Link>
-            </Bloco>
           </div>
         </aside>
       </div>
+
+      {/* ─ o fim do case: A TRAMA, agora como convite ─────────────────────
+          28/09, áudio do Mateus: *"no final de cada projeto… terminou todas as
+          telas, de repente tem isso aí passando"*. Saiu da home (como índice
+          confundia) e mora aqui, onde a pergunta é uma só: qual o próximo?
+          Duas fitas em sentidos opostos, abrindo pelo PRÓXIMO projeto; o
+          separador é um quadrado cheio, não um ponto — era o "tracinho" entre
+          Boreal e Alex Archer que fazia os nomes se emendarem. */}
+      <section className="p-segue" aria-label="More work">
+        <div className="flex items-baseline justify-between pb-6">
+          <p className="p-rotulo">Next project</p>
+          <Link to={`/work/${proximo.slug}`} className="p-corpo p-link">
+            {proximo.title} →
+          </Link>
+        </div>
+        {[0, 1].map((li) => {
+          const volta = [...WORK.slice(i + 1), ...WORK.slice(0, i + 1)].filter((w) => w.slug !== item.slug);
+          const linha = li === 0 ? volta : [...volta].reverse();
+          return (
+            <div key={li} className="p-trama p-segue-linha">
+              <div className={`p-trama-fita${li === 1 ? " p-trama-fita--volta" : ""}`}>
+                {[...linha, ...linha].map((w, k) => (
+                  <span key={`${w.slug}-${k}`} className="p-segue-item">
+                    <Link
+                      to={`/work/${w.slug}`}
+                      className="p-segue-nome"
+                      style={{ ["--cor" as string]: corDe(w.slug) }}
+                      tabIndex={k >= linha.length || li === 1 ? -1 : undefined}
+                    >
+                      {w.title}
+                    </Link>
+                    <span className="p-segue-sep" aria-hidden="true" />
+                  </span>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </section>
     </Prancha>
   );
 }

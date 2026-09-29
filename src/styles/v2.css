@@ -4188,3 +4188,41 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
 /* sem WebGL (ou movimento reduzido), a fita de reserva também fica pequena */
 .p-fundo-carrossel .p-cartoes-plano li { flex: 0 0 min(40vw, 240px); }
 .p-fundo-carrossel .p-cartoes-plano img { aspect-ratio: 3 / 2; }
+
+/* ── CASE: A TRAMA NO FIM, COMO "PRÓXIMO PROJETO" (28/09) ─────────────────── */
+.p-segue {
+  padding-top: calc(var(--p-gap-y) * 4);
+  margin-inline: calc(var(--p-margem) * -1);
+}
+.p-segue > div:first-child { padding-inline: var(--p-margem); }
+.p-segue-linha .p-trama-fita { gap: 0; }
+.p-segue-linha + .p-segue-linha .p-trama-fita { animation-duration: 83s; }
+.p-segue-item {
+  display: inline-flex;
+  align-items: center;
+}
+.p-segue-nome {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: clamp(44px, 8.4vw, 132px);
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+  color: var(--p-ink);
+  transition: color 0.3s ease-out, opacity 0.3s ease-out;
+}
+/* o separador: um quadrado cheio com ar dos dois lados — o "·" colado lia
+   como parte do nome e as marcas se emendavam */
+.p-segue-sep {
+  width: 0.14em;
+  height: 0.14em;
+  margin-inline: 0.42em;
+  font-size: clamp(44px, 8.4vw, 132px);
+  background: var(--p-quieto);
+}
+.p-segue-linha:hover .p-segue-nome { opacity: 0.4; }
+.p-segue-linha .p-segue-nome:hover,
+.p-segue-linha .p-segue-nome:focus-visible {
+  opacity: 1;
+  color: var(--cor, var(--p-acento));
+}
