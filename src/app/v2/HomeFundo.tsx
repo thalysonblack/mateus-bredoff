@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { prefersReducedMotion } from "../../lib/gsap";
 import { WORK } from "../../content/work";
@@ -8,6 +8,7 @@ import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha } from "./sistema";
 import { HoverFluido } from "./HoverFluido";
 import { HoverColuna } from "./HoverColuna";
+import { WorkCartoes } from "./WorkCartoes";
 
 /**
  * HOME — O REEL DE FUNDO (28/09).
@@ -41,6 +42,12 @@ export default function HomeFundo() {
   useMetaRota();
   const [k, setK] = useState(0);
   const [sob, setSob] = useState<(typeof WORK)[number] | null>(null);
+  /* layout carrossel: o card do centro, e se o cursor está na faixa */
+  const [ativo, setAtivo] = useState(0);
+  const [naFaixa, setNaFaixa] = useState(false);
+  /* o callback do WebGL é criado uma vez: lê a faixa por ref, não por estado */
+  const naFaixaRef = useRef(false);
+  naFaixaRef.current = naFaixa;
   const n = WORK.length;
   /* três montagens temporárias do reel, para comparar: ?reel=a|b|c */
   const [params] = useSearchParams();
@@ -155,29 +162,53 @@ export default function HomeFundo() {
           </p>
         </div>
 
+        {layout === "carrossel" ? (
+          /* o carrossel da /work na base: enquanto o cursor está na faixa, o
+             card do centro acende o fundo; fora dela, o reel volta */
+          <div
+            className="p-fundo-carrossel"
+            onMouseEnter={() => {
+              setNaFaixa(true);
+              setSob(WORK[ativo]);
+            }}
+            onMouseLeave={() => {
+              setNaFaixa(false);
+              setSob(null);
+            }}
+          >
+            <WorkCartoes
+              itens={WORK}
+              aoAtivo={(i) => {
+                setAtivo(i);
+                if (naFaixaRef.current) setSob(WORK[i]);
+              }}
+            />
+          </div>
+        ) : (
         <ul className="p-fundo-tabela" onMouseLeave={() => setSob(null)}>
-          {WORK.map((w, i) => (
-            <li key={w.slug}>
-              <Link
-                to={`/work/${w.slug}`}
-                className={`p-fundo-linha${sob?.slug === w.slug ? " aceso" : ""}`}
-                onMouseEnter={() => setSob(w)}
-                onFocus={() => setSob(w)}
-                onBlur={() => setSob(null)}
-              >
-                <span className="p-marca">{String(i + 1).padStart(2, "0")}</span>
-                <span className="p-item">{w.title}</span>
-                <span className="p-corpo p-fundo-meta">{w.disciplines.join(", ")}</span>
+            {WORK.map((w, i) => (
+              <li key={w.slug}>
+                <Link
+                  to={`/work/${w.slug}`}
+                  className={`p-fundo-linha${sob?.slug === w.slug ? " aceso" : ""}`}
+                  onMouseEnter={() => setSob(w)}
+                  onFocus={() => setSob(w)}
+                  onBlur={() => setSob(null)}
+                >
+                  <span className="p-marca">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="p-item">{w.title}</span>
+                  <span className="p-corpo p-fundo-meta">{w.disciplines.join(", ")}</span>
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link to="/work" className="p-fundo-linha p-fundo-todos">
+                <span className="p-marca">→</span>
+                <span className="p-item">All work</span>
               </Link>
             </li>
-          ))}
-          <li>
-            <Link to="/work" className="p-fundo-linha p-fundo-todos">
-              <span className="p-marca">→</span>
-              <span className="p-item">All work</span>
-            </Link>
-          </li>
-        </ul>
+          </ul>
+        )}
       </section>
     </Prancha>
   );

@@ -17,7 +17,7 @@ import { prefersReducedMotion } from "../../lib/gsap";
  * ⚠ sem WebGL (ou com movimento reduzido) a fita vira uma fileira simples de
  * capas com scroll nativo — a peça continua acessível.
  */
-export function WorkCartoes({ itens, controles }: { itens: WorkItem[]; controles?: ReactNode }) {
+export function WorkCartoes({ itens, controles, aoAtivo }: { itens: WorkItem[]; controles?: ReactNode; aoAtivo?: (i: number) => void }) {
   const palco = useRef<HTMLDivElement | null>(null);
   const motor = useRef<CartoesWebGL | null>(null);
   const pilula = useRef<HTMLDivElement | null>(null);
@@ -33,7 +33,8 @@ export function WorkCartoes({ itens, controles }: { itens: WorkItem[]; controles
       return;
     }
     const v = criarCartoesWebGL(el, itens.map((w) => ({ src: w.cover.src, nome: w.title, tags: w.disciplines })), {
-      aoMudarAtivo: () => {},
+      /* a home (layout carrossel) usa o card do centro para acender o fundo */
+      aoMudarAtivo: (i) => aoAtivo?.(i),
       aoAbrir: (i) => navigate(`/work/${itens[i].slug}`),
       aoPonteiro: (p: Ponteiro) => {
         const pil = pilula.current;
