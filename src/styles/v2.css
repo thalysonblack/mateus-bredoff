@@ -4359,3 +4359,5 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
   .p-uma-sobre { padding-block: 96px; }
   .p-uma-reel, .p-uma-prova { padding-block: 96px 64px; }
 }
+/* versão B (tela única): a hero ocupa a tela inteira da Prancha, régua embaixo por cima */
+.p-tela.h-svh .p-uma-hero { height: 100svh; }

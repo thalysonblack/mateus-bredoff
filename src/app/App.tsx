@@ -204,6 +204,7 @@ export default function App() {
               pré-render seguem valendo sem uma linha alterada. */}
           <Route path="/" element={<HomeUma />} />
           <Route path="/v2/home-fundo" element={<HomeFundo />} />
+          <Route path="/v2/neutra" element={<HomeUma tela />} />
           <Route path="/about" element={<PranchaAbout />} />
           <Route path="/work" element={<PranchaWork />} />
           <Route path="/work/:slug" element={<PranchaCase />} />

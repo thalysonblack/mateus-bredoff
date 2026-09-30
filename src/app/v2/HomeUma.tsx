@@ -29,7 +29,12 @@ import { WorkCartoes } from "./WorkCartoes";
  * A página ROLA agora: a roda vertical é da página, e a fita anda por arrasto
  * e pela rolagem horizontal do trackpad (`rolaPagina`).
  */
-export default function HomeUma() {
+/**
+ * `tela`: a VERSÃO B que ele pediu no mesmo áudio — "no centro algo mais
+ * neutro, só o nome, e embaixo o hover" — numa tela só, sem rolagem: só a
+ * hero, e a roda anda a fita (a página não tem para onde rolar).
+ */
+export default function HomeUma({ tela = false }: { tela?: boolean } = {}) {
   useMetaRota();
   const [sob, setSob] = useState<(typeof WORK)[number] | null>(null);
   const [comSom, setComSom] = useState(false);
@@ -44,7 +49,7 @@ export default function HomeUma() {
   const publicados = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano).slice(0, 6);
 
   return (
-    <Prancha n="01" nome="Index" superficie="tinta" status="Available for projects" rodape="completo">
+    <Prancha n="01" nome="Index" superficie="tinta" status="Available for projects" rodape={tela ? "regua" : "completo"} tela={tela}>
       {/* ─ 1 · HERO ───────────────────────────────────────────────────────── */}
       <section className={`p-uma-hero${sob ? " p-uma-hero--projeto" : ""}`}>
         <HoverFluido sob={sob} modo="liquido" receita={4} />
@@ -53,10 +58,12 @@ export default function HomeUma() {
           <p className="p-marca p-uma-oficio">Brand designer &amp; art director — Brazil, working worldwide</p>
         </div>
         <div className="p-uma-fita">
-          <WorkCartoes itens={WORK} plano rolaPagina aoSob={(i) => setSob(i == null ? null : WORK[i])} />
+          <WorkCartoes itens={WORK} plano rolaPagina={!tela} aoSob={(i) => setSob(i == null ? null : WORK[i])} />
         </div>
       </section>
 
+      {tela ? null : (
+        <>
       {/* ─ 2 · SOBRE ──────────────────────────────────────────────────────── */}
       <section className="p-uma-papel p-uma-sobre">
         <p className="p-rotulo">About</p>
@@ -122,6 +129,9 @@ export default function HomeUma() {
           ))}
         </ul>
       </section>
+
+        </>
+      )}
 
       {comSom && REEL.video ? (
         <div className="p-player" onClick={() => setComSom(false)} role="presentation">
