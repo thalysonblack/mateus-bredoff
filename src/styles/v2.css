@@ -4249,3 +4249,113 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
 .p-segue-thumb img.on { opacity: 1; transform: scale(1); }
 @media (hover: none) { .p-segue-thumb { display: none; } }
 @media (prefers-reduced-motion: reduce) { .p-segue-thumb, .p-segue-thumb img { transition: none; } }
+
+/* ── HOME ONE PAGE (30/09) — ver `v2/HomeUma.tsx` ────────────────────────── */
+.p-uma-hero {
+  position: relative;
+  height: 100svh; min-height: 560px;
+  margin-inline: calc(var(--p-margem) * -1);
+  margin-top: calc((var(--p-margem-y) + var(--p-menu-h, 77px)) * -1);
+  overflow: hidden;
+  background: #0d0f0f;
+  color: #e9e3e1;
+}
+.p-uma-nome {
+  position: absolute; z-index: 2;
+  left: var(--p-margem); right: var(--p-margem);
+  top: 34%;
+  transition: opacity 0.5s ease-out;
+  pointer-events: none;
+}
+.p-uma-hero--projeto .p-uma-nome { opacity: 0.1; }
+.p-uma-titulo {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 400;
+  font-size: clamp(56px, 11vw, 210px);
+  line-height: 0.9;
+  letter-spacing: -0.055em;
+  margin-left: -0.05em;
+}
+.p-uma-oficio { color: rgba(233, 227, 225, 0.62); padding-top: 18px; font-size: 11px; letter-spacing: 0.06em; }
+.p-uma-fita {
+  position: absolute; z-index: 3;
+  left: var(--p-margem); right: var(--p-margem);
+  bottom: var(--p-margem-y);
+  display: flex; height: 23vh; min-height: 170px;
+}
+.p-uma-fita .p-cartoes { flex: 1; }
+
+/* 2 · sobre, em papel */
+.p-uma-papel {
+  margin-inline: calc(var(--p-margem) * -1);
+  padding-inline: var(--p-margem);
+  background: #f4f4f2;
+  color: #14201f;
+  --p-ink: #14201f; --p-quieto: rgba(20, 32, 31, 0.62); --p-fio: rgba(20, 32, 31, 0.13); --p-acento: #277796;
+}
+.p-uma-sobre {
+  display: grid;
+  grid-template-columns: var(--p-grade-col1) minmax(0, 1fr);
+  column-gap: var(--p-grade-vao);
+  row-gap: 32px;
+  padding-block: 160px 128px;
+}
+.p-uma-sobre > * { grid-column: 2; }
+.p-uma-sobre > .p-rotulo { grid-column: 1; grid-row: 1; color: var(--p-quieto); padding-top: 0.6em; }
+.p-uma-declaracao {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-size: clamp(26px, 2.7vw, 50px);
+  line-height: 1.14;
+  letter-spacing: -0.035em;
+  max-width: 26ch;
+}
+.p-uma-corpo { max-width: 62ch; color: var(--p-quieto); }
+.p-uma-servicos { margin-top: 48px; border-bottom: 1px solid var(--p-fio); }
+.p-uma-servicos li {
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 0.9fr) minmax(0, 1.3fr);
+  column-gap: var(--p-grade-vao);
+  align-items: baseline;
+  padding: 18px 0;
+  border-top: 1px solid var(--p-fio);
+}
+.p-uma-servicos .p-marca, .p-uma-servicos .p-corpo { color: var(--p-quieto); }
+
+/* 3 · showreel */
+.p-uma-reel { padding-block: 128px 0; }
+.p-uma-reel-cab { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 24px; }
+.p-uma-reel-cab .p-rotulo { color: rgba(233, 227, 225, 0.62); }
+.p-uma-som { background: none; border: 0; padding: 0; color: inherit; cursor: pointer; }
+.p-uma-reel-palco {
+  display: block; width: calc(100% + 2 * var(--p-margem));
+  margin-inline: calc(var(--p-margem) * -1);
+  aspect-ratio: 16 / 9; max-height: 92svh;
+  padding: 0; border: 0; background: #000; cursor: pointer; overflow: hidden;
+}
+.p-uma-reel-palco video { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* 4 · prova */
+.p-uma-prova {
+  display: grid;
+  grid-template-columns: var(--p-grade-col1) minmax(0, 1fr);
+  column-gap: var(--p-grade-vao);
+  padding-block: 128px 96px;
+}
+.p-uma-prova .p-rotulo { color: rgba(233, 227, 225, 0.62); padding-top: 0.3em; }
+.p-uma-prova ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--p-grade-vao); }
+.p-uma-prova li {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+  padding: 14px 0; border-top: 1px solid rgba(233, 227, 225, 0.14);
+}
+.p-uma-prova li .p-corpo { color: rgba(233, 227, 225, 0.62); }
+
+@media (max-width: 860px) {
+  .p-uma-nome { top: 26%; }
+  .p-uma-sobre, .p-uma-prova { grid-template-columns: 1fr; }
+  .p-uma-sobre > *, .p-uma-sobre > .p-rotulo { grid-column: 1; grid-row: auto; }
+  .p-uma-servicos li { grid-template-columns: 2rem 1fr; }
+  .p-uma-servicos li .p-corpo { grid-column: 2; }
+  .p-uma-prova ul { grid-template-columns: 1fr; }
+  .p-uma-sobre { padding-block: 96px; }
+  .p-uma-reel, .p-uma-prova { padding-block: 96px 64px; }
+}

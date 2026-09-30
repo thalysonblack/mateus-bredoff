@@ -23,6 +23,7 @@ export function WorkCartoes({
   aoAtivo,
   aoSob,
   plano = false,
+  rolaPagina = false,
 }: {
   itens: WorkItem[];
   controles?: ReactNode;
@@ -31,6 +32,8 @@ export function WorkCartoes({
   aoSob?: (i: number | null) => void;
   /** fita "plana" da home: sem card de destaque, sem tags, sem o cursor View Case */
   plano?: boolean;
+  /** a página rola: a roda vertical passa para ela */
+  rolaPagina?: boolean;
 }) {
   const palco = useRef<HTMLDivElement | null>(null);
   const motor = useRef<CartoesWebGL | null>(null);
@@ -62,7 +65,7 @@ export function WorkCartoes({
         pil.style.opacity = "1";
         pil.style.transform = `translate3d(${p.x - r.left}px, ${p.y - r.top}px, 0) translate(-50%, -50%)`;
       },
-    }, plano ? { destaque: false, tags: false, fracao: 0.16, rodaGlobal: true, curva: 0.15 } : {});
+    }, plano ? { destaque: false, tags: false, fracao: 0.16, rodaGlobal: !rolaPagina, soHorizontal: rolaPagina, curva: 0.15 } : {});
     motor.current = v;
     setSemGL(!v);
     return () => {

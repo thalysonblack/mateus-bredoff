@@ -30,6 +30,7 @@ import HomeB from "./v2/HomeB";
 import HomeC from "./v2/HomeC";
 import HomeD from "./v2/HomeD";
 import HomeFundo from "./v2/HomeFundo";
+import HomeUma from "./v2/HomeUma";
 import HomeE from "./v2/HomeE";
 import HomeF from "./v2/HomeF";
 import HomeG from "./v2/HomeG";
@@ -201,7 +202,8 @@ export default function App() {
               `/`, `/about`, `/work`, `/work/:slug`, `/lab` são as do CMS dele e
               do original, muda só quem as monta. Por isso `content/meta.ts` e o
               pré-render seguem valendo sem uma linha alterada. */}
-          <Route path="/" element={<HomeFundo />} />
+          <Route path="/" element={<HomeUma />} />
+          <Route path="/v2/home-fundo" element={<HomeFundo />} />
           <Route path="/about" element={<PranchaAbout />} />
           <Route path="/work" element={<PranchaWork />} />
           <Route path="/work/:slug" element={<PranchaCase />} />

@@ -163,6 +163,9 @@ export type OpcoesCartoes = {
   rodaGlobal?: boolean;
   /** multiplica o barril e a tigela — a CURVATURA dos cards (padrão 1) */
   curva?: number;
+  /** página que ROLA (home one page): a roda vertical é da página; a fita só
+      anda por arrasto e pela rolagem horizontal do trackpad */
+  soHorizontal?: boolean;
 };
 
 export type Carta = { src: string; nome: string; tags: string[] };
@@ -579,6 +582,7 @@ export function criarCartoesWebGL(
   };
   let rodaTimer: ReturnType<typeof setTimeout> | null = null;
   const onWheel = (e: WheelEvent) => {
+    if (opcoes.soHorizontal && Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
     e.preventDefault();
     snap?.kill();
     snap = null;
