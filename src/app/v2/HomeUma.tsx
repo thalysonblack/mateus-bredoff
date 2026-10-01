@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
 import { WORK } from "../../content/work";
 import { REEL } from "../../content/reel";
 import { LEAD } from "../../content/about";
 import { SERVICOS } from "../../content/servicos";
 import { RECONHECIMENTO } from "../../content/reconhecimento";
+import { PECAS } from "../../content/pecas";
+import retrato from "../../assets/optimized/hero-portrait-1600.webp";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha } from "./sistema";
 import { HoverFluido } from "./HoverFluido";
@@ -46,7 +49,7 @@ export default function HomeUma({ tela = false }: { tela?: boolean } = {}) {
     return () => window.removeEventListener("keydown", fecha);
   }, [comSom]);
 
-  const publicados = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano).slice(0, 6);
+  const publicados = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano).slice(0, 5);
 
   return (
     <Prancha n="01" nome="Index" superficie="tinta" status="Available for projects" rodape={tela ? "regua" : "completo"} tela={tela}>
@@ -64,19 +67,38 @@ export default function HomeUma({ tela = false }: { tela?: boolean } = {}) {
 
       {tela ? null : (
         <>
-      {/* ─ 2 · SOBRE ──────────────────────────────────────────────────────── */}
-      <section className="p-uma-papel p-uma-sobre">
-        <p className="p-rotulo">About</p>
-        <p className="p-uma-declaracao">{LEAD[0]}</p>
-        <p className="p-corpo p-uma-corpo">{LEAD[1]}</p>
-        <ul className="p-uma-servicos">
-          {SERVICOS.map((s, i) => (
-            <li key={s.nome}>
-              <span className="p-marca">{String(i + 1).padStart(2, "0")}</span>
-              <span className="p-item">{s.nome}</span>
-              <span className="p-corpo">{s.entrega}</span>
-            </li>
-          ))}
+      {/* ─ 2 · SOBRE — duas colunas: ele à esquerda, a declaração à direita ─ */}
+      <section className="p-uma-papel p-uma-sobre2">
+        <figure className="p-uma-retrato">
+          <img src={retrato} alt="Mateus Bredoff" loading="lazy" decoding="async" draggable={false} />
+        </figure>
+        <div className="p-uma-sobre2-texto">
+          <p className="p-rotulo">About</p>
+          <p className="p-uma-declaracao">{LEAD[0]}</p>
+          <p className="p-corpo p-uma-corpo">{LEAD[1]}</p>
+        </div>
+      </section>
+
+      {/* ─ 2b · SERVIÇOS — quatro colunas, cada serviço com a peça que o prova ─ */}
+      <section className="p-uma-servicos2">
+        <p className="p-rotulo">What I do</p>
+        <ul>
+          {SERVICOS.map((sv, i) => {
+            const w = WORK.find((x) => x.slug === sv.peca) ?? WORK[i];
+            return (
+              <li key={sv.nome}>
+                <Link to={`/work/${w.slug}`} className="p-uma-servico">
+                  <span className="p-uma-servico-peca">
+                    <img src={PECAS[w.slug][1] ?? PECAS[w.slug][0]} alt="" loading="lazy" decoding="async" draggable={false} />
+                  </span>
+                  {/* ⚠ o "®" não existe na Departure Mono — vira quadrado vazio no rótulo */}
+                  <span className="p-marca">{String(i + 1).padStart(2, "0")} — {w.title.replace("®", "").trim()}</span>
+                  <span className="p-uma-servico-nome">{sv.nome}</span>
+                  <span className="p-corpo">{sv.entrega}</span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </section>
 
@@ -109,27 +131,32 @@ export default function HomeUma({ tela = false }: { tela?: boolean } = {}) {
         ) : null}
       </section>
 
-      {/* ─ 4 · PROVA ──────────────────────────────────────────────────────── */}
-      <section className="p-uma-prova">
+      {/* ─ 4 · PUBLICADO — índice editorial: o veículo em display, a peça ao lado ─ */}
+      <section className="p-uma-papel p-uma-publicado">
         <p className="p-rotulo">Published in</p>
-        <ul>
-          {publicados.map((r) => (
+        <ol>
+          {publicados.map((r, i) => (
             <li key={`${r.veiculo}-${r.projeto}`}>
-              {r.href ? (
-                <a href={r.href} target="_blank" rel="noopener noreferrer" className="p-item p-link">
-                  {r.veiculo}
-                </a>
-              ) : (
-                <span className="p-item">{r.veiculo}</span>
-              )}
-              <span className="p-corpo">
-                {r.projeto}, {r.ano}
+              <span className="p-marca">{String(i + 1).padStart(2, "0")}</span>
+              <span className="p-uma-veiculo">
+                {r.href ? (
+                  <a href={r.href} target="_blank" rel="noopener noreferrer">
+                    {r.veiculo}
+                  </a>
+                ) : (
+                  r.veiculo
+                )}
+              </span>
+              <span className="p-corpo p-uma-pub-ficha">
+                {r.projeto} · {r.ano}
+              </span>
+              <span className="p-uma-pub-peca">
+                <img src={r.foto.src} alt={r.foto.alt} loading="lazy" decoding="async" draggable={false} />
               </span>
             </li>
           ))}
-        </ul>
+        </ol>
       </section>
-
         </>
       )}
 

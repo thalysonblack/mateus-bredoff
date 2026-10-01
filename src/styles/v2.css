@@ -4361,3 +4361,67 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
 }
 /* versão B (tela única): a hero ocupa a tela inteira da Prancha, régua embaixo por cima */
 .p-tela.h-svh .p-uma-hero { height: 100svh; }
+
+/* ── ONE PAGE · SEÇÕES REFEITAS (01/10, "as seções não ficaram bem") ─────────
+   Uma estrutura por seção, e a matéria dele em escala em todas:
+   sobre = duas colunas com o retrato · serviços = quatro peças em coluna ·
+   publicado = índice editorial com a peça ao lado. */
+
+/* SOBRE — o retrato alto à esquerda (sangra a margem), o texto à direita */
+.p-uma-sobre2 {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  column-gap: clamp(32px, 5vw, 96px);
+  align-items: end;
+  padding-block: 0;
+  padding-left: 0;
+}
+.p-uma-retrato { margin: 0; height: min(100svh, 980px); overflow: hidden; }
+.p-uma-retrato img { width: 100%; height: 100%; object-fit: cover; object-position: 38% 30%; display: block; }
+.p-uma-sobre2-texto { display: grid; row-gap: 28px; padding-block: 128px 96px; }
+.p-uma-sobre2-texto .p-rotulo { color: var(--p-quieto); }
+
+/* SERVIÇOS — quatro colunas, a peça vertical em cima, o serviço embaixo */
+.p-uma-servicos2 { padding-block: 128px 112px; color: #e9e3e1; }
+.p-uma-servicos2 > .p-rotulo { color: rgba(233, 227, 225, 0.62); padding-bottom: 32px; }
+.p-uma-servicos2 ul { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--p-grade-vao); }
+.p-uma-servico { display: grid; row-gap: 12px; color: inherit; text-decoration: none; }
+.p-uma-servico-peca { display: block; aspect-ratio: 3 / 4; overflow: hidden; background: rgba(233, 227, 225, 0.06); margin-bottom: 8px; }
+.p-uma-servico-peca img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+.p-uma-servico:hover .p-uma-servico-peca img { transform: scale(1.04); }
+.p-uma-servico .p-marca, .p-uma-servico .p-corpo { color: rgba(233, 227, 225, 0.62); }
+.p-uma-servico-nome {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-size: clamp(22px, 1.9vw, 36px); line-height: 1.05; letter-spacing: -0.035em;
+}
+
+/* PUBLICADO — índice: nº · veículo em display · ficha · a peça publicada */
+.p-uma-publicado { padding-block: 128px 112px; }
+.p-uma-publicado > .p-rotulo { color: var(--p-quieto); padding-bottom: 24px; }
+.p-uma-publicado ol { border-bottom: 1px solid var(--p-fio); }
+.p-uma-publicado li {
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 1fr) minmax(0, 0.5fr) min(24vw, 400px);
+  column-gap: var(--p-grade-vao);
+  align-items: center;
+  padding: 20px 0;
+  border-top: 1px solid var(--p-fio);
+}
+.p-uma-publicado .p-marca, .p-uma-pub-ficha { color: var(--p-quieto); }
+.p-uma-veiculo {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-size: clamp(30px, 4.2vw, 80px); line-height: 1; letter-spacing: -0.045em;
+}
+.p-uma-veiculo a { color: inherit; text-decoration: none; transition: color 0.3s ease-out; }
+.p-uma-veiculo a:hover { color: var(--p-acento); }
+.p-uma-pub-peca { display: block; aspect-ratio: 16 / 10; overflow: hidden; }
+.p-uma-pub-peca img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+@media (max-width: 860px) {
+  .p-uma-sobre2 { grid-template-columns: 1fr; padding-left: var(--p-margem); }
+  .p-uma-retrato { height: 70svh; margin-inline: calc(var(--p-margem) * -1); }
+  .p-uma-sobre2-texto { padding-block: 48px 96px; }
+  .p-uma-servicos2 ul { grid-template-columns: 1fr 1fr; row-gap: 40px; }
+  .p-uma-publicado li { grid-template-columns: 2rem 1fr; row-gap: 12px; }
+  .p-uma-pub-ficha, .p-uma-pub-peca { grid-column: 2; }
+}
