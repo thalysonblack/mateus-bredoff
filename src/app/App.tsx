@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router";
 import { initLenis, destroyLenis, scrollToTop, scrollToElement } from "../lib/lenis";
 import { ScrollTrigger } from "../lib/gsap";
@@ -31,6 +31,8 @@ import HomeC from "./v2/HomeC";
 import HomeD from "./v2/HomeD";
 import HomeFundo from "./v2/HomeFundo";
 import HomeUma from "./v2/HomeUma";
+/* o conceito 3D traz o Three.js: carrega só quando a rota abre */
+const HomeEspaco = lazy(() => import("./v2/HomeEspaco"));
 import HomeE from "./v2/HomeE";
 import HomeF from "./v2/HomeF";
 import HomeG from "./v2/HomeG";
@@ -205,6 +207,7 @@ export default function App() {
           <Route path="/" element={<HomeUma />} />
           <Route path="/v2/home-fundo" element={<HomeFundo />} />
           <Route path="/v2/neutra" element={<HomeUma tela />} />
+          <Route path="/v2/espaco" element={<Suspense fallback={null}><HomeEspaco /></Suspense>} />
           <Route path="/about" element={<PranchaAbout />} />
           <Route path="/work" element={<PranchaWork />} />
           <Route path="/work/:slug" element={<PranchaCase />} />

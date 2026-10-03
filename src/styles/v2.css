@@ -4425,3 +4425,42 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
   .p-uma-publicado li { grid-template-columns: 2rem 1fr; row-gap: 12px; }
   .p-uma-pub-ficha, .p-uma-pub-peca { grid-column: 2; }
 }
+
+/* ── HOME · O ESPAÇO (03/10) — o conceito do Florén com a matéria do Bredoff ─
+   Palco alto com a cena em sticky; fundo em degradê papel → tinta, como o
+   palco do Florén, para as pranchas pegarem luz em cima e afundarem embaixo. */
+.p-esp-palco {
+  position: relative;
+  height: 640vh;
+  margin-inline: calc(var(--p-margem) * -1);
+  margin-top: calc((var(--p-margem-y) + var(--p-menu-h, 77px)) * -1);
+}
+.p-esp-cena {
+  position: sticky; top: 0;
+  height: 100svh; overflow: hidden;
+  background: linear-gradient(to bottom, #e6e5e1 0%, #8f918e 38%, #0d0f0f 78%);
+}
+.p-esp-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+.p-esp-hero { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.6s ease-out; }
+.p-esp-hero.on { opacity: 1; }
+.p-esp-kicker { position: absolute; left: var(--p-margem); top: calc(var(--p-margem-y) + var(--p-menu-h, 77px) + 32px); color: rgba(13, 15, 15, 0.7); font-size: 11px; letter-spacing: 0.06em; }
+.p-esp-role { position: absolute; right: var(--p-margem); top: calc(var(--p-margem-y) + var(--p-menu-h, 77px) + 32px); text-align: right; color: rgba(13, 15, 15, 0.7); font-size: 11px; letter-spacing: 0.06em; }
+.p-esp-nome {
+  position: absolute; left: var(--p-margem); right: var(--p-margem); bottom: 3vh;
+  font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 400;
+  font-size: 12.4vw; line-height: 0.82; letter-spacing: -0.06em;
+  color: #e9e3e1; white-space: nowrap; margin-left: -0.05em;
+}
+.p-esp-legenda {
+  position: absolute; left: var(--p-margem); top: calc(var(--p-margem-y) + var(--p-menu-h, 77px) + 32px);
+  color: #e9e3e1; font-size: 11px; letter-spacing: 0.06em; mix-blend-mode: difference;
+  animation: p-diag-ficha 0.5s ease-out both;
+}
+.p-esp-foco { position: absolute; left: var(--p-margem); bottom: 5vh; color: #e9e3e1; pointer-events: none; }
+.p-esp-foco > div { display: grid; row-gap: 10px; animation: p-diag-ficha 0.45s ease-out both; }
+.p-esp-foco .p-marca { color: rgba(233, 227, 225, 0.62); font-size: 11px; letter-spacing: 0.06em; }
+.p-esp-foco-nome {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-size: clamp(48px, 7vw, 132px); line-height: 0.9; letter-spacing: -0.05em;
+}

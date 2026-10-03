@@ -40,16 +40,6 @@ import { WorkCartoes } from "./WorkCartoes";
 export default function HomeUma({ tela = false }: { tela?: boolean } = {}) {
   useMetaRota();
   const [sob, setSob] = useState<(typeof WORK)[number] | null>(null);
-  const [comSom, setComSom] = useState(false);
-
-  useEffect(() => {
-    if (!comSom) return;
-    const fecha = (e: KeyboardEvent) => e.key === "Escape" && setComSom(false);
-    window.addEventListener("keydown", fecha);
-    return () => window.removeEventListener("keydown", fecha);
-  }, [comSom]);
-
-  const publicados = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano).slice(0, 5);
 
   return (
     <Prancha n="01" nome="Index" superficie="tinta" status="Available for projects" rodape={tela ? "regua" : "completo"} tela={tela}>
@@ -65,8 +55,31 @@ export default function HomeUma({ tela = false }: { tela?: boolean } = {}) {
         </div>
       </section>
 
-      {tela ? null : (
-        <>
+      {tela ? null : <SecoesUma />}
+
+    </Prancha>
+  );
+}
+
+/**
+ * As seções da one page abaixo da hero — sobre, serviços, showreel, publicado.
+ * Componente próprio porque duas homes as usam: a one page e o conceito 3D
+ * (`/v2/espaco`), que troca só a hero.
+ */
+export function SecoesUma() {
+  const [comSom, setComSom] = useState(false);
+
+  useEffect(() => {
+    if (!comSom) return;
+    const fecha = (e: KeyboardEvent) => e.key === "Escape" && setComSom(false);
+    window.addEventListener("keydown", fecha);
+    return () => window.removeEventListener("keydown", fecha);
+  }, [comSom]);
+
+  const publicados = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano).slice(0, 5);
+
+  return (
+    <>
       {/* ─ 2 · SOBRE — duas colunas: ele à esquerda, a declaração à direita ─ */}
       <section className="p-uma-papel p-uma-sobre2">
         <figure className="p-uma-retrato">
@@ -157,14 +170,11 @@ export default function HomeUma({ tela = false }: { tela?: boolean } = {}) {
           ))}
         </ol>
       </section>
-        </>
-      )}
-
       {comSom && REEL.video ? (
         <div className="p-player" onClick={() => setComSom(false)} role="presentation">
           <video src={REEL.video} autoPlay controls playsInline className="p-player-video" />
         </div>
       ) : null}
-    </Prancha>
+    </>
   );
 }
