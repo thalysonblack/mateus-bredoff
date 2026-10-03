@@ -6,7 +6,7 @@ import { WORK } from "../../content/work";
 import { PECAS } from "../../content/pecas";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha } from "./sistema";
-import { SecoesUma } from "./HomeUma";
+import { EspacoSecoes } from "./EspacoSecoes";
 
 /**
  * HOME — O ESPAÇO (03/10, "faz algo como fez no Florén").
@@ -33,6 +33,25 @@ export default function HomeEspaco() {
   const motor = useRef<Espaco | null>(null);
   const [foco, setFoco] = useState(-1);
   const [fase, setFase] = useState(0);
+  /* o carregamento do Florén: eixo de 1px desce, contador 000 → 100 */
+  const contador = useRef<HTMLSpanElement | null>(null);
+  const [carregado, setCarregado] = useState(false);
+  useEffect(() => {
+    if (prefersReducedMotion()) return setCarregado(true);
+    const o = { n: 0 };
+    const tw = gsap.to(o, {
+      n: 100,
+      duration: 1.5,
+      ease: "power2.inOut",
+      onUpdate: () => {
+        if (contador.current) contador.current.textContent = String(Math.round(o.n)).padStart(3, "0");
+      },
+      onComplete: () => setCarregado(true),
+    });
+    return () => {
+      tw.kill();
+    };
+  }, []);
 
   useEffect(() => {
     const c = tela.current;
@@ -84,7 +103,12 @@ export default function HomeEspaco() {
   const legendas = ["", "01 / Selected work", "02 / The work, up close", "03 / Eight brands"];
 
   return (
-    <Prancha n="01" nome="Index" superficie="tinta" status="Available for projects" rodape="completo">
+    <Prancha n="01" nome="Index" superficie="tinta" status="Available for projects" rodape="regua">
+      <div className={`p-flo-carga${carregado ? " fora" : ""}`} aria-hidden="true">
+        <span className="p-flo-carga-eixo" />
+        <span ref={contador} className="p-marca p-flo-carga-n">000</span>
+      </div>
+
       <section ref={palco} className="p-esp-palco" aria-label="Selected work">
         <div className="p-esp-cena">
           <canvas ref={tela} className="p-esp-canvas" />
@@ -116,7 +140,7 @@ export default function HomeEspaco() {
         </div>
       </section>
 
-      <SecoesUma />
+      <EspacoSecoes />
     </Prancha>
   );
 }
