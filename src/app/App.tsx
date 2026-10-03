@@ -33,6 +33,7 @@ import HomeFundo from "./v2/HomeFundo";
 import HomeUma from "./v2/HomeUma";
 /* o conceito 3D traz o Three.js: carrega só quando a rota abre */
 const HomeEspaco = lazy(() => import("./v2/HomeEspaco"));
+const HomeEstudo = lazy(() => import("./v2/HomeEstudo"));
 import HomeE from "./v2/HomeE";
 import HomeF from "./v2/HomeF";
 import HomeG from "./v2/HomeG";
@@ -208,6 +209,7 @@ export default function App() {
           <Route path="/v2/home-fundo" element={<HomeFundo />} />
           <Route path="/v2/neutra" element={<HomeUma tela />} />
           <Route path="/v2/espaco" element={<Suspense fallback={null}><HomeEspaco /></Suspense>} />
+          <Route path="/v2/estudo" element={<Suspense fallback={null}><HomeEstudo /></Suspense>} />
           <Route path="/about" element={<PranchaAbout />} />
           <Route path="/work" element={<PranchaWork />} />
           <Route path="/work/:slug" element={<PranchaCase />} />
