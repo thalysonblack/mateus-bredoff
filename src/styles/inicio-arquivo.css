@@ -8,10 +8,11 @@
   align-items: end;
   height: clamp(440px, 62svh, 720px);
   margin-top: calc(-1 * clamp(40px, 9vh, 120px)); /* a hero já desce 96–220px: o maço sobe um pouco */
+  z-index: 3; /* as cartas dadas pousam POR CIMA das linhas da lista, que vêm depois no DOM */
 }
 
 /* a coluna 1 é a legenda do arquivo: nome em corpo de título, contador em mono */
-.ia-legenda { align-self: end; display: flex; flex-direction: column; gap: 14px; padding-bottom: 4px; }
+.ia-legenda { position: relative; z-index: 300; /* o nome fica por cima da carta que desce pela coluna 1 */ align-self: end; display: flex; flex-direction: column; gap: 14px; padding-bottom: 4px; }
 .ia-nome {
   font-family: "Geist", ui-sans-serif, sans-serif;
   font-weight: 300;
@@ -40,12 +41,17 @@
   aspect-ratio: 4 / 5;
   margin-left: calc(clamp(190px, 21vw, 340px) / -2);
   margin-top: calc(clamp(190px, 21vw, 340px) * -0.625);
+  pointer-events: none; /* a mesa lê o cursor; a carta pousada não pode roubar o hover da linha */
+  will-change: transform;
+}
+/* a face carrega a matéria da carta; o leque do hover mexe nela, o scroll mexe na carta */
+.ia-face {
+  width: 100%; height: 100%;
   background: #e6e5e1;
   outline: 1px solid rgba(20, 32, 31, 0.08);
   box-shadow: 0 1px 0 rgba(20, 32, 31, 0.06), 0 18px 40px -24px rgba(20, 32, 31, 0.45);
-  will-change: transform;
 }
-.ia-carta img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; user-select: none; }
+.ia-face img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; user-select: none; }
 
 /* a leitura: a peça do topo, sob a mesa, alinhada à coluna 2 */
 .ia-leitura {

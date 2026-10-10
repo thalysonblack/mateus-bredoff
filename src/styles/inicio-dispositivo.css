@@ -10,6 +10,7 @@
   --ic-cor: #277796;
   position: relative;
   isolation: isolate;
+  z-index: 41; /* acima da lente da lista (z 40): a agulha da lista atravessa o visor, como no aparelho */
   display: flex;
   flex-direction: column;
   /* a .ix-hero tem padding-top próprio; o aparelho o devolve e ocupa a tela */
@@ -18,14 +19,11 @@
   min-height: 520px;
   padding-bottom: 8px;
 }
-.ic::before {
-  content: "";
-  position: absolute; z-index: -1;
-  top: -50vh; bottom: -96px;
-  left: calc(50% - 50vw); width: 100vw;
-  background: color-mix(in oklab, var(--ic-cor) 9%, transparent);
-  transition: background-color 1.6s cubic-bezier(0.22, 1, 0.36, 1);
-  pointer-events: none;
+/* a TINTA é da página (InicioDispositivo põe --ic-tinta na .p-tela): a hero e a lista
+   ficam sob o mesmo fundo — o aparelho tinge enquanto opera, a lista tinge no hover */
+.p-tela:has(.ic) {
+  background-color: color-mix(in oklab, var(--ic-tinta, #f4f4f2) 9%, #f4f4f2);
+  transition: background-color 1.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .ic-palco {
@@ -93,10 +91,7 @@
   flex: none;
   height: 76px;
   margin-top: clamp(20px, 3vh, 36px);
-  cursor: ew-resize;
-  touch-action: pan-y;
   user-select: none;
-  outline: none;
 }
 .ic-fio {
   position: absolute; left: 0; right: 0; bottom: 18px;
@@ -115,6 +110,7 @@
   color: var(--p-quieto);
   transition: color 0.5s ease;
 }
+.ic-marca-txt { display: flex; flex-direction: column; align-items: inherit; gap: 4px; }
 .ic-marca::after { /* o traço maior do canal */
   content: ""; position: absolute; bottom: 0; left: 50%;
   width: 1px; height: 14px; background: currentColor;
@@ -128,7 +124,7 @@
   font-size: 13px; letter-spacing: -0.01em;
   white-space: nowrap;
 }
-.ic-marca.is-on, .ic-marca:hover, .ic-marca:focus-visible { color: var(--p-ink); }
+.ic-marca.is-on { color: var(--p-ink); }
 
 .ic-agulha {
   position: absolute; bottom: 4px; top: 0;
@@ -141,7 +137,6 @@
   content: ""; position: absolute; top: -3px; left: -3px;
   width: 7px; height: 7px; background: inherit; transform: rotate(45deg);
 }
-.ic-regua:focus-visible .ic-fio { outline: 1px solid var(--p-ink); outline-offset: 6px; }
 
 /* ─ mobile: empilha — etiqueta, visor, leitor; a régua mostra só os números ─ */
 @media (max-width: 760px) {
@@ -155,8 +150,24 @@
   .ic-dica { display: none; }
   .ic-marca-nome { display: none; }
   .ic-regua { height: 56px; margin-top: 8px; }
+  .ic-agulha--lista { display: none; }
 }
 
+/* ─ a régua continua na LISTA ─ */
+/* o fio de cada linha nasce do x do seu canal (o UmaIndice anima --fio; aqui só muda a origem) */
+.p-tela:has(.ic) .ix-lista > li::before { transform-origin: var(--ic-x, 0%) 50%; }
+/* a agulha da lista: posição absoluta na hero, levada pelo GSAP até a linha em hover */
+.ix-hero:has(.ic) { position: relative; }
+.ic-agulha--lista {
+  position: absolute; left: 0; top: 0; bottom: auto;
+  height: 0; z-index: 0;
+  transform-origin: 50% 0;
+  opacity: 0; visibility: hidden;
+}
+.ic-agulha--lista::before { top: -3px; }
+.ix-hero:has(.ic) .ix-lista { position: relative; z-index: 1; }
+
 @media (prefers-reduced-motion: reduce) {
-  .ic::before, .ic-num, .ic-agulha, .ic-marca { transition: none; }
+  .p-tela:has(.ic) { transition: none; }
+  .ic-num, .ic-agulha, .ic-marca { transition: none; }
 }
