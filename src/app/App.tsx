@@ -31,6 +31,9 @@ import HomeC from "./v2/HomeC";
 import HomeD from "./v2/HomeD";
 import HomeFundo from "./v2/HomeFundo";
 import HomeUma from "./v2/HomeUma";
+import UmaRolo from "./v2/UmaRolo";
+import UmaIndice from "./v2/UmaIndice";
+import UmaRevista from "./v2/UmaRevista";
 /* o conceito 3D traz o Three.js: carrega só quando a rota abre */
 const HomeEspaco = lazy(() => import("./v2/HomeEspaco"));
 const HomeEstudo = lazy(() => import("./v2/HomeEstudo"));
@@ -207,6 +210,9 @@ export default function App() {
               pré-render seguem valendo sem uma linha alterada. */}
           <Route path="/" element={<HomeFundo />} />
           <Route path="/v2/uma" element={<HomeUma />} />
+          <Route path="/v2/uma-rolo" element={<UmaRolo />} />
+          <Route path="/v2/uma-indice" element={<UmaIndice />} />
+          <Route path="/v2/uma-revista" element={<UmaRevista />} />
           <Route path="/v2/neutra" element={<HomeUma tela />} />
           <Route path="/v2/espaco" element={<Suspense fallback={null}><HomeEspaco /></Suspense>} />
           <Route path="/v2/estudo" element={<Suspense fallback={null}><HomeEstudo /></Suspense>} />
