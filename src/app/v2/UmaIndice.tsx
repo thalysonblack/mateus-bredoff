@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { WORK } from "../../content/work";
 import { REEL } from "../../content/reel";
+import { NomeObra } from "./NomeObra";
 import { LEAD } from "../../content/about";
 import { SERVICOS } from "../../content/servicos";
 import { RECONHECIMENTO } from "../../content/reconhecimento";
@@ -72,13 +73,17 @@ export default function UmaIndice() {
   useLayoutEffect(() => {
     if (prefersReducedMotion()) return;
     let split: SplitText | null = null;
+    let splitObra: SplitText | null = null;
     const ctx = gsap.context(() => {});
     let vivo = true;
     void document.fonts.ready.then(() => {
       if (!vivo) return;
       ctx.add(() => {
         /* ENTRADA — o nome sobe por máscara, letra a letra */
-        split = SplitText.create(".ix-nome", { type: "lines,chars", mask: "lines" });
+        split = SplitText.create("h1.ix-nome", { type: "lines,chars", mask: "lines" });
+        /* a cópia do NomeObra é dividida IGUAL — senão o espaçamento das letras diverge e o
+           trabalho aparece deslocado do nome (só o h1 anima) */
+        splitObra = SplitText.create(".ix-nome-obra", { type: "lines,chars", mask: "lines" });
         const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
         /* fromTo com o fim EXPLÍCITO: um `from` lê o fim do estado atual, e se a
            entrada roda duas vezes (remontagem) a segunda grava o meio da
@@ -146,6 +151,7 @@ export default function UmaIndice() {
       vivo = false;
       ctx.revert();
       split?.revert();
+      splitObra?.revert();
     };
   }, []);
 
@@ -160,7 +166,7 @@ export default function UmaIndice() {
     <Prancha n="01" nome="Index" superficie="papel" status="Available for projects" rodape="completo">
       {/* ─ 1 · HERO: o nome e o índice do trabalho ─────────────────────────── */}
       <section className="ix-hero">
-        <h1 className="ix-nome">Mateus Bredoff</h1>
+        <NomeObra texto="Mateus Bredoff" entrada={1.35} />
         <div className="ix-grade ix-oficio">
           <p className="p-rotulo">Selected work — {String(WORK.length).padStart(2, "0")}</p>
           <p className="p-corpo">Brand designer &amp; art director. Based in Brazil, working worldwide.</p>

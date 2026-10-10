@@ -194,3 +194,18 @@
   .ix-titulo, .ix-lista > li, .ix-n > span, .ix-lente, .ix-veiculo { transition: none; }
   .ix-lista > li.is-sob .ix-titulo { transform: none; }
 }
+
+/* ─ O NOME FEITO DO TRABALHO (NomeObra) — flipbook na entrada, furo no hover ─ */
+@property --r { syntax: "<length>"; inherits: false; initial-value: 0px; }
+.ix-nome-caixa { position: relative; width: fit-content; cursor: crosshair; }
+.ix-nome-obra {
+  position: absolute; inset: 0;
+  pointer-events: none; user-select: none;
+  color: transparent;
+  background: var(--obra) center / cover no-repeat;
+  -webkit-background-clip: text; background-clip: text;
+  --mx: 0; --my: 0;
+  -webkit-mask: radial-gradient(circle var(--r) at calc(var(--mx) * 1px) calc(var(--my) * 1px), #000 98%, transparent 100%);
+  mask: radial-gradient(circle var(--r) at calc(var(--mx) * 1px) calc(var(--my) * 1px), #000 98%, transparent 100%);
+}
+@media (prefers-reduced-motion: reduce) { .ix-nome-obra { display: none; } }
