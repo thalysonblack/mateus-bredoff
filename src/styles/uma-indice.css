@@ -49,38 +49,35 @@
 .ix-lista--sob > li:not(.is-sob) { opacity: 0.62; }
 .ix-lista > li.is-sob .ix-titulo { transform: translateX(0.18em); }
 
-/* a janela do hover: pequena, segue o cursor, nunca vira tela cheia */
-.ix-janela {
-  position: fixed;
-  left: 0; top: 0;
-  z-index: 40;
-  pointer-events: none;
-}
-.ix-janela-moldura {
-  position: relative;
-  width: clamp(200px, 19vw, 320px);
-  aspect-ratio: 4 / 3;
-  /* ao lado do cursor e centrada na altura dele: nunca cobre a linha e nunca
-     sai pela base da tela quando a linha está embaixo */
-  margin-left: 28px;
-  translate: 0 -50%;
-  overflow: hidden;
+/* o FIO de cada linha é um pseudo com scaleX(--fio): a entrada o desenha da esquerda */
+.ix-lista > li, .ix-servico, .ix-pubs > li { position: relative; --fio: 1; }
+.ix-linha { border-top: 0; }
+.ix-lista > li::before, .ix-servico::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px;
   background: var(--p-fio);
-  opacity: 0;
-  transform: scale(0.94);
-  transform-origin: 0 50%;
-  transition: opacity 0.25s ease-out, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: scaleX(var(--fio)); transform-origin: 0 50%;
 }
-.ix-janela.is-on .ix-janela-moldura { opacity: 1; transform: none; }
-.ix-janela.is-esq .ix-janela-moldura { margin-left: 0; translate: calc(-100% - 28px) -50%; transform-origin: 100% 50%; }
-.ix-janela img {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 0.2s ease-out;
+
+/* nº ↔ "→ View": duas linhas numa máscara, a da vez sobe */
+.ix-n { display: inline-grid; overflow: hidden; height: 1.25em; line-height: 1.25em; }
+.ix-n > span { grid-area: 1 / 1; transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+.ix-n > span + span { transform: translateY(105%); color: var(--p-ink); }
+.ix-lista > li.is-sob .ix-n > span:first-child { transform: translateY(-105%); }
+.ix-lista > li.is-sob .ix-n > span + span { transform: none; }
+
+/* a LENTE WebGL — uma coluna fixa entre o nome e a ficha; o Y é do cursor */
+.ix-lente {
+  position: fixed; top: 0; left: 54vw; z-index: 40;
+  width: 21vw; aspect-ratio: 16 / 9;
+  pointer-events: none;
+  clip-path: inset(0% 0% 100% 0%);
+  transition: clip-path 0.5s cubic-bezier(0.7, 0, 0.84, 0);
 }
-.ix-janela img.is-on { opacity: 1; }
+.ix-lente.is-on { clip-path: inset(0% 0% 0% 0%); transition: clip-path 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+/* nas publicações a coluna livre é a do rótulo */
+.ix-lente--pub { left: var(--p-margem); width: calc((100vw - 2 * var(--p-margem)) * 0.276 - var(--p-grade-vao)); }
+/* o visor "cartaz" do sistema vira o miolo da lente: sem posição nem sombra próprias */
+.ix-lente .p-gl--cartaz { position: absolute; inset: 0; left: 0; top: 0; width: 100%; height: 100%; aspect-ratio: auto; box-shadow: none; }
 
 /* ── seções ───────────────────────────────────────────────────────────── */
 .ix-secao { padding-top: clamp(96px, 16vh, 200px); row-gap: 28px; }
@@ -113,6 +110,7 @@
   align-items: baseline;
   padding-block: 18px;
 }
+.ix-servico-n,
 .ix-servico-nome,
 .ix-veiculo {
   font-family: 'Geist', ui-sans-serif, sans-serif;
@@ -122,9 +120,14 @@
   letter-spacing: -0.03em;
 }
 .ix-servico-entrega { color: var(--p-quieto); max-width: 44ch; }
+.ix-servico-n { color: var(--p-quieto); font-variant-numeric: tabular-nums; }
+.ix-tabela:has(.ix-servico) > li { border-top: 0; }
 
 .ix-reel-cab { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+.ix-reel-secao { position: relative; z-index: 30; }
+.ix-reel-vaga { min-width: 0; }
 .ix-reel {
+  position: relative; z-index: 1;
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -143,15 +146,18 @@
   color: var(--p-ink);
 }
 .ix-pub-proj { color: var(--p-quieto); }
-a.ix-pub .ix-veiculo { transition: color 0.2s ease-out; }
-a.ix-pub:hover .ix-veiculo { color: var(--p-acento); }
+.ix-pubs > li { transition: opacity 0.3s ease-out; }
+.ix-pubs--sob > li:not(.is-sob) { opacity: 0.62; }
+.ix-veiculo { display: inline-block; transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+.ix-pubs > li.is-sob .ix-veiculo { transform: translateX(0.18em); }
 
 /* o fim: o rodapé completo da Prancha precisa de distância da última tabela */
 .ix-secao:last-of-type { padding-bottom: clamp(96px, 14vh, 180px); }
 
 /* ── toque / mobile ───────────────────────────────────────────────────── */
 @media (hover: none) {
-  .ix-janela { display: none; }
+  .ix-lente { display: none; }
+  .ix-pubs--sob > li:not(.is-sob) { opacity: 1; }
   .ix-lista--sob > li:not(.is-sob) { opacity: 1; }
   .ix-lista > li.is-sob .ix-titulo { transform: none; }
 }
@@ -185,6 +191,6 @@ a.ix-pub:hover .ix-veiculo { color: var(--p-acento); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ix-titulo, .ix-lista > li, .ix-janela-moldura, .ix-janela img { transition: none; }
+  .ix-titulo, .ix-lista > li, .ix-n > span, .ix-lente, .ix-veiculo { transition: none; }
   .ix-lista > li.is-sob .ix-titulo { transform: none; }
 }
