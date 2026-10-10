@@ -45,7 +45,7 @@ export function InicioTipo() {
 
     /* o lockup "indice" copia corpo e coluna do nome de projeto da lista real */
     const alinharIndice = () => {
-      const t = document.querySelector<HTMLElement>(".ix-lista .ix-titulo");
+      const t = document.querySelector<HTMLElement>(".ib-lista .ib-titulo");
       if (!t) return;
       el.style.setProperty("--it-indice-fs", getComputedStyle(t).fontSize);
       /* o hover desloca o título 0.18em por transform: desconta o translate da medida */
@@ -116,7 +116,7 @@ export function InicioTipo() {
           }
           ScrollTrigger.refresh();
           /* no celular a miniatura da linha empurra o título quando a imagem carrega: mede de novo */
-          const mini = document.querySelector(".ix-lista .ix-mini");
+          const mini = document.querySelector(".ib-lista .ib-mini");
           if (mini) {
             const ro = new ResizeObserver(() => ScrollTrigger.refresh());
             ro.observe(mini);
@@ -148,8 +148,8 @@ export function InicioTipo() {
         ))}
       </h1>
       <p className="p-marca it-legenda" aria-hidden="true">
-        <span>{i < 4 ? `Lockup ${String(i + 1).padStart(2, "0")} / 04` : "Index"}</span>
-        <span>{i < 4 ? LOCKUPS[i].nome : "Selected work — 08"}</span>
+        <span>{i < 4 ? `Lockup ${String(i + 1).padStart(2, "0")} / 04` : "Chapter 01 / 05"}</span>
+        <span>{i < 4 ? LOCKUPS[i].nome : "Index — selected work 08"}</span>
         <span className="it-dica">Scroll ↓</span>
       </p>
     </div>
