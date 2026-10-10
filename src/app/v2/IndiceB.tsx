@@ -21,7 +21,7 @@ import "../../styles/indice-b.css";
  * A página INTEIRA nasce do Início B: o nome dele como brand system. Cada seção é
  * um capítulo de manual, aberto pela mesma legenda mono entre fios da abertura,
  * e cada capítulo tem UM gesto tipográfico, sem repetir:
- *   abertura  o nome passa por 4 lockups e assenta como linha zero do índice (InicioTipo)
+ *   abertura  o nome se abre, os 8 projetos passam no vão e o nome atraca no menu (InicioTipo)
  *   01 Index         os projetos chegam alinhados à direita e se RECOMPÕEM à esquerda
  *   02 Tone of voice a declaração assenta palavra a palavra no grid; o retrato como diretriz
  *   03 Applications  cada serviço passa de Tracked a Horizontal (o tracking fecha)
@@ -193,7 +193,7 @@ export default function IndiceB() {
   return (
     <Prancha n="01" nome="Index" superficie="papel" status="Available for projects" rodape="regua">
       <div ref={raiz} className="ib">
-        {/* ─ ABERTURA + 01 INDEX: o nome assenta como linha zero e a lista continua ─ */}
+        {/* ─ ABERTURA + 01 INDEX: o nome abre espaço para o trabalho e atraca no menu; a lista segue ─ */}
         <section className="ib-hero">
           <InicioTipo />
           <ol className={`ib-lista${sob != null ? " ib-lista--sob" : ""}`} onPointerLeave={() => setSob(null)}>

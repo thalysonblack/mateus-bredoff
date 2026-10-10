@@ -1,42 +1,42 @@
-// prova da PÁGINA B inteira (/v2/indice-b): frames ao longo do scroll real (mouse.wheel; o Lenis ignora scrollTo)
+// prova da PÁGINA B (/v2/indice-b), rodada 4: o nome se abre, os projetos passam no vão,
+// o nome atraca no menu. Frames ao longo do pin (mouse.wheel; o Lenis ignora scrollTo).
 // uso: node scripts/prova-indice-b.mjs [url] [pasta]
 import { chromium } from 'playwright';
 const [url = 'http://localhost:5322/v2/indice-b', out = '.'] = process.argv.slice(2);
 const b = await chromium.launch();
-for (const [w, h, tag, n] of [[1440, 900, 'd', 14], [390, 844, 'm', 10]]) {
+for (const [w, h, tag] of [[1512, 860, 'd'], [390, 844, 'm']]) {
   const p = await b.newPage({ viewport: { width: w, height: h } });
   const errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('console', m => m.type() === 'error' && errs.push(m.text()));
   await p.goto(url); await p.waitForTimeout(2800);
-  await p.mouse.move(w - 4, 4);
+  await p.mouse.move(w - 4, h - 4);
   const alvo = async (y) => {
-    for (let i = 0; i < 160; i++) {
+    for (let i = 0; i < 200; i++) {
       const sy = await p.evaluate(() => scrollY);
-      if (Math.abs(sy - y) < 30) break;
-      await p.mouse.wheel(0, Math.max(-300, Math.min(300, y - sy))); await p.waitForTimeout(30);
+      if (Math.abs(sy - y) < 20) break;
+      await p.mouse.wheel(0, Math.max(-250, Math.min(250, y - sy))); await p.waitForTimeout(30);
     }
-    await p.waitForTimeout(1100);
+    await p.waitForTimeout(1000);
   };
-  const total = await p.evaluate(() => document.documentElement.scrollHeight - innerHeight);
-  for (let k = 0; k < n; k++) { await alvo(total * k / (n - 1)); await p.screenshot({ path: `${out}/pb-${tag}-${String(k).padStart(2, '0')}.png` }); }
-  /* o reel no meio do pin (desktop) */
-  if (tag === 'd') {
-    /* varre a região do reel e guarda o maior retângulo (o ápice da expansão) */
-    const y0 = await p.evaluate(() => { const v = document.querySelector('.ib-mov'); return scrollY + v.getBoundingClientRect().top - innerHeight; });
-    let melhor = null;
-    for (let y = y0; y < y0 + h * 4; y += h * 0.15) {
-      await alvo(y);
-      const r = await p.evaluate(() => { const b = document.querySelector('.ib-reel').getBoundingClientRect(); return [b.left, b.top, b.width, b.height].map(Math.round); });
-      if (!melhor || r[2] * r[3] > melhor.r[2] * melhor.r[3]) { melhor = { r, y }; await p.screenshot({ path: `${out}/pb-d-reel.png` }); }
+  const shot = (n) => p.screenshot({ path: `${out}/pb3-${tag}-${n}.png` });
+  const pin = (tag === 'd' ? 5.2 : 4.2) * h;
+  const passos = [0, 0.08, 0.2, 0.32, 0.45, 0.6, 0.75, 0.86, 0.93, 1];
+  for (const [k, f] of passos.entries()) {
+    await alvo(pin * f); await shot(String(k).padStart(2, '0'));
+    if (f === 0.93 || f === 1) {
+      const r = await p.evaluate(() => {
+        const m = document.querySelector('.it-palavra').getBoundingClientRect();
+        const t = document.querySelector('.p-menu a.p-menu-campo > span:first-child');
+        const tr = t.getBoundingClientRect();
+        return { heroMateus: [m.left, m.top, m.width].map(Math.round), menu: [tr.left, tr.top, tr.width].map(Math.round), menuOp: getComputedStyle(t).opacity };
+      });
+      console.log(tag, 'doca', f, JSON.stringify(r));
     }
-    console.log('reel no ápice', melhor);
-    /* hover na lista: a lente WebGL */
-    await alvo(3.4 * h + h * 0.4);
-    const li = await p.locator('.ib-lista > li').nth(2).boundingBox();
-    await p.mouse.move(li.x + li.width * 0.3, li.y + li.height / 2, { steps: 6 }); await p.waitForTimeout(1600);
-    await p.screenshot({ path: `${out}/pb-d-hover.png` });
   }
+  await alvo(pin + h * 0.6); await shot('lista');
+  const cap = await p.evaluate(() => scrollY + document.querySelectorAll('.ib-cap')[0].getBoundingClientRect().top);
+  await alvo(cap - 40); await shot('capitulo');
   const sx = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth);
-  console.log(tag, 'erros', errs, 'scroll-x', sx, 'total', total);
+  console.log(tag, 'erros', errs, 'scroll-x', sx);
   await p.close();
 }
 await b.close();

@@ -1,7 +1,7 @@
 /**
  * PÁGINA B — O MANUAL DE MARCA (/v2/indice-b, IndiceB.tsx). Papel, uma grade só:
  * a da casa (`--p-grade-col1` para o rótulo, o resto para o conteúdo). Cada
- * capítulo abre com a mesma legenda mono entre dois fios da abertura (InicioTipo).
+ * capítulo abre com a mesma legenda mono entre dois fios.
  */
 .ib-grade {
   display: grid;
@@ -20,7 +20,14 @@
 .ib-cap-linha > span:nth-child(2) { opacity: 1; }
 
 /* ── abertura + 01 index ─────────────────────────────────────────────────── */
-.ib-hero { padding-top: clamp(96px, 20vh, 220px); }
+.ib-hero { padding-top: 24px; }
+/* ⚠ "também o menu" (10/10): nesta página o menu fixo ganha o papel por trás — o conteúdo
+   não passa visível por baixo dele. O ::before cobre também a margem acima do menu. */
+.p-tela:has(.ib) > div > .p-menu::before {
+  content: ""; position: absolute; z-index: -1;
+  inset: calc(-1 * var(--p-margem-y)) calc(-1 * var(--p-margem)) -14px;
+  background: #f4f4f2;
+}
 .ib-lista { list-style: none; border-bottom: 1px solid var(--p-fio); margin-top: 8px; }
 .ib-lista > li, .ib-app, .ib-spec > li { position: relative; --fio: 1; }
 .ib-lista > li::before, .ib-app::before, .ib-spec > li::before {

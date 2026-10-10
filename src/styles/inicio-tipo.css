@@ -1,57 +1,56 @@
-/* INÍCIO B — o nome como brand system: o scroll passa por quatro lockups e assenta no índice (InicioTipo.tsx) */
+/* INÍCIO B, rodada 4 — o nome se abre, o trabalho passa no vão, o nome atraca no menu (InicioTipo.tsx) */
 .it-caixa {
+  --it-fs: clamp(54px, 11.2vw, 216px);
   position: relative;
-  height: calc(100svh - clamp(96px, 20vh, 220px) - 140px);
-  min-height: 360px;
-  margin-bottom: 8px;
+  /* o palco ocupa a tela abaixo do menu: o pin prende onde ele nasce */
+  height: calc(100svh - 2 * var(--p-margem-y) - var(--p-menu-h, 69px) - 48px);
+  min-height: 420px;
 }
 .it-nome {
-  position: absolute; inset: 40px 0 0; /* o topo é da legenda */
-  display: flex;
+  position: absolute; inset: 0;
+  display: flex; align-items: flex-end; gap: 0.22em;
   font-family: 'Geist', ui-sans-serif, sans-serif;
   font-weight: 300;
+  font-size: var(--it-fs);
   line-height: 0.82;
   letter-spacing: -0.06em;
+  margin-left: -0.055em;
   color: var(--p-ink);
-}
-.it-palavra { display: flex; white-space: nowrap; }
-/* a máscara existe só para a entrada; overflow-y apenas, para o Flip poder viajar em x */
-.it-mascara { display: inline-block; overflow: clip; overflow-clip-margin: 0.12em; padding-bottom: 0.06em; }
-.it-letra { display: inline-block; will-change: transform; }
-
-/* 01 HORIZONTAL — uma linha, assentada na base da caixa */
-.it-caixa[data-lockup="horizontal"] .it-nome { align-items: flex-end; gap: 0.22em; font-size: clamp(54px, 11.2vw, 216px); margin-left: -0.055em; }
-/* 02 STACKED — duas linhas enormes, à esquerda */
-.it-caixa[data-lockup="empilhado"] .it-nome { flex-direction: column; justify-content: flex-end; font-size: clamp(72px, 15.5vh, 300px); font-size: min(15vw, 19svh); margin-left: -0.055em; }
-/* 03 SPLIT — Mateus no alto à esquerda, Bredoff na base à direita; respiro abaixo da legenda */
-.it-caixa[data-lockup="diagonal"] .it-nome { flex-direction: column; justify-content: space-between; padding-top: 36px; font-size: clamp(48px, 9vw, 180px); }
-.it-caixa[data-lockup="diagonal"] .it-palavra:last-child { align-self: flex-end; }
-/* 04 TRACKED — as letras espalhadas na largura inteira, numa linha só no meio */
-/* cada palavra ocupa 40% da largura: o vão entre elas (20%) é ~3× o vão entre letras */
-.it-caixa[data-lockup="aberto"] .it-nome { align-items: center; justify-content: space-between; font-size: clamp(36px, 5.6vw, 108px); }
-.it-caixa[data-lockup="aberto"] .it-palavra { width: 40%; justify-content: space-between; }
-/* 05 INDEX — o nome vira a linha zero da lista: corpo e coluna do .ix-titulo (medidos no JS) */
-.it-caixa[data-lockup="indice"] .it-nome { align-items: flex-end; gap: 0.22em; font-size: var(--it-indice-fs, 4.4vw); padding-left: var(--it-indice-x, 0px); padding-bottom: 0.1em; }
-
-/* guias de manual: fio de 1px no topo e na base da área de assinatura */
-.it-guia { position: absolute; left: 0; right: 0; height: 1px; background: var(--p-fio); transform-origin: left; }
-.it-guia--a { top: 0; }
-.it-guia--b { bottom: -8px; }
-
-.it-legenda {
-  position: absolute; left: 0; right: 0; top: 10px;
-  display: flex; justify-content: space-between; gap: 16px;
-  color: var(--p-ink); opacity: 0.62;
   pointer-events: none;
+  z-index: 2; /* ao atracar, as palavras passam por CIMA da janela */
 }
-.it-dica { opacity: 0.8; }
+.it-palavra { display: flex; white-space: nowrap; will-change: transform; }
+.it-mascara { display: inline-block; overflow: clip; overflow-clip-margin: 0.12em; padding-bottom: 0.06em; }
+.it-letra { display: inline-block; }
+
+/* o quadro do vão: entre "Mateus" (alto, esquerda) e "Bredoff" (base, direita) */
+.it-quadro {
+  position: absolute; left: 50%; top: 50%;
+  translate: -50% -50%;
+  height: calc(100% - 2 * 0.82 * 0.82 * var(--it-fs) - 72px);
+  max-width: 42vw;
+  aspect-ratio: 4 / 3;
+}
+.it-janela { position: absolute; inset: 0; color: var(--p-ink); }
+.it-janela img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.it-legenda {
+  position: absolute; left: 0; right: 0; top: calc(100% + 10px);
+  display: flex; justify-content: space-between; gap: 16px;
+  white-space: nowrap; color: var(--p-ink);
+}
+.it-legenda > span:last-child { color: var(--p-quieto); }
+.it-dica { position: absolute; right: 0; top: 0; color: var(--p-ink); opacity: 0; }
 
 @media (max-width: 760px) {
-  .it-caixa { height: 62svh; }
-  .it-caixa[data-lockup="horizontal"] .it-nome { gap: 0.22em; font-size: 12.4vw; }
-  .it-caixa[data-lockup="empilhado"] .it-nome { font-size: 25vw; }
-  .it-caixa[data-lockup="diagonal"] .it-nome { font-size: 17vw; }
-  .it-caixa[data-lockup="aberto"] .it-nome { flex-direction: column; justify-content: center; gap: 0.3em; font-size: 12vw; }
-  .it-caixa[data-lockup="aberto"] .it-palavra { width: 100%; }
+  .it-caixa { --it-fs: 15.5vw; min-height: 0; }
+  .it-nome { gap: 0.18em; }
+  .it-quadro { height: auto; width: 78vw; max-width: none; }
+  .it-legenda > span:last-child { display: none; }
 }
-@media (prefers-reduced-motion: reduce) { .it-letra { will-change: auto; } }
+/* sem movimento: o nome na base e a janela fechada — o trabalho está na lista logo abaixo */
+@media (prefers-reduced-motion: reduce) {
+  .it-quadro { display: none; }
+  .it-palavra { will-change: auto; }
+}
+/* a janela nasce fechada (o JS a abre com o scroll); sem JS ela fica aberta */
+.js .it-janela { clip-path: inset(50% 50% 50% 50%); }
