@@ -114,13 +114,17 @@ export default function UmaIndice() {
           });
         });
 
-        /* SHOWREEL — a janela cresce até quase a tela e volta à grade (desktop) */
+        /* SHOWREEL — a janela cresce até a tela INTEIRA e volta à grade (desktop) */
         gsap.matchMedia().add("(min-width: 761px)", () => {
           const reel = document.querySelector<HTMLElement>(".ix-reel");
           const vaga = reel?.parentElement; /* a vaga na grade não se transforma: é a medida */
           if (!reel || !vaga) return;
-          /* cresce até a margem de 12px, sem passar da altura da tela */
-          const escala = () => Math.min((window.innerWidth - 24) / vaga.offsetWidth, (window.innerHeight - 24) / vaga.offsetHeight);
+          /* TELA CHEIA de verdade: a caixa estica em x e y separados até a viewport inteira, e o
+             vídeo contra-escala para ficar com escala UNIFORME (= cover) — sem distorcer, sem margem */
+          const vid = reel.querySelector("video");
+          const sx = () => window.innerWidth / vaga.offsetWidth;
+          const sy = () => window.innerHeight / vaga.offsetHeight;
+          const s = () => Math.max(sx(), sy());
           const desvio = () => {
             const r = vaga.getBoundingClientRect();
             return window.innerWidth / 2 - (r.left + r.width / 2);
@@ -128,10 +132,12 @@ export default function UmaIndice() {
           gsap.timeline({
             scrollTrigger: { trigger: vaga, start: "center center", end: "+=160%", pin: ".ix-reel-secao", pinSpacing: true /* pai flex: o padrão viraria false */, scrub: 0.8, invalidateOnRefresh: true },
           })
-            .to(reel, { scale: escala, x: desvio, ease: "power2.inOut", duration: 1 })
+            .to(reel, { scaleX: sx, scaleY: sy, x: desvio, ease: "power2.inOut", duration: 1 })
+            .to(vid, { scaleX: () => s() / sx(), scaleY: () => s() / sy(), ease: "power2.inOut", duration: 1 }, 0)
             .to(".ix-reel-cab", { autoAlpha: 0, duration: 0.4 }, 0)
             .to({}, { duration: 0.7 })
-            .to(reel, { scale: 1, x: 0, ease: "power2.inOut", duration: 1 })
+            .to(reel, { scaleX: 1, scaleY: 1, x: 0, ease: "power2.inOut", duration: 1 })
+            .to(vid, { scaleX: 1, scaleY: 1, ease: "power2.inOut", duration: 1 }, "<")
             .to(".ix-reel-cab", { autoAlpha: 1, duration: 0.4 }, "<0.6");
         });
       });
