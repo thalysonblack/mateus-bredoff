@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router";
 import { WORK } from "../../content/work";
 import { REEL } from "../../content/reel";
@@ -45,7 +45,12 @@ const NUM = (i: number) => String(i + 1).padStart(2, "0");
 /* o projeto de uma publicação, pelo título (o "®" não entra na comparação) */
 const limpa = (t: string) => t.replace("®", "").trim().toLowerCase();
 const projetoDe = (nome: string) => WORK.find((w) => limpa(w.title) === limpa(nome)) ?? null;
-export default function UmaIndice() {
+/**
+ * `inicio`: a hero é trocável para experimentar as três famílias da pesquisa (10/10,
+ * `~/dev/_inbox/ref-bredoff-hero/`). Sem prop, fica o nome do NomeObra. Com prop, o
+ * componente entra NO LUGAR do nome; a linha de ofício e a lista seguem iguais.
+ */
+export default function UmaIndice({ inicio }: { inicio?: ReactNode } = {}) {
   useMetaRota();
   const [sob, setSob] = useState<number | null>(null);
   /* a lente é UMA só (um contexto WebGL): serve à lista e às publicações */
@@ -80,15 +85,17 @@ export default function UmaIndice() {
       if (!vivo) return;
       ctx.add(() => {
         /* ENTRADA — o nome sobe por máscara, letra a letra */
-        split = SplitText.create("h1.ix-nome", { type: "lines,chars", mask: "lines" });
+        const temNome = !!document.querySelector("h1.ix-nome");
+        split = temNome ? SplitText.create("h1.ix-nome", { type: "lines,chars", mask: "lines" }) : null;
         /* a cópia do NomeObra é dividida IGUAL — senão o espaçamento das letras diverge e o
            trabalho aparece deslocado do nome (só o h1 anima) */
-        splitObra = SplitText.create(".ix-nome-obra", { type: "lines,chars", mask: "lines" });
+        splitObra = temNome ? SplitText.create(".ix-nome-obra", { type: "lines,chars", mask: "lines" }) : null;
         const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
         /* fromTo com o fim EXPLÍCITO: um `from` lê o fim do estado atual, e se a
            entrada roda duas vezes (remontagem) a segunda grava o meio da
            primeira como destino — as linhas ficavam 38px abaixo do fio. */
-        tl.fromTo(split.chars, { yPercent: 115 }, { yPercent: 0, duration: 1.15, stagger: 0.022 })
+        if (split) tl.fromTo(split.chars, { yPercent: 115 }, { yPercent: 0, duration: 1.15, stagger: 0.022 }, 0);
+        tl
           .fromTo(".ix-oficio > *", { y: 14, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.9, stagger: 0.08 }, 0.35)
           .fromTo(".ix-lista > li", { "--fio": 0 }, { "--fio": 1, duration: 1.2, ease: "expo.inOut", stagger: 0.06 }, 0.4)
           .fromTo(".ix-lista .ix-linha > :not(.ix-mini)", { yPercent: 60, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 0.9, stagger: 0.012, clearProps: "transform" }, 0.55);
@@ -166,7 +173,7 @@ export default function UmaIndice() {
     <Prancha n="01" nome="Index" superficie="papel" status="Available for projects" rodape="completo">
       {/* ─ 1 · HERO: o nome e o índice do trabalho ─────────────────────────── */}
       <section className="ix-hero">
-        <NomeObra texto="Mateus Bredoff" entrada={1.35} />
+        {inicio ?? <NomeObra texto="Mateus Bredoff" entrada={1.35} />}
         <div className="ix-grade ix-oficio">
           <p className="p-rotulo">Selected work — {String(WORK.length).padStart(2, "0")}</p>
           <p className="p-corpo">Brand designer &amp; art director. Based in Brazil, working worldwide.</p>

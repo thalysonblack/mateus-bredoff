@@ -1,0 +1,59 @@
+/* INÍCIO B — o nome como brand system: quatro lockups, troca por FLIP (InicioTipo.tsx) */
+.it-caixa {
+  position: relative;
+  height: calc(100svh - clamp(96px, 20vh, 220px) - 140px);
+  min-height: 360px;
+  margin-bottom: 8px;
+  cursor: ew-resize;
+  user-select: none;
+}
+.it-nome {
+  position: absolute; inset: 40px 0 0; /* o topo é da legenda */
+  display: flex;
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 300;
+  line-height: 0.82;
+  letter-spacing: -0.06em;
+  color: var(--p-ink);
+}
+.it-palavra { display: flex; white-space: nowrap; }
+/* a máscara existe só para a entrada; overflow-y apenas, para o Flip poder viajar em x */
+.it-mascara { display: inline-block; overflow: clip; overflow-clip-margin: 0.12em; padding-bottom: 0.06em; }
+.it-letra { display: inline-block; will-change: transform; }
+
+/* 01 HORIZONTAL — uma linha, assentada na base da caixa */
+.it-caixa[data-lockup="horizontal"] .it-nome { align-items: flex-end; gap: 0.22em; font-size: clamp(54px, 11.2vw, 216px); margin-left: -0.055em; }
+/* 02 STACKED — duas linhas enormes, à esquerda */
+.it-caixa[data-lockup="empilhado"] .it-nome { flex-direction: column; justify-content: flex-end; font-size: clamp(72px, 15.5vh, 300px); font-size: min(15vw, 19svh); margin-left: -0.055em; }
+/* 03 SPLIT — Mateus no alto à esquerda, Bredoff na base à direita */
+.it-caixa[data-lockup="diagonal"] .it-nome { flex-direction: column; justify-content: space-between; font-size: clamp(48px, 9vw, 180px); }
+.it-caixa[data-lockup="diagonal"] .it-palavra:last-child { align-self: flex-end; }
+/* 04 TRACKED — as letras espalhadas na largura inteira, numa linha só no meio */
+.it-caixa[data-lockup="aberto"] .it-nome { align-items: center; justify-content: space-between; font-size: clamp(36px, 5.6vw, 108px); }
+.it-caixa[data-lockup="aberto"] .it-palavra { flex: 1; justify-content: space-between; }
+.it-caixa[data-lockup="aberto"] .it-palavra + .it-palavra { margin-left: 1.8em; } /* o vão entre palavras tem de vencer o vão entre letras */
+
+/* guias de manual: fio de 1px no topo e na base da área de assinatura */
+.it-guia { position: absolute; left: 0; right: 0; height: 1px; background: var(--p-fio); transform-origin: left; }
+.it-guia--a { top: 0; }
+.it-guia--b { bottom: -8px; }
+
+.it-legenda {
+  position: absolute; left: 0; right: 0; top: 10px;
+  display: flex; justify-content: space-between; gap: 16px;
+  color: var(--p-ink); opacity: 0.62;
+  pointer-events: none;
+}
+.it-dica { opacity: 0.8; }
+
+@media (max-width: 760px) {
+  .it-caixa { height: 62svh; cursor: pointer; }
+  .it-dica { display: none; }
+  .it-caixa[data-lockup="horizontal"] .it-nome { gap: 0.22em; font-size: 12.4vw; }
+  .it-caixa[data-lockup="empilhado"] .it-nome { font-size: 25vw; }
+  .it-caixa[data-lockup="diagonal"] .it-nome { font-size: 17vw; }
+  .it-caixa[data-lockup="aberto"] .it-nome { flex-direction: column; justify-content: center; gap: 0.3em; font-size: 12vw; }
+  .it-caixa[data-lockup="aberto"] .it-palavra + .it-palavra { margin-left: 0; }
+  .it-caixa[data-lockup="aberto"] .it-palavra { flex: none; width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .it-letra { will-change: auto; } }

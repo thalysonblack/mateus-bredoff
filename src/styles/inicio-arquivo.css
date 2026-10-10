@@ -1,0 +1,81 @@
+/* INÍCIO A — "O ARQUIVO À MOSTRA": o maço das peças (InicioArquivo.tsx) */
+
+.ia {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--p-grade-col1) minmax(0, 1fr);
+  column-gap: var(--p-grade-vao);
+  align-items: end;
+  height: clamp(440px, 62svh, 720px);
+  margin-top: calc(-1 * clamp(40px, 9vh, 120px)); /* a hero já desce 96–220px: o maço sobe um pouco */
+}
+
+/* a coluna 1 é a legenda do arquivo: nome em corpo de título, contador em mono */
+.ia-legenda { align-self: end; display: flex; flex-direction: column; gap: 14px; padding-bottom: 4px; }
+.ia-nome {
+  font-family: "Geist", ui-sans-serif, sans-serif;
+  font-weight: 300;
+  font-size: clamp(32px, 3.4vw, 56px);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: var(--p-ink);
+}
+.ia-nome > span { display: inline-block; }
+.ia-nome { overflow: clip; padding-bottom: 0.08em; }
+.ia-conta { color: var(--p-quieto); }
+.ia-conta-n { color: var(--p-ink); font-variant-numeric: tabular-nums; }
+
+/* a mesa: as cartas empilhadas no centro da coluna 2 */
+.ia-mesa {
+  position: relative;
+  height: 100%;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+.ia-carta {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(190px, 21vw, 340px);
+  aspect-ratio: 4 / 5;
+  margin-left: calc(clamp(190px, 21vw, 340px) / -2);
+  margin-top: calc(clamp(190px, 21vw, 340px) * -0.625);
+  background: #e6e5e1;
+  outline: 1px solid rgba(20, 32, 31, 0.08);
+  box-shadow: 0 1px 0 rgba(20, 32, 31, 0.06), 0 18px 40px -24px rgba(20, 32, 31, 0.45);
+  will-change: transform;
+}
+.ia-carta img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; user-select: none; }
+
+/* a leitura: a peça do topo, sob a mesa, alinhada à coluna 2 */
+.ia-leitura {
+  position: absolute;
+  right: 0;
+  bottom: -2px;
+  display: flex;
+  gap: 1.2em;
+  color: var(--p-ink);
+  font-variant-numeric: tabular-nums;
+}
+.ia-leitura > span:first-child { color: var(--p-quieto); }
+.ia-ver { color: var(--p-quieto); }
+.ia-mesa:hover ~ .ia-leitura .ia-ver { color: var(--p-ink); }
+
+@media (max-width: 760px) {
+  .ia {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+    height: clamp(460px, 74svh, 640px);
+    margin-top: calc(-1 * clamp(24px, 6vh, 64px));
+    row-gap: 18px;
+  }
+  .ia-mesa { grid-row: 1; }
+  .ia-legenda { grid-row: 2; }
+  .ia-carta {
+    width: 52vw;
+    margin-left: -26vw;
+    margin-top: -32.5vw;
+  }
+  .ia-leitura { position: static; grid-row: 3; font-size: 10px; flex-wrap: wrap; gap: 0.8em; }
+  .ia-ver { display: none; }
+}
