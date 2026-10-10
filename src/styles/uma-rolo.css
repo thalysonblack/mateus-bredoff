@@ -1,0 +1,125 @@
+/* ONE PAGE — "O ROLO" (UmaRolo.tsx). Tinta, cinema: um plano por tela. */
+
+/* ─ 1 · ABERTURA ─ */
+.rl-abertura {
+  min-height: calc(100svh - var(--p-menu-h, 77px));
+  display: flex; flex-direction: column; justify-content: center;
+  padding-inline: var(--p-margem);
+  padding-bottom: var(--p-margem-y);
+  position: relative;
+}
+.rl-nome {
+  font-family: 'Geist', ui-sans-serif, sans-serif;
+  font-weight: 300;
+  font-size: clamp(48px, 10.4vw, 200px);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+  margin-left: -0.05em;
+}
+.rl-oficio { margin-top: 24px; color: var(--p-quieto, rgba(236, 234, 229, 0.62)); }
+.rl-cartela {
+  position: absolute; left: var(--p-margem); right: var(--p-margem); bottom: var(--p-margem-y);
+  list-style: none;
+  display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: var(--p-grade-vao);
+  border-top: 1px solid var(--p-fio);
+  padding-top: 12px;
+  overflow: hidden;
+}
+.rl-cartela button {
+  all: unset; cursor: pointer;
+  display: flex; flex-direction: column; gap: 4px;
+  font-size: 13px; line-height: 1.2;
+  color: rgba(236, 234, 229, 0.62);
+  transition: color 0.25s ease;
+}
+.rl-cartela button:hover, .rl-cartela button:focus-visible { color: var(--p-ink); }
+.rl-cartela-n { font-family: 'Departure Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: 0.06em; }
+
+/* ─ 2 · PLANOS ─ */
+.rl-palco { position: relative; height: 100svh; overflow: hidden; background: #0d1414; }
+.rl-plano {
+  position: absolute; inset: 0;
+  display: block; overflow: hidden;
+  transform-origin: 50% 40%;
+  will-change: clip-path, transform;
+}
+.rl-plano img { position: absolute; inset: -2%; width: 104%; height: 104%; object-fit: cover; }
+.rl-legenda {
+  position: absolute; left: var(--p-margem); top: calc(var(--p-menu-h, 77px) + 24px); z-index: 2;
+  display: flex; flex-direction: column; gap: 2px;
+  color: #eceae5; mix-blend-mode: difference;
+}
+.rl-legenda-quieta { opacity: 0.62; }
+.rl-rodape {
+  position: absolute; left: var(--p-margem); right: var(--p-margem); bottom: calc(var(--p-margem-y) + 14px); z-index: 20;
+  display: flex; justify-content: space-between;
+  color: #eceae5; mix-blend-mode: difference; pointer-events: none;
+}
+.rl-barra {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 20;
+  height: 1px; background: #eceae5; transform-origin: 0 50%; mix-blend-mode: difference;
+}
+/* sem pin (mobile e movimento reduzido): os planos empilham, cada um com sua tela */
+@media (max-width: 760px), (prefers-reduced-motion: reduce) {
+  .rl-palco { height: auto; overflow: visible; }
+  .rl-plano { position: relative; height: 82svh; }
+  .rl-rodape, .rl-barra { display: none; }
+  .rl-legenda { top: auto; bottom: 16px; }
+}
+
+/* ─ 3 · INTERTÍTULO ─ */
+.rl-inter { position: relative; height: 100svh; display: grid; place-items: center; padding-inline: var(--p-margem); }
+.rl-cartela-txt {
+  grid-area: 1 / 1;
+  max-width: 22ch; text-align: center;
+  font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 300;
+  font-size: clamp(30px, 4.4vw, 76px); line-height: 1.04; letter-spacing: -0.035em;
+}
+@media (max-width: 760px), (prefers-reduced-motion: reduce) {
+  .rl-inter { height: auto; display: flex; flex-direction: column; gap: 32px; padding-block: 120px; }
+  .rl-cartela-txt { margin-inline: auto; }
+}
+
+/* ─ 4 · CRÉDITOS e 6 · FIM — formato de crédito: papel à esquerda, nome à direita, eixo no centro ─ */
+.rl-creditos, .rl-fim { padding: clamp(96px, 16vh, 180px) var(--p-margem); }
+.rl-creditos-cab { text-align: center; color: rgba(236, 234, 229, 0.62); margin-bottom: 48px; }
+.rl-creditos ol, .rl-fim ol { list-style: none; display: flex; flex-direction: column; gap: 28px; }
+.rl-credito { display: grid; grid-template-columns: 1fr 1fr; column-gap: 40px; align-items: baseline; }
+.rl-credito-papel {
+  text-align: right;
+  font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 300;
+  font-size: clamp(24px, 2.6vw, 44px); line-height: 1.05; letter-spacing: -0.03em;
+}
+.rl-credito-papel a { color: inherit; text-decoration: none; }
+.rl-credito-papel a:hover { text-decoration: underline; text-underline-offset: 0.12em; text-decoration-thickness: 1px; }
+.rl-credito-nome { font-size: 14px; line-height: 1.45; max-width: 36ch; color: rgba(236, 234, 229, 0.62); }
+.rl-creditos-corpo { max-width: 56ch; margin: 96px auto 0; text-align: center; color: rgba(236, 234, 229, 0.62); }
+@media (max-width: 760px) {
+  .rl-credito { grid-template-columns: 1fr; row-gap: 6px; text-align: center; }
+  .rl-credito-papel { text-align: center; }
+  .rl-credito-nome { margin-inline: auto; }
+}
+
+/* ─ 5 · CLÍMAX ─ */
+.rl-climax { position: relative; height: 100svh; display: grid; place-items: center; overflow: hidden; }
+.rl-climax-cab {
+  position: absolute; left: var(--p-margem); right: var(--p-margem); top: calc(var(--p-menu-h, 77px) + 24px);
+  display: flex; justify-content: space-between; color: rgba(236, 234, 229, 0.62);
+}
+.rl-climax-cab button { all: unset; cursor: pointer; color: var(--p-ink); }
+.rl-reel-vaga { width: min(44vw, 640px); aspect-ratio: 16 / 9; position: relative; z-index: 30; }
+.rl-reel { all: unset; display: block; width: 100%; height: 100%; overflow: hidden; cursor: pointer; background: #0d1414; }
+.rl-reel video { width: 100%; height: 100%; object-fit: cover; display: block; }
+@media (max-width: 760px) {
+  .rl-climax { height: auto; padding-block: 120px 64px; }
+  .rl-climax-cab { position: static; margin-bottom: 16px; }
+  .rl-reel-vaga { width: calc(100vw - 2 * var(--p-margem)); }
+  .rl-climax { display: flex; flex-direction: column; padding-inline: var(--p-margem); }
+}
+
+/* ─ mobile: o nome cabe, a cartela vira duas colunas ─ */
+@media (max-width: 760px) {
+  .rl-nome { font-size: 13.6vw; white-space: normal; }
+  .rl-cartela { position: static; margin-top: 64px; grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 14px; }
+}
