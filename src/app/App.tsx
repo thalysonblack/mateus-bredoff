@@ -205,8 +205,8 @@ export default function App() {
               `/`, `/about`, `/work`, `/work/:slug`, `/lab` são as do CMS dele e
               do original, muda só quem as monta. Por isso `content/meta.ts` e o
               pré-render seguem valendo sem uma linha alterada. */}
-          <Route path="/" element={<HomeUma />} />
-          <Route path="/v2/home-fundo" element={<HomeFundo />} />
+          <Route path="/" element={<HomeFundo />} />
+          <Route path="/v2/uma" element={<HomeUma />} />
           <Route path="/v2/neutra" element={<HomeUma tela />} />
           <Route path="/v2/espaco" element={<Suspense fallback={null}><HomeEspaco /></Suspense>} />
           <Route path="/v2/estudo" element={<Suspense fallback={null}><HomeEstudo /></Suspense>} />
