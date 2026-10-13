@@ -13,7 +13,7 @@ import "../../styles/reels.css";
  *   CENTRO  o vídeo abre centrado no papel; o scroll cresce até a tela cheia
  * O reel sai da seção 4 do Índice (semReel): ele já está na hero.
  */
-function Video() {
+function Video({ ritmo = 1 }: { ritmo?: number }) {
   return (
     <video
       className="rx-video"
@@ -23,9 +23,12 @@ function Video() {
       muted
       loop
       playsInline
+      onLoadedMetadata={(e) => { e.currentTarget.playbackRate = ritmo; }}
+      onPlay={(e) => { e.currentTarget.playbackRate = ritmo; }}
       ref={(el) => {
         if (!el) return;
         el.muted = true;
+        el.playbackRate = ritmo;
         void el.play().catch(() => {});
       }}
     />
@@ -82,7 +85,7 @@ function HeroReelFull() {
   return (
     <section ref={ref} className="hx-cena rx rx-full p-capa-full">
       <div className="rx-quadro" onPointerEnter={() => selar(true)} onPointerLeave={() => selar(false)} onClick={() => setAberto(true)}>
-        <Video />
+        <Video ritmo={0.6} />
         <div className="rx-sombra" />
       </div>
       <p className="rx-legenda p-marca">
