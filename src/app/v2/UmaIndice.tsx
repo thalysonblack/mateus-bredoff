@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode, type CSSProperties } from "react";
 import { Link } from "react-router";
 import { WORK } from "../../content/work";
 import { REEL } from "../../content/reel";
@@ -267,7 +267,18 @@ export default function UmaIndice({ inicio, semReel }: { inicio?: ReactNode; sem
             const miolo = (
               <>
                 <span className="p-marca ix-n">{NUM(i)}</span>
-                <span className="ix-veiculo">{r.veiculo}</span>
+                {r.logo ? (
+                  <span className="ix-veiculo">
+                    <span
+                      role="img"
+                      aria-label={r.veiculo}
+                      className={`ix-logo${r.logo.alturaPx ? " ix-logo--alto" : ""}`}
+                      style={{ "--logo": `url("${r.logo.src}")`, aspectRatio: `${r.logo.w} / ${r.logo.h}` } as CSSProperties}
+                    />
+                  </span>
+                ) : (
+                  <span className="ix-veiculo ix-veiculo--abz">{r.veiculo}</span>
+                )}
                 <span className="p-corpo ix-pub-proj">{r.projeto.replace("®", "").trim()}</span>
                 <span className="p-marca ix-ano">{r.ano}</span>
               </>
