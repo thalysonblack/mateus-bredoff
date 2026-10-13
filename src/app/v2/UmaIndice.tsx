@@ -279,7 +279,7 @@ export default function UmaIndice({ inicio, semReel }: { inicio?: ReactNode; sem
                 ) : (
                   <span className="ix-veiculo ix-veiculo--abz">{r.veiculo}</span>
                 )}
-                <span className="p-corpo ix-pub-proj">{r.projeto.replace("®", "").trim()}</span>
+                <span className="p-corpo ix-pub-proj">{r.projeto.replace("®", "").trim()}{r.veiculo.includes("Behance") && <span className="ix-selo" title="Featured on Behance" aria-label="Featured on Behance">Bē</span>}</span>
                 <span className="p-marca ix-ano">{r.ano}</span>
               </>
             );

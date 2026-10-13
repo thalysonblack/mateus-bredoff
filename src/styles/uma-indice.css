@@ -105,7 +105,7 @@
 .ix-tabela > li { border-top: 1px solid var(--p-fio); }
 .ix-servico {
   display: grid;
-  grid-template-columns: 4ch minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: var(--p-grade-col1) 28.8% minmax(0, 1fr) auto;
   column-gap: var(--p-grade-vao);
   align-items: baseline;
   padding-block: 18px;
@@ -139,7 +139,7 @@
 
 .ix-pub {
   display: grid;
-  grid-template-columns: 4ch minmax(0, 1fr) minmax(0, 1fr) 6ch;
+  grid-template-columns: var(--p-grade-col1) 28.8% minmax(0, 1fr) auto;
   column-gap: var(--p-grade-vao);
   align-items: baseline;
   padding-block: 16px;
@@ -217,3 +217,19 @@
   -webkit-mask: var(--logo) no-repeat left center / contain; mask: var(--logo) no-repeat left center / contain; }
 .ix-logo--alto { height: 0.8em; vertical-align: -0.22em; }
 .ix-veiculo--abz { font-weight: 700; text-transform: uppercase; letter-spacing: 0.01em; font-size: clamp(13px, 0.95vw, 17px); }
+
+/* selo Behance ao lado do projeto que foi destaque lá (13/10) */
+.ix-selo { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-left: 10px; vertical-align: 1px;
+  border-radius: 50%; background: var(--p-ink); color: var(--p-papel, #f1f0ec); font: 700 10px/1 "Geist", sans-serif; letter-spacing: -0.02em; }
+
+/* "alinhar ao menu" (13/10): Ofício e Publicado seguem as colunas do menu — subgrid da grade do menu */
+@media (min-width: 900px) {
+  .ix-grade:has(> .ix-tabela) { grid-template-columns: var(--p-grade-col1) 28.8% minmax(0, 1fr) auto; }
+  .ix-grade > .ix-tabela { grid-column: 2 / -1; display: grid; grid-template-columns: subgrid; }
+  .ix-tabela > li { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; }
+  .ix-servico, .ix-pub { grid-column: 1 / -1; grid-template-columns: subgrid; }
+  .ix-servico-n, .ix-pub > .ix-n { grid-column: 1; grid-row: 1; }
+  .ix-servico-nome, .ix-veiculo { grid-column: 1; grid-row: 1; padding-left: 110px; }
+  .ix-servico-entrega, .ix-pub-proj { grid-column: 2; grid-row: 1; }
+  .ix-pub > .ix-ano, .ix-pub > :last-child:not(.ix-pub-proj) { grid-column: 3; grid-row: 1; }
+}
