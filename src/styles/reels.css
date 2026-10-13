@@ -5,14 +5,30 @@
   display: flex; justify-content: space-between; margin: 0;
 }
 
-/* FULL: o vídeo cobre a tela; um degradê só no topo deixa o menu ler */
-.rx-quadro { position: absolute; inset: 0; overflow: hidden; background: #14201f; clip-path: inset(0% 0% 0% 0% round 0px); }
-.rx-quadro::after {
-  content: ""; position: absolute; inset: 0 0 auto; height: 28%;
-  background: linear-gradient(rgba(10, 14, 14, 0.42), rgba(10, 14, 14, 0));
-  pointer-events: none;
+/* FULL: vídeo cobre a tela; overlay preto uniforme deixa menu e legenda lerem */
+.rx-quadro { position: absolute; inset: 0; overflow: hidden; background: #0b0d0d; }
+.rx-quadro .rx-video { transform-origin: 50% 50%; will-change: transform; }
+.rx-sombra { position: absolute; inset: 0; background: #000; opacity: 0.5; pointer-events: none; }
+.rx-full .rx-legenda { color: #e9e3e1; align-items: baseline; }
+.rx-play { all: unset; cursor: pointer; display: none; }
+@media (hover: hover) and (pointer: fine) { .rx-full .rx-quadro { cursor: none; } }
+@media (hover: none), (pointer: coarse) { .rx-play { display: inline; } .rx-scroll { display: none; } }
+
+/* selo que segue o cursor */
+.rx-selo {
+  position: fixed; left: 0; top: 0; z-index: 9999; pointer-events: none;
+  translate: -50% -50%; padding: 10px 16px; border-radius: 999px;
+  background: #e9e3e1; color: #14201f; white-space: nowrap;
+  opacity: 0; visibility: hidden; transform: scale(0);
 }
-.rx-full .rx-legenda { color: #e9e3e1; }
+@media (hover: none), (pointer: coarse) { .rx-selo { display: none; } }
+
+/* player aberto */
+.rx-player { position: fixed; inset: 0; z-index: 9998; background: #000; display: grid; place-items: center; animation: rx-entra .45s ease-out both; }
+@media (hover: hover) and (pointer: fine) { .rx-player { cursor: none; } }
+.rx-player video { width: 100%; height: 100%; object-fit: contain; }
+.rx-fechar { all: unset; position: absolute; top: var(--p-margem); right: var(--p-margem); color: #e9e3e1; cursor: pointer; }
+@keyframes rx-entra { from { opacity: 0; } }
 
 /* CENTRO: o vídeo abre centrado no papel */
 .rx-centro { display: grid; place-items: center; }
@@ -23,4 +39,11 @@
 .rx-centro .rx-legenda { color: var(--p-quieto); }
 @media (max-width: 760px) {
   .rx-caixa { width: calc(100vw - 2 * var(--p-margem)); }
+}
+
+/* sobre o reel escurecido o menu lê branco chapado; o difference embaralhava com o vídeo */
+.rx-sobre .p-tela:has(.rx-full) > div > .p-menu { mix-blend-mode: normal; }
+.rx-full .rx-quadro::after {
+  content: ""; position: absolute; inset: 0 0 auto; height: 22%; pointer-events: none;
+  background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0));
 }
