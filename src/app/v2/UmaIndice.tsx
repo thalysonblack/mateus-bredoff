@@ -50,7 +50,7 @@ const projetoDe = (nome: string) => WORK.find((w) => limpa(w.title) === limpa(no
  * `~/dev/_inbox/ref-bredoff-hero/`). Sem prop, fica o nome do NomeObra. Com prop, o
  * componente entra NO LUGAR do nome; a linha de ofício e a lista seguem iguais.
  */
-export default function UmaIndice({ inicio }: { inicio?: ReactNode } = {}) {
+export default function UmaIndice({ inicio, semReel }: { inicio?: ReactNode; semReel?: boolean } = {}) {
   useMetaRota();
   const [sob, setSob] = useState<number | null>(null);
   /* a lente é UMA só (um contexto WebGL): serve à lista e às publicações */
@@ -231,7 +231,7 @@ export default function UmaIndice({ inicio }: { inicio?: ReactNode } = {}) {
       </section>
 
       {/* ─ 4 · SHOWREEL ────────────────────────────────────────────────────── */}
-      {REEL.video ? (
+      {REEL.video && !semReel ? (
         <section className="ix-secao ix-grade ix-reel-secao">
           <div className="ix-reel-cab">
             <p className="p-rotulo">Showreel — {REEL.ano}</p>

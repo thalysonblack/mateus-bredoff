@@ -19,7 +19,7 @@ const nome = (i: number) => WORK[i].title.replace("®", "").trim();
 const CAPAS = WORK.map((w) => PECAS[w.slug][0]);
 
 /* a hero sangra até as bordas da tela: anula o recuo da Prancha, medido */
-function sangrar(el: HTMLElement) {
+export function sangrar(el: HTMLElement) {
   el.style.marginTop = el.style.marginLeft = "0px";
   const r = el.getBoundingClientRect();
   el.style.marginTop = `${-(r.top + window.scrollY)}px`;
@@ -28,7 +28,7 @@ function sangrar(el: HTMLElement) {
 }
 
 /* o App mata os ScrollTriggers ao montar a rota: tudo nasce depois das fontes */
-function useCena(montar: (el: HTMLElement) => void) {
+export function useCena(montar: (el: HTMLElement) => void) {
   const ref = useRef<HTMLElement | null>(null);
   useLayoutEffect(() => {
     const el = ref.current;

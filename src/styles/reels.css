@@ -1,0 +1,26 @@
+/* HERO SÓ COM O SHOWREEL (Reels.tsx) — base .hx-cena vem de heroes.css */
+.rx-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.rx-legenda {
+  position: absolute; z-index: 2; left: var(--p-margem); right: var(--p-margem); bottom: var(--p-margem);
+  display: flex; justify-content: space-between; margin: 0;
+}
+
+/* FULL: o vídeo cobre a tela; um degradê só no topo deixa o menu ler */
+.rx-quadro { position: absolute; inset: 0; overflow: hidden; background: #14201f; clip-path: inset(0% 0% 0% 0% round 0px); }
+.rx-quadro::after {
+  content: ""; position: absolute; inset: 0 0 auto; height: 28%;
+  background: linear-gradient(rgba(10, 14, 14, 0.42), rgba(10, 14, 14, 0));
+  pointer-events: none;
+}
+.rx-full .rx-legenda { color: #e9e3e1; }
+
+/* CENTRO: o vídeo abre centrado no papel */
+.rx-centro { display: grid; place-items: center; }
+.rx-caixa {
+  position: relative; overflow: hidden; background: #14201f; border-radius: 4px;
+  width: min(60vw, calc(70svh * 16 / 9)); aspect-ratio: 16 / 9; will-change: transform;
+}
+.rx-centro .rx-legenda { color: var(--p-quieto); }
+@media (max-width: 760px) {
+  .rx-caixa { width: calc(100vw - 2 * var(--p-margem)); }
+}
