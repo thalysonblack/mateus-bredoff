@@ -44,7 +44,14 @@ function HeroReelFull() {
       .to(".rx-sombra", { opacity: 0.8, ease: "none", duration: 1 }, 0)
       .to(".rx-legenda", { autoAlpha: 0, duration: 0.25 }, 0);
     /* menu branco chapado só enquanto ele está sobre o reel; no papel volta ao difference */
-    ScrollTrigger.create({ trigger: el, start: "top top", end: "bottom top+=90", toggleClass: { targets: document.documentElement, className: "rx-sobre" } });
+    ScrollTrigger.create({ trigger: el, start: "top bottom", end: "bottom top+=90", toggleClass: { targets: document.documentElement, className: "rx-sobre" } });
+    /* TWKS: o menu nasce no meio da tela e sobe 1:1 com a página até atracar no topo */
+    const menu = document.querySelector<HTMLElement>(".p-menu");
+    if (menu) {
+      const desce = () => window.innerHeight / 2 - menu.getBoundingClientRect().height / 2 - menu.offsetTop;
+      gsap.fromTo(menu, { y: desce }, { y: 0, ease: "none", immediateRender: true,
+        scrollTrigger: { start: 0, end: desce, scrub: true, invalidateOnRefresh: true } });
+    }
   });
 
   /* o selo segue o mouse (só desktop) */

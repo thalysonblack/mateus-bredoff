@@ -42,8 +42,36 @@
 }
 
 /* sobre o reel escurecido o menu lê branco chapado; o difference embaralhava com o vídeo */
-.rx-sobre .p-tela:has(.rx-full) > div > .p-menu { mix-blend-mode: normal; }
+.rx-sobre .p-tela:has(.rx-full) > div > .p-menu { mix-blend-mode: normal; color: #fff; }
+.rx-sobre .p-tela:has(.rx-full) > div > .p-menu * { color: #fff !important; }
 .rx-full .rx-quadro::after {
   content: ""; position: absolute; inset: 0 0 auto; height: 22%; pointer-events: none;
   background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0));
+}
+
+/* MENU EM LINHA ÚNICA NO CENTRO DA HERO (13/10, print do TWKS: "o centro assim")
+   nome | Index Work About | Brand Designer | Contact — uma linha, branco, corpo maior.
+   Hora e "Currently" saem; a segunda linha cinza vira item próprio. O GSAP (Reels.tsx)
+   desce o menu até o meio da tela e o devolve ao topo 1:1 com o scroll, como no TWKS. */
+.p-tela:has(.rx-full) > div > .p-menu {
+  display: flex; align-items: baseline; gap: 0 clamp(10px, 1vw, 16px);
+  font-size: clamp(16px, 1.3vw, 22px); letter-spacing: -0.02em; will-change: transform;
+}
+.p-tela:has(.rx-full) > div > .p-menu > a.p-menu-campo:first-child,
+.p-tela:has(.rx-full) > div > .p-menu .p-menu-nav { display: contents; }
+.p-tela:has(.rx-full) > div > .p-menu > div.p-menu-campo { display: none; }
+.p-tela:has(.rx-full) > div > .p-menu > a.p-menu-campo:first-child > span:first-child { order: 1; width: 17%; flex: none; }
+.p-tela:has(.rx-full) > div > .p-menu .p-menu-nav > * { order: 2; }
+.p-tela:has(.rx-full) > div > .p-menu > a.p-menu-campo:first-child > span:last-child { order: 3; margin-left: auto; color: inherit; }
+.p-tela:has(.rx-full) > div > .p-menu .p-menu-nav > a[href^="mailto"] { order: 4; margin-left: auto; }
+.p-tela:has(.rx-full) > div > .p-menu .p-menu-ponto { display: none; }
+@media (max-width: 760px) {
+  /* celular: nome + Contact na 1ª linha, a nav na 2ª; o ofício sai */
+  .p-tela:has(.rx-full) > div > .p-menu { flex-wrap: wrap; row-gap: 6px; font-size: 17px; }
+  .p-tela:has(.rx-full) > div > .p-menu > a.p-menu-campo:first-child > span:first-child { width: auto; }
+  .p-tela:has(.rx-full) > div > .p-menu > a.p-menu-campo:first-child > span:last-child { display: none; }
+  .p-tela:has(.rx-full) > div > .p-menu .p-menu-nav > a[href^="mailto"] { order: 2; }
+  .p-tela:has(.rx-full) > div > .p-menu .p-menu-nav > a:not([href^="mailto"]) { order: 3; }
+  .p-tela:has(.rx-full) > div > .p-menu .p-menu-nav > a:not([href^="mailto"]):first-child { margin-left: 0; }
+  .p-tela:has(.rx-full) > div > .p-menu::after { content: ""; order: 2; flex-basis: 100%; }
 }
