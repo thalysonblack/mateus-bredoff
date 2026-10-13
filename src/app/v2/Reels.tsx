@@ -89,9 +89,8 @@ function HeroReelFull() {
         <div className="rx-sombra" />
       </div>
       <p className="rx-legenda p-marca">
-        <span>Showreel {REEL.ano}</span>
         <button type="button" className="rx-play" onClick={() => setAberto(true)}>▶ Play reel</button>
-        <span className="rx-scroll">Scroll</span>
+        <span className="rx-scroll" aria-hidden><i /></span>
       </p>
       {createPortal(
         <>
