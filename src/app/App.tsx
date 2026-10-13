@@ -36,6 +36,7 @@ import UmaIndice from "./v2/UmaIndice";
 import IndiceA from "./v2/IndiceA";
 import IndiceB from "./v2/IndiceB";
 import IndiceC from "./v2/IndiceC";
+import { Hero1, Hero2, Hero3 } from "./v2/Heroes";
 import UmaRevista from "./v2/UmaRevista";
 /* o conceito 3D traz o Three.js: carrega só quando a rota abre */
 const HomeEspaco = lazy(() => import("./v2/HomeEspaco"));
@@ -218,6 +219,9 @@ export default function App() {
           <Route path="/v2/indice-a" element={<IndiceA />} />
           <Route path="/v2/indice-b" element={<IndiceB />} />
           <Route path="/v2/indice-c" element={<IndiceC />} />
+          <Route path="/v2/hero-1" element={<Hero1 />} />
+          <Route path="/v2/hero-2" element={<Hero2 />} />
+          <Route path="/v2/hero-3" element={<Hero3 />} />
           <Route path="/v2/uma-revista" element={<UmaRevista />} />
           <Route path="/v2/neutra" element={<HomeUma tela />} />
           <Route path="/v2/espaco" element={<Suspense fallback={null}><HomeEspaco /></Suspense>} />

@@ -1,0 +1,34 @@
+/* TRÊS HEROES (Heroes.tsx) — a hero sangra até a borda; a margem é medida no JS */
+.p-tela:has(.hx-cena) .ix-hero { padding-top: 0; }
+.hx-cena { position: relative; height: 100svh; overflow: hidden; margin-bottom: clamp(48px, 10vh, 120px); }
+.hx-cena .p-marca { position: absolute; z-index: 2; }
+
+/* 1 · trabalho primeiro */
+.h1-palco { position: absolute; inset: 0; background: #14201f; }
+.h1-plano, .h1-tela, .h1-tela canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.h1-legenda { left: var(--p-margem); right: var(--p-margem); bottom: var(--p-margem); display: grid; grid-template-columns: var(--p-grade-col1) 1fr auto; color: #e9e3e1; mix-blend-mode: difference; }
+.h1-dica { right: var(--p-margem); top: 50%; color: #e9e3e1; mix-blend-mode: difference; writing-mode: vertical-rl; }
+
+/* 2 · frase */
+.h2 { display: flex; align-items: center; padding: 0 var(--p-margem); }
+.h2-rotulo { top: calc(var(--p-margem-y) + var(--p-menu-h, 69px) + 24px); left: var(--p-margem); color: var(--p-quieto); }
+.h2-dica { bottom: var(--p-margem); left: var(--p-margem); color: var(--p-quieto); }
+.h2-frase {
+  font-family: 'Bodoni Moda', Georgia, serif; font-weight: 400;
+  font-size: clamp(40px, 7.4vw, 132px); line-height: 1.02; letter-spacing: -0.03em;
+  margin: 0; max-width: 15ch; color: var(--p-ink);
+}
+.h2-vaga { display: inline-block; vertical-align: -0.12em; width: 0; height: 0.82em; margin-right: 0.24em; overflow: hidden; border-radius: 2px; }
+.h2-fita { display: flex; flex-direction: column; width: 1.9em; }
+.h2-fita img { width: 1.9em; height: 0.82em; object-fit: cover; display: block; }
+
+/* 3 · grade viva */
+.h3 { background: var(--p-papel, #ecebe6); }
+.h3-quadro { position: absolute; inset: 0; display: grid; place-items: center; }
+.h3-grade {
+  display: grid; grid-template-columns: repeat(var(--cols), 1fr); gap: 10px;
+  width: max(160vw, 980px); flex: none; will-change: transform;
+}
+.h3-peca { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; }
+.h3-titulo { left: var(--p-margem); bottom: var(--p-margem); color: #e9e3e1; mix-blend-mode: difference; }
+.h3-ficha { left: var(--p-margem); right: var(--p-margem); bottom: var(--p-margem); display: grid; grid-template-columns: var(--p-grade-col1) 1fr auto; color: #e9e3e1; mix-blend-mode: difference; }
