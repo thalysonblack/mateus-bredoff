@@ -213,7 +213,7 @@
 /* Published in: o logo real de cada veículo, por máscara na cor da tinta (13/10, "trazer logo de cada site").
    Altura ótica: o wordmark do Behance é chapado e baixo; o WBDS tem brasão + 2 linhas e pede mais altura.
    O Abduzeedo não publica arquivo de logo (só favicon 32px): entra como no site dele, nome em grotesca pesada. */
-.ix-logo { display: inline-block; height: 0.78em; vertical-align: baseline; background: currentColor;
+.ix-logo { display: inline-block; height: 0.4em; vertical-align: baseline; background: currentColor;
   -webkit-mask: var(--logo) no-repeat left center / contain; mask: var(--logo) no-repeat left center / contain; }
-.ix-logo--alto { height: 1.5em; vertical-align: -0.45em; }
-.ix-veiculo--abz { font-weight: 700; text-transform: uppercase; letter-spacing: 0.01em; font-size: clamp(18px, 1.8vw, 31px); }
+.ix-logo--alto { height: 0.8em; vertical-align: -0.22em; }
+.ix-veiculo--abz { font-weight: 700; text-transform: uppercase; letter-spacing: 0.01em; font-size: clamp(13px, 0.95vw, 17px); }
