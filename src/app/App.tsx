@@ -39,6 +39,7 @@ import IndiceC from "./v2/IndiceC";
 import { Hero1, Hero2, Hero3 } from "./v2/Heroes";
 import { ReelFull, ReelCentro } from "./v2/Reels";
 import Rolin from "./v2/Rolin";
+import RolinB from "./v2/RolinB";
 import UmaRevista from "./v2/UmaRevista";
 /* o conceito 3D traz o Three.js: carrega só quando a rota abre */
 const HomeEspaco = lazy(() => import("./v2/HomeEspaco"));
@@ -226,6 +227,7 @@ export default function App() {
           <Route path="/v2/hero-3" element={<Hero3 />} />
           <Route path="/v2/reel-full" element={<ReelFull />} />
           <Route path="/v2/rolin" element={<Rolin />} />
+          <Route path="/v2/rolin-b" element={<RolinB />} />
           <Route path="/v2/reel-centro" element={<ReelCentro />} />
           <Route path="/v2/uma-revista" element={<UmaRevista />} />
           <Route path="/v2/neutra" element={<HomeUma tela />} />

@@ -220,7 +220,7 @@
 
 /* selo Behance ao lado do projeto que foi destaque lá (13/10) */
 .ix-selo { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-left: 10px; vertical-align: 1px;
-  border-radius: 50%; background: var(--p-ink); color: var(--p-papel, #f1f0ec); font: 700 10px/1 "Geist", sans-serif; letter-spacing: -0.02em; }
+  border-radius: 50%; background: var(--p-ink); color: #f4f4f2; font: 700 10px/1 "Geist", sans-serif; letter-spacing: -0.02em; }
 
 /* "alinhar ao menu" (13/10): Ofício e Publicado seguem as colunas do menu — subgrid da grade do menu */
 @media (min-width: 900px) {

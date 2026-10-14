@@ -35,7 +35,7 @@ function Video({ ritmo = 1 }: { ritmo?: number }) {
   );
 }
 
-function HeroReelFull() {
+export function HeroReelFull() {
   const [aberto, setAberto] = useState(false);
   const selo = useRef<HTMLDivElement | null>(null);
   const tela = useRef<HTMLVideoElement | null>(null);
