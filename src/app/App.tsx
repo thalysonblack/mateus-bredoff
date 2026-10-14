@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect } from "react";
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router";
 import { initLenis, destroyLenis, scrollToTop, scrollToElement } from "../lib/lenis";
 import { ScrollTrigger } from "../lib/gsap";
@@ -11,44 +11,13 @@ import About from "./pages/About";
 import HomeAutoral from "./pages/HomeV2";
 import PranchaIndex from "./v2/Home";
 import PranchaAbout from "./v2/About";
-import AboutB from "./v2/AboutB";
-import AboutC from "./v2/AboutC";
-import AboutD from "./v2/AboutD";
-import AboutE from "./v2/AboutE";
-import AboutF from "./v2/AboutF";
-import AboutG from "./v2/AboutG";
-import AboutH from "./v2/AboutH";
-import AboutI from "./v2/AboutI";
-import AboutJ from "./v2/AboutJ";
-import AboutK from "./v2/AboutK";
-import AboutL from "./v2/AboutL";
 import PranchaWork from "./v2/Work";
 import PranchaCase from "./v2/Case";
-import PranchaLab from "./v2/Lab";
-import HomeA from "./v2/HomeA";
-import HomeB from "./v2/HomeB";
-import HomeC from "./v2/HomeC";
-import HomeD from "./v2/HomeD";
 import HomeFundo from "./v2/HomeFundo";
-import HomeUma from "./v2/HomeUma";
-import UmaRolo from "./v2/UmaRolo";
-import UmaIndice from "./v2/UmaIndice";
-import IndiceA from "./v2/IndiceA";
-import IndiceB from "./v2/IndiceB";
-import IndiceC from "./v2/IndiceC";
-import { Hero1, Hero2, Hero3 } from "./v2/Heroes";
-import { ReelFull, ReelCentro } from "./v2/Reels";
+import { ReelFull } from "./v2/Reels";
 import Rolin from "./v2/Rolin";
 import RolinB from "./v2/RolinB";
-import UmaRevista from "./v2/UmaRevista";
 /* o conceito 3D traz o Three.js: carrega só quando a rota abre */
-const HomeEspaco = lazy(() => import("./v2/HomeEspaco"));
-const HomeEstudo = lazy(() => import("./v2/HomeEstudo"));
-import HomeE from "./v2/HomeE";
-import HomeF from "./v2/HomeF";
-import HomeG from "./v2/HomeG";
-import HomeH from "./v2/HomeH";
-import HomeI from "./v2/HomeI";
 import HomeV4 from "./v4/Home";
 import WorkV4 from "./v4/Work";
 import CaseV4 from "./v4/Case";
@@ -57,8 +26,6 @@ import LabV4 from "./v4/Lab";
 import HomeV5 from "./v5/Home";
 import CaseV5 from "./v5/Case";
 import AboutV5 from "./v5/About";
-import AboutM from "./v2/AboutM";
-import AboutN from "./v2/AboutN";
 import HomeV3 from "./pages/HomeV3";
 import AboutV3 from "./pages/AboutV3";
 import WorkIndexV3 from "./pages/WorkIndexV3";
@@ -216,23 +183,9 @@ export default function App() {
               do original, muda só quem as monta. Por isso `content/meta.ts` e o
               pré-render seguem valendo sem uma linha alterada. */}
           <Route path="/" element={<HomeFundo />} />
-          <Route path="/v2/uma" element={<HomeUma />} />
-          <Route path="/v2/uma-rolo" element={<UmaRolo />} />
-          <Route path="/v2/uma-indice" element={<UmaIndice />} />
-          <Route path="/v2/indice-a" element={<IndiceA />} />
-          <Route path="/v2/indice-b" element={<IndiceB />} />
-          <Route path="/v2/indice-c" element={<IndiceC />} />
-          <Route path="/v2/hero-1" element={<Hero1 />} />
-          <Route path="/v2/hero-2" element={<Hero2 />} />
-          <Route path="/v2/hero-3" element={<Hero3 />} />
           <Route path="/v2/reel-full" element={<ReelFull />} />
           <Route path="/v2/rolin" element={<Rolin />} />
           <Route path="/v2/rolin-b" element={<RolinB />} />
-          <Route path="/v2/reel-centro" element={<ReelCentro />} />
-          <Route path="/v2/uma-revista" element={<UmaRevista />} />
-          <Route path="/v2/neutra" element={<HomeUma tela />} />
-          <Route path="/v2/espaco" element={<Suspense fallback={null}><HomeEspaco /></Suspense>} />
-          <Route path="/v2/estudo" element={<Suspense fallback={null}><HomeEstudo /></Suspense>} />
           <Route path="/about" element={<PranchaAbout />} />
           <Route path="/work" element={<PranchaWork />} />
           <Route path="/work/:slug" element={<PranchaCase />} />
@@ -288,30 +241,14 @@ export default function App() {
           <Route path="/v2/about" element={<PranchaAbout />} />
           {/* a segunda proposta da about, da capa para baixo — "outra proposta
               da segunda section pra baixo". A capa é a mesma nas duas. */}
-          <Route path="/v2/about-b" element={<AboutB />} />
           {/* a terceira: catálogo de serviços COM FOTO, no espírito da about
               original do Framer (superfície escura, rótulo lateral) */}
-          <Route path="/v2/about-c" element={<AboutC />} />
-          <Route path="/v2/about-d" element={<AboutD />} />
-          <Route path="/v2/about-e" element={<AboutE />} />
-          <Route path="/v2/about-f" element={<AboutF />} />
-          <Route path="/v2/about-g" element={<AboutG />} />
-          <Route path="/v2/about-h" element={<AboutH />} />
           {/* 11/09 — "ainda não" na décima. Repertório novo (acervo da casa):
               três POSTURAS mutuamente incompatíveis, cada uma numa família que
               nenhuma das dez tocou. Ver o cabeçalho de cada arquivo. */}
-          <Route path="/v2/about-i" element={<AboutI />} />
-          <Route path="/v2/about-j" element={<AboutJ />} />
-          <Route path="/v2/about-k" element={<AboutK />} />
           {/* 12/09 — "não gostei" nas três; a resposta desenhada foi MOVIMENTO
               COMO PROTAGONISTA. O visor fluido da home em tela cheia. */}
-          <Route path="/v2/about-l" element={<AboutL />} />
-          <Route path="/v2/about-m" element={<AboutM />} />
-          <Route path="/v2/about-n" element={<AboutN />} />
           {/* a mesma about com as outras duas mecânicas de serviços */}
-          <Route path="/v2/about-c-fita" element={<AboutC servicos="fita" />} />
-          <Route path="/v2/about-c-cortina" element={<AboutC servicos="cortina" />} />
-          <Route path="/v2/lab" element={<PranchaLab />} />
 
           {/* ── AS TRÊS HOMES DE PARTIDO ─────────────────────────────────
               "gostei mas nao da home" (17/08) — as subpáginas ficaram e a home
@@ -320,21 +257,8 @@ export default function App() {
               como este projeto já resolveu isso uma vez (as homes /arquivo/a,
               /b e /c de agosto, apagadas depois da escolha).
               A quarta em comparação é a própria `/v2` (a folha de espécimes). */}
-          <Route path="/v2/a" element={<HomeA />} />
-          <Route path="/v2/b" element={<HomeB />} />
-          <Route path="/v2/c" element={<HomeC />} />
-          <Route path="/v2/d" element={<HomeD />} />
           {/* as três receitas do visor fluido, lado a lado para ele escolher —
               mesma home, só troca a mecânica da transição */}
-          <Route path="/v2/d1" element={<HomeD fluidoModo={1} comparando />} />
-          <Route path="/v2/d2" element={<HomeD fluidoModo={2} comparando />} />
-          <Route path="/v2/d3" element={<HomeD fluidoModo={3} comparando />} />
-          <Route path="/v2/d4" element={<HomeD fluidoModo={4} comparando />} />
-          <Route path="/v2/e" element={<HomeE />} />
-          <Route path="/v2/f" element={<HomeF />} />
-          <Route path="/v2/g" element={<HomeG />} />
-          <Route path="/v2/h" element={<HomeH />} />
-          <Route path="/v2/i" element={<HomeI />} />
 
 
           {/* ── V4 "O ÍNDICE" ────────────────────────────────────────────

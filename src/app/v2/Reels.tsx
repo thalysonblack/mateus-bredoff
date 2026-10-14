@@ -108,29 +108,4 @@ export function HeroReelFull() {
   );
 }
 
-function HeroReelCentro() {
-  const ref = useCena((el) => {
-    const caixa = el.querySelector<HTMLElement>(".rx-caixa")!;
-    const sx = () => window.innerWidth / caixa.offsetWidth;
-    const sy = () => window.innerHeight / caixa.offsetHeight;
-    const s = () => Math.max(sx(), sy());
-    gsap.timeline({ scrollTrigger: { trigger: el, start: "top top", end: "+=140%", pin: true, scrub: 0.6, invalidateOnRefresh: true } })
-      .to(caixa, { scaleX: sx, scaleY: sy, borderRadius: 0, ease: "power2.inOut", duration: 1 })
-      /* contra-escala: o vídeo fica com escala uniforme (cover), sem distorcer */
-      .to(".rx-caixa .rx-video", { scaleX: () => s() / sx(), scaleY: () => s() / sy(), ease: "power2.inOut", duration: 1 }, 0)
-      .to(".rx-legenda", { autoAlpha: 0, duration: 0.3 }, 0)
-      .to({}, { duration: 0.4 });
-  });
-  return (
-    <section ref={ref} className="hx-cena rx rx-centro">
-      <div className="rx-caixa"><Video /></div>
-      <p className="rx-legenda p-marca">
-        <span>Showreel {REEL.ano}</span>
-        <span>Scroll</span>
-      </p>
-    </section>
-  );
-}
-
 export const ReelFull = () => <UmaIndice inicio={<HeroReelFull />} semReel />;
-export const ReelCentro = () => <UmaIndice inicio={<HeroReelCentro />} semReel />;

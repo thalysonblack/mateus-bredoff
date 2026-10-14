@@ -30,17 +30,6 @@
 .rx-fechar { all: unset; position: absolute; top: var(--p-margem); right: var(--p-margem); color: #e9e3e1; cursor: pointer; }
 @keyframes rx-entra { from { opacity: 0; } }
 
-/* CENTRO: o vídeo abre centrado no papel */
-.rx-centro { display: grid; place-items: center; }
-.rx-caixa {
-  position: relative; overflow: hidden; background: #14201f; border-radius: 4px;
-  width: min(60vw, calc(70svh * 16 / 9)); aspect-ratio: 16 / 9; will-change: transform;
-}
-.rx-centro .rx-legenda { color: var(--p-quieto); }
-@media (max-width: 760px) {
-  .rx-caixa { width: calc(100vw - 2 * var(--p-margem)); }
-}
-
 /* sobre o reel escurecido o menu lê branco chapado; o difference embaralhava com o vídeo */
 .rx-sobre .p-tela:has(.rx-full) > div > .p-menu { mix-blend-mode: normal; color: #fff; }
 .rx-sobre .p-tela:has(.rx-full) > div > .p-menu * { color: #fff !important; }
