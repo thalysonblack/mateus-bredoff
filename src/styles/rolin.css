@@ -1,0 +1,117 @@
+/* ONE PAGE "ROLIN" (Rolin.tsx) — tudo num corpo só: 11px, caixa alta, grotesca */
+.rl {
+  --rl-m: 17px; --rl-vao: 17px;
+  --rl-tinta: #000; --rl-quieto: #9a9a9a; --rl-papel: #fff; --rl-grito: #ff1a0d;
+  background: var(--rl-papel); color: var(--rl-tinta);
+  font: 600 11px/1.18 "Alte Haas Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  text-transform: uppercase; letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+}
+.rl a { color: inherit; text-decoration: none; }
+.rl button { all: unset; cursor: pointer; }
+.rl ol { list-style: none; margin: 0; padding: 0; }
+.rl p { margin: 0; }
+.rl-quieto { color: var(--rl-quieto); }
+
+/* grade de 4: nome | ofício | metade direita (fio + pílula) */
+.rl-topo, .rl-linha, .rl-work {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--rl-vao);
+  padding-inline: var(--rl-m);
+}
+.rl-topo { position: fixed; z-index: 40; inset: 0 0 auto 0; padding-top: 15px; align-items: start; pointer-events: none; }
+.rl-topo > * { pointer-events: auto; }
+.rl-fio { grid-column: 3 / 5; margin-top: 12px; margin-right: 106px; height: 1px; background: rgb(0 0 0 / 0.14); position: relative; overflow: hidden; }
+.rl-fio i { position: absolute; inset: 0 auto 0 0; background: var(--rl-tinta); }
+.rl-pilula {
+  position: absolute; right: var(--rl-m); top: 10px;
+  display: flex; gap: 2px; padding: 3px; border-radius: 6px; background: rgb(0 0 0 / 0.08);
+  backdrop-filter: blur(10px);
+}
+.rl-pilula button { padding: 6px 9px 5px; border-radius: 4px; font-size: 10px; color: rgb(0 0 0 / 0.5); transition: background 0.3s, color 0.3s; }
+.rl-pilula button.is-on { background: #fff; color: var(--rl-tinta); }
+
+/* WORK: índice parado no meio da altura, coluna de peças na metade direita */
+.rl-work { padding-top: 0; }
+.rl-indice {
+  grid-column: 1 / 3; position: sticky; top: 0; height: 100svh;
+  display: grid; grid-template-columns: subgrid; align-content: center;
+}
+.rl-indice li { color: var(--rl-quieto); position: relative; padding-block: 2.5px; transition: color 0.25s; }
+.rl-indice li.is-on { color: var(--rl-tinta); }
+.rl-indice li.is-on::before { content: ""; position: absolute; left: -12px; top: 50%; width: 4px; height: 4px; margin-top: -2.5px; border-radius: 50%; background: var(--rl-grito); }
+.rl-indice li:hover { color: var(--rl-tinta); }
+.rl-coluna { grid-column: 3 / 5; padding-block: 23vh 30vh; display: flex; flex-direction: column; gap: 15vh; }
+.rl-peca a { position: relative; display: block; aspect-ratio: 1.3; overflow: hidden; border-radius: 4px; background: #eee; cursor: crosshair; }
+.rl-peca img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.rl-peca-2 { opacity: 0; transition: opacity 0.5s ease; }
+.rl-peca a:hover .rl-peca-2 { opacity: 1; }
+.rl-peca-nome { display: none; }
+.rl-view {
+  position: absolute; right: 10px; bottom: 10px; padding: 6px 9px 5px 22px; border-radius: 4px;
+  background: rgb(0 0 0 / 0.35); backdrop-filter: blur(8px); color: #fff;
+  opacity: 0; transform: translateY(6px); transition: opacity 0.3s, transform 0.3s;
+}
+.rl-view::before { content: ""; position: absolute; left: 9px; top: 50%; width: 6px; height: 6px; margin-top: -3.5px; background: currentColor; border-radius: 1px; }
+.rl-peca a:hover .rl-view, .rl-reel:hover .rl-view { opacity: 1; transform: none; }
+
+/* REEL e SERVIÇOS: rótulo | dado | conteúdo na metade direita */
+.rl-linha { padding-block: 18vh; align-items: start; }
+.rl-reel { grid-column: 3 / 5; position: relative; display: block !important; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 4px; background: #111; cursor: crosshair !important; }
+.rl-reel video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rl-servicos { grid-column: 3 / 5; display: grid; grid-template-columns: subgrid; row-gap: 14px; }
+.rl-servicos li { grid-column: 1 / 3; display: grid; grid-template-columns: subgrid; }
+.rl-servicos li > :last-child { text-transform: none; font-weight: 500; font-size: 12px; line-height: 1.3; }
+
+/* INFO: o grito — metade vermelha com a hora, metade preta com a ficha em vermelho */
+.rl-info { display: grid; grid-template-columns: 7fr 5fr; min-height: 100svh; }
+.rl-info-hora { background: var(--rl-grito); color: #000; overflow: hidden; display: flex; align-items: flex-end; padding: 0 0 2vh 1vw; }
+.rl-hora { font-weight: 700; font-size: 21vw; line-height: 0.78; letter-spacing: -0.04em; white-space: nowrap; }
+.rl-hora span { display: inline-block; }
+.rl-info-ficha {
+  background: #000; color: var(--rl-grito); padding: 15px var(--rl-m) 24px;
+  display: grid; grid-template-rows: auto 1fr auto; gap: 40px; min-width: 0;
+}
+.rl-info-cab { display: grid; grid-template-columns: 1fr 1fr; padding-right: 110px; }
+.rl-ponto { position: relative; }
+.rl-ponto::before { content: ""; position: absolute; left: -12px; top: 4px; width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+.rl-bio { align-self: center; max-width: 52ch; line-height: 1.32; }
+.rl-info-pe { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.rl-info-pe p { padding-block: 1.5px; }
+.rl-apagado { color: rgb(255 26 13 / 0.55); }
+.rl-info-pe .rl-apagado:first-child { margin-bottom: 8px; }
+.rl-pub { display: flex; align-items: center; gap: 10px; }
+.rl-logo { display: inline-block; height: 11px; vertical-align: middle; background: currentColor;
+  -webkit-mask: var(--logo) no-repeat left center / contain; mask: var(--logo) no-repeat left center / contain; }
+
+@media (max-width: 899px) {
+  .rl { --rl-m: 10px; --rl-vao: 10px; }
+  .rl-topo { grid-template-columns: 1fr 1fr; padding-top: 16px; }
+  .rl-fio { display: none; }
+  .rl-pilula { position: fixed; top: auto; bottom: 18px; left: 50%; right: auto; transform: translateX(-50%); background: rgb(0 0 0 / 0.45); }
+  .rl-pilula button { color: rgb(255 255 255 / 0.6); }
+  .rl-pilula button.is-on { color: #000; }
+  .rl-work, .rl-linha { grid-template-columns: 1fr 1fr; }
+  .rl-indice { grid-column: 1 / -1; position: static; height: auto; padding-top: 250px; }
+  .rl-indice ol { display: none; }
+  .rl-coluna { grid-column: 1 / -1; padding-block: 16px 60px; gap: 10px; }
+  .rl-peca a { aspect-ratio: 0.69; }
+  .rl-peca-nome { display: block; position: absolute; inset: 50% 0 auto; transform: translateY(-50%); text-align: center; color: #fff; z-index: 1; }
+  .rl-view { display: none; }
+  .rl-linha { padding-block: 90px; row-gap: 14px; }
+  .rl-reel, .rl-servicos { grid-column: 1 / -1; }
+  .rl-servicos li { grid-template-columns: 1fr 1fr; column-gap: 10px; }
+  .rl-info { grid-template-columns: 1fr; }
+  .rl-info-hora { min-height: 62svh; padding-left: 2vw; }
+  .rl-hora { font-size: 40vw; }
+  .rl-info-cab { padding-right: 0; padding-left: 10px; }
+  .rl-info-ficha { padding-bottom: 90px; }
+}
+
+/* o topo não deixa rótulo passar por baixo do nome: faixa de papel só na metade esquerda (a direita é das peças) */
+.rl-topo::before { content: ""; position: absolute; z-index: -1; left: 0; top: 0; width: 50%; height: 52px; background: var(--rl-papel); transition: opacity 0.3s; }
+.rl-topo.is-info::before { opacity: 0; }
+/* sobre o preto do INFO a pílula clareia */
+.rl-topo.is-info .rl-pilula { background: rgb(255 255 255 / 0.16); }
+.rl-topo.is-info .rl-pilula button:not(.is-on) { color: rgb(255 255 255 / 0.6); }
+.rl-logo.is-alto { height: 18px; }
+@media (max-width: 899px) { .rl-topo::before { width: 100%; height: 48px; } }
