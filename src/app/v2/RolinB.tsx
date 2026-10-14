@@ -8,7 +8,7 @@ import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha } from "./sistema";
 import { HoverFluido } from "./HoverFluido";
 import { HeroReelFull } from "./Reels";
-import { gsap, ScrollTrigger, SplitText, prefersReducedMotion } from "../../lib/gsap";
+import { gsap, ScrollTrigger, prefersReducedMotion } from "../../lib/gsap";
 import "../../styles/uma-indice.css";
 import "../../styles/rolin-b.css";
 
@@ -22,8 +22,6 @@ import "../../styles/rolin-b.css";
  */
 const NUM = (i: number) => String(i + 1).padStart(2, "0");
 const nome = (t: string) => t.replace("®", "").trim();
-/* a frase da ponte é a 1ª frase da bio real; o resto da bio fica no Info */
-const [FRASE, ...RESTO_BIO] = LEAD[0].split(/(?<=\.)\s+/);
 
 export default function RolinB() {
   useMetaRota();
@@ -49,10 +47,6 @@ export default function RolinB() {
         gsap.fromTo(".rb-fio i", { scaleX: 0 }, { scaleX: 1, ease: "none",
           scrollTrigger: { trigger: ".rb-coluna", start: "top 55%", end: "bottom 55%", scrub: true } });
         if (prefersReducedMotion()) return;
-        /* ponte: a frase acende palavra a palavra, de quieto para tinta, no scroll */
-        const sp = SplitText.create(".rb-frase", { type: "words" });
-        gsap.fromTo(sp.words, { color: "var(--p-quieto)", opacity: 0.35 }, { color: "var(--p-ink)", opacity: 1, stagger: 0.1, ease: "none",
-          scrollTrigger: { trigger: ".rb-frase", start: "top 80%", end: "bottom 40%", scrub: true } });
         gsap.utils.toArray<HTMLElement>(".rb-peca img").forEach((img) => {
           gsap.fromTo(img, { yPercent: -5, scale: 1.1 }, { yPercent: 5, scale: 1.1, ease: "none",
             scrollTrigger: { trigger: img.parentElement, start: "top bottom", end: "bottom top", scrub: true } });
@@ -92,29 +86,14 @@ export default function RolinB() {
       <div ref={raiz} className="rb">
         <section className="ix-hero"><HeroReelFull /></section>
 
-        {/* PONTE — quem ele é, antes do trabalho; o cabeçalho "Selected work" atraca e vira o topo do índice */}
-        <section className="rb-ponte">
-          <p className="p-rotulo">About</p>
-          <p className="rb-frase">{FRASE}</p>
-          <ul className="rb-fatos p-marca">
-            <li><span className="rb-quieto">Based</span> Brazil — working globally</li>
-            <li><span className="rb-quieto">Disciplines</span> {SERVICOS.map((s) => s.nome).join(" · ")}</li>
-            <li><span className="rb-quieto">Currently</span> Available for projects</li>
-          </ul>
-        </section>
-
-        <div className="rb-palco">
-        <header className="rb-cab">
-          <p className="p-rotulo">Selected work</p>
-          <p className="rb-conta p-marca" aria-hidden>
-            <span>{NUM(ativo)}</span><span className="rb-quieto"> / {NUM(WORK.length - 1)}</span>
-            <span className="rb-fio"><i /></span>
-          </p>
-          <p className="p-marca rb-quieto rb-total">{NUM(WORK.length - 1)} projects</p>
-        </header>
         {/* WORK — índice parado à esquerda (Geist grande e leve), peças rolando à direita */}
         <section className="rb-work">
           <div className="rb-indice">
+            <p className="p-rotulo">Selected work</p>
+            <p className="rb-conta p-marca" aria-hidden>
+              <span>{NUM(ativo)}</span><span className="rb-quieto"> / {NUM(WORK.length - 1)}</span>
+              <span className="rb-fio"><i /></span>
+            </p>
             <ol>
               {WORK.map((w, i) => (
                 <li key={w.slug} className={i === ativo ? "is-on" : undefined}>
@@ -141,13 +120,12 @@ export default function RolinB() {
             ))}
           </ol>
         </section>
-        </div>
 
         {/* INFO — duas metades nas colunas do menu: a declaração | serviços e publicações */}
         <section className="rb-info">
           <div className="rb-info-a">
             <p className="p-rotulo">About</p>
-            <p className="rb-bio">{RESTO_BIO.join(" ")}</p>
+            <p className="rb-bio">{LEAD[0]}</p>
           </div>
           <div className="rb-info-b">
             <div>
