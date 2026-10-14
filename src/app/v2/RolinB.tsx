@@ -8,6 +8,7 @@ import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha } from "./sistema";
 import { HoverFluido } from "./HoverFluido";
 import { HeroReelFull } from "./Reels";
+import { REEL } from "../../content/reel";
 import { gsap, ScrollTrigger, prefersReducedMotion } from "../../lib/gsap";
 import "../../styles/uma-indice.css";
 import "../../styles/rolin-b.css";
@@ -41,13 +42,51 @@ export default function RolinB() {
     document.fonts.ready.then(() => requestAnimationFrame(() => requestAnimationFrame(() => {
       if (!vivo) return;
       ctx = gsap.context(() => {
-        gsap.utils.toArray<HTMLElement>(".rb-peca").forEach((p, i) => {
+        /* o reel em tela cheia encolhe até virar a peça 00 da coluna (sem corte entre a hero e o Work) */
+        const hero = el.querySelector<HTMLElement>(".hx-cena");
+        const vaga = el.querySelector<HTMLElement>(".rb-reel");
+        const quadro = hero?.querySelector<HTMLElement>(".rx-quadro");
+        const video = quadro?.querySelector<HTMLElement>(".rx-video");
+        const alvo = vaga?.querySelector<HTMLElement>(".rb-quadro");
+        if (hero && vaga && quadro && video && alvo) {
+          /* a hero do reel-full traz o próprio scroll (cresce/escurece, menu branco): aqui quem manda é a costura */
+          ScrollTrigger.getAll().filter((t) => t.trigger === hero).forEach((t) => { t.animation?.progress(0); t.kill(); });
+          const wrap = hero.parentElement as HTMLElement;
+          const fim = () => wrap.offsetHeight - hero.offsetHeight - 10;
+          const g = { W: 1, H: 1, x: 0, y: 0, w: 1, h: 1 };
+          const medir = () => {
+            g.W = hero.clientWidth; g.H = hero.clientHeight;
+            const r = alvo.getBoundingClientRect();
+            g.x = r.left; g.y = r.top + window.scrollY - fim(); g.w = r.width; g.h = r.height;
+          };
+          const p = { v: 0 };
+          const pintar = () => {
+            const k = gsap.parseEase("power2.inOut")(p.v);
+            const sx = gsap.utils.interpolate(1, g.w / g.W, k), sy = gsap.utils.interpolate(1, g.h / g.H, k);
+            const s = Math.max(sx, sy);
+            gsap.set(quadro, { transformOrigin: "0 0", x: g.x * k, y: g.y * k, scaleX: sx, scaleY: sy });
+            gsap.set(video, { scaleX: s / sx, scaleY: s / sy });
+          };
+          medir();
+          ScrollTrigger.addEventListener("refresh", () => { medir(); pintar(); });
+          gsap.timeline({ scrollTrigger: { start: 0, end: fim, scrub: true, invalidateOnRefresh: true } })
+            .to(p, { v: 1, ease: "none", duration: 1, onUpdate: pintar }, 0)
+            .to(quadro.querySelector(".rx-sombra"), { opacity: 0, ease: "none", duration: 0.8 }, 0)
+            .to(quadro, { "--rb-grad": 0, ease: "none", duration: 0.5 }, 0)
+            .to(hero.querySelector(".rx-legenda"), { autoAlpha: 0, duration: 0.15 }, 0)
+            .from(".rb-indice > *, .rb-indice li", { x: -48, autoAlpha: 0, stagger: 0.04, duration: 0.35, ease: "power2.out" }, 0.45)
+            .set(quadro, { autoAlpha: 0 }, 0.999)
+            .set(vaga, { autoAlpha: 1 }, 0.999);
+          /* menu branco só enquanto o reel ainda cobre o topo */
+          ScrollTrigger.create({ start: -1, end: () => fim() * 0.4, toggleClass: { targets: document.documentElement, className: "rx-sobre" } });
+        }
+        gsap.utils.toArray<HTMLElement>(".rb-peca:not(.rb-reel)").forEach((p, i) => {
           ScrollTrigger.create({ trigger: p, start: "top 55%", end: "bottom 55%", onToggle: (s) => s.isActive && setAtivo(i) });
         });
         gsap.fromTo(".rb-fio i", { scaleX: 0 }, { scaleX: 1, ease: "none",
           scrollTrigger: { trigger: ".rb-coluna", start: "top 55%", end: "bottom 55%", scrub: true } });
         if (prefersReducedMotion()) return;
-        gsap.utils.toArray<HTMLElement>(".rb-peca img").forEach((img) => {
+        gsap.utils.toArray<HTMLElement>(".rb-peca:not(.rb-reel) img").forEach((img) => {
           gsap.fromTo(img, { yPercent: -5, scale: 1.1 }, { yPercent: 5, scale: 1.1, ease: "none",
             scrollTrigger: { trigger: img.parentElement, start: "top bottom", end: "bottom top", scrub: true } });
         });
@@ -107,6 +146,19 @@ export default function RolinB() {
             </ol>
           </div>
           <ol className="rb-coluna">
+            <li className="rb-peca rb-reel">
+              {/* o clique reaproveita o player com som da hero */}
+              <button type="button" aria-label="Play reel" onClick={() => raiz.current?.querySelector<HTMLElement>(".rx-quadro")?.click()}>
+                <span className="rb-quadro">
+                  <video src={REEL.video ?? undefined} poster={REEL.capa.src} autoPlay muted loop playsInline
+                    ref={(v) => { if (v) { v.muted = true; v.playbackRate = 0.6; } }} />
+                </span>
+                <span className="rb-legenda p-marca">
+                  <span>00 — Showreel</span>
+                  <span className="rb-quieto">Play reel · {REEL.ano}</span>
+                </span>
+              </button>
+            </li>
             {WORK.map((w, i) => (
               <li key={w.slug} className="rb-peca">
                 <Link to={`/work/${w.slug}`} aria-label={nome(w.title)} onPointerEnter={entrar(w)} onPointerLeave={() => setSob(null)}>

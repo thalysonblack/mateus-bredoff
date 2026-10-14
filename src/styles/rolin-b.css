@@ -87,3 +87,21 @@ html:not(.rx-sobre) .p-tela:has(.rb) > div > .p-menu .p-menu-campo > nav + span,
 html:not(.rx-sobre) .p-tela:has(.rb) > div > .p-menu .p-menu-nav a:not([aria-current]) { color: var(--p-quieto); }
 html:not(.rx-sobre) .p-tela:has(.rb) > div > .p-menu .p-menu-nav a[aria-current],
 html:not(.rx-sobre) .p-tela:has(.rb) > div > .p-menu .p-menu-nav a:hover { color: var(--p-ink); }
+
+/* COSTURA reel → Work: a hero fica presa (sticky) por --rb-d enquanto o reel encolhe até a peça 00;
+   o Work sobe por baixo dela (margem negativa), então o índice e o papel já estão lá atrás */
+.rb { --rb-d: 130svh; }
+.rb .ix-hero { position: relative; z-index: 3; height: calc(100svh + var(--rb-d)); pointer-events: none; }
+.rb .hx-cena { position: sticky; top: 0; margin-bottom: 0; }
+.rb .rx-quadro { pointer-events: auto; will-change: transform; }
+.rb .rx-legenda { pointer-events: auto; }
+.rb .rx-full .rx-quadro::after { opacity: var(--rb-grad, 1); }
+.rb-work { position: relative; z-index: 1; margin-top: calc(-100svh - var(--rb-d)); }
+.rb .rb-coluna { padding-top: calc(var(--rb-d) + 24vh); }
+.rb-reel { visibility: hidden; opacity: 0; }
+.rb-reel button { all: unset; box-sizing: border-box; width: 100%; display: flex; flex-direction: column; gap: 10px; cursor: pointer; }
+.rb-reel video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+@media (max-width: 899px) {
+  .rb-indice { position: sticky; top: calc(var(--p-margem-y) + var(--p-menu-h, 120px)); z-index: 2; background: #f4f4f2; padding-block: 12px; }
+  .rb .rb-coluna { padding-top: calc(var(--rb-d) + var(--p-menu-h, 120px) + 96px); }
+}
