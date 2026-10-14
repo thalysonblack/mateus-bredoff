@@ -87,3 +87,41 @@ html:not(.rx-sobre) .p-tela:has(.rb) > div > .p-menu .p-menu-campo > nav + span,
 html:not(.rx-sobre) .p-tela:has(.rb) > div > .p-menu .p-menu-nav a:not([aria-current]) { color: var(--p-quieto); }
 html:not(.rx-sobre) .p-tela:has(.rb) > div > .p-menu .p-menu-nav a[aria-current],
 html:not(.rx-sobre) .p-tela:has(.rb) > div > .p-menu .p-menu-nav a:hover { color: var(--p-ink); }
+
+/* PONTE (13/10, "ir direto pros trabalhos não ficou legal"): quem ele é, antes do trabalho */
+.rb-ponte {
+  display: grid; grid-template-columns: var(--rb-grade); column-gap: var(--p-grade-vao); row-gap: 56px;
+  padding-block: clamp(120px, 22vh, 240px) clamp(96px, 18vh, 200px);
+}
+.rb-ponte > .p-rotulo { grid-column: 1; }
+.rb-frase {
+  grid-column: 2 / 5; margin: 0; max-width: 18ch;
+  font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 300;
+  font-size: clamp(40px, 5.4vw, 96px); line-height: 1.02; letter-spacing: -0.045em;
+}
+.rb-fatos { grid-column: 3 / 5; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.rb-fatos li { display: grid; grid-template-columns: 14ch 1fr; gap: 16px; border-top: 1px solid var(--p-fio); padding-block: 10px; }
+.rb-fatos li:last-child { border-bottom: 1px solid var(--p-fio); }
+
+/* o cabeçalho do Work atraca logo abaixo do menu e vira o topo do índice parado */
+.rb-cab {
+  position: sticky; z-index: 5; top: calc(var(--p-margem-y) + var(--p-menu-h, 69px) + 14px);
+  display: grid; grid-template-columns: var(--rb-grade); column-gap: var(--p-grade-vao); align-items: center;
+  padding-block: 12px; border-top: 1px solid var(--p-ink); background: #f4f4f2;
+}
+.rb-cab .p-rotulo { grid-column: 1; margin: 0; }
+.rb-cab .rb-conta { grid-column: 2; margin: 0; }
+.rb-total { grid-column: 4; margin: 0; }
+
+@media (max-width: 899px) {
+  .rb-ponte { grid-template-columns: minmax(0, 1fr); row-gap: 32px; padding-block: 96px 72px; }
+  .rb-ponte > *, .rb-frase, .rb-fatos { grid-column: 1; }
+  .rb-fatos li { grid-template-columns: 11ch 1fr; }
+  .rb-cab { grid-template-columns: auto 1fr auto; column-gap: 16px; }
+  .rb-cab .p-rotulo, .rb-cab .rb-conta, .rb-total { grid-column: auto; }
+  /* a 1ª peça não nasce por baixo do menu + cabeçalho */
+  .rb-coluna { padding-top: 32px; }
+  .rb-peca { scroll-margin-top: calc(var(--p-menu-h, 69px) + 80px); }
+}
+/* o índice centra no espaço ABAIXO do cabeçalho atracado */
+@media (min-width: 900px) { .rb-indice { padding-top: calc(var(--p-margem-y) + var(--p-menu-h, 69px) + 60px); } }
