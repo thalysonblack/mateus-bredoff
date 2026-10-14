@@ -1,0 +1,70 @@
+/* ONE PAGE "NOVA" (Nova.tsx) — palco escuro, cor chapada do projeto, Bodoni de cartaz */
+.p-tela:has(.nv) { background: #0b0b0a; }
+.nv { --nv-claro: #f2eee8; --nv-tinta: #0b0b0a; color: var(--nv-claro); margin-inline: calc(var(--p-margem) * -1); }
+.nv-rotulo { font: 500 13px/1 'Inter Tight', sans-serif; letter-spacing: 0.01em; opacity: 0.62; margin-bottom: clamp(32px, 5vh, 56px); }
+
+/* WORK — o palco preso */
+.nv-work { position: relative; height: 100svh; overflow: hidden; color: var(--nv-tinta); }
+.nv-nomes { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.nv-titulo {
+  grid-area: 1 / 1; margin: 0; white-space: nowrap;
+  font: 400 clamp(72px, 17vw, 300px)/0.9 'Bodoni Moda', serif; letter-spacing: -0.035em;
+}
+.nv-nomes { clip-path: inset(0); }
+.nv-palco {
+  position: absolute; left: 50%; top: 50%; translate: -50% -50%; z-index: 2; display: block;
+  width: min(30vw, 46svh); aspect-ratio: 4 / 5; overflow: hidden;
+  box-shadow: 0 40px 80px -30px rgb(0 0 0 / 0.45);
+}
+.nv-capa { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.nv-palco .p-gl--cartaz { position: absolute; inset: 0; left: 0; top: 0; width: 100%; height: 100%; aspect-ratio: auto; box-shadow: none; }
+.nv-ficha {
+  position: absolute; left: var(--p-margem); right: var(--p-margem); bottom: var(--p-margem);
+  display: flex; justify-content: space-between; align-items: flex-end; z-index: 3;
+}
+.nv-conta { margin: 0; font: 400 clamp(40px, 5vw, 88px)/0.9 'Bodoni Moda', serif; font-variant-numeric: lining-nums tabular-nums; }
+.nv-de { opacity: 0.5; }
+.nv-meta { margin: 0; font: 500 14px/1.3 'Inter Tight', sans-serif; text-align: right; max-width: 24ch; }
+
+/* ABOUT — a declaração */
+.nv-sobre { padding: clamp(120px, 22vh, 260px) var(--p-margem); }
+.nv-bio { margin: 0; max-width: 22ch; font: 400 clamp(34px, 5.2vw, 92px)/1.02 'Bodoni Moda', serif; letter-spacing: -0.025em; }
+
+/* SERVICES — palavras de cartaz que correm */
+.nv-servicos { padding: 0 var(--p-margem) clamp(120px, 20vh, 240px); overflow: hidden; }
+.nv-servicos ol { list-style: none; margin: 0; padding: 0; }
+.nv-servicos li { display: flex; align-items: flex-end; gap: clamp(16px, 2vw, 40px); padding-block: 6px; }
+.nv-servico-nome { display: block; white-space: nowrap; font: 400 clamp(52px, 10vw, 190px)/0.95 'Bodoni Moda', serif; letter-spacing: -0.035em; }
+.nv-servico-entrega { flex: 0 0 auto; max-width: 26ch; padding-bottom: 1.2em; font: 400 14px/1.35 'Inter Tight', sans-serif; opacity: 0.62; }
+.nv-servicos li:nth-child(even) { flex-direction: row-reverse; justify-content: flex-start; text-align: right; }
+
+/* PUBLISHED — logos em branco */
+.nv-pubs { padding: 0 var(--p-margem) clamp(120px, 20vh, 240px); }
+.nv-pubs ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: clamp(32px, 4vw, 64px) clamp(24px, 3vw, 48px); }
+.nv-pub { display: flex; flex-direction: column; gap: 14px; color: var(--nv-claro); text-decoration: none; }
+.nv-veiculo { display: flex; align-items: center; height: 44px; font-size: 44px; }
+.nv-veiculo .ix-logo { height: 0.6em; }
+.nv-veiculo .ix-logo--alto { height: 1em; vertical-align: 0; }
+.nv-veiculo .ix-veiculo--abz { font: 700 22px/1 'Inter Tight', sans-serif; text-transform: uppercase; }
+.nv-proj { display: inline-flex; align-items: center; gap: 10px; font: 400 clamp(22px, 1.8vw, 30px)/1.1 'Bodoni Moda', serif; }
+.nv-ano { font: 500 13px/1 'Inter Tight', sans-serif; opacity: 0.62; }
+.nv-selo { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%;
+  background: var(--nv-claro); color: var(--nv-tinta); font: 700 10px/1 'Inter Tight', sans-serif; }
+.nv-pub:hover .nv-proj { text-decoration: underline; text-underline-offset: 0.15em; text-decoration-thickness: 1px; }
+
+/* CONTACT — a tela inunda */
+.nv-fim {
+  min-height: 100svh; display: flex; flex-direction: column; justify-content: space-between;
+  padding: calc(var(--p-menu-h, 77px) + 48px) var(--p-margem) var(--p-margem); color: var(--nv-tinta);
+}
+.nv-fim-titulo { margin: auto 0; transform-origin: 0 50%; font: 400 clamp(84px, 19vw, 340px)/0.85 'Bodoni Moda', serif; letter-spacing: -0.045em; }
+.nv-fim-links { display: flex; flex-wrap: wrap; gap: 12px clamp(24px, 4vw, 64px); margin: 0; font: 500 clamp(16px, 1.4vw, 22px)/1.2 'Inter Tight', sans-serif; }
+.nv-fim-links a { color: inherit; text-decoration: underline; text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+
+@media (max-width: 860px) {
+  .nv-palco { width: 66vw; }
+  .nv-titulo { font-size: 15vw; }
+  .nv-servicos li, .nv-servicos li:nth-child(even) { flex-direction: column; align-items: flex-start; text-align: left; gap: 4px; padding-block: 14px; }
+  .nv-servico-entrega { padding-bottom: 0; }
+  .nv-meta { max-width: 18ch; font-size: 12px; }
+}
