@@ -167,3 +167,19 @@
 .rc-view::before { content: ""; position: absolute; left: 9px; top: 50%; width: 6px; height: 6px; margin-top: -3.5px; background: currentColor; border-radius: 1px; }
 @media (hover: hover) and (pointer: fine) and (min-width: 64rem) { .rc-quadro { cursor: none; } }
 @media not ((hover: hover) and (pointer: fine) and (min-width: 64rem)) { .rc-view { display: none; } }
+
+/* GRADE À VISTA (15/10): só as guias que o layout USA — margens, coluna 2 do topo, bordas das capas, centro das tags.
+   Guia de Figma em fio de cabelo vermelho; fica atrás do conteúdo. G reforça. */
+.rc-grade-guia { position: fixed; inset: 0; z-index: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.rc-grade-guia i { position: absolute; top: 0; bottom: 0; width: 1px; background: rgb(255 26 13 / 0.16); transition: background-color 0.3s ease; }
+.rc-guia-m { left: var(--rc-m); }
+.rc-guia-c2 { left: calc(var(--rc-m) + (100% - 2 * var(--rc-m) - 3 * var(--rc-vao)) / 4 + var(--rc-vao)); }
+.rc-guia-cl { left: var(--rc-capa-l, 33.6%); }
+.rc-guia-meio { left: 50%; }
+.rc-guia-cr { left: calc(var(--rc-capa-r, 90.8%) - 1px); }
+.rc-guia-md { right: var(--rc-m); }
+.rc-grade-guia.is-cheia i { background: rgb(255 26 13 / 0.45); }
+.rc-grade-guia.is-info { opacity: 0; }
+.rc-palco, .rc-pe { position: relative; z-index: 1; }
+@media (max-width: 899px) { .rc-guia-c2, .rc-guia-cl, .rc-guia-cr { display: none; } .rc-guia-meio { display: none; } }
+@media (prefers-reduced-motion: reduce) { .rc-grade-guia, .rc-grade-guia i { transition: none; } }

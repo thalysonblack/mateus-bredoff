@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { Link } from "react-router";
 import { WORK } from "../../content/work";
 import { LEAD } from "../../content/about";
@@ -28,6 +28,15 @@ export default function RolinC() {
   useMetaRota();
   const raiz = useRef<HTMLDivElement | null>(null);
   const [noPe, setNoPe] = useState(false);
+  const [guia, setGuia] = useState(false);
+  useEffect(() => {
+    const tecla = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() !== "g" || e.metaKey || e.ctrlKey || (e.target as HTMLElement).closest("input, textarea")) return;
+      setGuia((v) => !v);
+    };
+    window.addEventListener("keydown", tecla);
+    return () => window.removeEventListener("keydown", tecla);
+  }, []);
   const [ativo, setAtivo] = useState(0);
   const selo = useRef<HTMLSpanElement | null>(null);
   const publicados = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano);
@@ -40,6 +49,12 @@ export default function RolinC() {
       /* tags da legenda começam no CENTRO da tela: distância da borda da legenda até o meio */
       const leg = el.querySelector<HTMLElement>(".rc-legenda");
       if (leg) el.style.setProperty("--rc-centro", `${document.documentElement.clientWidth / 2 - leg.getBoundingClientRect().left}px`);
+      const capa = el.querySelector<HTMLElement>(".rc-quadro");
+      if (capa) {
+        const r = capa.getBoundingClientRect();
+        el.style.setProperty("--rc-capa-l", `${r.left}px`);
+        el.style.setProperty("--rc-capa-r", `${r.right}px`);
+      }
     };
     medir();
     const ro = new ResizeObserver(medir);
@@ -106,6 +121,10 @@ export default function RolinC() {
 
   return (
     <div ref={raiz} className="rc">
+      {/* GRADE À VISTA (15/10): as guias REAIS do layout (margens, coluna 2, borda das capas, centro), como guia de Figma. G reforça. */}
+      <div className={`rc-grade-guia${noPe ? " is-info" : ""}${guia ? " is-cheia" : ""}`} aria-hidden>
+        {["m", "c2", "cl", "meio", "cr", "md"].map((k) => <i key={k} className={`rc-guia-${k}`} />)}
+      </div>
       {/* MENU FIXO: nome | disciplina | WORK INFO, sempre na tela */}
       <header className={`rc-fixo${noPe ? " is-info" : ""}`}>
         <Link to="/v2/rolin-c">Mateus Bredoff</Link>
