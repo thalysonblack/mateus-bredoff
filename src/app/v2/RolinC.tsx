@@ -106,7 +106,7 @@ export default function RolinC() {
           </picture>
           <div className="rl-info-ficha">
             <div className="rl-info-cab">
-              <a href="mailto:hello@mateusbredoff.com" className="rl-ponto">hello@mateusbredoff.com</a>
+              <a href="mailto:hello@mateusbredoff.com" >hello@mateusbredoff.com</a>
               <span>
                 <a href={INSTAGRAM} target="_blank" rel="noopener noreferrer">Instagram</a><br />
                 <a href="https://www.behance.net/mateusbredoff" target="_blank" rel="noopener noreferrer">Behance</a>
