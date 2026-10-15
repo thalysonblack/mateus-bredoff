@@ -5,6 +5,7 @@ import { SERVICOS } from "../../content/servicos";
 import { INSTAGRAM } from "../../content/lab";
 import { RECONHECIMENTO, type Reconhecimento } from "../../content/reconhecimento";
 import { ScrollTrigger } from "../../lib/gsap";
+import { scrollToTop } from "../../lib/lenis";
 import retrato from "../../assets/optimized/framer/retrato-mateus-paisagem-1600.webp";
 import retrato2x from "../../assets/optimized/framer/retrato-mateus-paisagem-3200.webp";
 import neoxRosto from "../../assets/optimized/hover/neox-3.webp";
@@ -50,18 +51,34 @@ export function Publicacao({ r }: { r: Reconhecimento }) {
   );
 }
 
+/* grade de 12: estado comum às quatro rotas (localStorage) e escrito no <html>, onde o CSS lê */
+const GRADE = "rc-grade";
+const lerGrade = () => { try { return localStorage.getItem(GRADE) !== "off"; } catch { return true; } };
+const sobEscuro = () => Array.from(document.querySelectorAll("[data-rc-escuro]")).some((b) => {
+  const r = b.getBoundingClientRect();
+  return r.top <= 40 && r.bottom > 40;
+});
+const guias = (className: string) => (
+  <div className={className} aria-hidden>{Array.from({ length: 12 }, (_, i) => <i key={i} />)}</div>
+);
+
 /**
  * Grade + menu fixo. O menu fica branco sobre todo bloco marcado `data-rc-escuro`
- * (rodapé, hero da About, contato). Triggers nascem depois das fontes + 2 frames:
- * o App mata os ScrollTriggers no effect da rota.
+ * (rodapé, hero da About). Triggers nascem depois das fontes + 2 frames:
+ * o App mata os ScrollTriggers no effect da rota. O estado inicial do menu é medido na hora,
+ * para a faixa de papel não piscar sobre a hero escura.
  */
 export function RcMoldura({ atual, onAbout }: { atual?: "work" | "about"; onAbout?: (e: MouseEvent) => void }) {
   const [escuro, setEscuro] = useState(false);
-  const [guia, setGuia] = useState(false);
+  const [grade, setGrade] = useState(lerGrade);
+  useEffect(() => {
+    document.documentElement.toggleAttribute("data-rc-sem-grade", !grade);
+    try { localStorage.setItem(GRADE, grade ? "on" : "off"); } catch { /* sem storage: vale só nesta visita */ }
+  }, [grade]);
   useEffect(() => {
     const tecla = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() !== "g" || e.metaKey || e.ctrlKey || (e.target as HTMLElement).closest("input, textarea")) return;
-      setGuia((v) => !v);
+      if (e.key.toLowerCase() !== "g" || e.metaKey || e.ctrlKey || e.altKey || (e.target as HTMLElement).closest("input, textarea")) return;
+      setGrade((v) => !v);
     };
     window.addEventListener("keydown", tecla);
     return () => window.removeEventListener("keydown", tecla);
@@ -69,6 +86,7 @@ export function RcMoldura({ atual, onAbout }: { atual?: "work" | "about"; onAbou
   useLayoutEffect(() => {
     let vivo = true;
     let ts: ScrollTrigger[] = [];
+    setEscuro(sobEscuro());
     document.fonts.ready.then(() => requestAnimationFrame(() => requestAnimationFrame(() => {
       if (!vivo) return;
       const ativos = new Set<Element>();
@@ -76,15 +94,21 @@ export function RcMoldura({ atual, onAbout }: { atual?: "work" | "about"; onAbou
         ScrollTrigger.create({ trigger: bloco, start: "top 40px", end: "bottom 40px",
           onToggle: (t) => { t.isActive ? ativos.add(bloco) : ativos.delete(bloco); setEscuro(ativos.size > 0); } }));
       ScrollTrigger.refresh();
+      setEscuro(sobEscuro());
     })));
     return () => { vivo = false; ts.forEach((t) => t.kill()); };
   }, []);
   const marca = (k: string) => (atual === k ? { "aria-current": "page" as const, className: "is-atual" } : {});
   return (
     <>
-      <div className={`rc-grade-guia${escuro ? " is-info" : ""}${guia ? " is-cheia" : ""}`} aria-hidden>
-        {Array.from({ length: 12 }, (_, i) => <i key={i} />)}
-      </div>
+      {guias(`rc-grade-guia${escuro ? " is-info" : ""}`)}
+      {/* grade liga/desliga: canto inferior esquerdo, fora do menu (não passa sobre capa); tecla G faz o mesmo */}
+      <button type="button" className="rc-grade-bt" aria-pressed={grade} aria-label={grade ? "Ocultar grade" : "Mostrar grade"}
+        title="Grid (G)" onClick={() => setGrade((v) => !v)}>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1" aria-hidden>
+          <rect x="0.5" y="0.5" width="3" height="13" /><rect x="5.5" y="0.5" width="3" height="13" /><rect x="10.5" y="0.5" width="3" height="13" />
+        </svg>
+      </button>
       <header className={`rc-fixo${escuro ? " is-info" : ""}`}>
         <Link to={RC}>Mateus Bredoff</Link>
         <span className="rc-disc">Brand design /<br />art direction</span>
@@ -126,5 +150,39 @@ export function RcRodape() {
         </div>
       </section>
     </div>
+  );
+}
+
+/**
+ * FECHAMENTO DA ABOUT (15/10): o contato no preto, na grade de 12 à vista. Rótulo na coluna 1,
+ * ficha da coluna 7 (o eixo do centro). Só a About usa; home/work/case seguem com o RcRodape.
+ */
+export function RcFechamento({ rotulo }: { rotulo: string }) {
+  return (
+    <footer id="rc-info" className="rcf is-sem-foto" data-rc-escuro>
+      {guias("rc-grade-guia rcf-guia")}
+      <p className="rcf-rot"><span className="rcf-q">{rotulo}</span> Contact</p>
+      <div className="rcf-ficha">
+        <div className="rcf-contato">
+          <a className="rcf-email" href={`mailto:${EMAIL}`}>{EMAIL}</a>
+          <p className="rcf-redes">
+            <a href={INSTAGRAM} target="_blank" rel="noopener noreferrer">Instagram</a>
+            <a href={BEHANCE} target="_blank" rel="noopener noreferrer">Behance</a>
+          </p>
+        </div>
+        <div className="rcf-servicos">
+          <p className="rcf-q">Services</p>
+          {SERVICOS.map((s) => <p key={s.nome}>{s.nome}</p>)}
+        </div>
+        <div className="rcf-pubs">
+          <p className="rcf-q">Recognition</p>
+          {publicados.map((r) => <Publicacao key={`${r.veiculo}-${r.projeto}-${r.ano}`} r={r} />)}
+        </div>
+        <div className="rcf-pe">
+          <p className="rcf-q">© {new Date().getFullYear()} Mateus Bredoff</p>
+          <button type="button" className="rcf-topo" onClick={() => scrollToTop(false)}>Back to top ↑</button>
+        </div>
+      </div>
+    </footer>
   );
 }

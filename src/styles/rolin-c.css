@@ -89,7 +89,7 @@
 @media (max-width: 899px) { .rc-lado-topo { grid-template-columns: 1fr 1fr; } }
 
 /* rodapé herdado da Rolin: o .rl aqui é só escopo de estilo */
-.rc-pe.rl { min-height: 0; }
+
 
 /* MENU FIXO (15/10): fica na tela até o rodapé; no rodapé o WORK/INFO vira branco sobre o preto */
 .rc-fixo {
@@ -112,28 +112,20 @@
   .rc-lado-abre { margin-top: 72px; }
 }
 
-/* RODAPÉ sem vermelho (15/10): retrato no lugar da hora; ficha em branco/cinza no preto */
-.rc-pe .rc-retrato { display: block; overflow: hidden; background: #0b0b0b; }
-.rc-pe .rc-retrato img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
-.rc-pe .rl-info-ficha, .rc-pe .rl-info-ficha a { color: #fff; }
-.rc-pe .rl-apagado, .rc-pe .rl-pub .rl-apagado { color: #8a8a8a; }
-.rc-pe .rl-logo { background-color: #fff; }
-@media (max-width: 899px) { .rc-pe .rc-retrato { height: 80svh; } }
-.rc-fixo.is-info, .rc-fixo.is-info a { color: #fff; }
+.rc-fixo.is-info, .rc-fixo.is-info a, .rc-fixo.is-info button { color: #fff; }
 
 /* WEBGL (15/10): com o canvas rodando, a capa é pintada pelo plano; a <img> fica no DOM, invisível */
 .rc.is-gl .rc-quadro img { opacity: 0; }
 .rc.is-gl .rc-quadro { background: transparent; }
 
 /* HOVER DOS LINKS (15/10, v2): o fio foi reprovado — só a cor sobe de quieto a tinta; no rodapé, cinza a branco */
-.rc-fixo .rc-nav a, .rc-indice a, .rc-todos, .rc-pe .rl-info-ficha a { transition: color 150ms ease; }
-.rc-pe .rl-info-cab a { color: #8a8a8a; }
+.rc-fixo .rc-nav a, .rc-indice a, .rc-todos { transition: color 150ms ease; }
 @media (hover: hover) and (pointer: fine) {
   .rc-fixo .rc-nav a:hover, .rc-indice a:hover, .rc-todos:hover { color: var(--rc-tinta); }
-  .rc-fixo.is-info .rc-nav a:hover, .rc-pe .rl-info-cab a:hover { color: #fff; }
+  .rc-fixo.is-info .rc-nav a:hover { color: #fff; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .rc-fixo .rc-nav a, .rc-indice a, .rc-todos, .rc-pe .rl-info-ficha a { transition: none; }
+  .rc-fixo .rc-nav a, .rc-indice a, .rc-todos { transition: none; }
 }
 
 /* RODAPÉ (15/10): o corte foto | ficha cai na vertical das tags (disciplinas) da legenda; tags e corte no CENTRO da tela; --rc-centro é medido no TSX */
@@ -141,9 +133,7 @@
 .rc-legenda .rc-ano { justify-self: end; }
 @media (min-width: 900px) {
   /* foto até a vertical das tags; o texto da ficha começa exatamente nela */
-  .rc-pe .rl-info { grid-template-columns: 50% 1fr; } /* a borda da FOTO cai na vertical das tags */
   .rc-legenda { grid-template-columns: 32px calc(var(--rc-centro, 50%) - 32px - 24px) 1fr 3em; }
-  .rc-pe .rl-info-ficha { padding-left: var(--rc-m); }
 }
 
 /* LATERAIS NO MEIO DA TELA (15/10): o bloco inteiro (rótulo + lista + all projects) e o "08 projects" centrados */
@@ -176,9 +166,8 @@
   padding-inline: var(--rc-m); transition: opacity 0.3s ease;
 }
 .rc-grade-guia i { border-inline: 1px solid rgb(255 26 13 / 0.09); transition: background-color 0.3s ease; }
-.rc-grade-guia.is-cheia i { background: rgb(255 26 13 / 0.06); border-color: rgb(255 26 13 / 0.18); }
 .rc-grade-guia.is-info { opacity: 0; }
-.rc-palco, .rc-pe { position: relative; z-index: 1; }
+.rc-palco { position: relative; z-index: 1; }
 @media (max-width: 899px) { .rc-grade-guia { grid-template-columns: repeat(4, minmax(0, 1fr)); } .rc-grade-guia i:nth-child(n+5) { display: none; } }
 @media (prefers-reduced-motion: reduce) { .rc-grade-guia, .rc-grade-guia i { transition: none; } }
 
@@ -198,36 +187,10 @@
 }
 
 /* conteúdo da ficha começa no CENTRO da tela (o eixo das tags da home); rótulo na coluna 1 */
-.rca-ficha, .rcw-cab, .rcw-grade, .rcc-ficha, .rcc-pecas, .rcc-prox, .rca-contato {
+.rca-ficha, .rcw-cab, .rcw-grade, .rcc-ficha, .rcc-pecas, .rcc-prox, .rcf {
   position: relative; z-index: 1;
   display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--rc-vao); padding-inline: var(--rc-m);
 }
-.rca-rot { grid-column: 1 / 4; }
-.rca-miolo { grid-column: 7 / 12; min-width: 0; }
-
-/* ABOUT — hero no enquadramento final da transição da home */
-.rca-hero { position: relative; z-index: 1; height: 100vh; background: #0b0b0b; }
-.rca-retrato, .rca-retrato img { display: block; width: 100%; height: 100%; }
-.rca-retrato img { object-fit: cover; object-position: 50% 22%; }
-.rca-ficha { padding-block: 128px 160px; row-gap: 96px; }
-.rca-linha { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; }
-.rca-texto { display: flex; flex-direction: column; gap: 1.18em; max-width: 62ch; }
-.rca-texto p, p.rca-texto { line-height: 1.32; }
-.rca-tabela li { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); column-gap: var(--rc-vao); padding-block: 2px; }
-.rca-corpo { text-transform: none; font-weight: 500; font-size: 12px; line-height: 1.35; letter-spacing: 0; max-width: 52ch; }
-.rca-etapas { margin-top: 48px !important; display: flex; flex-direction: column; gap: 24px; }
-.rca-etapas li { display: grid; grid-template-columns: 32px minmax(0, 1fr); row-gap: 8px; }
-.rca-etapas .rca-corpo { grid-column: 2; }
-.rca-pubs { display: flex; flex-direction: column; gap: 6px; }
-.rca-pubs .rl-apagado { color: var(--rc-quieto); }
-.rca-pubs .rl-logo { background-color: var(--rc-tinta); }
-.rca-contato { min-height: 70svh; background: #000; color: #fff; padding-block: 15px 24px; align-content: space-between; row-gap: 96px; }
-.rca-contato .rca-rot { padding-top: 43px; }
-.rca-apagado { color: #8a8a8a; }
-.rca-contato .rca-miolo { display: flex; flex-direction: column; gap: 24px; }
-.rca-email { font-size: clamp(22px, 2.6vw, 40px); line-height: 1; letter-spacing: -0.02em; text-transform: none; }
-.rca-contato a { transition: color 150ms ease; }
-@media (hover: hover) and (pointer: fine) { .rca-contato a:hover { color: #8a8a8a; } }
 
 /* WORK — folha de contato, 3 por linha (4 colunas de 12 cada) */
 .rcw-cab { padding-top: 160px; padding-bottom: 48px; }
@@ -266,11 +229,8 @@
 }
 
 @media (max-width: 899px) {
-  .rca-ficha, .rcw-cab, .rcw-grade, .rcc-ficha, .rcc-pecas, .rcc-prox, .rca-contato { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .rca-rot, .rca-miolo, .rcc-titulo, .rcc-meta, .rcc-texto { grid-column: 1 / -1; }
-  .rca-linha { row-gap: 16px; }
-  .rca-ficha { padding-block: 72px 96px; row-gap: 64px; }
-  .rca-contato { min-height: 60svh; }
+  .rca-ficha, .rcw-cab, .rcw-grade, .rcc-ficha, .rcc-pecas, .rcc-prox, .rcf { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .rcc-titulo, .rcc-meta, .rcc-texto { grid-column: 1 / -1; }
   .rcw-cab { padding-top: 96px; padding-bottom: 24px; }
   .rcw-cab > :first-child { grid-column: 1 / 3; }
   .rcw-cab > :nth-child(2) { display: none; }
@@ -284,8 +244,213 @@
   .rcc-prox > :last-child { grid-column: 3 / -1; justify-self: end; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .rcw-grade img, .rcc-quadro img, .rca-contato a, .rcc-prox a { transition: none; }
+  .rcw-grade img, .rcc-quadro img, .rcc-prox a { transition: none; }
 }
 /* fora da home o conteúdo passa sob o menu: faixa de papel atrás dele (some no preto) */
-:is(.rca, .rcw, .rcc) .rc-fixo { padding-bottom: 12px; background: var(--rc-papel); transition: background-color 0.3s ease; }
-:is(.rca, .rcw, .rcc) .rc-fixo.is-info { background: transparent; }
+:is(.rcw, .rcc) .rc-fixo { padding-bottom: 12px; background: var(--rc-papel); transition: background-color 0.3s ease; }
+:is(.rcw, .rcc) .rc-fixo.is-info { background: transparent; }
+
+/* ═══ GRADE LIGA/DESLIGA (15/10): botão [ Grid ] no menu + tecla G, estado no <html> e no localStorage ═══ */
+/* ícone de 3 colunas, fixo no canto inferior esquerdo; difference = lê sobre papel, preto e foto */
+.rc-grade-bt {
+  all: unset; position: fixed; z-index: 41; left: var(--rc-m); bottom: 15px; display: grid; place-items: center;
+  width: 14px; height: 14px; padding: 15px; margin: -15px; cursor: pointer;
+  color: #fff; mix-blend-mode: difference; opacity: 0.45; transition: opacity 150ms ease;
+}
+.rc-grade-bt svg { display: block; }
+.rc-grade-bt[aria-pressed="true"] { opacity: 1; }
+.rc-grade-bt:focus-visible { outline: 1px solid currentColor; outline-offset: -8px; }
+@media (hover: hover) and (pointer: fine) { .rc-grade-bt:hover { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .rc-grade-bt { transition: none; } }
+html[data-rc-sem-grade] .rc-grade-guia { opacity: 0; }
+
+/* ═══ ABOUT (15/10, v2): a hero do /about antigo + a ficha na linguagem da home ═══ */
+.rca-hero { position: relative; z-index: 1; height: 100vh; overflow: hidden; background: #0b0b0b; }
+.rca-retrato, .rca-retrato img { display: block; width: 100%; height: 100%; margin: 0; }
+.rca-retrato img { object-fit: cover; object-position: 50% 22%; }
+/* nome e ofício: filhos DIRETOS da hero (o blend morre em stacking context de ancestral) */
+.rca-marca {
+  position: absolute; bottom: 0; z-index: 2; margin: 0; pointer-events: none;
+  font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 400;
+  font-size: clamp(34px, 6.67vw, 128px); line-height: 0.89; letter-spacing: -0.03em;
+  text-transform: uppercase; color: #fff; mix-blend-mode: exclusion;
+}
+.rca-marca--esq { left: var(--rc-m); }
+.rca-marca--dir { right: var(--rc-m); text-align: right; }
+@supports (animation-timeline: scroll()) {
+  .rca-retrato img, .rca-marca--esq, .rca-marca--dir {
+    animation-timeline: scroll(root block); animation-range: 0 100vh;
+    animation-fill-mode: both; animation-timing-function: linear;
+  }
+  .rca-retrato img { animation-name: p-hero-recua; }
+  .rca-marca--esq { animation-name: p-hero-sai-esq; }
+  .rca-marca--dir { animation-name: p-hero-sai-dir; }
+}
+@keyframes p-hero-recua { to { transform: scale(1.08) translateY(3%); } }
+@keyframes p-hero-sai-esq { to { transform: translateX(-42%); } }
+@keyframes p-hero-sai-dir { to { transform: translateX(42%); } }
+@media (prefers-reduced-motion: reduce) { .rca-retrato img, .rca-marca--esq, .rca-marca--dir { animation: none; } }
+
+/* ficha: rótulo nas colunas 1–3, conteúdo no eixo do centro (coluna 7); fio de 1px entre linhas */
+.rca { --rc-fio: rgb(0 0 0 / 0.12); }
+.rca-ficha { padding-block: 160px; row-gap: 128px; }
+.rca-sec { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; row-gap: 48px; align-items: start; }
+.rca-rot { grid-column: 1 / 4; }
+.rca-corpo { text-transform: none; font-weight: 500; font-size: 12px; line-height: 1.4; letter-spacing: 0; }
+.rca-lead, .rca-manchete { grid-column: 7 / -1; text-transform: none; font-weight: 500; letter-spacing: -0.015em; }
+.rca-lead { font-size: clamp(20px, 1.9vw, 30px); line-height: 1.18; max-width: 30ch; }
+.rca-duas { grid-column: 7 / -1; columns: 2; column-gap: var(--rc-vao); }
+.rca-manchete { font-size: clamp(16px, 1.25vw, 20px); line-height: 1.25; max-width: 36ch; }
+.rca-rot + .rca-lead, .rca-rot + .rca-manchete, .rca-rot + ol, .rca-rot + ul { grid-row: 1; }
+
+.rca-nums { grid-column: 7 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--rc-vao); row-gap: 48px; }
+.rca-nums li { display: flex; flex-direction: column; gap: 12px; padding-top: 12px; border-top: 1px solid var(--rc-fio); }
+.rca-num { font-size: clamp(48px, 5vw, 88px); line-height: 0.9; letter-spacing: -0.04em; font-weight: 500; }
+
+.rca-etapas, .rca-servicos, .rca-pubs, .rca-ferramentas { display: grid; grid-template-columns: subgrid; }
+.rca-etapas { grid-column: 1 / -1; }
+.rca-etapas li { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; padding-block: 12px 24px; border-top: 1px solid var(--rc-fio); }
+.rca-etapas li > :first-child { grid-column: 1 / 4; }
+.rca-etapas .rca-etapa { grid-column: 4 / 7; }
+.rca-etapas .rca-corpo { grid-column: 7 / 12; max-width: 62ch; }
+
+.rca-servicos { grid-column: 7 / -1; }
+.rca-servicos li { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; padding-block: 12px; border-top: 1px solid var(--rc-fio); }
+.rca-servicos li > :first-child { grid-column: 1 / 4; }
+.rca-servicos .rca-corpo { grid-column: 4 / -1; }
+
+.rca-ferramentas { grid-column: 7 / -1; margin: 0; padding: 0; list-style: none; row-gap: 24px; }
+.rca-ferramentas li { grid-column: span 2; display: flex; flex-direction: column; gap: 12px; padding-top: 12px; border-top: 1px solid var(--rc-fio); }
+/* marca de terceiro em vetor, monocromática na tinta; 18px de altura óptica igual para todas */
+.rca-ferr-logo { display: block; width: 18px; height: 18px; background: var(--rc-tinta);
+  -webkit-mask: var(--logo) no-repeat left center / contain; mask: var(--logo) no-repeat left center / contain; }
+.rca-ferr-logo.is-vazio { background: none; }
+
+.rca-pubs { grid-column: 7 / -1; }
+.rca-pubs li { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; padding-block: 12px; border-top: 1px solid var(--rc-fio); }
+.rca-pubs .rl-pub { grid-column: 1 / -1; }
+.rca-pubs .rl-pub { display: grid; grid-template-columns: subgrid; align-items: center; min-height: 18px; }
+.rca-pubs .rl-pub > :first-child { grid-column: 1 / 4; justify-self: start; }
+.rca-pubs .rl-pub > :last-child { grid-column: 4 / -1; color: var(--rc-quieto); }
+.rca-pubs .rl-logo { background-color: var(--rc-tinta); }
+
+@media (max-width: 899px) {
+  .rca-hero { height: 100vh; }
+  .rca-marca { font-size: 30px; }
+  .rca-ficha { padding-block: 72px 96px; row-gap: 64px; }
+  .rca-sec { row-gap: 24px; }
+  .rca-rot, .rca-lead, .rca-manchete, .rca-duas, .rca-nums, .rca-servicos, .rca-pubs, .rca-ferramentas { grid-column: 1 / -1; }
+  .rca-ferramentas li { grid-column: span 2; }
+  .rca-rot + .rca-lead, .rca-rot + .rca-manchete, .rca-rot + ol, .rca-rot + ul { grid-row: auto; }
+  .rca-duas { columns: 1; }
+  .rca-nums { row-gap: 24px; }
+  .rca-etapas li { row-gap: 8px; }
+  .rca-etapas li > :first-child { grid-column: 1; }
+  .rca-etapas .rca-etapa, .rca-etapas .rca-corpo { grid-column: 2 / -1; }
+  .rca-servicos li { row-gap: 8px; }
+  .rca-servicos li > :first-child, .rca-servicos .rca-corpo { grid-column: 1 / -1; }
+  .rca-pubs .rl-pub > :first-child { grid-column: 1 / 3; }
+  .rca-pubs .rl-pub > :last-child { grid-column: 3 / -1; }
+}
+
+/* ═══ RODAPÉ (15/10, v2) — o mesmo nas quatro rotas: retrato até o centro da tela, ficha da coluna 7 ═══ */
+.rcf {
+  --rcf-q: #8a8a8a;
+  position: relative; z-index: 1; min-height: 100svh; background: #000; color: #fff;
+  padding-block: 15px 24px; overflow: hidden;
+}
+.rcf-q { color: var(--rcf-q); }
+.rcf .rcf-guia { position: absolute; z-index: 0; }
+.rcf .rcf-guia i { border-color: rgb(255 255 255 / 0.07); }
+.rcf-rot { position: relative; z-index: 1; grid-column: 1 / 4; padding-top: 43px; }
+.rcf-ficha {
+  position: relative; z-index: 1; grid-column: 7 / -1; grid-row: 1;
+  display: grid; grid-template-columns: subgrid; grid-template-rows: auto 1fr auto auto; row-gap: 48px;
+  min-height: calc(100svh - 39px);
+}
+.rcf-contato { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 12px; padding-top: 43px; }
+.rcf-email { font-size: clamp(22px, 2.6vw, 40px); line-height: 1; letter-spacing: -0.02em; text-transform: none; font-weight: 500; }
+.rcf-redes { display: flex; gap: 16px; }
+.rcf-servicos, .rcf-pubs { grid-row: 3; display: flex; flex-direction: column; gap: 3px; }
+.rcf-servicos { grid-column: 1 / 3; }
+.rcf-pubs { grid-column: 3 / -1; }
+.rcf-servicos .rcf-q, .rcf-pubs .rcf-q { margin-bottom: 9px; }
+/* recognition na grade: logo na 1ª coluna, projeto da 2ª em diante — todos na mesma vertical */
+.rcf-pubs { display: grid; grid-template-columns: subgrid; row-gap: 3px; align-content: start; }
+.rcf-pubs > * { grid-column: 1 / -1; }
+.rcf .rl-pub { display: grid; grid-template-columns: subgrid; align-items: center; min-height: 18px; }
+.rcf .rl-pub > :first-child { grid-column: 1; justify-self: start; }
+.rcf .rl-pub > :last-child { grid-column: 2 / -1; }
+.rcf .rl-apagado { color: var(--rcf-q); }
+.rcf .rl-logo { background-color: currentColor; }
+.rcf-pe { grid-column: 1 / -1; grid-row: 4; display: flex; justify-content: space-between; align-items: baseline; padding-top: 12px; border-top: 1px solid rgb(255 255 255 / 0.14); }
+.rcf-topo { all: unset; cursor: pointer; color: var(--rcf-q); }
+.rcf-topo:focus-visible { outline: 1px solid currentColor; outline-offset: 3px; }
+.rcf a, .rcf-topo { transition: color 150ms ease; }
+.rcf-redes a, .rcf .rl-pub a { color: var(--rcf-q); }
+@media (hover: hover) and (pointer: fine) {
+  .rcf a:hover, .rcf-topo:hover { color: #fff; }
+  .rcf .rl-pub a:hover + .rl-apagado { color: #fff; }
+}
+@media (prefers-reduced-motion: reduce) { .rcf a, .rcf-topo { transition: none; } }
+@media (max-width: 899px) {
+  .rcf { padding-top: 0; min-height: 0; }
+  .rcf.is-sem-foto { padding-top: 40px; }
+  .rcf-rot { grid-column: 1 / -1; padding-top: 0; }
+  .rcf-ficha { grid-column: 1 / -1; grid-row: auto; min-height: 0; grid-template-rows: none; row-gap: 40px; padding-top: 24px; }
+  .rcf.is-sem-foto .rcf-ficha { padding-top: 16px; }
+  .rcf-contato { padding-top: 0; }
+  .rcf-servicos, .rcf-pubs { grid-row: auto; grid-column: 1 / -1; }
+  .rcf-pe { grid-row: auto; }
+  .rcf-redes a, .rcf-topo { padding-block: 14px; margin-block: -14px; }
+}
+
+/* RODAPÉ da home/work/case — como no commit 397c413 (ordem dele: "o da HOME deixa como estava") */
+.rc-pe.rl { min-height: 0; }
+.rc-palco, .rc-pe { position: relative; z-index: 1; }
+.rc-pe .rc-retrato { display: block; overflow: hidden; background: #0b0b0b; }
+.rc-pe .rc-retrato img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+.rc-pe .rl-info-ficha, .rc-pe .rl-info-ficha a { color: #fff; }
+.rc-pe .rl-apagado, .rc-pe .rl-pub .rl-apagado { color: #8a8a8a; }
+.rc-pe .rl-logo { background-color: #fff; }
+@media (max-width: 899px) { .rc-pe .rc-retrato { height: 80svh; } }
+.rc-pe .rl-info-ficha a { transition: color 150ms ease; }
+.rc-pe .rl-info-cab a { color: #8a8a8a; }
+@media (hover: hover) and (pointer: fine) { .rc-pe .rl-info-cab a:hover { color: #fff; } }
+@media (prefers-reduced-motion: reduce) { .rc-pe .rl-info-ficha a { transition: none; } }
+@media (min-width: 900px) {
+  .rc-pe .rl-info { grid-template-columns: 50% 1fr; }
+  .rc-pe .rl-info-ficha { padding-left: var(--rc-m); }
+}
+
+/* ABOUT SEM CORTE (15/10, "remover corte"): o menu não tem faixa de papel; ele é branco em difference,
+   e o que passa por baixo inverte o texto em vez de ser decepado */
+.rca .rc-fixo, .rca .rc-fixo.is-info { background: transparent; color: #fff; mix-blend-mode: difference; }
+.rca .rc-fixo a { color: rgb(255 255 255 / 0.62); }
+.rca .rc-fixo > a, .rca .rc-fixo .rc-nav a.is-atual { color: #fff; }
+@media (hover: hover) and (pointer: fine) { .rca .rc-fixo a:hover { color: #fff; } }
+@media (max-width: 899px) { .rca .rc-fixo { background: transparent; } }
+
+/* WORK/CASE descolados (15/10): `.rc ol { padding: 0 }` vencia a margem e o vão de fechamento destas listas —
+   a grade encostava em x=0 e o rodapé na última legenda. Mesmo vão da home antes do rodapé (160 / 96). */
+.rc ol.rcw-grade { padding: 0 var(--rc-m) 160px; }
+.rc ol.rcc-pecas { padding: 0 var(--rc-m) 96px; }
+@media (max-width: 899px) { .rc ol.rcw-grade { padding-bottom: 96px; } }
+
+/* SHOWREEL (15/10): 1º card da coluna, 4:3 como as capas, fora do WebGL; abre em tela cheia */
+.rc-reel-bt { all: unset; display: block; width: 100%; cursor: pointer; }
+.rc-reel-bt:focus-visible { outline: 1px solid var(--rc-tinta); outline-offset: 4px; }
+.rc-quadro-reel { display: block; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 4px; background: #0b0b0b; }
+.rc-quadro-reel video { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+@media (hover: hover) and (pointer: fine) and (min-width: 64rem) {
+  .rc-quadro-reel { cursor: none; }
+  .rc-reel-bt:hover video { transform: scale(1.03); }
+  .rc-reel-bt:hover .rc-legenda .rc-quieto { color: var(--rc-tinta); }
+}
+.rc-reel-tela { position: fixed; inset: 0; z-index: 100; background: #000; display: grid; place-items: center; padding: 48px var(--rc-m); animation: rc-reel-entra 200ms cubic-bezier(0.23, 1, 0.32, 1); }
+.rc-reel-tela video { max-width: 100%; max-height: 100%; width: 100%; height: 100%; object-fit: contain; outline: none; }
+.rc-reel-x { all: unset; position: absolute; top: 15px; right: var(--rc-m); color: rgb(255 255 255 / 0.7); cursor: pointer; padding: 14px; margin: -14px; transition: color 150ms ease; }
+.rc-reel-x:focus-visible { outline: 1px solid #fff; outline-offset: -10px; }
+@media (hover: hover) and (pointer: fine) { .rc-reel-x:hover { color: #fff; } }
+@keyframes rc-reel-entra { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .rc-reel-tela { animation: none; } .rc-quadro-reel video { transition: none; } }
