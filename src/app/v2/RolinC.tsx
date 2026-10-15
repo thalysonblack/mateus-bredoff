@@ -32,6 +32,20 @@ export default function RolinC() {
   const selo = useRef<HTMLSpanElement | null>(null);
   const publicados = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano);
 
+  /* o corte foto | ficha do rodapé cai na vertical das tags (disciplinas) da legenda */
+  useLayoutEffect(() => {
+    const el = raiz.current;
+    if (!el) return;
+    const medir = () => {
+      const tag = el.querySelector<HTMLElement>(".rc-tag");
+      if (tag) el.style.setProperty("--rc-tag", `${tag.getBoundingClientRect().left}px`);
+    };
+    medir();
+    const ro = new ResizeObserver(medir);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   useLayoutEffect(() => {
     const el = raiz.current;
     if (!el) return;
@@ -136,7 +150,7 @@ export default function RolinC() {
                 <span className="rc-legenda">
                   <span className="rc-num">{String(i + 1).padStart(2, "0")}</span>
                   <span>{nome(w.title)}</span>
-                  <span className="rc-quieto">{w.disciplines.join(", ")}</span>
+                  <span className="rc-quieto rc-tag">{w.disciplines.join(", ")}</span>
                   <span className="rc-quieto rc-ano">{w.year}</span>
                 </span>
               </Link>
