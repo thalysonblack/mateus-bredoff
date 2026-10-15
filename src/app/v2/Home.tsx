@@ -1,270 +1,263 @@
-import { Link } from "react-router";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router";
 import { WORK } from "../../content/work";
-import { RECONHECIMENTO } from "../../content/reconhecimento";
-import { TIERS } from "../sections/Pricing";
-import { CONTATO } from "../v3-system";
 import { useMetaRota } from "../../hooks/useMetaRota";
-import { Prancha, Bloco } from "./sistema";
-import { useRevelar } from "./useRevelar";
+import { gsap, ScrollTrigger, prefersReducedMotion } from "../../lib/gsap";
+import { MolduraV2, RodapeV2, RC, nome, capa } from "./Moldura";
+import { montarCapasGl } from "./gl";
+import { scrollToElement, getLenis } from "../../lib/lenis";
+import { REEL } from "../../content/reel";
 
 /**
- * A HOME — completa, com scroll.
- *
- * ⚠ QUINTA versão, e cada correção dele está registrada porque juntas elas SÃO
- * o partido:
- *
- *   1. "era pra ser uma home mais elaborada" — a de fichas era o /about da
- *      referência, não uma home.
- *   2. "vc ta copiando, nao, apenas conceito" — fora a régua de artboard, o
- *      cubo 3D e a sigla sangrando: assinatura do corentin.
- *   3. "gostei mas nao da home" → seis partidos em rota, para escolher.
- *   4. "horrivel os dois" (sala de projeção e alfabeto) — os dois eram
- *      desenhos em UM PLANO. Chapados.
- *   5. "quero profundidade" → "sem perspectiva Z, digo profundidade no sentido
- *      craft, imersao, respiro".
- *   6. "uma home mais completa, com scroll".
- *
- * Então profundidade aqui não é eixo — é ACABAMENTO, ATMOSFERA e AR:
- *
- *   RESPIRO   a página anda em passos de uma tela (`.p-capitulo`), e o vazio
- *             ENTRE assuntos é maior que o vazio dentro deles. É o que faz uma
- *             home longa ler como capítulos em vez de rolo.
- *   IMERSÃO   a superfície troca por capítulo, sangrada de borda a borda —
- *             quem rola muda de ambiente, não de seção.
- *   CRAFT     nada aparece de repente: cada bloco sobe sob máscara com degrau
- *             de 90ms entre irmãos, e a peça entra FORA DE FOCO e resolve.
- *
- * A trama viva abre a página (é a única coisa que ele aprovou de cara), e o
- * resto do site desce dela: trabalho, prova, oferta, contato.
+ * ONE PAGE — V2 (15/10). Topo idêntico ao da V2 (nome | disciplina, 11px caixa alta).
+ * O resto muda: topo NÃO é fixo (nada passa por cima de imagem), sem fio e sem pílula;
+ * os trabalhos são um catálogo escalonado na grade de 4 — cada peça ocupa 2 colunas,
+ * alternando o lado, com a legenda FORA da imagem, embaixo. Celular: pilha de uma coluna.
  */
+const ANOS = `’${String(Math.min(...WORK.flatMap((w) => w.year ?? []))).slice(2)} — ’${String(Math.max(...WORK.flatMap((w) => w.year ?? []))).slice(2)}`;
 
-const MANIFESTO =
-  "Brand designer and art director working with companies that want a clear, relevant and memorable presence.";
-
-const LEAD =
-  "Every identity starts from strategy — objectives, audience, competitors, market context — and lands as a visual system built with intention, made to connect emotionally and to last.";
+/* "deixar os 7 principais" (15/10): a home mostra os 7 primeiros de WORK (ordem do Figma); /v2/work e o letreiro mostram todos */
+const SELECIONADOS = 7;
+const DESTAQUE = WORK.slice(0, SELECIONADOS);
 
 export default function HomeV2() {
   useMetaRota();
-  const preco = (n: number | null) =>
-    n === null ? "On request" : `from US$ ${n.toLocaleString("en-US")}`;
+  const raiz = useRef<HTMLDivElement | null>(null);
+  const navegar = useNavigate();
+  /* ABOUT (href "#about" de propósito: o obturador global de TransicaoRota só pega href "/…"): desce até o fim, o retrato do rodapé abre até a tela cheia e a About entra por ele (15/10) */
+  const irAbout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const pe = raiz.current?.querySelector<HTMLElement>("#rc-info");
+    const foto = pe?.querySelector<HTMLElement>(".rc-retrato");
+    if (!pe || !foto || prefersReducedMotion()) { navegar(`${RC}/about`); return; }
+    scrollToElement(pe);
+    /* SEM PISCAR: o clone é o mesmo <picture> já decodificado; termina em 100vw×100vh no corte da
+       hero (50% 22%); só sai depois que a hero da About está no topo, decodificada e pintada (2 frames). */
+    const abrir = async () => {
+      const r = foto.getBoundingClientRect();
+      const veu = foto.cloneNode(true) as HTMLElement;
+      Object.assign(veu.style, { position: "fixed", zIndex: "60", left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px`, margin: "0", overflow: "hidden", background: "#0b0b0b" });
+      const im = veu.querySelector("img")!;
+      im.loading = "eager";
+      Object.assign(im.style, { display: "block", width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 30%" });
+      await im.decode().catch(() => {});
+      document.body.appendChild(veu);
+      const ease = "power3.inOut";
+      gsap.to(im, { objectPosition: "50% 22%", duration: 0.9, ease });
+      gsap.to(veu, { left: 0, top: 0, width: "100vw", height: "100vh", duration: 0.9, ease,
+        onComplete: () => {
+          navegar(`${RC}/about`);
+          const ini = performance.now();
+          const pronta = () => {
+            const alvo = document.querySelector<HTMLImageElement>(".rca-hero img");
+            if (!alvo || !alvo.complete || window.scrollY > 0.5) {
+              if (performance.now() - ini < 2000) return requestAnimationFrame(pronta);
+            }
+            (alvo ? alvo.decode() : Promise.resolve()).catch(() => {}).then(() =>
+              requestAnimationFrame(() => requestAnimationFrame(() =>
+                gsap.to(veu, { opacity: 0, duration: 0.35, ease: "power2.out", onComplete: () => veu.remove() }))));
+          };
+          requestAnimationFrame(pronta);
+        } });
+    };
+    /* espera o scroll chegar (o rodapé encosta no topo) antes de abrir */
+    const ini = performance.now();
+    const checar = () => {
+      if (Math.abs(pe.getBoundingClientRect().top) < 2 || performance.now() - ini > 1800) abrir();
+      else requestAnimationFrame(checar);
+    };
+    requestAnimationFrame(checar);
+  };
+  const [ativo, setAtivo] = useState(0);
+  const selo = useRef<HTMLSpanElement | null>(null);
+  const [reelAberto, setReelAberto] = useState(false);
+  const thumb = useRef<HTMLVideoElement | null>(null);
+  const reelBotao = useRef<HTMLButtonElement | null>(null);
 
-  const capAbertura = useRevelar<HTMLElement>();
-  const capSobre = useRevelar<HTMLElement>();
-  const capProva = useRevelar<HTMLElement>();
-  const capOferta = useRevelar<HTMLElement>();
-  const fita = [...WORK, ...WORK];
+  /* thumb do reel: toca só na tela */
+  useEffect(() => {
+    const v = thumb.current;
+    if (!v) return;
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) v.play().catch(() => {}); else v.pause(); });
+    io.observe(v);
+    return () => io.disconnect();
+  }, []);
+
+  /* tags da legenda e corte foto | ficha do rodapé no centro da tela */
+  useLayoutEffect(() => {
+    const el = raiz.current;
+    if (!el) return;
+    const medir = () => {
+      /* tags da legenda começam no CENTRO da tela: distância da borda da legenda até o meio */
+      const leg = el.querySelector<HTMLElement>(".rc-legenda");
+      if (leg) el.style.setProperty("--rc-centro", `${document.documentElement.clientWidth / 2 - leg.getBoundingClientRect().left}px`);
+    };
+    medir();
+    const ro = new ResizeObserver(medir);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  useLayoutEffect(() => {
+    const el = raiz.current;
+    if (!el) return;
+    let ctx: gsap.Context | null = null;
+    let desmontarGl: (() => void) | null = null;
+    let limparSelo: (() => void) | null = null;
+    let vivo = true;
+    const reduz = prefersReducedMotion();
+    /* o App mata os ScrollTriggers no effect da rota: nascer dois frames depois das fontes */
+    document.fonts.ready.then(() => requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (!vivo) return;
+      ctx = gsap.context(() => {
+        /* a peça no meio da tela acende na lista lateral */
+        gsap.utils.toArray<HTMLElement>(".rc-peca").forEach((peca, i) => {
+          ScrollTrigger.create({ trigger: peca, start: "top center", end: "bottom+=96 center", onToggle: (t) => t.isActive && setAtivo(i) });
+        });
+        /* selo VIEW PROJECT que segue o cursor sobre a capa (desktop) */
+        const v = selo.current;
+        if (v && matchMedia("(hover: hover) and (pointer: fine) and (min-width: 64rem)").matches) {
+          const dur = reduz ? 0 : 0.35;
+          const xTo = gsap.quickTo(v, "x", { duration: dur, ease: "power3.out" });
+          const yTo = gsap.quickTo(v, "y", { duration: dur, ease: "power3.out" });
+          let visivel = false;
+          const mover = (e: PointerEvent) => { if (!visivel) entra(e); xTo(e.clientX); yTo(e.clientY); };
+          const entra = (e: PointerEvent) => {
+            visivel = true;
+            v.textContent = (e.currentTarget as HTMLElement).dataset.selo ?? "View project";
+            gsap.set(v, { x: e.clientX, y: e.clientY });
+            gsap.to(v, { autoAlpha: 1, scale: 1, duration: reduz ? 0 : 0.2, ease: "power2.out", overwrite: "auto" });
+          };
+          const sai = () => (visivel = false, gsap.to(v, { autoAlpha: 0, scale: 0.85, duration: reduz ? 0 : 0.12, ease: "power2.out", overwrite: "auto" }));
+          gsap.set(v, { autoAlpha: 0, scale: 0.85 });
+          gsap.utils.toArray<HTMLElement>(".rc-quadro, .rc-quadro-reel").forEach((q) => {
+            q.addEventListener("pointerenter", entra); q.addEventListener("pointermove", mover); q.addEventListener("pointerleave", sai);
+          });
+          addEventListener("scroll", sai, { passive: true });
+          limparSelo = () => {
+            gsap.utils.toArray<HTMLElement>(".rc-quadro, .rc-quadro-reel").forEach((q) => {
+              q.removeEventListener("pointerenter", entra); q.removeEventListener("pointermove", mover); q.removeEventListener("pointerleave", sai);
+            });
+            removeEventListener("scroll", sai);
+          };
+        }
+        if (reduz) return;
+        gsap.utils.toArray<HTMLElement>(".rc-quadro").forEach((q) => {
+          gsap.fromTo(q, { clipPath: "inset(14% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.1, ease: "power3.out",
+            scrollTrigger: { trigger: q, start: "top 88%", once: true } });
+          gsap.fromTo(q.querySelector("img"), { scale: 1.08 }, { scale: 1, duration: 1.4, ease: "power3.out",
+            scrollTrigger: { trigger: q, start: "top 88%", once: true } });
+        });
+      }, el);
+      ScrollTrigger.refresh();
+      if (!reduz) desmontarGl = montarCapasGl(el);
+    })));
+    return () => { vivo = false; ctx?.revert(); desmontarGl?.(); limparSelo?.(); };
+  }, []);
 
   return (
-    <Prancha n="01" nome="Index" superficie="papel" status="Available for projects">
-      {/* ═ 01 · ABERTURA — a trama viva ═══════════════════════════════════ */}
-      <section ref={capAbertura} className="p-capitulo p-visivel">
-        <div className="grid gap-2" aria-hidden="true">
-          {[fita, [...fita].reverse(), [...WORK.slice(3), ...WORK.slice(0, 3), ...WORK.slice(3), ...WORK.slice(0, 3)]].map(
-            (linha, li) => (
-              <div key={li} className="p-trama -mx-[var(--p-margem)]">
-                <div
-                  className={`p-trama-fita ${li === 1 ? "p-trama-fita--volta" : ""} ${li === 2 ? "p-trama-fita--terca" : ""}`}
-                >
-                  {linha.map((w, k) => (
-                    <span key={`${w.slug}-${k}`} className="flex items-baseline gap-[0.32em]">
-                      <span
-                        className="p-trama-nome"
-                        style={{ backgroundImage: `url(${w.cover.src2x ?? w.cover.src})` }}
-                      >
-                        {w.title}
-                      </span>
-                      <span className="p-trama-ponto">·</span>
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ),
+    <div ref={raiz} className="rc">
+      <MolduraV2 onAbout={irAbout} />
+
+      <span ref={selo} className="rc-view" aria-hidden="true">View project</span>
+
+      <div className="rc-palco">
+        <aside className="rc-lado">
+          <div className="rc-lado-bloco">
+            <div id="rc-work" className="rc-lado-topo">
+              <p>Selected work</p>
+              <p className="rc-quieto">{ANOS}</p>
+            </div>
+            <ol className="rc-indice">
+              {[REEL.titulo, ...DESTAQUE.map((w) => nome(w.title))].map((t, i) => (
+                <li key={t}>
+                  <a href={`#rc-peca-${i}`} className={i === ativo ? "is-ativo" : undefined}
+                    onClick={(e) => { e.preventDefault(); const alvo = document.getElementById(`rc-peca-${i}`); if (alvo) scrollToElement(alvo, -15); }}>
+                    {t}
+                  </a>
+                </li>
+              ))}
+            </ol>
+            <Link to={`${RC}/work`} className="rc-todos">All projects</Link>
+          </div>
+        </aside>
+
+        <ol className="rc-lista">
+          {/* 00 — SHOWREEL: vídeo em loop no mesmo 4:3; fora do WebGL (classe própria, o gl.ts só pega .rc-quadro) */}
+          {REEL.video && (
+            <li id="rc-peca-0" className="rc-peca rc-peca--reel">
+              <button ref={reelBotao} type="button" className="rc-reel-bt" onClick={() => setReelAberto(true)} aria-label="Play reel">
+                <span className="rc-quadro-reel" data-selo="Play reel">
+                  <video ref={thumb} src={REEL.video} poster={REEL.capa.src} muted loop playsInline autoPlay preload="metadata" aria-hidden />
+                  {/* o reel se distingue das capas: formato 16:9, rótulo sobre o vídeo e um "play" visível */}
+                  <span className="rc-reel-rotulo" aria-hidden>
+                    <span>Showreel ’{String(REEL.ano).slice(2)}</span>
+                    <span className="rc-reel-play"><i />Play reel</span>
+                  </span>
+                </span>
+                <span className="rc-legenda">
+                  <span className="rc-num">00</span>
+                  <span>{REEL.titulo}</span>
+                  <span className="rc-quieto rc-tag">Motion, selected work</span>
+                  <span className="rc-quieto rc-ano">’{String(REEL.ano).slice(2)}</span>
+                </span>
+              </button>
+            </li>
           )}
-        </div>
-        <h1 className="sr-only">
-          Mateus Bredoff — brand designer and art director. Selected work:{" "}
-          {WORK.map((w) => w.title).join(", ")}.
-        </h1>
-
-        <div
-          className="grid grid-cols-12 pt-14"
-          style={{ columnGap: "var(--p-gap-x)" }}
-        >
-          <p className="p-sobe p-corpo col-span-4 max-w-[42ch] max-lg:col-span-12">{MANIFESTO}</p>
-          <p className="p-sobe p-marca col-span-2 col-start-11 text-right max-lg:hidden">
-            {String(WORK.length).padStart(2, "0")} works · 2026
-          </p>
-        </div>
-      </section>
-
-      {/* ═ 02 · SOBRE — uma frase, e o vazio em volta dela ════════════════ */}
-      <section
-        ref={capSobre}
-        className="p-capitulo -mx-[var(--p-margem)] p-branco"
-        style={{ paddingInline: "var(--p-margem)" }}
-      >
-        <div className="grid grid-cols-12" style={{ columnGap: "var(--p-gap-x)" }}>
-          <p className="p-rotulo p-sobe col-span-2 max-lg:col-span-12">Approach</p>
-          <div className="col-span-6 col-start-4 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-6">
-            <p className="p-sobe p-corpo max-w-[56ch]">{LEAD}</p>
-            <p className="p-sobe pt-8">
-              <Link to="/about" className="p-corpo p-link" style={{ color: "var(--p-quieto)" }}>
-                About the studio →
+          {DESTAQUE.map((w, i) => (
+            <li key={w.slug} id={`rc-peca-${i + 1}`} className="rc-peca">
+              <Link to={`${RC}/work/${w.slug}`}>
+                <span className="rc-quadro">
+                  <img src={capa(w).src} srcSet={capa(w).srcSet}
+                    width={w.cover.w} height={w.cover.h}
+                    alt={capa(w).alt} loading={i < 2 ? "eager" : "lazy"} decoding="async" draggable={false} />
+                </span>
+                <span className="rc-legenda">
+                  <span className="rc-num">{String(i + 1).padStart(2, "0")}</span>
+                  <span>{nome(w.title)}</span>
+                  <span className="rc-quieto rc-tag">{w.disciplines.join(", ")}</span>
+                  <span className="rc-quieto rc-ano">{w.year}</span>
+                </span>
               </Link>
-            </p>
-          </div>
-        </div>
-      </section>
+            </li>
+          ))}
+        </ol>
 
-      {/* ═ 03 · O TRABALHO — um capítulo por peça, alternando o lado ══════
-          Cada projeto ocupa uma tela e entra fora de foco. É o oposto da grade:
-          a pessoa não escolhe entre nove miniaturas, ela ATRAVESSA nove peças —
-          e é isso que "imersão" quer dizer numa página que rola. */}
-      {WORK.map((w, k) => (
-        <CapituloPeca key={w.slug} w={w} k={k} />
-      ))}
+        <aside className="rc-dir">
+          <p className="rc-quieto rc-conta">{String(SELECIONADOS).padStart(2, "0")} selected / {String(WORK.length).padStart(2, "0")} projects</p>
+        </aside>
+      </div>
 
-      {/* ═ 04 · A PROVA — reconhecimento, em tinta ════════════════════════ */}
-      <section
-        ref={capProva}
-        className="p-capitulo p-tinta -mx-[var(--p-margem)]"
-        style={{ paddingInline: "var(--p-margem)" }}
-      >
-        <div className="grid grid-cols-12" style={{ columnGap: "var(--p-gap-x)" }}>
-          <p className="p-rotulo p-sobe col-span-2 max-lg:col-span-12">
-            Recognition — {String(RECONHECIMENTO.length).padStart(2, "0")}
-          </p>
-          <ul className="col-span-8 col-start-4 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-6">
-            {RECONHECIMENTO.map((r) => (
-              <li key={`${r.veiculo}-${r.projeto}`} className="p-sobe p-fio py-5">
-                <div className="grid grid-cols-12 items-baseline" style={{ columnGap: "var(--p-gap-x)" }}>
-                  <span className="p-corpo col-span-3 max-md:col-span-12">
-                    {r.href ? (
-                      <a href={r.href} target="_blank" rel="noopener noreferrer" className="p-link">
-                        {r.veiculo}
-                      </a>
-                    ) : (
-                      r.veiculo
-                    )}
-                  </span>
-                  <span className="p-corpo col-span-6 max-md:col-span-12" style={{ color: "var(--p-quieto)" }}>
-                    {r.titulo}
-                  </span>
-                  <span className="p-marca col-span-3 text-right max-md:col-span-12 max-md:text-left">
-                    {r.projeto} · {r.ano}
-                  </span>
-                </div>
-              </li>
-            ))}
-            <li className="p-fio" />
-          </ul>
-        </div>
-      </section>
-
-      {/* ═ 05 · A OFERTA + CONTATO ═══════════════════════════════════════ */}
-      <section ref={capOferta} className="p-capitulo">
-        <div className="grid grid-cols-12" style={{ columnGap: "var(--p-gap-x)" }}>
-          <p className="p-rotulo p-sobe col-span-2 max-lg:col-span-12">
-            Services — {String(TIERS.length).padStart(2, "0")}
-          </p>
-
-          <ul className="col-span-6 col-start-4 max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-6">
-            {TIERS.map((t) => (
-              <li key={t.name} className="p-sobe p-fio py-6">
-                <div className="flex items-baseline justify-between gap-6">
-                  <span className="p-item">{t.name}</span>
-                  <span className="p-corpo" style={{ color: "var(--p-quieto)" }}>
-                    {preco(t.priceFrom)}
-                  </span>
-                </div>
-                <p className="p-corpo max-w-[54ch] pt-2" style={{ color: "var(--p-quieto)" }}>
-                  {t.description}
-                </p>
-              </li>
-            ))}
-            <li className="p-fio" />
-          </ul>
-
-          <div className="col-span-3 col-start-11 grid gap-8 self-start max-lg:col-span-12 max-lg:col-start-1 max-lg:pt-12">
-            <Bloco rotulo="Contact &amp; inquiries" className="p-sobe">
-              <ul className="grid gap-[6px]">
-                {CONTATO.map((c) => (
-                  <li key={c.label} className="p-corpo">
-                    {c.href ? (
-                      <a
-                        href={c.href}
-                        target={c.href.startsWith("mailto:") ? undefined : "_blank"}
-                        rel="noopener noreferrer"
-                        className="p-link"
-                      >
-                        {c.label === "Email" ? c.valor : c.label}
-                      </a>
-                    ) : (
-                      <span style={{ color: "var(--p-quieto)" }}>{c.label}</span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </Bloco>
-          </div>
-        </div>
-      </section>
-    </Prancha>
+      <RodapeV2 />
+      {reelAberto && REEL.video && <ReelTela src={REEL.video} fechar={() => { setReelAberto(false); reelBotao.current?.focus(); }} />}
+    </div>
   );
 }
 
-/**
- * Um capítulo de peça: a arte grande entrando fora de foco, com a ficha ao lado.
- * O lado alterna a cada projeto — não por variedade decorativa, mas porque numa
- * sequência longa o olho aprende a posição e para de olhar; alternar mantém a
- * leitura acordada sem mudar a anatomia.
- */
-function CapituloPeca({ w, k }: { w: (typeof WORK)[number]; k: number }) {
-  const ref = useRevelar<HTMLElement>();
-  const direita = k % 2 === 1;
+/** REEL EM TELA CHEIA: preto, vídeo com som e controles nativos; fecha com Esc, clique fora ou ×.
+ *  Lenis parado enquanto aberto; foco preso no diálogo e devolvido ao card por quem fecha. */
+function ReelTela({ src, fechar }: { src: string; fechar: () => void }) {
+  const caixa = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const lenis = getLenis();
+    lenis?.stop();
+    caixa.current?.querySelector<HTMLButtonElement>(".rc-reel-x")?.focus();
+    const tecla = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { e.preventDefault(); fechar(); return; }
+      if (e.key !== "Tab" || !caixa.current) return;
+      const f = Array.from(caixa.current.querySelectorAll<HTMLElement>("button, video"));
+      const i = f.indexOf(document.activeElement as HTMLElement);
+      const prox = f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length];
+      e.preventDefault(); prox?.focus();
+    };
+    document.addEventListener("keydown", tecla);
+    return () => { document.removeEventListener("keydown", tecla); lenis?.start(); };
+  }, [fechar]);
   return (
-    <section ref={ref} className="p-capitulo">
-      <div
-        className="grid grid-cols-12 items-center"
-        style={{ columnGap: "var(--p-gap-x)" }}
-      >
-        <Link
-          to={`/work/${w.slug}`}
-          className={`col-span-7 ${direita ? "col-start-6" : "col-start-1"} max-lg:col-span-12 max-lg:col-start-1`}
-        >
-          <img
-            src={w.cover.src}
-            srcSet={w.cover.src2x ? `${w.cover.src} 1400w, ${w.cover.src2x} 2200w` : undefined}
-            sizes="(max-width: 1024px) 92vw, 56vw"
-            alt={w.cover.alt}
-            width={w.cover.w}
-            height={w.cover.h}
-            loading={k > 0 ? "lazy" : undefined}
-            decoding="async"
-            draggable={false}
-            className="p-foca w-full object-cover"
-            style={{ aspectRatio: `${w.cover.w} / ${w.cover.h}` }}
-          />
-        </Link>
-
-        <div
-          className={`col-span-4 ${direita ? "col-start-1 row-start-1" : "col-start-9"} max-lg:col-span-12 max-lg:col-start-1 max-lg:row-start-2 max-lg:pt-6`}
-        >
-          <p className="p-sobe p-marca">{String(k + 1).padStart(2, "0")}</p>
-          <p className="p-sobe p-especime pt-2" style={{ ["--n" as string]: w.title.length + 4 }}>
-            {w.title}
-          </p>
-          <p className="p-sobe p-corpo pt-4" style={{ color: "var(--p-quieto)" }}>
-            {w.disciplines.join(", ")} — {w.year}
-          </p>
-          <p className="p-sobe pt-6">
-            <Link to={`/work/${w.slug}`} className="p-corpo p-link">
-              Open project →
-            </Link>
-          </p>
-        </div>
-      </div>
-    </section>
+    <div ref={caixa} className="rc-reel-tela" role="dialog" aria-modal="true" aria-label="Showreel"
+      onClick={(e) => { if (e.target === e.currentTarget) fechar(); }}>
+      <video src={src} autoPlay controls playsInline tabIndex={0} />
+      <button type="button" className="rc-reel-x" onClick={fechar} aria-label="Close reel">Close ×</button>
+    </div>
   );
 }

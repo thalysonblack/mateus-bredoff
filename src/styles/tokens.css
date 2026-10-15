@@ -1,0 +1,364 @@
+
+:root {
+  /* --- paleta medida ------------------------------------------------------
+     O papel é #F6F6F6, cinza neutro — NÃO o creme quente #EDE6E1 da direção
+     autoral. O creme existe no original, mas como cor de TEXTO sobre o
+     petróleo, nunca como fundo. */
+  --fr-papel: #f6f6f6;
+  --fr-petroleo: #142126;
+  --fr-marrom: #260f0a;
+  --fr-creme: #ede6e1;
+  --fr-cinza: #868686;
+
+  /* Texto quieto: preto a 50% sobre o papel. É o valor do original — mede
+     ~4,8:1 sobre #F6F6F6, passa em AA para corpo. Não afrouxar abaixo disso. */
+  --fr-quieto: rgba(0, 0, 0, 0.5);
+  --fr-quieto-inv: rgba(255, 255, 255, 0.5);
+
+  /* --- escala tipográfica medida ------------------------------------------
+     Pares tamanho/entrelinha exatamente como computados. O tracking é sempre
+     negativo (≈ −0,03em); em corpo grande o original abre para −0,02em. */
+
+  /* nome do hero — caixa alta, sangra pela base */
+  --fr-nome: 124px;
+  --fr-nome-lh: 110.36px;
+  --fr-nome-ls: -3.72px;
+
+  /* display — o original usa DUAS entrelinhas no mesmo corpo de 64px:
+     1,10 na manchete e 1,20 na lista de disciplinas. */
+  --fr-display: 64px;
+  --fr-display-lh: 70.4px;
+  --fr-display-ls: -3.2px;
+  /* A variante solta tem TAMANHO próprio, não só entrelinha. No desktop
+     coincide com o display (64), mas no mobile o original mede 24 enquanto o
+     display mede 32 — usar `var(--fr-display)` aqui pintava 32px no celular em
+     toda lista de disciplinas, no Capabilities e no rodapé. */
+  --fr-display-solto: 64px;
+  --fr-display-solto-lh: 76.8px;
+  --fr-display-solto-ls: -1.28px;
+
+  --fr-corpo: 18px;
+  --fr-corpo-lh: 26.1px;
+  --fr-corpo-ls: -0.54px;
+
+  --fr-meta: 14px;
+  --fr-meta-lh: 16.8px;
+
+  --fr-rotulo: 12px;
+  --fr-rotulo-lh: 19.2px;
+  --fr-rotulo-ls: -0.24px;
+
+  --fr-micro: 10px;
+  --fr-micro-lh: 12.5px;
+  --fr-micro-ls: -0.4px;
+
+
+  --fr-manchete: 48px;          /* manchete de seção */
+  --fr-manchete-lh: 52.8px;
+  --fr-manchete-ls: -1.44px;
+
+  --fr-manchete-lh-case: 52.32px;
+
+  /* O único peso 300 do site. Já declarado em fonts.css. */
+  --fr-numero: 128px;
+  --fr-numero-lh: 128px;
+  --fr-numero-ls: -5.12px;
+
+  --fr-lead: 32px;              /* lead da About */
+  --fr-lead-lh: 35.2px;
+
+  --fr-etapa: 20px;             /* corpo de etapa */
+  --fr-etapa-lh: 29px;
+  --fr-etapa-ls: -0.6px;
+
+  --fr-etapa-titulo: 16px;
+  --fr-etapa-titulo-lh: 23.2px;
+  --fr-etapa-titulo-ls: -0.48px;
+
+  --fr-numero-rotulo: 20px;
+  --fr-numero-rotulo-lh: 22px;
+  --fr-numero-rotulo-ls: -0.6px;
+
+  /* ⚠ 12px NÃO é um estilo só. Este é o rótulo de seção ("About me"), peso
+     400. O `.fr-rotulo` lá em cima (12/19.2/−0.24, peso 500) é a TAG dos
+     cards. Mesma medida, papéis diferentes — não unifique. */
+  --fr-secao-rotulo: 12px;
+  --fr-secao-rotulo-lh: 13.2px;
+  --fr-secao-rotulo-ls: -0.36px;
+
+  --fr-indice: 16px;            /* 01…05 */
+  --fr-indice-lh: 17.6px;
+  --fr-indice-ls: -0.48px;
+
+  --fr-case-titulo: 64px;       /* mesmo corpo do display, tracking mais aberto */
+  --fr-case-titulo-lh: 70.4px;
+  --fr-case-titulo-ls: -1.92px;
+
+  --fr-case-corpo: 16px;
+  --fr-case-corpo-lh: 25.6px;
+  --fr-case-corpo-ls: -0.32px;
+
+  --fr-ficha: 12px;             /* ficha técnica do case */
+  --fr-ficha-lh: 16.8px;
+  --fr-ficha-ls: -0.36px;
+
+  --fr-link-quieto: 16px;
+  --fr-link-quieto-lh: 20.8px;
+  --fr-link-quieto-ls: -0.64px;
+
+  --fr-card-titulo: 14px;
+  --fr-card-titulo-lh: 16.8px;
+
+  --fr-nav-rodape: 18px;
+  --fr-nav-rodape-lh: 20px;
+  --fr-nav-rodape-ls: -0.5px;
+
+  /* --- margens ------------------------------------------------------------
+     A margem lateral do original NÃO é única, e tratar como única foi a
+     tentação. São quatro, por contexto. */
+  --fr-margem: 24px;            /* padrão: /about, rodapé */
+  --fr-margem-cabecalho: 32px;  /* cabeçalho do case */
+  --fr-margem-pilha: 8px;       /* pilha de imagens do case */
+
+  --fr-rotulo-col: 400px;
+
+  /* ⚠ 16px também são DOIS estilos, como os 12px. Este é o índice da nav do
+     rodapé (entrelinha 18, tracking normal); `--fr-indice` é o numeral das
+     etapas (17.6 / −0.48). Não unifique. */
+  --fr-nav-indice: 16px;
+  --fr-nav-indice-lh: 18px;
+}
+
+@media (max-width: 809px) {
+  :root {
+    /* Medido em 390px. O display cai à metade; a variante solta cai mais
+       ainda (64 → 24), porque é lista e não manchete. O corpo não muda. */
+    --fr-display: 32px;
+    --fr-display-lh: 35.2px;
+    --fr-display-ls: -1.6px;
+    --fr-display-solto: 24px;
+    --fr-display-solto-lh: 28.8px;
+    --fr-display-solto-ls: -0.48px;
+
+    /* Só o que de fato muda. Rótulo de seção, índice, ficha, link quieto,
+       título de card, corpo de case e título de etapa são IGUAIS no mobile —
+       ausência aqui é medida, não esquecimento. */
+    --fr-manchete: 24px;
+    --fr-manchete-lh: 26.4px;
+    --fr-manchete-ls: -0.72px;
+
+    --fr-numero: 82px;
+    --fr-numero-lh: 82px;
+    --fr-numero-ls: -3.28px;
+
+    --fr-lead: 24px;
+    --fr-lead-lh: 26.4px;
+
+    --fr-etapa: 16px;
+    --fr-etapa-lh: 24px;
+    --fr-etapa-ls: -0.48px;
+
+    --fr-numero-rotulo: 16px;
+    --fr-numero-rotulo-lh: 17.6px;
+    --fr-numero-rotulo-ls: -0.48px;
+
+    /* A entrelinha do título de case fica MENOR que o corpo (32/23.04) — o
+       original aperta a caixa alta em duas linhas de propósito. Não é engano
+       de medição; não "corrija" para 1.1. */
+    --fr-case-titulo: 32px;
+    --fr-case-titulo-lh: 23.04px;
+    --fr-case-titulo-ls: -0.96px;
+
+    --fr-margem: 12px;
+    --fr-margem-cabecalho: 12px;
+    /* 4px, não 12: em 390px as imagens do case saem em x=4 com 382 de largura
+       (390 − 2×4). A pilha aperta contra a borda mais do que o resto da
+       página — presumir uma margem única no mobile seria o erro fácil. */
+    --fr-margem-pilha: 4px;
+  }
+}
+
+/* --- classes do sistema ---------------------------------------------------
+   Prefixo `fr-` para não colidir com o sistema autoral em `system.css`
+   enquanto os dois convivem no disco. */
+
+.fr {
+  font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  background: var(--fr-papel);
+  color: #000;
+}
+
+.fr-nome {
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: var(--fr-nome);
+  line-height: var(--fr-nome-lh);
+  letter-spacing: var(--fr-nome-ls);
+}
+
+.fr-display {
+  font-weight: 400;
+  font-size: var(--fr-display);
+  line-height: var(--fr-display-lh);
+  letter-spacing: var(--fr-display-ls);
+}
+
+.fr-display-solto {
+  font-weight: 400;
+  font-size: var(--fr-display-solto);
+  line-height: var(--fr-display-solto-lh);
+  letter-spacing: var(--fr-display-solto-ls);
+}
+
+.fr-corpo {
+  font-weight: 500;
+  font-size: var(--fr-corpo);
+  line-height: var(--fr-corpo-lh);
+  letter-spacing: var(--fr-corpo-ls);
+}
+
+.fr-meta {
+  font-weight: 500;
+  font-size: var(--fr-meta);
+  line-height: var(--fr-meta-lh);
+}
+
+.fr-rotulo {
+  font-weight: 500;
+  font-size: var(--fr-rotulo);
+  line-height: var(--fr-rotulo-lh);
+  letter-spacing: var(--fr-rotulo-ls);
+}
+
+.fr-micro {
+  font-weight: 500;
+  font-size: var(--fr-micro);
+  line-height: var(--fr-micro-lh);
+  letter-spacing: var(--fr-micro-ls);
+}
+
+/* Bloco escuro. O texto sobre ele é creme, não branco puro — medido. */
+.fr-tinta {
+  background: var(--fr-petroleo);
+  color: var(--fr-creme);
+}
+
+/* --- papéis das rotas internas ------------------------------------------- */
+
+.fr-manchete {
+  font-weight: 400;
+  font-size: var(--fr-manchete);
+  line-height: var(--fr-manchete-lh);
+  letter-spacing: var(--fr-manchete-ls);
+}
+
+/* Variante do case. Só a entrelinha muda. */
+.fr-manchete-case {
+  font-weight: 400;
+  font-size: var(--fr-manchete);
+  line-height: var(--fr-manchete-lh-case);
+  letter-spacing: var(--fr-manchete-ls);
+}
+
+.fr-numero {
+  font-weight: 300;
+  font-size: var(--fr-numero);
+  line-height: var(--fr-numero-lh);
+  letter-spacing: var(--fr-numero-ls);
+}
+
+.fr-numero-rotulo {
+  font-weight: 400;
+  font-size: var(--fr-numero-rotulo);
+  line-height: var(--fr-numero-rotulo-lh);
+  letter-spacing: var(--fr-numero-rotulo-ls);
+}
+
+.fr-lead {
+  font-weight: 400;
+  font-size: var(--fr-lead);
+  line-height: var(--fr-lead-lh);
+  letter-spacing: normal;
+}
+
+.fr-etapa {
+  font-weight: 500;
+  font-size: var(--fr-etapa);
+  line-height: var(--fr-etapa-lh);
+  letter-spacing: var(--fr-etapa-ls);
+}
+
+.fr-etapa-titulo {
+  font-weight: 500;
+  font-size: var(--fr-etapa-titulo);
+  line-height: var(--fr-etapa-titulo-lh);
+  letter-spacing: var(--fr-etapa-titulo-ls);
+}
+
+/* 12px peso 400 — o rótulo de seção. Não confundir com `.fr-rotulo`. */
+.fr-secao-rotulo {
+  font-weight: 400;
+  font-size: var(--fr-secao-rotulo);
+  line-height: var(--fr-secao-rotulo-lh);
+  letter-spacing: var(--fr-secao-rotulo-ls);
+}
+
+.fr-indice {
+  font-weight: 400;
+  font-size: var(--fr-indice);
+  line-height: var(--fr-indice-lh);
+  letter-spacing: var(--fr-indice-ls);
+}
+
+/* O SEGUNDO 16px: índice da nav do rodapé. Entrelinha 18 e tracking normal, ao
+   contrário do `.fr-indice` (17.6 / −0.48) que numera as etapas da /about. As
+   vars já existiam; faltava a classe, e sem ela `className="fr-nav-indice"` não
+   pinta nada — o tipo de regressão que passa no build e só aparece medindo. */
+.fr-nav-indice {
+  font-weight: 400;
+  font-size: var(--fr-nav-indice);
+  line-height: var(--fr-nav-indice-lh);
+}
+
+.fr-case-titulo {
+  font-weight: 400;
+  font-size: var(--fr-case-titulo);
+  line-height: var(--fr-case-titulo-lh);
+  letter-spacing: var(--fr-case-titulo-ls);
+}
+
+.fr-case-corpo {
+  font-weight: 400;
+  font-size: var(--fr-case-corpo);
+  line-height: var(--fr-case-corpo-lh);
+  letter-spacing: var(--fr-case-corpo-ls);
+}
+
+.fr-ficha {
+  font-weight: 400;
+  font-size: var(--fr-ficha);
+  line-height: var(--fr-ficha-lh);
+  letter-spacing: var(--fr-ficha-ls);
+  color: var(--fr-marrom);
+}
+
+.fr-link-quieto {
+  font-weight: 400;
+  font-size: var(--fr-link-quieto);
+  line-height: var(--fr-link-quieto-lh);
+  letter-spacing: var(--fr-link-quieto-ls);
+}
+
+.fr-card-titulo {
+  font-weight: 500;
+  font-size: var(--fr-card-titulo);
+  line-height: var(--fr-card-titulo-lh);
+  letter-spacing: normal;
+}
+
+.fr-nav-rodape {
+  font-weight: 400;
+  font-size: var(--fr-nav-rodape);
+  line-height: var(--fr-nav-rodape-lh);
+  letter-spacing: var(--fr-nav-rodape-ls);
+}

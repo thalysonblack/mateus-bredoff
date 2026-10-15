@@ -1,58 +1,3 @@
-/**
- * Onde o trabalho dele foi PUBLICADO por terceiros.
- *
- * Pedido de 16/08 ("a home ainda é curta… section com reconhecimentos dele, um
- * projeto dele estava na Abduzeedo"). A seção existe para dizer o que o próprio
- * portfólio não pode dizer sobre si: que outra gente escolheu mostrar aquilo.
- *
- * ## A régua desta lista
- *
- * **Só entra o que eu ABRI.** Cada item foi visitado com navegador real em
- * 16/08/2026 e traz o código HTTP que devolveu — busca que devolve um título
- * não é prova de que a página existe hoje. O campo `verificado` é auditoria, não
- * enfeite: quando alguém for reconferir daqui a seis meses, é por ele que se
- * começa.
- *
- * **`href: null` quando a página não abre para o público.** É a mesma regra que
- * o rodapé aplica ao X.com: neste site, link que não leva a lugar nenhum vira
- * texto.
- *
- * ✅ **O World Brand Design VOLTOU a abrir — e tem TRÊS matérias, não duas.**
- * Em 16/08 os dois links deram 401 e viraram rótulo. Ele perguntou "o world
- * brand design não tem link?" em 17/08 e a pergunta se respondeu medindo, não
- * relendo o registro: o site foi refeito como **World Brand Design Society**
- * (SPA), as matérias mudaram de endereço e abrem sem senha.
- *
- * Como se acha lá dentro, para a próxima vez: a busca da SPA chama
- * `GET /api/entries/search?q=bredoff&page=1&limit=30`, que devolve id, título e
- * a imagem — **mas não o slug**. O endereço é o título em kebab-case na RAIZ do
- * domínio (não em `/entry/`, apesar de a rota existir no bundle). ⚠️ Como toda
- * SPA, ela responde 200 em qualquer caminho: só vale como prova abrir no
- * navegador e conferir se o `<h1>` traz o título da matéria.
- *
- * A terceira matéria (**Alex Archer**, 04/05/2026) nunca esteve neste arquivo —
- * apareceu na mesma medição. O portfólio tinha um reconhecimento a menos do que
- * a realidade.
- *
- * ⚠️ **LOGO: o campo existe e só um veículo tem arquivo.** Ele pediu os logos
- * duas vezes, e eu fui atrás por todos os caminhos — HTML, CSS, SVG inline,
- * favicon, `og:image`, caminhos convencionais (`/logo.svg`), e por último
- * capturando o header em 4× para recortar o wordmark:
- *
- *   World Brand Design  →  logo real, 350×102 ✓ (está em uso abaixo)
- *   Abduzeedo           →  só favicon 32×32; o header não tem SVG nem <img>
- *   todays.design       →  nada; o `og:image` é social card, não marca
- *
- * O componente já lê `logo` quando existe e cai no wordmark quando não — então
- * assim que os arquivos chegarem (do Thalyson, do Mateus ou do press kit dos
- * veículos) é UMA LINHA por item. O que não dá é subir marca de terceiro
- * pixelada num portfólio de designer.
- *
- * ⚠️ **Números de vaidade ficam de fora.** O Behance mostra contagem de views,
- * mas a página mistura os números do projeto com os das recomendações ao lado, e
- * não consegui isolar com confiança. Número que não sei ler não vai para a tela
- * de cliente.
- */
 import artGinga from "../assets/optimized/art-ginga-1400.webp";
 import artGinga2x from "../assets/optimized/art-ginga-2200.webp";
 import artVotare from "../assets/optimized/art-votare-1400.webp";
@@ -173,19 +118,6 @@ export const RECONHECIMENTO: Reconhecimento[] = [
   },
 ];
 
-/**
- * ⚠️ PENDÊNCIA DE CONTEÚDO, e é grande: o Behance dele publica **9 projetos**
- * (Ginga, Votare, Alex Archer, Bureau, Neox, Trivo, Stag Grid, Bentofolio® e
- * Bentofolio 2) e `content/work.ts` tem 7 — **`Ginga` e os dois `Bentofolio`
- * não estão no site**, e `Remanescentes` (publicado no todays.design) não está
- * nem no Behance. Ginga é de 2026 e já rendeu matéria na Abduzeedo: é o
- * trabalho mais recente e mais reconhecido dele, e o portfólio não o mostra.
- * Faltam as artes — pedir ao Mateus.
- *
- * ✅ E uma pendência VELHA que se resolveu sozinha: o perfil dele no Behance
- * agora diz **"Senior Designer · Brazil"**. A contradição com o "based in
- * Brazil" do site (o Behance o listava na Alemanha em 25/07) deixou de existir.
- */
 /* ⚠ Remanescentes voltou para esta lista em 17/08/2026: ele mandou remover o
    projeto da coleção, então a matéria do todays.design passou a apontar para um
    case que não existe. */

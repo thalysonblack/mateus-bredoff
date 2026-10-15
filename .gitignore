@@ -29,10 +29,6 @@ pnpm-debug.log*
 *.swp
 .vercel
 
-# Material-fonte do CDN do Framer (75 MB de PNG/JPG/MP4 crus, 47 arquivos).
-# Fica FORA do git de propósito: binário no histórico é permanente, e o que o
-# site serve são os WebP/MP4 reencodados de src/assets/optimized/ — estes aqui
-# são o negativo, como PSD/RAW. Precisam de backup fora do repo: o CDN do
-# Framer some no dia em que o site de lá for desligado.
-# O mapa de quem é quem está versionado em src/content/midia-framer.json.
-src/assets/framer-raw/
+
+# material local (fora do git)
+_refs/

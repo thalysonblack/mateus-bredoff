@@ -73,19 +73,6 @@ if (!ORIGEM) {
 const escapa = (s) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-/**
- * Troca o miolo de uma tag e PROVA que trocou.
- *
- * O `padrao` tem dois grupos — o que vem antes do valor e o que vem depois — e
- * o valor novo é montado entre eles. Capturar o VALOR e dar `replace` nele
- * parece equivalente e não é: com a tag vazia (`<title></title>`) o grupo é a
- * string vazia, e `replace("")` insere no índice 0 em vez de substituir, o que
- * cospe o título ANTES da tag. Com valor repetido no resto da tag, troca o
- * lugar errado. Ancorar nas bordas não tem esses dois modos de falha.
- *
- * A função de substituição também evita que um `$` no texto (`$2.500`) seja
- * lido como referência de grupo.
- */
 function troca(fonte, rotulo, padrao, valor) {
   let casou = false;
   const novo = fonte.replace(padrao, (_m, antes, depois) => {

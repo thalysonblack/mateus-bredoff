@@ -4,7 +4,7 @@
  * ⚠ O ARQUIVO DO VÍDEO AINDA NÃO EXISTE. `video` é `null` de propósito, e
  * enquanto for, a home mostra o frame com a capa mas NÃO finge que abre: sem
  * arquivo, um play que não toca nada é pior que play nenhum. É a mesma regra
- * que mantém os cases magros em vez de preenchidos com arte de template —
+ * que mantém os cases magros em vez de preenchidos com arte que não é dele —
  * neste repo, inventário nunca autoriza publicação.
  *
  * Para ligar: ponha o arquivo em `src/assets/` (ou uma URL), importe aqui e

@@ -1,23 +1,3 @@
-/**
- * Coleção de trabalho — a fonte ÚNICA dos cases.
- *
- * No Framer, `/work` é uma coleção de CMS e cada case é um item; aqui é este
- * arquivo. Home, índice `/work` e página `/work/:slug` leem todos daqui, então
- * não existe a possibilidade de o índice e a página discordarem.
- *
- * **Adicionar um case custa uma entrada neste array** — nenhum arquivo novo,
- * nenhuma rota nova. Foi por isso que não se fez um componente de página por
- * case: seis páginas quase iguais divergem no primeiro ajuste.
- *
- * O schema abaixo não foi inventado: são os rótulos que o CMS dele expõe em
- * toda página de item — About, Type, Year, Credits. Se um dia virar Sanity ou
- * Payload, estes campos viram o schema da coleção e a migração é mecânica.
- *
- * ⚠ CADA IMAGEM CARREGA SUA DIMENSÃO MEDIDA (`w`/`h`, lidas do arquivo com
- * `sips`, não estimadas). É o que permite reservar a caixa na proporção nativa
- * antes de a imagem carregar — sem layout shift e sem nada esticado. Se entrar
- * arte nova, MEÇA; não chute o par.
- */
 
 export type WorkImage = {
   /** srcset por largura: 1400/2200 quando a origem permite, nativa quando é menor. */
@@ -34,7 +14,7 @@ export type WorkImage = {
    * direita; em `/work/alex-archer` as de índice 3 e 4 saem lado a lado, uma em
    * cada coluna. Nenhuma regra de posição (`i % 4`) reproduz os dois — é escolha
    * editorial por peça. Enquanto o campo não vier preenchido, `CaseStudy` cai na
-   * cadência do template mais comum e o resultado é aproximado, não medido.
+   * cadência padrão e o resultado é aproximado, não medido.
    */
   meia?: boolean;
 };
@@ -54,16 +34,6 @@ export type WorkItem = {
   capaNaGaleria?: boolean;
   images: WorkImage[];
   behanceUrl?: string;
-  /**
-   * O texto deste case não existe ainda no material do cliente.
-   *
-   * No Framer publicado, quatro dos seis cases estão com LOREM IPSUM visível e
-   * um está totalmente vazio — só o Alex Archer tem texto escrito. Portar aquilo
-   * seria trocar de tecnologia mantendo o defeito, e escrever por conta própria
-   * seria inventar a narrativa dos projetos dele. Enquanto isto for `true`, a
-   * página mostra o trabalho (imagem + metadados) e omite o corpo de texto, em
-   * vez de exibir enchimento.
-   */
   contentPending?: boolean;
 };
 
@@ -421,25 +391,6 @@ import f_art_lama_10_1400 from "../assets/optimized/art-lama-10-1400.webp";
 import f_art_lama_10_2475 from "../assets/optimized/art-lama-10-2475.webp";
 
 export const WORK: WorkItem[] = [
-  /* ⚠ REMANESCENTES SAIU DA COLEÇÃO em 17/08/2026, a pedido dele ("projeto
-     remanescentes remover"). A arte e a matéria do todays.design continuam no
-     disco e em `reconhecimento.ts` — se ele quiser de volta, é reinserir esta
-     entrada, não refazer nada.
-
-     ⚠ Ginga entrou em 16/08/2026, e a lacuna que ele fecha
-     é a mais séria que este site tinha: o Behance dele publica NOVE projetos e a
-     coleção tinha SETE. Faltava justamente o trabalho mais recente — e o mais
-     reconhecido, com matéria na Abduzeedo. Um portfólio que não mostra o
-     projeto que rendeu imprensa está trabalhando contra o próprio dono.
-
-     As capas vieram das fontes públicas dele (Behance para Ginga em 2432×1904,
-     todays.design para Remanescentes), reencodadas aqui — é arte DELE, no site
-     DELE. Os dois entram `contentPending`, como os demais sem texto: peça e
-     metadados na tela, corpo vazio, nada inventado.
-
-     ⚠ Continuam de fora `Bentofolio®` e `Bentofolio 2`: são produto próprio
-     (template de portfólio), não identidade de cliente, e misturá-los na mesma
-     coleção mudaria o que a lista afirma ser. Decisão do Mateus. */
   /* ⚠ 15/10/2026 — a coleção passou a ser EXATAMENTE a do Figma do Mateus
      ("bote apenas os projetos que têm no Figma"), na ordem das páginas do
      arquivo: Visual identities → Ai Generated images → UI design. Bureau e
@@ -815,8 +766,4 @@ export const WORK: WorkItem[] = [
 
 export const findWork = (slug?: string) => WORK.find((w) => w.slug === slug);
 
-/**
- * Cases do CMS do Framer que ainda não estão na coleção. Vazio desde 15/10/2026:
- * `proxima` entrou com a arte do Figma do Mateus.
- */
 export const MISSING_FROM_CMS = [] as const;

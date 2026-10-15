@@ -35,7 +35,6 @@ const SERVIDO = iServido >= 0 ? process.argv[iServido + 1] : null;
 const PORTA = process.argv[2] || '5199';
 const BASE = SERVIDO || `http://localhost:${PORTA}`;
 
-/* Valores medidos no publicado em 04/08/2026 (HTML servido pelo Framer). */
 const ESPERADO = {
   '/': 'Mateus Bredoff',
   '/about': 'Mateus Bredoff',
@@ -44,8 +43,6 @@ const ESPERADO = {
   '/work/votare': 'Votare - Mateus Bredoff',
   '/work/alex-archer': 'Alex Archer ® - Mateus Bredoff',
   '/work/trivo': 'Trivo - Mateus Bredoff',
-  '/work/ferraci': 'Ferraci - Mateus Bredoff',
-  '/work/bureau': 'Bureau - Mateus Bredoff',
   '/work/neox': 'Neox - Mateus Bredoff',
 };
 
@@ -98,9 +95,7 @@ if (SERVIDO) {
         t === titulo &&
         og === titulo &&
         !!d &&
-        /* A description NÃO pode ser o nome do site: esse é o fallback do Framer
-           para campo nunca preenchido, e é justamente o que decidimos não
-           replicar. Se algum dia voltar a ser isso, foi regressão. */
+        /* a description não pode ser só o nome do site */
         d !== 'Mateus Bredoff' &&
         !!c &&
         /* Canonical na forma SEM barra, uma só, nas duas variantes de URL —

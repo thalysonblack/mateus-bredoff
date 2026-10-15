@@ -15,8 +15,6 @@ import { SplitText } from "gsap/SplitText";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
-/* Assinatura do projeto: reveals em power3.out, ~0.75–0.9s. Definir no default
-   evita que cada chamada reinvente o easing e a página fique com cinco ritmos. */
 gsap.defaults({ ease: "power3.out", duration: 0.85 });
 
 /* Evita o refresh em cadeia quando a barra de endereço do mobile aparece/some —
