@@ -168,29 +168,19 @@
 @media (hover: hover) and (pointer: fine) and (min-width: 64rem) { .rc-quadro { cursor: none; } }
 @media not ((hover: hover) and (pointer: fine) and (min-width: 64rem)) { .rc-view { display: none; } }
 
-/* GRADE À VISTA (15/10): só as guias que o layout USA — margens, coluna 2 do topo, bordas das capas, centro das tags.
-   Guia de Figma em fio de cabelo vermelho; fica atrás do conteúdo. G reforça. */
-.rc-grade-guia { position: fixed; inset: 0; z-index: 0; pointer-events: none; transition: opacity 0.3s ease; }
-.rc-grade-guia i { position: absolute; top: 0; bottom: 0; width: 1px; background: rgb(255 26 13 / 0.16); transition: background-color 0.3s ease; }
-.rc-guia-m { left: var(--rc-m); }
-.rc-guia-c2 { left: calc(var(--rc-m) + (100% - 2 * var(--rc-m) - 3 * var(--rc-vao)) / 4 + var(--rc-vao)); }
-.rc-guia-cl { left: var(--rc-capa-l, 33.6%); }
-.rc-guia-meio { left: 50%; }
-.rc-guia-cr { left: calc(var(--rc-capa-r, 90.8%) - 1px); }
-.rc-guia-md { right: var(--rc-m); }
-.rc-grade-guia.is-cheia i { background: rgb(255 26 13 / 0.45); }
+/* GRADE À VISTA (15/10): 12 colunas em fio duplo (as duas bordas de cada coluna), como o layout grid do Figma.
+   Fica atrás do conteúdo. G preenche as colunas. Ele preferiu esta versão às guias medidas com régua. */
+.rc-grade-guia {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--rc-vao);
+  padding-inline: var(--rc-m); transition: opacity 0.3s ease;
+}
+.rc-grade-guia i { border-inline: 1px solid rgb(255 26 13 / 0.09); transition: background-color 0.3s ease; }
+.rc-grade-guia.is-cheia i { background: rgb(255 26 13 / 0.06); border-color: rgb(255 26 13 / 0.18); }
 .rc-grade-guia.is-info { opacity: 0; }
 .rc-palco, .rc-pe { position: relative; z-index: 1; }
-@media (max-width: 899px) { .rc-guia-c2, .rc-guia-cl, .rc-guia-cr { display: none; } .rc-guia-meio { display: none; } }
+@media (max-width: 899px) { .rc-grade-guia { grid-template-columns: repeat(4, minmax(0, 1fr)); } .rc-grade-guia i:nth-child(n+5) { display: none; } }
 @media (prefers-reduced-motion: reduce) { .rc-grade-guia, .rc-grade-guia i { transition: none; } }
-
-/* RÉGUA (15/10): o número de cada guia, pequeno, no pé da tela — leitura de Figma */
-.rc-grade-guia b {
-  position: absolute; bottom: 12px; left: 4px; white-space: nowrap;
-  font: 500 9px/1 "Geist Mono", ui-monospace, monospace; letter-spacing: 0; color: rgb(255 26 13 / 0.7);
-}
-.rc-guia-md b, .rc-guia-cr b { left: auto; right: 4px; }
-@media (max-width: 899px) { .rc-grade-guia b { display: none; } }
 
 /* CAPAS PADRONIZADAS (15/10): todas no mesmo retângulo 4:3, a arte preenche por cover */
 .rc-quadro { aspect-ratio: 4 / 3; }

@@ -10,6 +10,7 @@ import { gsap, ScrollTrigger, prefersReducedMotion } from "../../lib/gsap";
 import retrato from "../../assets/optimized/framer/retrato-mateus-paisagem-1600.webp";
 import retrato2x from "../../assets/optimized/framer/retrato-mateus-paisagem-3200.webp";
 import retratoV from "../../assets/optimized/framer/retrato-mateus-vertical-900.webp";
+import neoxRosto from "../../assets/optimized/hover/neox-2.webp";
 import "../../styles/rolin.css";
 import "../../styles/rolin-c.css";
 import { montarCapasGl } from "./rolinCGl";
@@ -21,6 +22,10 @@ import { scrollToElement } from "../../lib/lenis";
  * os trabalhos são um catálogo escalonado na grade de 4 — cada peça ocupa 2 colunas,
  * alternando o lado, com a legenda FORA da imagem, embaixo. Celular: pilha de uma coluna.
  */
+/* capas trocadas só nesta versão (15/10): Neox entra pelo retrato de óculos */
+const CAPA: Record<string, { src: string; src2x?: string; alt?: string }> = {
+  neox: { src: neoxRosto, alt: "Neox — retrato com óculos e acessórios metálicos" },
+};
 const nome = (t: string) => t.replace("®", "").trim();
 const ANOS = `’${String(Math.min(...WORK.map((w) => w.year))).slice(2)} — ’${String(Math.max(...WORK.map((w) => w.year))).slice(2)}`;
 
@@ -29,7 +34,6 @@ export default function RolinC() {
   const raiz = useRef<HTMLDivElement | null>(null);
   const [noPe, setNoPe] = useState(false);
   const [guia, setGuia] = useState(false);
-  const [guias, setGuias] = useState<number[]>([]);
   useEffect(() => {
     const tecla = (e: KeyboardEvent) => {
       if (e.key.toLowerCase() !== "g" || e.metaKey || e.ctrlKey || (e.target as HTMLElement).closest("input, textarea")) return;
@@ -50,14 +54,6 @@ export default function RolinC() {
       /* tags da legenda começam no CENTRO da tela: distância da borda da legenda até o meio */
       const leg = el.querySelector<HTMLElement>(".rc-legenda");
       if (leg) el.style.setProperty("--rc-centro", `${document.documentElement.clientWidth / 2 - leg.getBoundingClientRect().left}px`);
-      /* a régua: cada guia mostra a própria posição em px, como no Figma */
-      requestAnimationFrame(() => setGuias([...el.querySelectorAll<HTMLElement>(".rc-grade-guia i")].map((i) => Math.round(i.getBoundingClientRect().left))));
-      const capa = el.querySelector<HTMLElement>(".rc-quadro");
-      if (capa) {
-        const r = capa.getBoundingClientRect();
-        el.style.setProperty("--rc-capa-l", `${r.left}px`);
-        el.style.setProperty("--rc-capa-r", `${r.right}px`);
-      }
     };
     medir();
     const ro = new ResizeObserver(medir);
@@ -124,9 +120,9 @@ export default function RolinC() {
 
   return (
     <div ref={raiz} className="rc">
-      {/* GRADE À VISTA (15/10): as guias REAIS do layout (margens, coluna 2, borda das capas, centro), como guia de Figma. G reforça. */}
+      {/* GRADE À VISTA (15/10): 12 colunas em fio duplo, guia de Figma. G preenche. (ele preferiu esta às guias medidas) */}
       <div className={`rc-grade-guia${noPe ? " is-info" : ""}${guia ? " is-cheia" : ""}`} aria-hidden>
-        {["m", "c2", "cl", "meio", "cr", "md"].map((k, n) => <i key={k} className={`rc-guia-${k}`}><b>{guias[n] ?? ""}</b></i>)}
+        {Array.from({ length: 12 }, (_, i) => <i key={i} />)}
       </div>
       {/* MENU FIXO: nome | disciplina | WORK INFO, sempre na tela */}
       <header className={`rc-fixo${noPe ? " is-info" : ""}`}>
@@ -166,9 +162,9 @@ export default function RolinC() {
             <li key={w.slug} id={`rc-peca-${i}`} className="rc-peca">
               <Link to={`/work/${w.slug}`}>
                 <span className="rc-quadro">
-                  <img src={w.cover.src} srcSet={w.cover.src2x ? `${w.cover.src} 1x, ${w.cover.src2x} 2x` : undefined}
+                  <img src={(CAPA[w.slug] ?? w.cover).src} srcSet={CAPA[w.slug] ? undefined : w.cover.src2x ? `${w.cover.src} 1x, ${w.cover.src2x} 2x` : undefined}
                     width={w.cover.w} height={w.cover.h}
-                    alt={w.cover.alt} loading={i < 2 ? "eager" : "lazy"} decoding="async" draggable={false} />
+                    alt={CAPA[w.slug]?.alt ?? w.cover.alt} loading={i < 2 ? "eager" : "lazy"} decoding="async" draggable={false} />
                 </span>
                 <span className="rc-legenda">
                   <span className="rc-num">{String(i + 1).padStart(2, "0")}</span>
