@@ -183,3 +183,15 @@
 .rc-palco, .rc-pe { position: relative; z-index: 1; }
 @media (max-width: 899px) { .rc-guia-c2, .rc-guia-cl, .rc-guia-cr { display: none; } .rc-guia-meio { display: none; } }
 @media (prefers-reduced-motion: reduce) { .rc-grade-guia, .rc-grade-guia i { transition: none; } }
+
+/* RÉGUA (15/10): o número de cada guia, pequeno, no pé da tela — leitura de Figma */
+.rc-grade-guia b {
+  position: absolute; bottom: 12px; left: 4px; white-space: nowrap;
+  font: 500 9px/1 "Geist Mono", ui-monospace, monospace; letter-spacing: 0; color: rgb(255 26 13 / 0.7);
+}
+.rc-guia-md b, .rc-guia-cr b { left: auto; right: 4px; }
+@media (max-width: 899px) { .rc-grade-guia b { display: none; } }
+
+/* CAPAS PADRONIZADAS (15/10): todas no mesmo retângulo 4:3, a arte preenche por cover */
+.rc-quadro { aspect-ratio: 4 / 3; }
+.rc-quadro img { width: 100%; height: 100%; object-fit: cover; }

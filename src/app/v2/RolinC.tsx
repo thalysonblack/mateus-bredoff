@@ -29,6 +29,7 @@ export default function RolinC() {
   const raiz = useRef<HTMLDivElement | null>(null);
   const [noPe, setNoPe] = useState(false);
   const [guia, setGuia] = useState(false);
+  const [guias, setGuias] = useState<number[]>([]);
   useEffect(() => {
     const tecla = (e: KeyboardEvent) => {
       if (e.key.toLowerCase() !== "g" || e.metaKey || e.ctrlKey || (e.target as HTMLElement).closest("input, textarea")) return;
@@ -49,6 +50,8 @@ export default function RolinC() {
       /* tags da legenda começam no CENTRO da tela: distância da borda da legenda até o meio */
       const leg = el.querySelector<HTMLElement>(".rc-legenda");
       if (leg) el.style.setProperty("--rc-centro", `${document.documentElement.clientWidth / 2 - leg.getBoundingClientRect().left}px`);
+      /* a régua: cada guia mostra a própria posição em px, como no Figma */
+      requestAnimationFrame(() => setGuias([...el.querySelectorAll<HTMLElement>(".rc-grade-guia i")].map((i) => Math.round(i.getBoundingClientRect().left))));
       const capa = el.querySelector<HTMLElement>(".rc-quadro");
       if (capa) {
         const r = capa.getBoundingClientRect();
@@ -123,7 +126,7 @@ export default function RolinC() {
     <div ref={raiz} className="rc">
       {/* GRADE À VISTA (15/10): as guias REAIS do layout (margens, coluna 2, borda das capas, centro), como guia de Figma. G reforça. */}
       <div className={`rc-grade-guia${noPe ? " is-info" : ""}${guia ? " is-cheia" : ""}`} aria-hidden>
-        {["m", "c2", "cl", "meio", "cr", "md"].map((k) => <i key={k} className={`rc-guia-${k}`} />)}
+        {["m", "c2", "cl", "meio", "cr", "md"].map((k, n) => <i key={k} className={`rc-guia-${k}`}><b>{guias[n] ?? ""}</b></i>)}
       </div>
       {/* MENU FIXO: nome | disciplina | WORK INFO, sempre na tela */}
       <header className={`rc-fixo${noPe ? " is-info" : ""}`}>
@@ -162,7 +165,7 @@ export default function RolinC() {
           {WORK.map((w, i) => (
             <li key={w.slug} id={`rc-peca-${i}`} className="rc-peca">
               <Link to={`/work/${w.slug}`}>
-                <span className="rc-quadro" style={{ aspectRatio: `${w.cover.w} / ${w.cover.h}` }}>
+                <span className="rc-quadro">
                   <img src={w.cover.src} srcSet={w.cover.src2x ? `${w.cover.src} 1x, ${w.cover.src2x} 2x` : undefined}
                     width={w.cover.w} height={w.cover.h}
                     alt={w.cover.alt} loading={i < 2 ? "eager" : "lazy"} decoding="async" draggable={false} />
