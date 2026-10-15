@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { WORK } from "../../content/work";
 import { LEAD } from "../../content/about";
 import { SERVICOS } from "../../content/servicos";
@@ -33,6 +33,35 @@ export default function RolinC() {
   useMetaRota();
   const raiz = useRef<HTMLDivElement | null>(null);
   const [noPe, setNoPe] = useState(false);
+  const navegar = useNavigate();
+  /* ABOUT (href "#about" de propósito: o obturador global de TransicaoRota só pega href "/…"): desce até o fim, o retrato do rodapé abre até a tela cheia e a About entra por ele (15/10) */
+  const irAbout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const pe = raiz.current?.querySelector<HTMLElement>("#rc-info");
+    const foto = pe?.querySelector<HTMLElement>(".rc-retrato");
+    if (!pe || !foto || prefersReducedMotion()) { navegar("/about"); return; }
+    scrollToElement(pe);
+    const abrir = () => {
+      const r = foto.getBoundingClientRect();
+      const veu = foto.cloneNode(true) as HTMLElement;
+      Object.assign(veu.style, { position: "fixed", zIndex: "60", left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px`, margin: "0" });
+      /* fora do .rc-pe o CSS da foto não vale: o clone leva o enquadramento inline,
+         e anda do corte do rodapé (50% 30%) para o da hero da About (50% 22%) */
+      const im = veu.querySelector("img")!;
+      Object.assign(im.style, { display: "block", width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 30%" });
+      document.body.appendChild(veu);
+      gsap.to(im, { objectPosition: "50% 22%", duration: 0.9, ease: "power3.inOut" });
+      gsap.to(veu, { left: 0, top: 0, width: "100vw", height: "100vh", duration: 0.9, ease: "power3.inOut",
+        onComplete: () => { navegar("/about"); gsap.to(veu, { opacity: 0, duration: 0.35, delay: 0.25, ease: "power2.out", onComplete: () => veu.remove() }); } });
+    };
+    /* espera o scroll chegar (o rodapé encosta no topo) antes de abrir */
+    const ini = performance.now();
+    const checar = () => {
+      if (Math.abs(pe.getBoundingClientRect().top) < 2 || performance.now() - ini > 1800) abrir();
+      else requestAnimationFrame(checar);
+    };
+    requestAnimationFrame(checar);
+  };
   const [guia, setGuia] = useState(false);
   useEffect(() => {
     const tecla = (e: KeyboardEvent) => {
@@ -130,7 +159,7 @@ export default function RolinC() {
         <span>Brand design /<br />art direction</span>
         <nav className="rc-nav" aria-label="Seções">
           <a href="#rc-work">Work</a>
-          <a href="#rc-info">About</a>
+          <a href="#about" onClick={irAbout}>About</a>
         </nav>
       </header>
 
