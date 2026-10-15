@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { gsap, prefersReducedMotion } from "../../lib/gsap";
 import { INSTAGRAM } from "../../content/lab";
 import { scrollToTop } from "../../lib/lenis";
-import { BEHANCE, EMAIL } from "./RolinCMoldura";
+import { BEHANCE, Credito, EMAIL } from "./RolinCMoldura";
 
 /**
  * FECHAMENTO DA ABOUT (15/10, v3): "ainda não gostei do footer". Altura pelo conteúdo; o gesto é o
@@ -74,6 +74,7 @@ export function RcFechamentoAbout({ rotulo }: { rotulo: string }) {
       </div>
       <div className="rcx-pe">
         <p className="rcx-q">© {new Date().getFullYear()} Mateus Bredoff</p>
+        <Credito className="rc-credito rcx-credito" />
         <button type="button" className="rcx-topo-bt" onClick={() => scrollToTop(false)}>Back to top ↑</button>
       </div>
     </footer>

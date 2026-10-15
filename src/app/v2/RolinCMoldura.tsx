@@ -177,9 +177,20 @@ export function RcRodape() {
               {publicados.map((r) => <Publicacao key={`${r.veiculo}-${r.projeto}-${r.ano}`} r={r} />)}
             </div>
           </div>
+          <Credito />
         </div>
       </section>
     </div>
+  );
+}
+
+/* crédito do estúdio no pé (15/10): o padrão dos sites de portfólio — "Design & Development" + estúdio linkado */
+export function Credito({ className = "rc-credito" }: { className?: string }) {
+  return (
+    <p className={className}>
+      <span className="rc-credito-q">Design & Development</span>{" "}
+      <a href="https://thegoodtaste.cc/" target="_blank" rel="noopener noreferrer">Goodtaste®</a>
+    </p>
   );
 }
 

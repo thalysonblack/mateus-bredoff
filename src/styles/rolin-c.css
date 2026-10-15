@@ -584,3 +584,12 @@ html[data-rc-medidas] .rc-grade-guia i { position: relative; border-color: rgb(2
 html[data-rc-medidas] .rc-grade-guia { counter-reset: col; }
 html[data-rc-medidas] .rc-grade-guia i::before { counter-increment: col; content: counter(col, decimal-leading-zero);
   position: absolute; bottom: 64px; left: 4px; font: 500 9px/1 ui-monospace, monospace; color: rgb(255 26 13 / 0.8); }
+
+/* crédito Goodtaste® no pé dos rodapés (15/10) */
+.rc-credito { margin-top: 32px; color: #fff; }
+.rc .rc-credito .rc-credito-q { color: #8a8a8a; }
+.rc .rc-credito a { color: #fff; transition: color 150ms ease; }
+@media (hover: hover) and (pointer: fine) { .rc .rc-credito a:hover { color: #8a8a8a; } }
+.rcx-pe .rcx-credito { margin-top: 0; }
+.rcx-pe .rcx-credito { grid-column: 7 / 10; }
+@media (max-width: 899px) { .rcx-pe .rcx-credito { grid-column: 1 / -1; order: 3; margin-top: 8px; } }
