@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode, useLayoutEffect } from "react";
 import { Link, useLocation } from "react-router";
-import { CONTATO } from "../../content/contato";
+import { CONTATO, EMAIL } from "../../content/contato";
 import "../../styles/base.css";
 import "../../styles/v1.css";
 
@@ -39,7 +39,7 @@ function Navegacao() {
      entra como primeiro item, com o mesmo ■ quando é a página atual. */
   const itens = [
     ...PRANCHAS.map((p) => ({ nome: p.nome, to: p.to, href: undefined as string | undefined })),
-    { nome: "Contact", to: "", href: "mailto:hello@mateusbredoff.com" },
+    { nome: "Contact", to: "", href: `mailto:${EMAIL}` },
   ];
   return (
     <nav className="p-menu-nav" aria-label="Site">
@@ -198,7 +198,7 @@ export function Prancha({
               <div className="p-rodape-miolo">
                 <ul className="p-rodape-canais">
                   <li>
-                    <a href="mailto:hello@mateusbredoff.com" className="p-servico-nome p-rodape-canal p-rodape-canal--aceso">
+                    <a href={`mailto:${EMAIL}`} className="p-servico-nome p-rodape-canal p-rodape-canal--aceso">
                       Let's talk
                     </a>
                   </li>

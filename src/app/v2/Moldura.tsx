@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useState, type CSSProperties, type MouseEvent } from "react";
 import { Link } from "react-router";
 import { LEAD } from "../../content/about";
+import { EMAIL } from "../../content/contato";
 import { SERVICOS } from "../../content/servicos";
 import { INSTAGRAM } from "../../content/lab";
 import { RECONHECIMENTO, type Reconhecimento } from "../../content/reconhecimento";
@@ -21,7 +22,7 @@ import "../../styles/v2.css";
 export const RC = "/v2";
 export const nome = (t: string) => t.replace("®", "").trim();
 export const BEHANCE = "https://www.behance.net/mateusbredoff";
-export const EMAIL = "hello@mateusbredoff.com";
+export { EMAIL };
 /* capa trocada só nesta versão (15/10): Neox entra pelas peças gráficas (adesivos) */
 export const capa = (w: WorkItem) => w.slug === "neox"
   ? { src: neoxRosto, srcSet: undefined, alt: "Neox — adesivos e peças gráficas da identidade" }
@@ -80,7 +81,7 @@ export function MolduraV2({ atual, onAbout }: { atual?: "work" | "about"; onAbou
     if (!(window as unknown as { __rcOla?: boolean }).__rcOla) {
       (window as unknown as { __rcOla?: boolean }).__rcOla = true;
       console.log("%cMateus Bredoff", "font: 600 32px/1 'Helvetica Neue', Arial, sans-serif; letter-spacing: -0.03em;");
-      console.log("%cYou opened the inspector. Good taste.\nBrand design & art direction — hello@mateusbredoff.com\n(try ↑ ↑ ↓ ↓ ← → ← → B A)", "font: 12px/1.5 ui-monospace, monospace; color: #767676;");
+      console.log(`%cYou opened the inspector. Good taste.\nBrand design & art direction — ${EMAIL}\n(try ↑ ↑ ↓ ↓ ← → ← → B A)`, "font: 12px/1.5 ui-monospace, monospace; color: #767676;");
     }
     const original = document.title;
     const aba = () => { document.title = document.hidden ? "Come back ✦ Mateus Bredoff" : original; };
