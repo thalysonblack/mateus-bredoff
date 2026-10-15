@@ -181,10 +181,15 @@ export default function RolinC() {
         <ol className="rc-lista">
           {/* 00 — SHOWREEL: vídeo em loop no mesmo 4:3; fora do WebGL (classe própria, o rolinCGl só pega .rc-quadro) */}
           {REEL.video && (
-            <li id="rc-peca-0" className="rc-peca">
+            <li id="rc-peca-0" className="rc-peca rc-peca--reel">
               <button ref={reelBotao} type="button" className="rc-reel-bt" onClick={() => setReelAberto(true)} aria-label="Play reel">
                 <span className="rc-quadro-reel" data-selo="Play reel">
                   <video ref={thumb} src={REEL.video} poster={REEL.capa.src} muted loop playsInline autoPlay preload="metadata" aria-hidden />
+                  {/* o reel se distingue das capas: formato 16:9, rótulo sobre o vídeo e um "play" visível */}
+                  <span className="rc-reel-rotulo" aria-hidden>
+                    <span>Showreel ’{String(REEL.ano).slice(2)}</span>
+                    <span className="rc-reel-play"><i />Play reel</span>
+                  </span>
                 </span>
                 <span className="rc-legenda">
                   <span className="rc-num">00</span>

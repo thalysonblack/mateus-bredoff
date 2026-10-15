@@ -454,3 +454,17 @@ html[data-rc-sem-grade] .rc-grade-guia { opacity: 0; }
 @media (hover: hover) and (pointer: fine) { .rc-reel-x:hover { color: #fff; } }
 @keyframes rc-reel-entra { from { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .rc-reel-tela { animation: none; } .rc-quadro-reel video { transition: none; } }
+
+/* SHOWREEL EVIDENTE (15/10): "confunde com os jobs" — 16:9 (as capas são 4:3), rótulo e play SOBRE o vídeo,
+   e um vão maior com fio separando o reel da lista de projetos */
+.rc-quadro-reel { position: relative; aspect-ratio: 16 / 9; }
+.rc-reel-rotulo {
+  position: absolute; inset: auto 0 0 0; display: flex; justify-content: space-between; align-items: end;
+  padding: 16px; color: #fff; pointer-events: none;
+  background: linear-gradient(to top, rgb(0 0 0 / 0.45), transparent);
+}
+.rc-reel-rotulo > span:first-child { font-size: clamp(28px, 3.4vw, 52px); line-height: 0.9; letter-spacing: -0.03em; }
+.rc-reel-play { display: inline-flex; align-items: center; gap: 8px; }
+.rc-reel-play i { width: 0; height: 0; border-style: solid; border-width: 5px 0 5px 8px; border-color: transparent transparent transparent #fff; }
+.rc-peca--reel { padding-bottom: 64px; border-bottom: 1px solid rgb(0 0 0 / 0.1); margin-bottom: 32px; }
+@media (max-width: 899px) { .rc-reel-rotulo { padding: 10px; } .rc-peca--reel { padding-bottom: 40px; margin-bottom: 16px; } }
