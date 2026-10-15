@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode, useLayoutEffect } from "react";
 import { Link, useLocation } from "react-router";
-import { CONTATO } from "../v3-system";
-import "../../styles/v2.css";
+import { CONTATO } from "../../content/contato";
+import "../../styles/base.css";
+import "../../styles/v1.css";
 
 /**
  * V2 — "O ESPÉCIME". As primitivas que toda rota desta direção compartilha.

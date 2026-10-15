@@ -11,12 +11,12 @@ import retrato2x from "../../assets/optimized/framer/retrato-mateus-paisagem-320
 import neoxRosto from "../../assets/optimized/hover/neox-3.webp";
 import type { WorkItem } from "../../content/work";
 import retratoV from "../../assets/optimized/framer/retrato-mateus-vertical-900.webp";
-import "../../styles/rolin.css";
-import "../../styles/rolin-c.css";
+import "../../styles/v2-base.css";
+import "../../styles/v2.css";
 
 /**
- * O SITE ROLIN C (15/10) — moldura comum às quatro rotas: grade de 12 à vista, menu fixo e rodapé.
- * Uma rota nova não recria nada disto; monta <RcMoldura> e, se quiser, <RcRodape>.
+ * O SITE V2 (15/10) — moldura comum às quatro rotas: grade de 12 à vista, menu fixo e rodapé.
+ * Uma rota nova não recria nada disto; monta <MolduraV2> e, se quiser, <RodapeV2>.
  */
 export const RC = "/v2";
 export const nome = (t: string) => t.replace("®", "").trim();
@@ -70,7 +70,7 @@ const guias = (className: string) => (
  * o App mata os ScrollTriggers no effect da rota. O estado inicial do menu é medido na hora,
  * para a faixa de papel não piscar sobre a hero escura.
  */
-export function RcMoldura({ atual, onAbout }: { atual?: "work" | "about"; onAbout?: (e: MouseEvent) => void }) {
+export function MolduraV2({ atual, onAbout }: { atual?: "work" | "about"; onAbout?: (e: MouseEvent) => void }) {
   const [escuro, setEscuro] = useState(false);
   const [grade, setGrade] = useState(lerGrade);
 
@@ -147,7 +147,7 @@ export function RcMoldura({ atual, onAbout }: { atual?: "work" | "about"; onAbou
 }
 
 /** rodapé: retrato + ficha no preto */
-export function RcRodape() {
+export function RodapeV2() {
   return (
     <div id="rc-info" className="rl rc-pe" data-rc-escuro>
       <section className="rl-info">
@@ -190,9 +190,9 @@ export function Credito({ className = "rc-credito" }: { className?: string }) {
 
 /**
  * FECHAMENTO DA ABOUT (15/10): o contato no preto, na grade de 12 à vista. Rótulo na coluna 1,
- * ficha da coluna 7 (o eixo do centro). Só a About usa; home/work/case seguem com o RcRodape.
+ * ficha da coluna 7 (o eixo do centro). Só a About usa; home/work/case seguem com o RodapeV2.
  */
-export function RcFechamento({ rotulo }: { rotulo: string }) {
+export function FechamentoV2({ rotulo }: { rotulo: string }) {
   return (
     <footer id="rc-info" className="rcf is-sem-foto" data-rc-escuro>
       {guias("rc-grade-guia rcf-guia")}

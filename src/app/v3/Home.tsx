@@ -4,8 +4,8 @@ import { gsap, ScrollTrigger } from "../../lib/gsap";
 import { getLenis } from "../../lib/lenis";
 import { REEL } from "../../content/reel";
 import { useCena } from "./Heroes";
-import UmaIndice from "./UmaIndice";
-import "../../styles/reels.css";
+import Indice from "./Indice";
+import "../../styles/v3.css";
 
 /**
  * HERO = SÓ O SHOWREEL (13/10, "apenas showreel em full na hero… ou showreel centralizado").
@@ -35,7 +35,7 @@ function Video({ ritmo = 1 }: { ritmo?: number }) {
   );
 }
 
-export function HeroReelFull() {
+export function HeroReel() {
   const [aberto, setAberto] = useState(false);
   const selo = useRef<HTMLDivElement | null>(null);
   const tela = useRef<HTMLVideoElement | null>(null);
@@ -108,4 +108,4 @@ export function HeroReelFull() {
   );
 }
 
-export const ReelFull = () => <UmaIndice inicio={<HeroReelFull />} semReel />;
+export const HomeV3 = () => <Indice inicio={<HeroReel />} semReel />;

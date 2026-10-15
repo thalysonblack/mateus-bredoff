@@ -5,7 +5,7 @@ import { PECAS } from "../../content/pecas";
 import { findWork, WORK, type WorkItem } from "../../content/work";
 import { corDe } from "../../content/cores";
 import { useMetaRota } from "../../hooks/useMetaRota";
-import { Prancha, Bloco } from "./sistema";
+import { Prancha, Bloco } from "../compartilhado/sistema";
 
 /**
  * O CASE — `/work/:slug`. Um componente para os nove.

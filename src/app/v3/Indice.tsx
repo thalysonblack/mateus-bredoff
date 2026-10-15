@@ -8,11 +8,11 @@ import { SERVICOS } from "../../content/servicos";
 import { RECONHECIMENTO } from "../../content/reconhecimento";
 import retrato from "../../assets/optimized/hero-portrait-1600.webp";
 import { useMetaRota } from "../../hooks/useMetaRota";
-import { Prancha } from "./sistema";
-import { HoverFluido } from "./HoverFluido";
-import { useRevelacaoPalavra } from "../sections/framer/useRevelacaoPalavra";
+import { Prancha } from "../compartilhado/sistema";
+import { HoverFluido } from "../compartilhado/HoverFluido";
+import { useRevelacaoPalavra } from "../compartilhado/useRevelacaoPalavra";
 import { gsap, SplitText, prefersReducedMotion } from "../../lib/gsap";
-import "../../styles/uma-indice.css";
+import "../../styles/v3-indice.css";
 
 /**
  * ONE PAGE — "O ÍNDICE" (10/10, rota /v2/uma-indice).
@@ -50,7 +50,7 @@ const projetoDe = (nome: string) => WORK.find((w) => limpa(w.title) === limpa(no
  * `~/dev/_inbox/ref-bredoff-hero/`). Sem prop, fica o nome do NomeObra. Com prop, o
  * componente entra NO LUGAR do nome; a linha de ofício e a lista seguem iguais.
  */
-export default function UmaIndice({ inicio, semReel }: { inicio?: ReactNode; semReel?: boolean } = {}) {
+export default function Indice({ inicio, semReel }: { inicio?: ReactNode; semReel?: boolean } = {}) {
   useMetaRota();
   const [sob, setSob] = useState<number | null>(null);
   /* a lente é UMA só (um contexto WebGL): serve à lista e às publicações */

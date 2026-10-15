@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { gsap, ScrollTrigger, SplitText, prefersReducedMotion } from "../../../lib/gsap";
+import { gsap, ScrollTrigger, SplitText, prefersReducedMotion } from "../../lib/gsap";
 
 /**
  * Revelação palavra a palavra por COR — o gesto central da `/about` original.

@@ -1,5 +1,5 @@
 /**
- * ROLIN C — a coluna de capas com o WebGL do /archive (o mesmo de `lib/arquivoWebGL.ts`, pedido
+ * V2 — a coluna de capas com o WebGL do /archive (o mesmo de `lib/arquivoWebGL.ts`, pedido
  * dele: "o webgl no scroll igual nos outros"). Mesma arquitetura de duas passadas e mesmas
  * constantes: as capas são desenhadas CHAPADAS num FBO, e o FBO vira textura de UM plano curvo em
  * perspectiva. uBend 0 → 0,9 e uDistort 0 → 0,6 saem da VELOCIDADE do scroll; parado, plano e limpo.
@@ -17,7 +17,7 @@ import { getLenis } from "../../lib/lenis";
 import { VERT_TELA, BEND_MIN, BEND_MAX, BEND_LERP } from "../../lib/arquivoWebGL";
 
 const PX_POR_INDICE = 420;
-/* 15/10: "tá distorcendo muito" — a Rolin C usa ~45% da curva e da lente da Work */
+/* 15/10: "tá distorcendo muito" — a V2 usa ~45% da curva e da lente da Work */
 const FORCA = 0.45;
 
 const VERT_CAPA = /* glsl */ `

@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { gsap, prefersReducedMotion } from "../../lib/gsap";
 import { INSTAGRAM } from "../../content/lab";
 import { scrollToTop } from "../../lib/lenis";
-import { BEHANCE, Credito, EMAIL } from "./RolinCMoldura";
+import { BEHANCE, Credito, EMAIL } from "./Moldura";
 
 /**
  * FECHAMENTO DA ABOUT (15/10, v3): "ainda não gostei do footer". Altura pelo conteúdo; o gesto é o
@@ -10,7 +10,7 @@ import { BEHANCE, Credito, EMAIL } from "./RolinCMoldura";
  * for projects" (header) e "based in Brazil and work globally" (LEAD). Services/Recognition saíram:
  * as seções 04 e 06 já os mostram logo acima.
  */
-export function RcFechamentoAbout({ rotulo }: { rotulo: string }) {
+export function FechamentoAboutV2({ rotulo }: { rotulo: string }) {
   const emailRef = useRef<HTMLAnchorElement>(null);
   const [copiado, setCopiado] = useState(false);
   const gestoRef = useRef<HTMLDivElement>(null);

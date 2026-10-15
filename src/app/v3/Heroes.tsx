@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "../../lib/gsap";
-import "../../styles/heroes.css";
+import "../../styles/v3-heroes.css";
 
 /* Base das heroes de cena (hoje só o reel em tela cheia, Reels.tsx). */
 /* a hero sangra até as bordas da tela: anula o recuo da Prancha, medido */

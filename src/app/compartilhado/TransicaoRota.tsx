@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router";
-import { gsap } from "../lib/gsap";
-import { WORK } from "../content/work";
-import { scrollToTop } from "../lib/lenis";
+import { gsap } from "../../lib/gsap";
+import { WORK } from "../../content/work";
+import { scrollToTop } from "../../lib/lenis";
 
 /**
  * A transição entre páginas — A CORTINA DE GRADE.
@@ -42,12 +42,12 @@ import { scrollToTop } from "../lib/lenis";
 
 /* nome legível da rota, para o rótulo do obturador. Sai do próprio pathname —
    não há uma segunda lista de rotas para divergir da primeira. */
-/* o site V2 (Rolin) mora em /v2, /v2/about, /v2/work[/slug] — os outros /v2/* são estúdio antigo */
+/* o site V2 (V2) mora em /v2, /v2/about, /v2/work[/slug] — os outros /v2/* são estúdio antigo */
 const ehV2 = (p: string) => p === "/v2" || /^\/v2\/(about|work)(\/|$)/.test(p);
 
 function nomeDaRota(p: string) {
   if (p === "/") return "Index";
-  /* site V2 (Rolin): /v2[/work[/slug]|/about] */
+  /* site V2 (V2): /v2[/work[/slug]|/about] */
   if (ehV2(p)) return nomeDaRota(p.slice(3) || "/");
   if (p.startsWith("/work/")) {
     const slug = p.split("/")[2] || "";
@@ -77,7 +77,7 @@ function superficieDaRota(p: string) {
      nenhum daquela direção — a transição entregava uma superfície mentirosa,
      que é exatamente o que o comentário acima manda evitar. */
   if (p === "/v4" || p.startsWith("/v4/")) return "branco";
-  /* o site Rolin C é papel branco puro em todas as rotas */
+  /* o site V2 é papel branco puro em todas as rotas */
   if (ehV2(p)) return "branco";
   if (SUPERFICIE[p]) return SUPERFICIE[p];
   if (p.startsWith("/work/")) return "branco";

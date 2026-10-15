@@ -2,17 +2,17 @@ import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router";
 import { initLenis, destroyLenis, scrollToTop, scrollToElement } from "../lib/lenis";
 import { ScrollTrigger } from "../lib/gsap";
-import TransicaoRota from "./TransicaoRota";
-import PranchaAbout from "./v2/About";
-import PranchaWork from "./v2/Work";
-import PranchaCase from "./v2/Case";
-import HomeFundo from "./v2/HomeFundo";
-import { ReelFull } from "./v2/Reels";
-import RolinC from "./v2/RolinC";
-import RolinCAbout from "./v2/RolinCAbout";
-import { RolinCWork, RolinCCase } from "./v2/RolinCWork";
-import Versoes from "./Versoes";
-import SeletorVersao from "./SeletorVersao";
+import TransicaoRota from "./compartilhado/TransicaoRota";
+import AboutV1 from "./v1/About";
+import WorkV1 from "./v1/Work";
+import CaseV1 from "./v1/Case";
+import HomeV1 from "./v1/Home";
+import { HomeV3 } from "./v3/Home";
+import HomeV2 from "./v2/Home";
+import AboutV2 from "./v2/About";
+import { WorkV2, CaseV2 } from "./v2/Work";
+import Versoes from "./compartilhado/Versoes";
+import SeletorVersao from "./compartilhado/SeletorVersao";
 
 /**
  * Mateus Bredoff — direção editorial, agora multi-página.
@@ -130,22 +130,22 @@ export default function App() {
       <Layout>
         <Routes>
           {/* V1 — o site no ar: home + as internas canônicas */}
-          <Route path="/" element={<HomeFundo />} />
-          <Route path="/v1" element={<HomeFundo />} />
-          <Route path="/about" element={<PranchaAbout />} />
-          <Route path="/work" element={<PranchaWork />} />
-          <Route path="/work/:slug" element={<PranchaCase />} />
+          <Route path="/" element={<HomeV1 />} />
+          <Route path="/v1" element={<HomeV1 />} />
+          <Route path="/about" element={<AboutV1 />} />
+          <Route path="/work" element={<WorkV1 />} />
+          <Route path="/work/:slug" element={<CaseV1 />} />
           {/* V2 — site inteiro */}
-          <Route path="/v2" element={<RolinC />} />
-          <Route path="/v2/about" element={<RolinCAbout />} />
-          <Route path="/v2/work" element={<RolinCWork />} />
-          <Route path="/v2/work/:slug" element={<RolinCCase />} />
+          <Route path="/v2" element={<HomeV2 />} />
+          <Route path="/v2/about" element={<AboutV2 />} />
+          <Route path="/v2/work" element={<WorkV2 />} />
+          <Route path="/v2/work/:slug" element={<CaseV2 />} />
           {/* V3 — home aberta pelo reel */}
-          <Route path="/v3" element={<ReelFull />} />
+          <Route path="/v3" element={<HomeV3 />} />
           {/* as três lado a lado, para aprovação */}
           <Route path="/versoes" element={<Versoes />} />
           {/* slug inexistente cai no case da V1, que trata o 404 */}
-          <Route path="*" element={<PranchaCase />} />
+          <Route path="*" element={<CaseV1 />} />
         </Routes>
         <SeletorVersao />
       </Layout>

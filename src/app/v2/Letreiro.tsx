@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { WORK } from "../../content/work";
 import { CORES } from "../../content/cores";
 import { gsap } from "../../lib/gsap";
-import { RC, nome, capa } from "./RolinCMoldura";
+import { RC, nome, capa } from "./Moldura";
 
 /**
  * LETREIRO (15/10, "esse sistema na V2 também"): o índice COMPLETO do trabalho em duas
@@ -12,7 +12,7 @@ import { RC, nome, capa } from "./RolinCMoldura";
  * Movimento: CSS puro (translateX −50% numa fita duplicada); reduced-motion = parada,
  * rolável à mão.
  */
-export function RcLetreiro({ atual }: { atual?: string } = {}) {
+export function LetreiroV2({ atual }: { atual?: string } = {}) {
   const previa = useRef<HTMLImageElement | null>(null);
   const [sob, setSob] = useState<string | null>(null);
 

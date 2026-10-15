@@ -3,13 +3,13 @@ import { Link, useNavigate } from "react-router";
 import { WORK } from "../../content/work";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { gsap, ScrollTrigger, prefersReducedMotion } from "../../lib/gsap";
-import { RcMoldura, RcRodape, RC, nome, capa } from "./RolinCMoldura";
-import { montarCapasGl } from "./rolinCGl";
+import { MolduraV2, RodapeV2, RC, nome, capa } from "./Moldura";
+import { montarCapasGl } from "./gl";
 import { scrollToElement, getLenis } from "../../lib/lenis";
 import { REEL } from "../../content/reel";
 
 /**
- * ONE PAGE — "ROLIN C" (15/10). Topo idêntico ao da Rolin (nome | disciplina, 11px caixa alta).
+ * ONE PAGE — V2 (15/10). Topo idêntico ao da V2 (nome | disciplina, 11px caixa alta).
  * O resto muda: topo NÃO é fixo (nada passa por cima de imagem), sem fio e sem pílula;
  * os trabalhos são um catálogo escalonado na grade de 4 — cada peça ocupa 2 colunas,
  * alternando o lado, com a legenda FORA da imagem, embaixo. Celular: pilha de uma coluna.
@@ -20,7 +20,7 @@ const ANOS = `’${String(Math.min(...WORK.flatMap((w) => w.year ?? []))).slice(
 const SELECIONADOS = 7;
 const DESTAQUE = WORK.slice(0, SELECIONADOS);
 
-export default function RolinC() {
+export default function HomeV2() {
   useMetaRota();
   const raiz = useRef<HTMLDivElement | null>(null);
   const navegar = useNavigate();
@@ -157,7 +157,7 @@ export default function RolinC() {
 
   return (
     <div ref={raiz} className="rc">
-      <RcMoldura onAbout={irAbout} />
+      <MolduraV2 onAbout={irAbout} />
 
       <span ref={selo} className="rc-view" aria-hidden="true">View project</span>
 
@@ -183,7 +183,7 @@ export default function RolinC() {
         </aside>
 
         <ol className="rc-lista">
-          {/* 00 — SHOWREEL: vídeo em loop no mesmo 4:3; fora do WebGL (classe própria, o rolinCGl só pega .rc-quadro) */}
+          {/* 00 — SHOWREEL: vídeo em loop no mesmo 4:3; fora do WebGL (classe própria, o gl.ts só pega .rc-quadro) */}
           {REEL.video && (
             <li id="rc-peca-0" className="rc-peca rc-peca--reel">
               <button ref={reelBotao} type="button" className="rc-reel-bt" onClick={() => setReelAberto(true)} aria-label="Play reel">
@@ -228,7 +228,7 @@ export default function RolinC() {
         </aside>
       </div>
 
-      <RcRodape />
+      <RodapeV2 />
       {reelAberto && REEL.video && <ReelTela src={REEL.video} fechar={() => { setReelAberto(false); reelBotao.current?.focus(); }} />}
     </div>
   );

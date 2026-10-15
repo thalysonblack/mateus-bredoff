@@ -1,8 +1,8 @@
 import { Link } from "react-router";
-import { useMetaRota } from "../hooks/useMetaRota";
-import v1 from "../assets/versoes/v1.webp";
-import v2 from "../assets/versoes/v2.webp";
-import v3 from "../assets/versoes/v3.webp";
+import { useMetaRota } from "../../hooks/useMetaRota";
+import v1 from "../../assets/versoes/v1.webp";
+import v2 from "../../assets/versoes/v2.webp";
+import v3 from "../../assets/versoes/v3.webp";
 
 /** /versoes — a página para o cliente aprovar: as três versões lado a lado, cada uma com o link para abrir. */
 const VERSOES = [

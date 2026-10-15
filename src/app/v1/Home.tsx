@@ -5,8 +5,8 @@ import { WORK } from "../../content/work";
 import { REEL, REELS } from "../../content/reel";
 import { PECAS } from "../../content/pecas";
 import { useMetaRota } from "../../hooks/useMetaRota";
-import { Prancha } from "./sistema";
-import { HoverFluido } from "./HoverFluido";
+import { Prancha } from "../compartilhado/sistema";
+import { HoverFluido } from "../compartilhado/HoverFluido";
 import { HoverColuna } from "./HoverColuna";
 import { WorkCartoes } from "./WorkCartoes";
 
