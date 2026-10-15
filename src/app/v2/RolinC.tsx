@@ -60,7 +60,7 @@ export default function RolinC() {
         <span>Brand design /<br />art direction</span>
         <nav className="rc-nav" aria-label="Seções">
           <a href="#rc-work">Work</a>
-          <a href="#rc-info">Info</a>
+          <a href="#rc-info">About</a>
         </nav>
       </header>
 
