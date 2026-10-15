@@ -25,8 +25,13 @@ export default function HomeOrchard() {
   const raiz = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    if (prefersReducedMotion() || !raiz.current) return;
-    const ctx = gsap.context(() => {
+    if (prefersReducedMotion()) return;
+    let ctx: gsap.Context | undefined;
+    let vivo = true;
+    /* RouteLifecycle mata os triggers depois deste efeito: criar após fontes + 2 frames. */
+    document.fonts.ready.then(() => requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!vivo || !raiz.current) return;
+    ctx = gsap.context(() => {
       gsap.fromTo(
         "[data-o-palavra]",
         { opacity: 0.14 },
@@ -39,7 +44,8 @@ export default function HomeOrchard() {
       });
     }, raiz);
     ScrollTrigger.refresh();
-    return () => ctx.revert();
+    })));
+    return () => { vivo = false; ctx?.revert(); };
   }, []);
 
   return (
