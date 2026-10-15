@@ -31,14 +31,18 @@ void main() {
 
 const FRAG_CAPA = /* glsl */ `
 precision highp float;
-uniform sampler2D tMap; uniform vec4 uRect; uniform float uClipTop; uniform float uReady;
+uniform sampler2D tMap; uniform vec4 uRect; uniform float uClipTop; uniform float uReady; uniform float uImgAspect;
 varying vec2 vUv;
 void main() {
   vec2 p = vUv * uRect.zw;
   vec2 q = abs(p - uRect.zw * 0.5) - (uRect.zw * 0.5 - 4.0);
   if (length(max(q, 0.0)) > 4.0) discard;                 /* raio 4px do .rc-quadro */
   if (1.0 - vUv.y < uClipTop) discard;                    /* clip-path do reveal */
-  gl_FragColor = vec4(texture2D(tMap, vUv).rgb, uReady);
+  /* object-fit: cover — a textura recorta como a <img>, nunca estica */
+  float caixa = uRect.z / uRect.w;
+  vec2 esc = caixa > uImgAspect ? vec2(1.0, uImgAspect / caixa) : vec2(caixa / uImgAspect, 1.0);
+  vec2 uvc = (vUv - 0.5) * esc + 0.5;
+  gl_FragColor = vec4(texture2D(tMap, uvc).rgb, uReady);
 }`;
 
 /* o FRAG_TELA da Work, com a lente-base e o grão proporcionais a uDistort (ver cabeçalho) */
@@ -82,7 +86,7 @@ export function montarCapasGl(raiz: HTMLElement): (() => void) | null {
     const img = quadro.querySelector("img")!;
     const program = new Program(gl, {
       vertex: VERT_CAPA, fragment: FRAG_CAPA, transparent: true,
-      uniforms: { tMap: { value: new Texture(gl) }, uRect: { value: [0, 0, 1, 1] }, uView: { value: [1, 1] }, uClipTop: { value: 0 }, uReady: { value: 0 } },
+      uniforms: { tMap: { value: new Texture(gl) }, uRect: { value: [0, 0, 1, 1] }, uView: { value: [1, 1] }, uClipTop: { value: 0 }, uReady: { value: 0 }, uImgAspect: { value: 1 } },
     });
     const mesh = new Mesh(gl, { geometry: geoCapa, program, frustumCulled: false });
     mesh.visible = false;
@@ -109,6 +113,7 @@ export function montarCapasGl(raiz: HTMLElement): (() => void) | null {
     const fim = () => {
       pl.program.uniforms.tMap.value = new Texture(gl, { image: pl.img, generateMipmaps: true, minFilter: gl.LINEAR_MIPMAP_LINEAR, flipY: true });
       pl.program.uniforms.uReady.value = 1;
+      pl.program.uniforms.uImgAspect.value = pl.img.naturalWidth / pl.img.naturalHeight;
       sujo = true;
     };
     pl.img.decode().then(fim, () => { if (pl.img.complete && pl.img.naturalWidth) fim(); });

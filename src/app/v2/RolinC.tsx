@@ -10,7 +10,7 @@ import { gsap, ScrollTrigger, prefersReducedMotion } from "../../lib/gsap";
 import retrato from "../../assets/optimized/framer/retrato-mateus-paisagem-1600.webp";
 import retrato2x from "../../assets/optimized/framer/retrato-mateus-paisagem-3200.webp";
 import retratoV from "../../assets/optimized/framer/retrato-mateus-vertical-900.webp";
-import neoxRosto from "../../assets/optimized/hover/neox-2.webp";
+import neoxRosto from "../../assets/optimized/hover/neox-3.webp";
 import "../../styles/rolin.css";
 import "../../styles/rolin-c.css";
 import { montarCapasGl } from "./rolinCGl";
@@ -22,9 +22,9 @@ import { scrollToElement } from "../../lib/lenis";
  * os trabalhos são um catálogo escalonado na grade de 4 — cada peça ocupa 2 colunas,
  * alternando o lado, com a legenda FORA da imagem, embaixo. Celular: pilha de uma coluna.
  */
-/* capas trocadas só nesta versão (15/10): Neox entra pelo retrato de óculos */
+/* capas trocadas só nesta versão (15/10): Neox entra pelas peças gráficas (adesivos) */
 const CAPA: Record<string, { src: string; src2x?: string; alt?: string }> = {
-  neox: { src: neoxRosto, alt: "Neox — retrato com óculos e acessórios metálicos" },
+  neox: { src: neoxRosto, alt: "Neox — adesivos e peças gráficas da identidade" },
 };
 const nome = (t: string) => t.replace("®", "").trim();
 const ANOS = `’${String(Math.min(...WORK.map((w) => w.year))).slice(2)} — ’${String(Math.max(...WORK.map((w) => w.year))).slice(2)}`;
@@ -204,7 +204,7 @@ export default function RolinC() {
                 {SERVICOS.map((s) => <p key={s.nome}>{s.nome}</p>)}
               </div>
               <div>
-                <p className="rl-apagado">Publication</p>
+                <p className="rl-apagado">Recognition</p>
                 {publicados.map((r) => {
                   const miolo = r.logo
                     ? <span role="img" aria-label={`${r.veiculo} — ${nome(r.projeto)}`} className={`rl-logo${r.logo.alturaPx ? " is-alto" : ""}`} style={{ "--logo": `url("${r.logo.src}")`, aspectRatio: `${r.logo.w} / ${r.logo.h}` } as CSSProperties} />
