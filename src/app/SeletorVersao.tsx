@@ -1,14 +1,18 @@
 import { Link, useLocation } from "react-router";
 
-/** Seletor de TODAS as versões de home do site. Só em dev (App monta atrás de import.meta.env.DEV). */
+/** Seletor V1 · V2 · V3 para o cliente aprovar. Aparece nas rotas das versões e em /versoes (também em produção); em dev, em toda rota. */
 const ROTAS = [
-  ["No ar", "/"],
-  ["Rolin", "/v2/rolin-c"],
-  ["Reel", "/v2/reel-full"],
+  ["All", "/versoes"],
+  ["V1", "/v1"],
+  ["V2", "/v2"],
+  ["V3", "/v3"],
 ] as const;
 
 export default function SeletorVersao() {
   const { pathname } = useLocation();
+  const naVersao = /^\/(v1|v3|versoes)$/.test(pathname) || pathname === "/v2" || /^\/v2\/(about|work)(\/|$)/.test(pathname);
+  if (!naVersao && !import.meta.env.DEV) return null;
+  const ativa = (r: string) => (r === "/v2" ? pathname === "/v2" || /^\/v2\/(about|work)(\/|$)/.test(pathname) : pathname === r);
   return (
     <nav aria-label="Versões" style={{ position: "fixed", left: 12, right: 12, bottom: 12, zIndex: 9999, display: "flex",
       gap: 2, padding: 4, margin: "0 auto", width: "fit-content", maxWidth: "calc(100vw - 24px)", overflowX: "auto",
@@ -16,7 +20,7 @@ export default function SeletorVersao() {
       font: "12px/1 'Geist', system-ui, sans-serif" }}>
       {ROTAS.map(([n, r]) => (
         <Link key={r} to={r} style={{ padding: "6px 10px", borderRadius: 999, textDecoration: "none", whiteSpace: "nowrap",
-          color: pathname === r ? "#14201F" : "#EEECE6", background: pathname === r ? "#EEECE6" : "transparent" }}>{n}</Link>
+          color: ativa(r) ? "#14201F" : "#EEECE6", background: ativa(r) ? "#EEECE6" : "transparent" }}>{n}</Link>
       ))}
     </nav>
   );

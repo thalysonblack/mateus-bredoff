@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router";
 import { initLenis, destroyLenis, scrollToTop, scrollToElement } from "../lib/lenis";
 import { ScrollTrigger } from "../lib/gsap";
 import Menu from "./sections/Menu";
@@ -9,7 +9,6 @@ import WorkIndex from "./pages/WorkIndex";
 import CaseStudy from "./pages/CaseStudy";
 import About from "./pages/About";
 import HomeAutoral from "./pages/HomeV2";
-import PranchaIndex from "./v2/Home";
 import PranchaAbout from "./v2/About";
 import PranchaWork from "./v2/Work";
 import PranchaCase from "./v2/Case";
@@ -20,6 +19,7 @@ import RolinC from "./v2/RolinC";
 import RolinCAbout from "./v2/RolinCAbout";
 import { RolinCWork, RolinCCase } from "./v2/RolinCWork";
 import Nova from "./v2/Nova";
+import Versoes from "./Versoes";
 import SeletorVersao from "./SeletorVersao";
 /* o conceito 3D traz o Three.js: carrega só quando a rota abre */
 import HomeV4 from "./v4/Home";
@@ -190,10 +190,17 @@ export default function App() {
           <Route path="/v2/fundo" element={<HomeFundo />} />
           <Route path="/v2/reel-full" element={<ReelFull />} />
           <Route path="/v2/rolin-b" element={<RolinB />} />
-          <Route path="/v2/rolin-c" element={<RolinC />} />
-          <Route path="/v2/rolin-c/about" element={<RolinCAbout />} />
-          <Route path="/v2/rolin-c/work" element={<RolinCWork />} />
-          <Route path="/v2/rolin-c/work/:slug" element={<RolinCCase />} />
+          {/* VERSÕES PARA APROVAÇÃO (15/10): V1 = no ar · V2 = Rolin (site inteiro) · V3 = Reel; /versoes lista as três */}
+          <Route path="/versoes" element={<Versoes />} />
+          <Route path="/v1" element={<HomeFundo />} />
+          <Route path="/v2" element={<RolinC />} />
+          <Route path="/v2/about" element={<RolinCAbout />} />
+          <Route path="/v2/work" element={<RolinCWork />} />
+          <Route path="/v2/work/:slug" element={<RolinCCase />} />
+          <Route path="/v3" element={<ReelFull />} />
+          {/* endereços antigos das mesmas versões, para link já enviado não quebrar */}
+          <Route path="/v2/rolin-c" element={<Navigate to="/v2" replace />} />
+          <Route path="/v2/rolin-c/*" element={<Navigate to="/v2" replace />} />
           <Route path="/v2/nova" element={<Nova />} />
           <Route path="/about" element={<PranchaAbout />} />
           <Route path="/work" element={<PranchaWork />} />
@@ -244,10 +251,6 @@ export default function App() {
               e revelatio.studio. Vive em rota própria COM as subpáginas — o
               partido só se julga com o site inteiro de pé, não com uma home
               solta. Ver `styles/v2.css` para o que foi medido em cada uma. */}
-          <Route path="/v2" element={<PranchaIndex />} />
-          <Route path="/v2/work" element={<PranchaWork />} />
-          <Route path="/v2/work/:slug" element={<PranchaCase />} />
-          <Route path="/v2/about" element={<PranchaAbout />} />
           {/* a segunda proposta da about, da capa para baixo — "outra proposta
               da segunda section pra baixo". A capa é a mesma nas duas. */}
           {/* a terceira: catálogo de serviços COM FOTO, no espírito da about
@@ -297,7 +300,7 @@ export default function App() {
               linguagem do site em vez de tela branca. */}
           <Route path="*" element={<PranchaCase />} />
         </Routes>
-        {import.meta.env.DEV && <SeletorVersao />}
+        <SeletorVersao />
       </Layout>
     </BrowserRouter>
   );

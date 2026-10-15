@@ -18,7 +18,7 @@ import "../../styles/rolin-c.css";
  * O SITE ROLIN C (15/10) — moldura comum às quatro rotas: grade de 12 à vista, menu fixo e rodapé.
  * Uma rota nova não recria nada disto; monta <RcMoldura> e, se quiser, <RcRodape>.
  */
-export const RC = "/v2/rolin-c";
+export const RC = "/v2";
 export const nome = (t: string) => t.replace("®", "").trim();
 export const BEHANCE = "https://www.behance.net/mateusbredoff";
 export const EMAIL = "hello@mateusbredoff.com";
