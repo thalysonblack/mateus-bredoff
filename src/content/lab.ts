@@ -36,8 +36,8 @@ export type Ensaio = {
 
 export const LAB: Ensaio[] = [
   { brand: "Fortis", discipline: "Typographic System", medium: "Print / Motion", slug: null },
-  { brand: "Bureau", discipline: "Electronic Music", medium: "Packaging / Merch", slug: "bureau" },
-  { brand: "Hōki", discipline: "Digital Product", medium: "Interface", slug: null },
+  { brand: "Bureau", discipline: "Electronic Music", medium: "Packaging / Merch", slug: null },
+  { brand: "Hōki", discipline: "Digital Product", medium: "Interface", slug: "hoki" },
   { brand: "Neox", discipline: "Technical Apparel", medium: "Campaign", slug: "neox" },
   { brand: "Alex Archer", discipline: "Personal Brand", medium: "Editorial", slug: "alex-archer" },
   { brand: "Bovine Beats", discipline: "Music Label", medium: "Cover Art", slug: null },

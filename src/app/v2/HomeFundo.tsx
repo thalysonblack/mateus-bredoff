@@ -137,7 +137,7 @@ export default function HomeFundo() {
             </span>
             <span className="p-diag-nome">{sob.title}</span>
             <span className="p-marca">
-              {sob.disciplines.join(", ")} · {sob.year}
+              {sob.disciplines.join(", ")}{sob.year ? ` · ${sob.year}` : ""}
             </span>
           </div>
           <div className="p-diag-pecas">

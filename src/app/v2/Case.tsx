@@ -131,9 +131,11 @@ export default function CaseV2() {
             className="sticky grid"
             style={{ top: "5rem", rowGap: "calc(var(--p-gap-y) / 2)" }}
           >
-            <Bloco rotulo="Year">
-              <p className="p-corpo">{item.year}</p>
-            </Bloco>
+            {item.year && (
+              <Bloco rotulo="Year">
+                <p className="p-corpo">{item.year}</p>
+              </Bloco>
+            )}
 
             <Bloco rotulo="Discipline">
               <p className="p-corpo">{item.disciplines.join(", ")}</p>

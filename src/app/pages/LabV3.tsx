@@ -44,14 +44,12 @@ type Quadro = {
 
 function montarQuadros(): Quadro[] {
   const aa = findWork("alex-archer");
-  const bureau = findWork("bureau");
   const neox = findWork("neox");
-  if (!aa || !bureau || !neox) return [];
+  if (!aa || !neox) return [];
 
   const fotos: { img: WorkImage; slug: string }[] = [
     { img: aa.cover, slug: aa.slug },
     ...aa.images.map((img) => ({ img, slug: aa.slug })),
-    { img: bureau.cover, slug: bureau.slug },
     { img: neox.cover, slug: neox.slug },
   ];
 

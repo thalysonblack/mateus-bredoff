@@ -95,7 +95,7 @@ const FIXAS: Record<string, MetaRota> = {
  * projeto alheio é o que este repo não faz. Disciplina e ano são fato.
  */
 const descricaoDoCase = (item: (typeof WORK)[number]) =>
-  `${item.title} — ${item.disciplines.join(", ")}, ${item.year}. Case study by brand designer Mateus Bredoff.`;
+  `${item.title} — ${item.disciplines.join(", ")}${item.year ? `, ${item.year}` : ""}. Case study by brand designer Mateus Bredoff.`;
 
 /**
  * Resolve QUALQUER pathname. Rota desconhecida e slug inexistente caem no
