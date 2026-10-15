@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router";
 import { initLenis, destroyLenis, scrollToTop, scrollToElement } from "../lib/lenis";
 import { ScrollTrigger } from "../lib/gsap";
 import Menu from "./sections/Menu";
@@ -14,7 +14,6 @@ import PranchaWork from "./v2/Work";
 import PranchaCase from "./v2/Case";
 import HomeFundo from "./v2/HomeFundo";
 import { ReelFull } from "./v2/Reels";
-import RolinB from "./v2/RolinB";
 import RolinC from "./v2/RolinC";
 import RolinCAbout from "./v2/RolinCAbout";
 import { RolinCWork, RolinCCase } from "./v2/RolinCWork";
@@ -189,7 +188,6 @@ export default function App() {
           <Route path="/" element={<HomeFundo />} />
           <Route path="/v2/fundo" element={<HomeFundo />} />
           <Route path="/v2/reel-full" element={<ReelFull />} />
-          <Route path="/v2/rolin-b" element={<RolinB />} />
           {/* VERSÕES PARA APROVAÇÃO (15/10): V1 = no ar · V2 = Rolin (site inteiro) · V3 = Reel; /versoes lista as três */}
           <Route path="/versoes" element={<Versoes />} />
           <Route path="/v1" element={<HomeFundo />} />
@@ -198,9 +196,6 @@ export default function App() {
           <Route path="/v2/work" element={<RolinCWork />} />
           <Route path="/v2/work/:slug" element={<RolinCCase />} />
           <Route path="/v3" element={<ReelFull />} />
-          {/* endereços antigos das mesmas versões, para link já enviado não quebrar */}
-          <Route path="/v2/rolin-c" element={<Navigate to="/v2" replace />} />
-          <Route path="/v2/rolin-c/*" element={<Navigate to="/v2" replace />} />
           <Route path="/v2/nova" element={<Nova />} />
           <Route path="/about" element={<PranchaAbout />} />
           <Route path="/work" element={<PranchaWork />} />
