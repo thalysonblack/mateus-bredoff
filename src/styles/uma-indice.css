@@ -233,3 +233,8 @@
   .ix-servico-entrega, .ix-pub-proj { grid-column: 2; grid-row: 1; }
   .ix-pub > .ix-ano, .ix-pub > :last-child:not(.ix-pub-proj) { grid-column: 3; grid-row: 1; }
 }
+
+/* 15/10: o selo é a FITA "Gr" do Behance (a mesma do .v3-selo), não um círculo "Bē" */
+.ix-selo--gr { place-items: start center; width: 20px; height: 31px; padding-top: 5px; border-radius: 0; vertical-align: middle;
+  background: #8c7137; color: #fff; font: 700 11px/1 "Geist", sans-serif; letter-spacing: -0.01em;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%); }
