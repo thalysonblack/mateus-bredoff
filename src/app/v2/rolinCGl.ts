@@ -17,6 +17,8 @@ import { getLenis } from "../../lib/lenis";
 import { VERT_TELA, BEND_MIN, BEND_MAX, BEND_LERP } from "../../lib/arquivoWebGL";
 
 const PX_POR_INDICE = 420;
+/* 15/10: "tá distorcendo muito" — a Rolin C usa ~45% da curva e da lente da Work */
+const FORCA = 0.45;
 
 const VERT_CAPA = /* glsl */ `
 attribute vec3 position; attribute vec2 uv;
@@ -145,9 +147,9 @@ export function montarCapasGl(raiz: HTMLElement): (() => void) | null {
   const tick = (_t: number, dt: number) => {
     const velocidade = Math.abs(scrollAtual - scrollAnterior) / PX_POR_INDICE;
     scrollAnterior = scrollAtual;
-    bend += (BEND_MIN + Math.min(velocidade * 6, 1) * (BEND_MAX - BEND_MIN) - bend) * BEND_LERP;
+    bend += (BEND_MIN + Math.min(velocidade * 6, 1) * (BEND_MAX - BEND_MIN) * FORCA - bend) * BEND_LERP;
     const u = progTela.uniforms;
-    u.uDistort.value += (Math.min(velocidade * 3, 0.6) - u.uDistort.value) * 0.05;
+    u.uDistort.value += (Math.min(velocidade * 3, 0.6) * FORCA - u.uDistort.value) * 0.05;
     if (bend < 1e-4) bend = 0;
     if (u.uDistort.value < 1e-4) u.uDistort.value = 0;
     u.uBend.value = bend;
