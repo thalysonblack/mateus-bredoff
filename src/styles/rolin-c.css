@@ -571,3 +571,10 @@ html[data-rc-sem-grade] .rc-grade-guia { opacity: 0; }
 @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) { .rcx-lente { display: none; } }
 .rcx-gesto { overflow: visible; overflow-x: clip; }
 .rcx-lente b { transform: none; }
+
+/* case: peça vertical sozinha em meia largura, alternando esquerda / centro / direita (15/10) */
+.rcc-pecas li.is-solta { grid-column: span 6; }
+.rcc-pecas li.is-solta.is-esq { grid-column: 1 / span 6; }
+.rcc-pecas li.is-solta.is-centro { grid-column: 4 / span 6; }
+.rcc-pecas li.is-solta.is-dir { grid-column: 7 / span 6; }
+@media (max-width: 899px) { .rcc-pecas li.is-solta, .rcc-pecas li.is-solta.is-esq, .rcc-pecas li.is-solta.is-centro, .rcc-pecas li.is-solta.is-dir { grid-column: 1 / -1; } }

@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router";
-import { WORK, findWork } from "../../content/work";
+import { WORK, findWork, type WorkImage } from "../../content/work";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { RcMoldura, RcRodape, RC, nome, capa } from "./RolinCMoldura";
 import { RcLetreiro } from "./RcLetreiro";
@@ -47,6 +47,21 @@ export function RolinCWork() {
   );
 }
 
+/* 15/10 "as telas verticais, dá aquela variada": duas peças meia seguidas continuam em par; uma peça
+   vertical SOZINHA ocupa meia largura e alterna a posição — esquerda, centro, direita */
+const LUGAR = ["is-esq", "is-centro", "is-dir"] as const;
+function posicoes(imgs: WorkImage[]) {
+  const out: { m: WorkImage; cls?: string }[] = [];
+  let n = 0;
+  for (let i = 0; i < imgs.length; i++) {
+    const m = imgs[i];
+    if (m.meia && imgs[i + 1]?.meia) { out.push({ m, cls: "is-meia" }, { m: imgs[i + 1], cls: "is-meia" }); i++; continue; }
+    if (m.meia || m.h > m.w * 1.05) { out.push({ m, cls: `is-solta ${LUGAR[n++ % 3]}` }); continue; }
+    out.push({ m });
+  }
+  return out;
+}
+
 export function RolinCCase() {
   useMetaRota();
   const { slug } = useParams();
@@ -79,8 +94,8 @@ export function RolinCCase() {
         {/* 15/10: a capa abre o case na proporção dela (não no corte 4:3 da home); se ela é recorte de uma peça
             da galeria, não entra — senão a mesma imagem aparece duas vezes */}
         {!w.capaNaGaleria && <li><img src={c.src} srcSet={c.srcSet} width={w.cover.w} height={w.cover.h} alt={c.alt} decoding="async" /></li>}
-        {w.images.map((m) => (
-          <li key={m.src} className={m.meia ? "is-meia" : undefined}>
+        {posicoes(w.images).map(({ m, cls }) => (
+          <li key={m.src} className={cls}>
             <img src={m.src} srcSet={m.src2x ? `${m.src} 1x, ${m.src2x} 2x` : undefined} width={m.w} height={m.h} alt={m.alt} loading="lazy" decoding="async" />
           </li>
         ))}
