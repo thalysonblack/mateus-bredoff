@@ -468,3 +468,8 @@ html[data-rc-sem-grade] .rc-grade-guia { opacity: 0; }
 .rc-reel-play i { width: 0; height: 0; border-style: solid; border-width: 5px 0 5px 8px; border-color: transparent transparent transparent #fff; }
 .rc-peca--reel { padding-bottom: 64px; border-bottom: 1px solid rgb(0 0 0 / 0.1); margin-bottom: 32px; }
 @media (max-width: 899px) { .rc-reel-rotulo { padding: 10px; } .rc-peca--reel { padding-bottom: 40px; margin-bottom: 16px; } }
+
+/* reel aberto em TELA CHEIA de verdade (15/10): sem margem, vídeo cobre a tela */
+.rc-reel-tela { padding: 0; }
+.rc-reel-tela video { object-fit: cover; }
+.rc-reel-x { z-index: 1; color: #fff; mix-blend-mode: difference; }
