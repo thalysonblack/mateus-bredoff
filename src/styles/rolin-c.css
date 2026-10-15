@@ -65,3 +65,25 @@
   .rc-bio, .rc-col:first-of-type { grid-column: 1 / -1; }
   .rc-col:first-of-type { grid-column: 1; }
 }
+
+/* PALCO (15/10, pedido dele no print): os trabalhos ocupam a faixa entre a disciplina e o WORK/INFO,
+   a partir do topo. Lados fixos (sticky) — nada passa por cima das imagens. */
+.rc-palco { display: grid; grid-template-columns: 32% minmax(0, 1fr) 7%; column-gap: var(--rc-vao); padding-inline: var(--rc-m); }
+.rc-lado, .rc-dir { position: sticky; top: 0; align-self: start; height: 100svh; padding-top: 15px; display: flex; flex-direction: column; }
+.rc-lado-topo { display: grid; grid-template-columns: calc((100vw - 2 * var(--rc-m) - 3 * var(--rc-vao)) / 4) 1fr; column-gap: var(--rc-vao); }
+.rc-lado-abre { margin-top: 150px; }
+.rc-dir { align-items: flex-end; }
+.rc-dir .rc-conta { margin-top: 150px; }
+.rc-dir .rc-nav { display: flex; gap: 16px; }
+.rc-palco .rc-lista { display: flex; flex-direction: column; gap: 96px; padding-top: 15px; padding-bottom: 160px; }
+.rc-palco .rc-peca { width: 100%; }
+.rc-palco .rc-quadro { max-height: none; }
+
+@media (max-width: 899px) {
+  .rc-palco { grid-template-columns: 1fr; }
+  .rc-lado, .rc-dir { position: static; height: auto; }
+  .rc-lado-abre { margin-top: 96px; margin-bottom: 24px; }
+  .rc-dir { order: -1; display: none; }
+  .rc-palco .rc-lista { gap: 56px; padding-bottom: 96px; }
+}
+@media (max-width: 899px) { .rc-lado-topo { grid-template-columns: 1fr 1fr; } }

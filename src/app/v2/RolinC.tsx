@@ -44,40 +44,46 @@ export default function RolinC() {
 
   return (
     <div ref={raiz} className="rc">
-      <header className="rc-topo">
-        <Link to="/v2/rolin-c">Mateus Bredoff</Link>
-        <span>Brand design /<br />art direction</span>
-        <nav className="rc-nav" aria-label="Seções">
-          <a href="#rc-work">Work</a>
-          <a href="#rc-info">Info</a>
-        </nav>
-      </header>
+      <div className="rc-palco">
+        <aside className="rc-lado">
+          <div className="rc-lado-topo">
+            <Link to="/v2/rolin-c">Mateus Bredoff</Link>
+            <span>Brand design /<br />art direction</span>
+          </div>
+          <div id="rc-work" className="rc-lado-topo rc-lado-abre">
+            <p>Selected work</p>
+            <p className="rc-quieto">{ANOS}</p>
+          </div>
+        </aside>
 
-      <section id="rc-work" className="rc-grade rc-abre">
-        <p>Selected work</p>
-        <p className="rc-quieto">{ANOS}</p>
-        <p className="rc-quieto rc-conta">{String(WORK.length).padStart(2, "0")} projects</p>
-      </section>
+        <ol className="rc-lista">
+          {WORK.map((w, i) => (
+            <li key={w.slug} className="rc-peca">
+              <Link to={`/work/${w.slug}`}>
+                <span className="rc-quadro" style={{ aspectRatio: `${w.cover.w} / ${w.cover.h}` }}>
+                  <img src={w.cover.src} srcSet={w.cover.src2x ? `${w.cover.src} 1x, ${w.cover.src2x} 2x` : undefined}
+                    width={w.cover.w} height={w.cover.h}
+                    alt={w.cover.alt} loading={i < 2 ? "eager" : "lazy"} decoding="async" draggable={false} />
+                </span>
+                <span className="rc-legenda">
+                  <span className="rc-num">{String(i + 1).padStart(2, "0")}</span>
+                  <span>{nome(w.title)}</span>
+                  <span className="rc-quieto">{w.disciplines.join(", ")}</span>
+                  <span className="rc-quieto rc-ano">{w.year}</span>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ol>
 
-      <ol className="rc-grade rc-lista">
-        {WORK.map((w, i) => (
-          <li key={w.slug} className={`rc-peca${i % 2 ? " is-dir" : ""}`}>
-            <Link to={`/work/${w.slug}`}>
-              <span className="rc-quadro" style={{ aspectRatio: `${w.cover.w} / ${w.cover.h}` }}>
-                <img src={w.cover.src} srcSet={w.cover.src2x ? `${w.cover.src} 1x, ${w.cover.src2x} 2x` : undefined}
-                  width={w.cover.w} height={w.cover.h}
-                  alt={w.cover.alt} loading={i < 2 ? "eager" : "lazy"} decoding="async" draggable={false} />
-              </span>
-              <span className="rc-legenda">
-                <span className="rc-num">{String(i + 1).padStart(2, "0")}</span>
-                <span>{nome(w.title)}</span>
-                <span className="rc-quieto">{w.disciplines.join(", ")}</span>
-                <span className="rc-quieto rc-ano">{w.year}</span>
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ol>
+        <aside className="rc-dir">
+          <nav className="rc-nav" aria-label="Seções">
+            <a href="#rc-work">Work</a>
+            <a href="#rc-info">Info</a>
+          </nav>
+          <p className="rc-quieto rc-conta">{String(WORK.length).padStart(2, "0")} projects</p>
+        </aside>
+      </div>
 
       <section id="rc-info" className="rc-grade rc-info">
         <p>Info</p>
