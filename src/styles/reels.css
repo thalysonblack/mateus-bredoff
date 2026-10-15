@@ -53,14 +53,3 @@
 }
 @keyframes rx-escorre { 0% { transform: translateY(-100%); } 55% { transform: translateY(0); } 100% { transform: translateY(100%); } }
 @media (prefers-reduced-motion: reduce) { .rx-scroll i::after { animation: none; transform: none; } }
-
-/* fora do reel o menu (4 linhas na nav) passava por cima do Índice sem fundo: ganha o papel por trás,
-   mesma receita da Rolin B (rolin-b.css) */
-html:not(.rx-sobre) .p-tela:has(.rx-full) > div > .p-menu::before {
-  content: ""; position: absolute; z-index: -1;
-  inset: calc(-1 * var(--p-margem-y)) calc(-1 * var(--p-margem)) -14px;
-  background: #f4f4f2;
-}
-html:not(.rx-sobre) .p-tela:has(.rx-full) > div > .p-menu { mix-blend-mode: normal; color: var(--p-ink); }
-html:not(.rx-sobre) .p-tela:has(.rx-full) > div > .p-menu .p-menu-campo > span:last-child,
-html:not(.rx-sobre) .p-tela:has(.rx-full) > div > .p-menu .p-menu-nav a:not([aria-current]) { color: var(--p-quieto); }
