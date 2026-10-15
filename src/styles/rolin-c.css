@@ -335,7 +335,8 @@ html[data-rc-sem-grade] .rc-grade-guia { opacity: 0; }
 
 @media (max-width: 899px) {
   .rca-hero { height: 100vh; }
-  .rca-marca { font-size: 30px; }
+  /* QA mobile 15/10: no pé (bottom 0) o nome ficava sob o seletor de versões fixo */
+  .rca-marca { font-size: 30px; bottom: 56px; }
   .rca-ficha { padding-block: 72px 96px; row-gap: 64px; }
   .rca-sec { row-gap: 24px; }
   .rca-rot, .rca-lead, .rca-manchete, .rca-duas, .rca-nums, .rca-servicos, .rca-pubs, .rca-ferramentas { grid-column: 1 / -1; }
@@ -415,6 +416,8 @@ html[data-rc-sem-grade] .rc-grade-guia { opacity: 0; }
 @media (max-width: 899px) { .rc-pe .rc-retrato { height: 80svh; } }
 .rc-pe .rl-info-ficha a { transition: color 150ms ease; }
 .rc-pe .rl-info-cab a { color: #8a8a8a; }
+/* QA mobile 15/10: o recuo de 10px do .rl (lugar do ponto) não existe aqui — e-mail fora da borda da bio; e colado no Instagram */
+@media (max-width: 899px) { .rc-pe .rl-info-cab { padding-left: 0; column-gap: 10px; } }
 @media (hover: hover) and (pointer: fine) { .rc-pe .rl-info-cab a:hover { color: #fff; } }
 @media (prefers-reduced-motion: reduce) { .rc-pe .rl-info-ficha a { transition: none; } }
 @media (min-width: 900px) {

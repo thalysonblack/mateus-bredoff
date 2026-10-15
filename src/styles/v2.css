@@ -3371,6 +3371,9 @@ a.pz-materia:hover { color: var(--p-acento); }
   .p-menu { grid-template-columns: 1fr 1fr; }
   .p-menu-nav { grid-column: 2; grid-row: 1 / span 3; align-items: flex-end; }
   .p-menu-fim { display: none; }
+  /* QA mobile 15/10: grudado, o menu de ~130px sem fundo passava POR CIMA do texto do case
+     e da about (nome sobre parágrafo). No celular ele rola junto com a página. */
+  .p-menu { position: relative; top: auto; }
 }
 
 
