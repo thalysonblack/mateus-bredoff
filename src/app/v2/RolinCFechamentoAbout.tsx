@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { INSTAGRAM } from "../../content/lab";
 import { scrollToTop } from "../../lib/lenis";
 import { BEHANCE, EMAIL } from "./RolinCMoldura";
@@ -45,14 +45,7 @@ export function RcFechamentoAbout({ rotulo }: { rotulo: string }) {
         <p className="rcx-lugar"><span className="rcx-q">Based in</span> Brazil<br /><span className="rcx-q">Working</span> globally</p>
       </div>
       <div className="rcx-gesto">
-        <a ref={emailRef} className="rcx-email" href={`mailto:${EMAIL}`} onClick={copiar} aria-label={EMAIL}>
-          {/* hover (15/10): cada letra rola para cima e a cópia de baixo entra, em cascata da esquerda */}
-          {[...EMAIL].map((c, i) => (
-            <span key={i} className="rcx-l" aria-hidden style={{ "--i": i } as CSSProperties}>
-              <span data-c={c}>{c}</span>
-            </span>
-          ))}
-        </a>
+        <a ref={emailRef} className="rcx-email" href={`mailto:${EMAIL}`} onClick={copiar}>{EMAIL}</a>
       </div>
       <div className="rcx-meio">
         <p className="rcx-dica" aria-live="polite">{copiado ? "Copied" : <span className="rcx-q">Click to copy</span>}</p>

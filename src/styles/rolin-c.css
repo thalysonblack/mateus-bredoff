@@ -527,15 +527,7 @@ html[data-rc-sem-grade] .rc-grade-guia { opacity: 0; }
 @media (hover: hover) and (pointer: fine) and (min-width: 64rem) { .rcx a.rcx-ig:hover, .rcx a.rcx-be:hover { color: #fff; } }
 @media (max-width: 899px) { .rcx p.rcx-dica { margin-bottom: 24px; } }
 
-/* E-MAIL: letras que rolam no hover (15/10) — a de cima sobe, a cópia entra de baixo, em cascata */
-.rcx-l { display: inline-block; overflow: hidden; vertical-align: top; line-height: 1; padding-bottom: 0.08em; }
-.rcx-l > span { display: inline-block; position: relative; transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1); transition-delay: calc(var(--i) * 14ms); }
-.rcx-l > span::after { content: attr(data-c); position: absolute; left: 0; top: 108%; }
-@media (hover: hover) and (pointer: fine) {
-  .rcx-email:hover { color: inherit; }
-  .rcx-email:hover .rcx-l > span { transform: translateY(-108%); }
-}
-@media (prefers-reduced-motion: reduce) { .rcx-l > span { transition: none; } }
+
 
 /* LETREIRO (15/10): índice completo em duas faixas opostas, antes do rodapé. Escopo .rc-letreiro. */
 .rc-letreiro { padding: 160px 0 140px; overflow: hidden; display: grid; row-gap: 4px;
