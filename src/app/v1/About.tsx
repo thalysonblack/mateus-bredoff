@@ -164,7 +164,9 @@ export default function AboutV2() {
      numérico no Lenis, nunca pin; `invalidateOnRefresh` porque a distância é
      a altura da viewport. */
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    /* no celular a capa é mais baixa que a tela e a folha seguinte já nasce à vista: o
+       gesto empurraria a foto para baixo do topo. Lá as folhas só empilham. */
+    if (window.matchMedia("(prefers-reduced-motion: reduce), (max-width: 860px)").matches) return;
     const folhas = Array.from(document.querySelectorAll<HTMLElement>(".p-tela .p-folha-sec"));
     const ctx = gsap.context(() => {
       folhas.forEach((sec, i) => {

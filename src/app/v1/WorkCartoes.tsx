@@ -32,7 +32,8 @@ export function WorkCartoes({
   useEffect(() => {
     const el = palco.current;
     if (!el || !itens.length) return;
-    if (prefersReducedMotion()) {
+    /* no celular a fita é HTML: rola com o dedo, com nome e disciplina legíveis */
+    if (prefersReducedMotion() || matchMedia("(max-width: 860px)").matches) {
       setSemGL(true);
       return;
     }
@@ -72,6 +73,8 @@ export function WorkCartoes({
               <li key={w.slug}>
                 <a href={`/work/${w.slug}`}>
                   <img src={w.cover.src} alt={w.cover.alt} loading="lazy" decoding="async" draggable={false} />
+                  <span className="p-cartoes-nome">{w.title}</span>
+                  <span className="p-marca p-cartoes-meta">{w.disciplines.join(" · ")}</span>
                 </a>
               </li>
             ))}

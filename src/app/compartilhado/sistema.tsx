@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode, useLayoutEffect } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode, useLayoutEffect } from "react";
 import { Link, useLocation } from "react-router";
 import { CONTATO, EMAIL } from "../../content/contato";
+import { getLenis } from "../../lib/lenis";
 import "../../styles/base.css";
 import "../../styles/v1.css";
 
@@ -67,6 +68,61 @@ function Navegacao() {
   );
 }
 
+/** o menu aberto no celular: nav grande, depois ofício, hora e status */
+function MenuPainel({ hora, status, fechar }: { hora: string; status?: string; fechar: () => void }) {
+  const painel = useRef<HTMLDivElement | null>(null);
+  const { pathname } = useLocation();
+  useEffect(() => {
+    const lenis = getLenis();
+    lenis?.stop();
+    const corpo = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    painel.current?.querySelector<HTMLElement>("a, button")?.focus();
+    const tecla = (e: KeyboardEvent) => {
+      if (e.key === "Escape") fechar();
+      if (e.key !== "Tab" || !painel.current) return;
+      const alvos = painel.current.querySelectorAll<HTMLElement>("a, button");
+      const [a, z] = [alvos[0], alvos[alvos.length - 1]];
+      if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); }
+      else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
+    };
+    window.addEventListener("keydown", tecla);
+    return () => {
+      window.removeEventListener("keydown", tecla);
+      document.documentElement.style.overflow = corpo;
+      lenis?.start();
+    };
+  }, [fechar]);
+  const itens = [
+    ...PRANCHAS.map((p) => ({ n: p.n, nome: p.nome, to: p.to as string, href: undefined as string | undefined })),
+    { n: "04", nome: "Contact", to: "", href: `mailto:${EMAIL}` },
+  ];
+  return (
+    <div ref={painel} id="p-menu-painel" className="p-menu-painel" role="dialog" aria-modal="true" aria-label="Menu">
+      <div className="p-menu-painel-topo">
+        <Link to="/" onClick={fechar}>Mateus Bredoff</Link>
+        <button type="button" className="p-menu-botao" onClick={fechar}>Close</button>
+      </div>
+      <nav className="p-menu-painel-nav" aria-label="Site">
+        {itens.map((p) => {
+          const atual = !!p.to && (pathname === p.to || (p.to !== "/" && pathname.startsWith(p.to + "/")));
+          const miolo = (<><span className="p-marca">{p.n}</span>{p.nome}</>);
+          return p.href ? (
+            <a key={p.nome} href={p.href}>{miolo}</a>
+          ) : (
+            <Link key={p.nome} to={p.to} onClick={fechar} aria-current={atual ? "page" : undefined}>{miolo}</Link>
+          );
+        })}
+      </nav>
+      <div className="p-menu-painel-pe">
+        <p><span>Brand Designer</span><span>Brazil</span></p>
+        <p><span>{hora} BRT</span><span>{new Date().toLocaleDateString("en-GB")}</span></p>
+        <p><span>Currently</span><span>{status ?? "Available for work"}</span></p>
+      </div>
+    </div>
+  );
+}
+
 export function Prancha({
   n,
   nome,
@@ -101,6 +157,17 @@ export function Prancha({
   children: ReactNode;
 }) {
   const hora = useHora();
+  /* menu do celular: topo com nome + "Menu"; a nav, a hora e o status abrem em tela cheia */
+  const [aberto, setAberto] = useState(false);
+  const botaoMenu = useRef<HTMLButtonElement | null>(null);
+  const { pathname } = useLocation();
+  useEffect(() => setAberto(false), [pathname]);
+  const fecharMenu = useCallback(() => setAberto(false), []);
+  const primeiraVez = useRef(true);
+  useEffect(() => {
+    if (primeiraVez.current) { primeiraVez.current = false; return; }
+    if (!aberto) botaoMenu.current?.focus();
+  }, [aberto]);
   /* ⭐ A ALTURA DO MENU É MEDIDA, não escrita. A hero da about começa por
      baixo do header com um margin-top negativo — e ele estava hardcoded para
      18px, a altura do header ANTIGO. Quando o menu virou quatro linhas (a nav
@@ -166,7 +233,18 @@ export function Prancha({
             <span>{status ?? "Available for work"}</span>
           </div>
           <Navegacao />
+          <button
+            ref={botaoMenu}
+            type="button"
+            className="p-menu-botao"
+            aria-expanded={aberto}
+            aria-controls="p-menu-painel"
+            onClick={() => setAberto(true)}
+          >
+            Menu
+          </button>
         </header>
+        {aberto ? <MenuPainel hora={hora} status={status} fechar={fecharMenu} /> : null}
 
         {/* ⚠ `flex flex-col` no main, e não só `flex-1`: o wrapper da prancha
             usa `min-h-svh` (min-height), e `height: 100%` de um filho não

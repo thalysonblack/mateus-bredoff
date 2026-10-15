@@ -4431,3 +4431,70 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
   .p-work-chip::before { content: ""; position: absolute; top: -13px; bottom: -6px; left: -10px; right: -10px; }
   .p-work-chip:last-of-type::before { right: -24px; }
 }
+
+/* ── MENU DO CELULAR (15/10): topo = nome + "Menu"; o resto abre em tela cheia ── */
+.p-menu-botao { display: none; }
+@media (max-width: 860px) {
+  .p-menu { display: flex !important; align-items: center; justify-content: space-between; min-height: 24px; }
+  .p-menu > .p-menu-campo:not(:first-child), .p-menu > .p-menu-nav { display: none !important; }
+  .p-menu > a.p-menu-campo > span:last-child { display: none; }
+  .p-menu-botao {
+    display: block; appearance: none; background: none; border: 0; padding: 12px; margin: -12px;
+    font: inherit; color: inherit; letter-spacing: inherit; cursor: pointer;
+  }
+  .p-menu > a.p-menu-campo { padding-block: 10px; margin-block: -10px; }
+}
+.p-menu-painel {
+  position: fixed; inset: 0; z-index: 10000; display: flex; flex-direction: column;
+  padding: var(--p-margem-y) var(--p-margem) calc(var(--p-margem-y) + env(safe-area-inset-bottom));
+  background: #14201f; color: #e9e3e1;
+  font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 500; font-size: var(--p-corpo);
+  letter-spacing: -0.03em; line-height: 1.09;
+  animation: p-menu-entra 0.25s ease-out both;
+}
+@keyframes p-menu-entra { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .p-menu-painel { animation: none; } }
+.p-menu-painel a, .p-menu-painel button { color: inherit; text-decoration: none; }
+.p-menu-painel-topo { display: flex; justify-content: space-between; align-items: center; min-height: 24px; }
+.p-menu-painel-topo > a { padding-block: 10px; margin-block: -10px; }
+.p-menu-painel-nav { display: flex; flex-direction: column; margin-top: 48px; border-bottom: 1px solid rgba(233, 227, 225, 0.16); }
+.p-menu-painel-nav a {
+  display: flex; align-items: baseline; gap: 16px; min-height: 64px; padding-block: 14px;
+  border-top: 1px solid rgba(233, 227, 225, 0.16);
+  font-weight: 300; font-size: 36px; line-height: 1; letter-spacing: -0.045em;
+  color: rgba(233, 227, 225, 0.62);
+}
+.p-menu-painel-nav a[aria-current="page"] { color: #e9e3e1; }
+.p-menu-painel-nav .p-marca { width: 24px; color: rgba(233, 227, 225, 0.62); letter-spacing: 0; }
+.p-menu-painel-pe { margin-top: auto; display: grid; row-gap: 16px; }
+.p-menu-painel-pe p { margin: 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--p-margem); }
+.p-menu-painel-pe span:last-child { color: rgba(233, 227, 225, 0.62); }
+
+/* ── V1 NO CELULAR (15/10): páginas de "tela" rolam; fita e cards em escala de toque ── */
+.p-cartoes-nome, .p-cartoes-meta { display: none; }
+@media (max-width: 860px) {
+  .p-tela.h-svh { height: auto; min-height: 100svh; overflow: visible; }
+  .p-tela.h-svh > div.h-full { height: auto; min-height: 100svh; }
+  .p-cartoes-plano a { display: grid; row-gap: 8px; color: inherit; text-decoration: none; }
+  .p-cartoes-nome { display: block; font-size: 16px; line-height: 1.2; letter-spacing: -0.02em; }
+  .p-cartoes-meta { display: block; color: var(--p-quieto); }
+
+  /* home: fita horizontal com snap, 1,5 card na tela */
+  .p-fundo-carrossel { height: auto; min-height: 0; }
+  .p-fundo-carrossel .p-cartoes-palco { overflow: visible; }
+  .p-fundo-carrossel .p-cartoes-plano { gap: 12px; align-items: start; scroll-snap-type: x mandatory; scroll-padding-inline: var(--p-margem); scrollbar-width: none; padding-bottom: 4px; }
+  .p-fundo-carrossel .p-cartoes-plano::-webkit-scrollbar { display: none; }
+  .p-fundo-carrossel .p-cartoes-plano li { flex: 0 0 min(62vw, 300px); scroll-snap-align: start; }
+  .p-fundo-carrossel .p-cartoes-plano img { aspect-ratio: 3 / 2; }
+  .p-fundo-base--carrossel { row-gap: 24px; }
+
+  /* /work: os cards empilham, uma coluna, a página rola */
+  .p-tela:not(:has(.p-fundo-carrossel)) .p-cartoes-palco { overflow: visible; margin-inline: 0; }
+  .p-tela:not(:has(.p-fundo-carrossel)) .p-cartoes-plano { flex-direction: column; overflow: visible; padding: 24px 0 0; gap: 32px; height: auto; }
+  .p-tela:not(:has(.p-fundo-carrossel)) .p-cartoes-plano li { flex: none; width: 100%; }
+  .p-tela:not(:has(.p-fundo-carrossel)) .p-cartoes-plano img { aspect-ratio: 3 / 2; }
+}
+@media (max-width: 860px) {
+  /* os filtros entram no fluxo, acima dos cards, e não por cima deles */
+  .p-work-modo--cards { position: relative; top: auto; padding: 8px 0 0; }
+}
