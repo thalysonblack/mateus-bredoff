@@ -1,11 +1,13 @@
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { Link } from "react-router";
 import { WORK } from "../../content/work";
 import { LEAD } from "../../content/about";
 import { SERVICOS } from "../../content/servicos";
 import { INSTAGRAM } from "../../content/lab";
+import { RECONHECIMENTO } from "../../content/reconhecimento";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { gsap, ScrollTrigger, prefersReducedMotion } from "../../lib/gsap";
+import "../../styles/rolin.css";
 import "../../styles/rolin-c.css";
 
 /**
@@ -17,9 +19,17 @@ import "../../styles/rolin-c.css";
 const nome = (t: string) => t.replace("®", "").trim();
 const ANOS = `’${String(Math.min(...WORK.map((w) => w.year))).slice(2)} — ’${String(Math.max(...WORK.map((w) => w.year))).slice(2)}`;
 
+const horaBR = () => new Date().toLocaleTimeString("pt-BR", { timeZone: "America/Sao_Paulo", hour: "2-digit", minute: "2-digit" }).split(":");
+
 export default function RolinC() {
   useMetaRota();
   const raiz = useRef<HTMLDivElement | null>(null);
+  const [hora, setHora] = useState(horaBR);
+  const publicados = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano);
+  useEffect(() => {
+    const t = setInterval(() => setHora(horaBR()), 10_000);
+    return () => clearInterval(t);
+  }, []);
 
   useLayoutEffect(() => {
     const el = raiz.current;
@@ -85,20 +95,44 @@ export default function RolinC() {
         </aside>
       </div>
 
-      <section id="rc-info" className="rc-grade rc-info">
-        <p>Info</p>
-        <p className="rc-bio">{LEAD[0]}</p>
-        <div className="rc-col">
-          <p className="rc-quieto">Services</p>
-          {SERVICOS.map((s) => <p key={s.nome}>{s.nome}</p>)}
-        </div>
-        <div className="rc-col">
-          <p className="rc-quieto">Contact</p>
-          <a href="mailto:hello@mateusbredoff.com">hello@mateusbredoff.com</a>
-          <a href={INSTAGRAM} target="_blank" rel="noopener noreferrer">Instagram</a>
-          <a href="https://www.behance.net/mateusbredoff" target="_blank" rel="noopener noreferrer">Behance</a>
-        </div>
-      </section>
+      {/* RODAPÉ da Rolin, igual: hora gigante no vermelho + ficha no preto */}
+      <div id="rc-info" className="rl rc-pe">
+        <section className="rl-info">
+          <div className="rl-info-hora" aria-label={`${hora.join(":")} BRT`}>
+            <p className="rl-hora"><span>{hora[0]}</span> <span>{hora[1]}</span><br /><span>BRT</span></p>
+          </div>
+          <div className="rl-info-ficha">
+            <div className="rl-info-cab">
+              <a href="mailto:hello@mateusbredoff.com" className="rl-ponto">hello@mateusbredoff.com</a>
+              <span>
+                <a href={INSTAGRAM} target="_blank" rel="noopener noreferrer">Instagram</a><br />
+                <a href="https://www.behance.net/mateusbredoff" target="_blank" rel="noopener noreferrer">Behance</a>
+              </span>
+            </div>
+            <p className="rl-bio">{LEAD[0]}</p>
+            <div className="rl-info-pe">
+              <div>
+                <p className="rl-apagado">Services</p>
+                {SERVICOS.map((s) => <p key={s.nome}>{s.nome}</p>)}
+              </div>
+              <div>
+                <p className="rl-apagado">Publication</p>
+                {publicados.map((r) => {
+                  const miolo = r.logo
+                    ? <span role="img" aria-label={`${r.veiculo} — ${nome(r.projeto)}`} className={`rl-logo${r.logo.alturaPx ? " is-alto" : ""}`} style={{ "--logo": `url("${r.logo.src}")`, aspectRatio: `${r.logo.w} / ${r.logo.h}` } as CSSProperties} />
+                    : <span>{r.veiculo}</span>;
+                  return (
+                    <p key={`${r.veiculo}-${r.projeto}-${r.ano}`} className="rl-pub">
+                      {r.href ? <a href={r.href} target="_blank" rel="noopener noreferrer">{miolo}</a> : miolo}
+                      <span className="rl-apagado">{nome(r.projeto)} ’{String(r.ano).slice(2)}</span>
+                    </p>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

@@ -87,3 +87,6 @@
   .rc-palco .rc-lista { gap: 56px; padding-bottom: 96px; }
 }
 @media (max-width: 899px) { .rc-lado-topo { grid-template-columns: 1fr 1fr; } }
+
+/* rodapé herdado da Rolin: o .rl aqui é só escopo de estilo */
+.rc-pe.rl { min-height: 0; }
