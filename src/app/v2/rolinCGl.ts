@@ -31,10 +31,39 @@ void main() {
   gl_Position = vec4(px / uView.x * 2.0 - 1.0, 1.0 - py / uView.y * 2.0, 0.0, 1.0);
 }`;
 
+/* 15/10: "aquele efeitinho do carrossel do work" — o fragment do cartoesWebGL com os MESMOS números
+   (aberração 0,002·dist + 0,004 em movimento + 0,0004·|vel|; grão 0,03; círculo de ruído ×12 · 0,008).
+   ⚠ Diferenças: base e grão multiplicam por uMov (0 parado → 1 rolando) — parado a capa sai igual à <img>;
+   a velocidade (Δscroll px/quadro) é limitada a 8 e × FORCA, e o ruído só acontece sob o cursor. */
 const FRAG_CAPA = /* glsl */ `
 precision highp float;
 uniform sampler2D tMap; uniform vec4 uRect; uniform float uClipTop; uniform float uReady; uniform float uImgAspect;
+uniform float uMov; uniform float uVel; uniform float uDist; uniform float uTime; uniform float uMouseEnter; uniform vec2 uMouse;
 varying vec2 vUv;
+vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec3 permute(vec3 x) { return mod289(((x * 34.0) + 10.0) * x); }
+float snoise(vec2 v) {
+  const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+  vec2 i = floor(v + dot(v, C.yy));
+  vec2 x0 = v - i + dot(i, C.xx);
+  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod289(i);
+  vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+  vec3 m = max(0.5 - vec3(dot(x0, x0), dot(x12.xy, x12.xy), dot(x12.zw, x12.zw)), 0.0);
+  m = m * m; m = m * m;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * (a0 * a0 + h * h);
+  vec3 g;
+  g.x = a0.x * x0.x + h.x * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
 void main() {
   vec2 p = vUv * uRect.zw;
   vec2 q = abs(p - uRect.zw * 0.5) - (uRect.zw * 0.5 - 4.0);
@@ -44,7 +73,17 @@ void main() {
   float caixa = uRect.z / uRect.w;
   vec2 esc = caixa > uImgAspect ? vec2(1.0, uImgAspect / caixa) : vec2(caixa / uImgAspect, 1.0);
   vec2 uvc = (vUv - 0.5) * esc + 0.5;
-  gl_FragColor = vec4(texture2D(tMap, uvc).rgb, uReady);
+  float ar = uRect.w / uRect.z;
+  float circle = 1.0 - distance(vec2(uMouse.x, uMouse.y * ar), vec2(vUv.x, vUv.y * ar)) * 12.0;
+  float vel = clamp(abs(uVel), 0.0, 8.0) * ${FORCA.toFixed(2)};  /* ±8 = o clamp do vertex da Work; × FORCA */
+  float intensity = uMouseEnter * (1.0 + vel * 0.08);            /* o spray só onde o cursor está */
+  uvc += max(circle, 0.0) * snoise(gl_FragCoord.xy + uTime * 0.5) * 0.008 * intensity;
+  float ab = uMov * (uDist * 0.002 + 0.004) + vel * 0.0004;
+  float r = texture2D(tMap, uvc + vec2(ab, 0.0)).r;
+  float gg = texture2D(tMap, uvc).g;
+  float b = texture2D(tMap, uvc - vec2(ab, 0.0)).b;
+  vec3 col = vec3(r, gg, b) + snoise(gl_FragCoord.xy * 0.5 + uTime * 100.0) * 0.03 * uMov;
+  gl_FragColor = vec4(col, uReady);
 }`;
 
 /* o FRAG_TELA da Work, com a lente-base e o grão proporcionais a uDistort (ver cabeçalho) */
@@ -88,12 +127,13 @@ export function montarCapasGl(raiz: HTMLElement): (() => void) | null {
     const img = quadro.querySelector("img")!;
     const program = new Program(gl, {
       vertex: VERT_CAPA, fragment: FRAG_CAPA, transparent: true,
-      uniforms: { tMap: { value: new Texture(gl) }, uRect: { value: [0, 0, 1, 1] }, uView: { value: [1, 1] }, uClipTop: { value: 0 }, uReady: { value: 0 }, uImgAspect: { value: 1 } },
+      uniforms: { tMap: { value: new Texture(gl) }, uRect: { value: [0, 0, 1, 1] }, uView: { value: [1, 1] }, uClipTop: { value: 0 }, uReady: { value: 0 }, uImgAspect: { value: 1 },
+        uMov: { value: 0 }, uVel: { value: 0 }, uDist: { value: 0 }, uTime: { value: 0 }, uMouseEnter: { value: 0 }, uMouse: { value: [0.5, 0.5] } },
     });
     const mesh = new Mesh(gl, { geometry: geoCapa, program, frustumCulled: false });
     mesh.visible = false;
     mesh.setParent(cenaFBO);
-    return { quadro, img, program, mesh, carregando: false };
+    return { quadro, img, program, mesh, carregando: false, dentro: false as boolean | undefined };
   });
 
   /* ── 2ª passada: a tela curva da Work, enchendo o frustum exato ── */
@@ -143,10 +183,19 @@ export function montarCapasGl(raiz: HTMLElement): (() => void) | null {
   const onScroll = (l: { scroll: number }) => { scrollAtual = l.scroll; };
   lenis.on("scroll", onScroll);
 
-  let bend = BEND_MIN, ultimo = "";
+  /* hover: o canvas não recebe ponteiro (pointer-events none), então o mouse vem da janela */
+  const mouse = { x: -1, y: -1 };
+  const onMove = (e: PointerEvent) => { mouse.x = e.clientX; mouse.y = e.clientY; };
+  addEventListener("pointermove", onMove, { passive: true });
+
+  let bend = BEND_MIN, ultimo = "", mov = 0, velSuave = 0;
   const tick = (_t: number, dt: number) => {
     const velocidade = Math.abs(scrollAtual - scrollAnterior) / PX_POR_INDICE;
+    velSuave += (scrollAtual - scrollAnterior - velSuave) * 0.1;   /* px/quadro, como o uVel da Work */
     scrollAnterior = scrollAtual;
+    mov += (Math.min(velocidade * 6, 1) - mov) * BEND_LERP;
+    if (mov < 1e-3) mov = 0;
+    if (Math.abs(velSuave) < 1e-2) velSuave = 0;
     bend += (BEND_MIN + Math.min(velocidade * 6, 1) * (BEND_MAX - BEND_MIN) * FORCA - bend) * BEND_LERP;
     const u = progTela.uniforms;
     u.uDistort.value += (Math.min(velocidade * 3, 0.6) * FORCA - u.uDistort.value) * 0.05;
@@ -155,7 +204,7 @@ export function montarCapasGl(raiz: HTMLElement): (() => void) | null {
     u.uBend.value = bend;
     u.uTime.value += dt / 1000;
 
-    let assinatura = `${bend},${u.uDistort.value}`;
+    let assinatura = `${bend},${u.uDistort.value},${mov},${velSuave}`;
     for (const pl of planos) {
       const r = pl.quadro.getBoundingClientRect();
       if (!pl.carregando && r.bottom > -vista.y && r.top < vista.y * 2) carregar(pl);
@@ -166,7 +215,17 @@ export function montarCapasGl(raiz: HTMLElement): (() => void) | null {
       pu.uRect.value = [r.left, r.top, r.width, r.height];
       pu.uView.value = [vista.x, vista.y];
       pu.uClipTop.value = clip ? parseFloat(clip) / 100 : 0;
-      assinatura += `|${r.left},${r.top},${r.width},${r.height},${pu.uClipTop.value}`;
+      const dentro = mouse.x >= r.left && mouse.x <= r.right && mouse.y >= r.top && mouse.y <= r.bottom;
+      if (dentro !== (pl.dentro ?? false)) {
+        pl.dentro = dentro;
+        gsap.to(pu.uMouseEnter, { value: dentro ? 1 : 0, duration: 0.6, ease: "power2.out", overwrite: true });
+      }
+      if (dentro) pu.uMouse.value = [(mouse.x - r.left) / r.width, (mouse.y - r.top) / r.height];
+      pu.uMov.value = mov; pu.uVel.value = velSuave; pu.uTime.value = u.uTime.value;
+      pu.uDist.value = Math.min(Math.abs(r.top + r.height / 2 - vista.y / 2) / (vista.y / 2 * 0.8), 1);
+      /* ruído animado: enquanto há hover ou movimento, todo quadro é novo */
+      const vivo = pu.uMouseEnter.value > 0 || mov > 0 ? u.uTime.value : 0;
+      assinatura += `|${r.left},${r.top},${r.width},${r.height},${pu.uClipTop.value},${vivo}`;
     }
     if (assinatura === ultimo && !sujo) return;      /* parado: nem desenha */
     ultimo = assinatura; sujo = false;
@@ -180,6 +239,8 @@ export function montarCapasGl(raiz: HTMLElement): (() => void) | null {
   return () => {
     gsap.ticker.remove(tick);
     lenis.off("scroll", onScroll);
+    removeEventListener("pointermove", onMove);
+    for (const pl of planos) gsap.killTweensOf(pl.program.uniforms.uMouseEnter);
     removeEventListener("resize", onResize);
     raiz.classList.remove("is-gl");
     gl.getExtension("WEBGL_lose_context")?.loseContext();
