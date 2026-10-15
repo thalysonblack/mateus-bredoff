@@ -14,7 +14,11 @@ import { REEL } from "../../content/reel";
  * os trabalhos são um catálogo escalonado na grade de 4 — cada peça ocupa 2 colunas,
  * alternando o lado, com a legenda FORA da imagem, embaixo. Celular: pilha de uma coluna.
  */
-const ANOS = `’${String(Math.min(...WORK.map((w) => w.year))).slice(2)} — ’${String(Math.max(...WORK.map((w) => w.year))).slice(2)}`;
+const ANOS = `’${String(Math.min(...WORK.flatMap((w) => w.year ?? []))).slice(2)} — ’${String(Math.max(...WORK.flatMap((w) => w.year ?? []))).slice(2)}`;
+
+/* "deixar os 7 principais" (15/10): a home mostra os 7 primeiros de WORK (ordem do Figma); /v2/work e o letreiro mostram todos */
+const SELECIONADOS = 7;
+const DESTAQUE = WORK.slice(0, SELECIONADOS);
 
 export default function RolinC() {
   useMetaRota();
@@ -165,7 +169,7 @@ export default function RolinC() {
               <p className="rc-quieto">{ANOS}</p>
             </div>
             <ol className="rc-indice">
-              {[REEL.titulo, ...WORK.map((w) => nome(w.title))].map((t, i) => (
+              {[REEL.titulo, ...DESTAQUE.map((w) => nome(w.title))].map((t, i) => (
                 <li key={t}>
                   <a href={`#rc-peca-${i}`} className={i === ativo ? "is-ativo" : undefined}
                     onClick={(e) => { e.preventDefault(); const alvo = document.getElementById(`rc-peca-${i}`); if (alvo) scrollToElement(alvo, -15); }}>
@@ -200,7 +204,7 @@ export default function RolinC() {
               </button>
             </li>
           )}
-          {WORK.map((w, i) => (
+          {DESTAQUE.map((w, i) => (
             <li key={w.slug} id={`rc-peca-${i + 1}`} className="rc-peca">
               <Link to={`${RC}/work/${w.slug}`}>
                 <span className="rc-quadro">
@@ -220,7 +224,7 @@ export default function RolinC() {
         </ol>
 
         <aside className="rc-dir">
-          <p className="rc-quieto rc-conta">{String(WORK.length).padStart(2, "0")} projects</p>
+          <p className="rc-quieto rc-conta">{String(SELECIONADOS).padStart(2, "0")} selected / {String(WORK.length).padStart(2, "0")} projects</p>
         </aside>
       </div>
 

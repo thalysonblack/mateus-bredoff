@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router";
 import { WORK, findWork } from "../../content/work";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { RcMoldura, RcRodape, RC, nome, capa } from "./RolinCMoldura";
+import { RcLetreiro } from "./RcLetreiro";
 
 /**
  * WORK e CASE da Rolin C (15/10). O índice é uma folha de contato de 3 por linha (a home já é a
@@ -10,7 +11,7 @@ import { RcMoldura, RcRodape, RC, nome, capa } from "./RolinCMoldura";
  * Quando o Figma do portfólio chegar, basta preencher `about`/`images` em content/work.ts.
  */
 const n2 = (i: number) => String(i + 1).padStart(2, "0");
-const ANOS = `’${String(Math.min(...WORK.map((w) => w.year))).slice(2)} — ’${String(Math.max(...WORK.map((w) => w.year))).slice(2)}`;
+const ANOS = `’${String(Math.min(...WORK.flatMap((w) => w.year ?? []))).slice(2)} — ’${String(Math.max(...WORK.flatMap((w) => w.year ?? []))).slice(2)}`;
 
 export function RolinCWork() {
   useMetaRota();
@@ -63,7 +64,7 @@ export function RolinCCase() {
           <h1>{nome(w.title)}</h1>
         </div>
         <dl className="rcc-meta">
-          <div><dt className="rc-quieto">Year</dt><dd>{w.year}</dd></div>
+          {w.year && <div><dt className="rc-quieto">Year</dt><dd>{w.year}</dd></div>}
           <div><dt className="rc-quieto">Type</dt><dd>{w.disciplines.join(", ")}</dd></div>
           {w.credits.length > 0 && (
             <div><dt className="rc-quieto">Credits</dt><dd>{w.credits.map((k) => <span key={k.name}>{k.name} — {k.role}<br /></span>)}</dd></div>
@@ -86,6 +87,8 @@ export function RolinCCase() {
         <Link to={`${RC}/work`} className="rc-quieto">All projects</Link>
         <Link to={`${RC}/work/${prox.slug}`}><span className="rc-quieto">Next</span> {nome(prox.title)}</Link>
       </nav>
+      {/* "era só no final do projeto" (15/10): o índice dos outros projetos fecha o case */}
+      <RcLetreiro atual={w.slug} />
       <RcRodape />
     </div>
   );

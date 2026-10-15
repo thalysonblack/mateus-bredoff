@@ -536,3 +536,33 @@ html[data-rc-sem-grade] .rc-grade-guia { opacity: 0; }
   .rcx-email:hover .rcx-l > span { transform: translateY(-108%); }
 }
 @media (prefers-reduced-motion: reduce) { .rcx-l > span { transition: none; } }
+
+/* LETREIRO (15/10): índice completo em duas faixas opostas, antes do rodapé. Escopo .rc-letreiro. */
+.rc-letreiro { padding: 160px 0 140px; overflow: hidden; display: grid; row-gap: 4px;
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.rc-letreiro-faixa { overflow: hidden; }
+.rc-letreiro-fita { display: flex; width: max-content; animation: rc-letreiro-anda 90s linear infinite; }
+.rc-letreiro-faixa--volta .rc-letreiro-fita { animation-name: rc-letreiro-volta; animation-duration: 110s; }
+.rc-letreiro-copia, .rc-letreiro-item { display: flex; align-items: baseline; }
+.rc-letreiro-item { font-size: clamp(44px, 7.6vw, 128px); line-height: 1; letter-spacing: -0.035em; font-weight: 500; white-space: nowrap; }
+.rc-letreiro-item a { color: var(--rc-quieto); transition: color 200ms ease; }
+.rc-letreiro-faixa--volta .rc-letreiro-item a { color: var(--rc-tinta); }
+.rc-letreiro-ponto { color: var(--rc-quieto); padding: 0 0.28em; }
+.rc-letreiro-item a.is-sob { color: var(--rc-cor, var(--rc-tinta)); }
+.rc-letreiro-faixa--volta .rc-letreiro-item a.is-sob { color: var(--rc-cor, var(--rc-quieto)); }
+.rc-letreiro-previa { position: fixed; left: 0; top: 0; z-index: 40; width: 220px; aspect-ratio: 4 / 3; object-fit: cover;
+  pointer-events: none; translate: 18px -50%; opacity: 0; scale: 0.92; transition: opacity 180ms ease, scale 220ms ease; }
+.rc-letreiro-previa.is-on { opacity: 1; scale: 1; }
+@keyframes rc-letreiro-anda { to { transform: translateX(-50%); } }
+@keyframes rc-letreiro-volta { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+@media (hover: hover) and (pointer: fine) and (min-width: 64rem) {
+  .rc-letreiro:hover .rc-letreiro-fita { animation-play-state: paused; }
+}
+@media not ((hover: hover) and (pointer: fine) and (min-width: 64rem)) { .rc-letreiro-previa { display: none; } }
+@media (max-width: 899px) { .rc-letreiro { padding: 96px 0 80px; } }
+@media (prefers-reduced-motion: reduce) {
+  .rc-letreiro-fita { animation: none; }
+  .rc-letreiro-faixa { overflow-x: auto; scrollbar-width: none; }
+  .rc-letreiro-item a, .rc-letreiro-previa { transition: none; }
+}
+.rcc .rc-letreiro { padding-top: 0; }
