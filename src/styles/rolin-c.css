@@ -558,3 +558,16 @@ html[data-rc-sem-grade] .rc-grade-guia { opacity: 0; }
   .rc-letreiro-item a, .rc-letreiro-previa { transition: none; }
 }
 .rcc .rc-letreiro { padding-top: 0; }
+
+/* E-MAIL: lente que inverte (15/10) — círculo branco em difference segue o cursor; cursor nativo some */
+.rcx-gesto { position: relative; }
+.rcx-lente {
+  position: absolute; left: 0; top: 0; z-index: 2; width: 180px; height: 180px; border-radius: 50%;
+  background: #fff; mix-blend-mode: difference; pointer-events: none; display: grid; place-items: center;
+}
+.rcx-lente b { font: 600 11px/1 "Alte Haas Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif; text-transform: uppercase;
+  letter-spacing: 0.01em; color: #fff; mix-blend-mode: difference; transform: translateY(58px); }
+@media (hover: hover) and (pointer: fine) { .rcx-email { cursor: none; } .rcx-email:hover { color: inherit; } }
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) { .rcx-lente { display: none; } }
+.rcx-gesto { overflow: visible; overflow-x: clip; }
+.rcx-lente b { transform: none; }

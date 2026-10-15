@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
+import { gsap, prefersReducedMotion } from "../../lib/gsap";
 import { INSTAGRAM } from "../../content/lab";
 import { scrollToTop } from "../../lib/lenis";
 import { BEHANCE, EMAIL } from "./RolinCMoldura";
@@ -12,6 +13,22 @@ import { BEHANCE, EMAIL } from "./RolinCMoldura";
 export function RcFechamentoAbout({ rotulo }: { rotulo: string }) {
   const emailRef = useRef<HTMLAnchorElement>(null);
   const [copiado, setCopiado] = useState(false);
+  const gestoRef = useRef<HTMLDivElement>(null);
+  const lenteRef = useRef<HTMLSpanElement>(null);
+
+  useLayoutEffect(() => {
+    const g = gestoRef.current, l = lenteRef.current;
+    if (!g || !l || prefersReducedMotion() || !matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    gsap.set(l, { xPercent: -50, yPercent: -50, scale: 0 });
+    const x = gsap.quickTo(l, "x", { duration: 0.5, ease: "power3.out" });
+    const y = gsap.quickTo(l, "y", { duration: 0.5, ease: "power3.out" });
+    const mover = (e: PointerEvent) => { const r = g.getBoundingClientRect(); x(e.clientX - r.left); y(e.clientY - r.top); };
+    const entra = (e: PointerEvent) => { mover(e); gsap.to(l, { scale: 1, duration: 0.45, ease: "power3.out", overwrite: "auto" }); };
+    const sai = () => gsap.to(l, { scale: 0, duration: 0.3, ease: "power2.in", overwrite: "auto" });
+    const a = emailRef.current!;
+    a.addEventListener("pointerenter", entra); a.addEventListener("pointermove", mover); a.addEventListener("pointerleave", sai);
+    return () => { a.removeEventListener("pointerenter", entra); a.removeEventListener("pointermove", mover); a.removeEventListener("pointerleave", sai); };
+  }, []);
 
   // o e-mail ocupa a largura útil: mede a 100px e escala (fonte carregada antes de medir)
   useLayoutEffect(() => {
@@ -44,7 +61,10 @@ export function RcFechamentoAbout({ rotulo }: { rotulo: string }) {
         <p className="rcx-disp">Available for projects</p>
         <p className="rcx-lugar"><span className="rcx-q">Based in</span> Brazil<br /><span className="rcx-q">Working</span> globally</p>
       </div>
-      <div className="rcx-gesto">
+      <div className="rcx-gesto" ref={gestoRef}>
+        {/* a gracinha (15/10): uma lente branca segue o cursor e inverte o e-mail por baixo (difference),
+            com o rótulo de cópia dentro — o texto fica inteiro, a ligadura "ff" não quebra */}
+        <span ref={lenteRef} className="rcx-lente" aria-hidden><b>{copiado ? "Copied" : "Copy"}</b></span>
         <a ref={emailRef} className="rcx-email" href={`mailto:${EMAIL}`} onClick={copiar}>{EMAIL}</a>
       </div>
       <div className="rcx-meio">
