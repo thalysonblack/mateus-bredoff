@@ -247,8 +247,7 @@
   .rcw-grade img, .rcc-quadro img, .rcc-prox a { transition: none; }
 }
 /* fora da home o conteúdo passa sob o menu: faixa de papel atrás dele (some no preto) */
-:is(.rcw, .rcc) .rc-fixo { padding-bottom: 12px; background: var(--rc-papel); transition: background-color 0.3s ease; }
-:is(.rcw, .rcc) .rc-fixo.is-info { background: transparent; }
+/* 15/10 "tirar fundo do menu": sem faixa também no work e no case — mesmo menu do About (branco em difference) */
 
 /* ═══ GRADE LIGA/DESLIGA (15/10): botão [ Grid ] no menu + tecla G, estado no <html> e no localStorage ═══ */
 /* ícone de 3 colunas, fixo no canto inferior esquerdo; difference = lê sobre papel, preto e foto */
@@ -425,11 +424,11 @@ html[data-rc-sem-grade] .rc-grade-guia { opacity: 0; }
 
 /* ABOUT SEM CORTE (15/10, "remover corte"): o menu não tem faixa de papel; ele é branco em difference,
    e o que passa por baixo inverte o texto em vez de ser decepado */
-.rca .rc-fixo, .rca .rc-fixo.is-info { background: transparent; color: #fff; mix-blend-mode: difference; }
-.rca .rc-fixo a { color: rgb(255 255 255 / 0.62); }
-.rca .rc-fixo > a, .rca .rc-fixo .rc-nav a.is-atual { color: #fff; }
-@media (hover: hover) and (pointer: fine) { .rca .rc-fixo a:hover { color: #fff; } }
-@media (max-width: 899px) { .rca .rc-fixo { background: transparent; } }
+:is(.rca, .rcw, .rcc) .rc-fixo, :is(.rca, .rcw, .rcc) .rc-fixo.is-info { background: transparent; color: #fff; mix-blend-mode: difference; }
+:is(.rca, .rcw, .rcc) .rc-fixo a { color: rgb(255 255 255 / 0.62); }
+:is(.rca, .rcw, .rcc) .rc-fixo > a, :is(.rca, .rcw, .rcc) .rc-fixo .rc-nav a.is-atual { color: #fff; }
+@media (hover: hover) and (pointer: fine) { :is(.rca, .rcw, .rcc) .rc-fixo a:hover { color: #fff; } }
+@media (max-width: 899px) { :is(.rca, .rcw, .rcc) .rc-fixo { background: transparent; } }
 
 /* WORK/CASE descolados (15/10): `.rc ol { padding: 0 }` vencia a margem e o vão de fechamento destas listas —
    a grade encostava em x=0 e o rodapé na última legenda. Mesmo vão da home antes do rodapé (160 / 96). */
@@ -527,3 +526,13 @@ html[data-rc-sem-grade] .rc-grade-guia { opacity: 0; }
 .rcx a.rcx-ig, .rcx a.rcx-be { color: var(--rcx-q); }
 @media (hover: hover) and (pointer: fine) and (min-width: 64rem) { .rcx a.rcx-ig:hover, .rcx a.rcx-be:hover { color: #fff; } }
 @media (max-width: 899px) { .rcx p.rcx-dica { margin-bottom: 24px; } }
+
+/* E-MAIL: letras que rolam no hover (15/10) — a de cima sobe, a cópia entra de baixo, em cascata */
+.rcx-l { display: inline-block; overflow: hidden; vertical-align: top; line-height: 1; padding-bottom: 0.08em; }
+.rcx-l > span { display: inline-block; position: relative; transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1); transition-delay: calc(var(--i) * 14ms); }
+.rcx-l > span::after { content: attr(data-c); position: absolute; left: 0; top: 108%; }
+@media (hover: hover) and (pointer: fine) {
+  .rcx-email:hover { color: inherit; }
+  .rcx-email:hover .rcx-l > span { transform: translateY(-108%); }
+}
+@media (prefers-reduced-motion: reduce) { .rcx-l > span { transition: none; } }

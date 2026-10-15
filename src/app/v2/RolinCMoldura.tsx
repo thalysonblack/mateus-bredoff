@@ -58,7 +58,8 @@ export function Publicacao({ r }: { r: Reconhecimento }) {
 }
 
 /* grade de 12: estado comum às quatro rotas (localStorage) e escrito no <html>, onde o CSS lê */
-const GRADE = "rc-grade";
+/* chave nova (15/10): ignora o "on" salvo antes, quando a grade nascia ligada — agora nasce desligada para todos */
+const GRADE = "rc-grade-2";
 /* desligada por padrão (15/10); só aparece se a pessoa ligar no botão ou no G */
 const lerGrade = () => { try { return localStorage.getItem(GRADE) === "on"; } catch { return false; } };
 const sobEscuro = () => Array.from(document.querySelectorAll("[data-rc-escuro]")).some((b) => {
