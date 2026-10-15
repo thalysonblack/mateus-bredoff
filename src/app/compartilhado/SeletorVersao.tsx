@@ -36,17 +36,19 @@ function useOcultoAoDescer(pathname: string) {
   const [oculto, setOculto] = useState(false);
   useEffect(() => {
     setOculto(false);
-    let ultimo = 0;
+    let ancora = 0;
     const ler = () => {
+      /* posição real da janela: o Lenis escreve nela a cada quadro, e o targetScroll dele
+         atrasa um evento quando o scroll é nativo (toque) */
       const lenis = getLenis();
-      const y = lenis ? lenis.scroll : window.scrollY;
+      const y = window.scrollY;
       const fim = lenis ? lenis.limit : document.documentElement.scrollHeight - window.innerHeight;
-      if (y < 80 || y > fim - 80) setOculto(false);
-      else if (Math.abs(y - ultimo) > 4) setOculto(y > ultimo);
-      ultimo = y;
+      if (y < 80 || y > fim - 80) { setOculto(false); ancora = y; return; }
+      if (y - ancora > 24) { setOculto(true); ancora = y; }
+      else if (ancora - y > 24) { setOculto(false); ancora = y; }
     };
-    const lenis = getLenis();
-    if (lenis) return lenis.on("scroll", ler);
+    /* o Lenis pode nascer depois deste efeito (o App o inicia no próprio efeito): o evento de
+       scroll da janela dispara nos dois casos, porque o Lenis move o scroll nativo */
     window.addEventListener("scroll", ler, { passive: true });
     return () => window.removeEventListener("scroll", ler);
   }, [pathname]);
