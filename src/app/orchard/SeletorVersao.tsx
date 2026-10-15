@@ -6,6 +6,7 @@ const ROTAS = [
   ["Orchard", "/"],
   ["Rolin", "/v2/rolin"],
   ["Rolin B", "/v2/rolin-b"],
+  ["Rolin C", "/v2/rolin-c"],
   ["Reel", "/v2/reel-full"],
   ["V4", "/v4"],
   ["Visor", "/arquivo/visor"],

@@ -17,6 +17,7 @@ import HomeFundo from "./v2/HomeFundo";
 import { ReelFull } from "./v2/Reels";
 import Rolin from "./v2/Rolin";
 import RolinB from "./v2/RolinB";
+import RolinC from "./v2/RolinC";
 import Nova from "./v2/Nova";
 import HomeOrchard from "./orchard/HomeOrchard";
 import SeletorVersao from "./orchard/SeletorVersao";
@@ -190,6 +191,7 @@ export default function App() {
           <Route path="/v2/reel-full" element={<ReelFull />} />
           <Route path="/v2/rolin" element={<Rolin />} />
           <Route path="/v2/rolin-b" element={<RolinB />} />
+          <Route path="/v2/rolin-c" element={<RolinC />} />
           <Route path="/v2/nova" element={<Nova />} />
           <Route path="/about" element={<PranchaAbout />} />
           <Route path="/work" element={<PranchaWork />} />
