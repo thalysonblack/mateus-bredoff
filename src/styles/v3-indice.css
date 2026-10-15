@@ -238,3 +238,6 @@
 .ix-selo--gr { place-items: start center; width: 20px; height: 31px; padding-top: 5px; border-radius: 0; vertical-align: middle;
   background: #8c7137; color: #fff; font: 700 11px/1 "Geist", sans-serif; letter-spacing: -0.01em;
   clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%); }
+
+/* fitas do Behance sob a tabela de Published in, na coluna do conteúdo */
+.ix-fitas { grid-column: 2 / -1; display: grid; row-gap: 14px; padding-top: 40px; }

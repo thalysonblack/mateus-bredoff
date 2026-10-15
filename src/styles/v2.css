@@ -596,3 +596,9 @@ html[data-rc-medidas] .rc-grade-guia i::before { counter-increment: col; content
 .rcx-pe .rcx-credito { margin-top: 0; }
 .rcx-pe .rcx-credito { grid-column: 7 / 10; }
 @media (max-width: 899px) { .rcx-pe .rcx-credito { grid-column: 1 / -1; order: 3; margin-top: 8px; } }
+
+/* fitas do Behance na Recognition: acima da lista, na coluna dela */
+.rca-fitas { grid-column: 7 / -1; grid-row: 1; display: grid; row-gap: 12px; }
+.rca-fitas .fitas-behance { --fita: 26px; }
+.rca-fitas + ol { grid-row: 2; }
+@media (max-width: 899px) { .rca-fitas, .rca-fitas + ol { grid-column: 1 / -1; grid-row: auto; } }

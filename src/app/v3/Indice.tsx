@@ -9,6 +9,7 @@ import { RECONHECIMENTO } from "../../content/reconhecimento";
 import retrato from "../../assets/optimized/hero-portrait-1600.webp";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha } from "../compartilhado/sistema";
+import { FitasBehance } from "../compartilhado/FitasBehance";
 import { HoverFluido } from "../compartilhado/HoverFluido";
 import { useRevelacaoPalavra } from "../compartilhado/useRevelacaoPalavra";
 import { gsap, SplitText, prefersReducedMotion } from "../../lib/gsap";
@@ -296,6 +297,7 @@ export default function Indice({ inicio, semReel }: { inicio?: ReactNode; semRee
             );
           })}
         </ol>
+        <FitasBehance className="ix-fitas" classeRotulo="p-marca" classeN="p-marca" />
       </section>
 
       {comSom && REEL.video ? (

@@ -9,6 +9,7 @@ import photoshop from "../../assets/logos/ferramentas/adobephotoshop.svg";
 import illustrator from "../../assets/logos/ferramentas/adobeillustrator.svg";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { gsap, ScrollTrigger, prefersReducedMotion } from "../../lib/gsap";
+import { FitasBehance } from "../compartilhado/FitasBehance";
 import { MolduraV2, Retrato, Publicacao, publicados } from "./Moldura";
 import { FechamentoAboutV2 } from "./FechamentoAbout";
 
@@ -117,6 +118,7 @@ export default function AboutV2() {
         {/* 06 — reconhecimento: logo | projeto ’ano, logos na mesma coluna */}
         <section className="rca-sec" data-rc-entra>
           <p className="rca-rot"><span className="rc-quieto">06</span> Recognition</p>
+          <FitasBehance className="rca-fitas" classeRotulo="rc-quieto" />
           <ol className="rca-pubs">
             {publicados.map((r) => (
               <li key={`${r.veiculo}-${r.projeto}-${r.ano}`}><Publicacao r={r} /></li>

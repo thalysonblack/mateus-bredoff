@@ -3740,16 +3740,6 @@ a.pz-materia:hover { color: var(--p-acento); }
 /* 1) as fitas do Behance: a mesma fita do perfil (entalhe em V, sigla em peso
    alto), na escala da referência (34×58), com a contagem em mono embaixo.
    Desenhada em CSS — sem raster, sem webfont de terceiro. */
-.pn-fitas { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 14px; }
-.pn-fita-item { display: grid; justify-items: center; row-gap: 6px; }
-.pn-fita {
-  display: grid; place-items: start center;
-  width: 34px; height: 58px; padding-top: 12px;
-  color: #fff;
-  font-family: 'Geist', ui-sans-serif, sans-serif; font-style: normal; font-weight: 700;
-  font-size: 15px; line-height: 1; letter-spacing: -0.01em;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
-}
 .pn-fita-n { font-size: 12px; }
 
 /* 2) published in: uma linha por projeto — nome em escala de página (o degrau

@@ -64,20 +64,6 @@ const LOGOS_VEICULO: Record<string, { src: string; ratio: string; simbolo?: stri
   "World Brand Design": { src: logoWbd, ratio: "350 / 102", simbolo: logoWbdSimbolo, altura: 34 },
 };
 
-/* As fitas do Behance, derivadas do que está em reconhecimento.ts (selo por
-   galeria). Dourado do Behance escurecido para passar em contraste — mesma
-   decisão do `.v3-selo`. Só existe fita para curadoria com `selo`. */
-const FITAS = (() => {
-  const gal: Record<string, { sigla: string; nome: string; cor: string; n: number }> = {};
-  for (const r of RECONHECIMENTO) {
-    if (r.selo === "behance-gr") {
-      gal.gr ??= { sigla: "Gr", nome: "Graphic Design", cor: "#8c7137", n: 0 };
-      gal.gr.n += 1;
-    }
-  }
-  return Object.values(gal);
-})();
-
 /* Published in, por PROJETO (o Trivo tem dois veículos): ordem = ano mais
    recente primeiro, e dentro do projeto a ordem do arquivo. */
 const POR_PROJETO = (() => {
@@ -92,6 +78,7 @@ const POR_PROJETO = (() => {
 const ICONES_TIER = [Hexagon, Layers, LayoutGrid];
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { useRevelar } from "./useRevelar";
+import { FitasBehance } from "../compartilhado/FitasBehance";
 import { useRevelacaoPalavra } from "../compartilhado/useRevelacaoPalavra";
 import { Prancha } from "../compartilhado/sistema";
 import { LEAD, PROCESSO_MANCHETE, PROCESSO, FERRAMENTAS, NUMEROS } from "../../content/about";
@@ -464,18 +451,7 @@ export default function AboutV2() {
                 com rótulo miúdo. 1) BEHANCE FEATURES — a fita como o Behance a mostra
                 no perfil, com a contagem embaixo (só o que está em reconhecimento.ts:
                 hoje uma curadoria, uma fita, "1"). */}
-            <div className="pn-sub">
-              <span className="p-marca pn-sub-rotulo">Behance features</span>
-              <ul className="pn-fitas">
-                {FITAS.map((f) => (
-                  <li key={f.sigla} className="pn-fita-item" title={f.nome}>
-                    <i className="pn-fita" style={{ background: f.cor }} aria-hidden="true">{f.sigla}</i>
-                    <span className="p-marca pn-fita-n">{f.n}</span>
-                    <span className="sr-only">{f.nome}: {f.n}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <FitasBehance className="pn-sub" classeRotulo="p-marca pn-sub-rotulo" classeN="p-marca pn-fita-n" />
 
             {/* 2) PUBLISHED IN — uma linha por projeto, o nome em escala de página à
                 esquerda e, à direita, o logo de cada veículo que o publicou (o logo É
