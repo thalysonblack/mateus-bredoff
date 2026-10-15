@@ -136,12 +136,13 @@
   .rc-fixo .rc-nav a, .rc-indice a, .rc-todos, .rc-pe .rl-info-ficha a { transition: none; }
 }
 
-/* RODAPÉ (15/10): o corte foto | ficha cai na vertical das tags (disciplinas) da legenda; --rc-tag é medido no TSX */
+/* RODAPÉ (15/10): o corte foto | ficha cai na vertical das tags (disciplinas) da legenda; tags e corte no CENTRO da tela; --rc-centro é medido no TSX */
 .rc-legenda { grid-template-columns: 32px 1fr 1fr 3em; }
 .rc-legenda .rc-ano { justify-self: end; }
 @media (min-width: 900px) {
   /* foto até a vertical das tags; o texto da ficha começa exatamente nela */
-  .rc-pe .rl-info { grid-template-columns: calc(var(--rc-tag, 50vw) - var(--rc-m)) 1fr; }
+  .rc-pe .rl-info { grid-template-columns: calc(50% - var(--rc-m)) 1fr; }
+  .rc-legenda { grid-template-columns: 32px calc(var(--rc-centro, 50%) - 32px - 24px) 1fr 3em; }
   .rc-pe .rl-info-ficha { padding-left: var(--rc-m); }
 }
 

@@ -32,13 +32,14 @@ export default function RolinC() {
   const selo = useRef<HTMLSpanElement | null>(null);
   const publicados = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano);
 
-  /* o corte foto | ficha do rodapé cai na vertical das tags (disciplinas) da legenda */
+  /* tags da legenda e corte foto | ficha do rodapé no centro da tela */
   useLayoutEffect(() => {
     const el = raiz.current;
     if (!el) return;
     const medir = () => {
-      const tag = el.querySelector<HTMLElement>(".rc-tag");
-      if (tag) el.style.setProperty("--rc-tag", `${tag.getBoundingClientRect().left}px`);
+      /* tags da legenda começam no CENTRO da tela: distância da borda da legenda até o meio */
+      const leg = el.querySelector<HTMLElement>(".rc-legenda");
+      if (leg) el.style.setProperty("--rc-centro", `${window.innerWidth / 2 - leg.getBoundingClientRect().left}px`);
     };
     medir();
     const ro = new ResizeObserver(medir);
