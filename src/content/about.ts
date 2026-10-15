@@ -1,14 +1,3 @@
-/**
- * O CONTEÚDO DA ABOUT — um lugar só, duas propostas.
- *
- * ⚠ Extraído de `About.tsx` quando ele pediu "outra proposta da segunda section
- * pra baixo": duas montagens do MESMO texto não podem ter duas cópias do texto,
- * senão a comparação vira comparação de conteúdo divergente e o que ele aprovar
- * precisa ser reconciliado à mão depois.
- *
- * Todo texto vem do /about publicado dele (medido do Framer), sem uma palavra
- * inventada. As cinco etapas do processo são as dele, na ordem dele.
- */
 export const LEAD = [
   "I am Mateus Bredoff, a multidisciplinary designer focused on visual identities. I am based in Brazil and work globally, collaborating with companies that understand the value of building a clear, relevant, and memorable presence.",
   "My approach begins with a deep understanding of the environment in which your company operates. I analyze business objectives, target audience, competitors, and market context, conducting a careful conceptual investigation that transforms strategy into visual expression. The result is a unique identity, built with intention, that emotionally connects your brand with its audience and positions it with clarity and differentiation within its sector.",

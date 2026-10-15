@@ -30,5 +30,5 @@ pnpm-debug.log*
 .vercel
 
 
-# material de referência local (fora do git)
+# material local (fora do git)
 _refs/

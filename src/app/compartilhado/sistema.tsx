@@ -4,19 +4,6 @@ import { CONTATO } from "../../content/contato";
 import "../../styles/base.css";
 import "../../styles/v1.css";
 
-/**
- * V2 — "O ESPÉCIME". As primitivas que toda rota desta direção compartilha.
- *
- * Leia o cabeçalho de `styles/v2.css` para o partido — e principalmente para a
- * correção que o definiu: **"vc ta copiando, nao, apenas conceito"**. A régua de
- * artboard, a cruz de registro e o numeral gigante saíram daqui por isso; eram
- * a assinatura da referência, não o princípio dela.
- *
- *   <Folha n="01" nome="Index" superficie="papel">…</Folha>
- *
- * Sobrou o que é conceito: superfície por ROTA, cabeçalho e rodapé de metadado
- * vivo, e o bloco de ficha. Página nova usa estas primitivas.
- */
 
 /* as folhas do acervo, na ordem — a nav é isto, e o número de cada rota
    também sai daqui: uma lista, não dois lugares para editar */
@@ -29,7 +16,6 @@ export const PRANCHAS = [
   { n: "03", nome: "About", to: "/about" },
 ] as const;
 
-/** hora dele, viva — o mesmo fato que o corentin põe na base ("05:16 (UTC+1)") */
 export function useHora(tz = "America/Sao_Paulo") {
   const [hora, setHora] = useState("--:--");
   useEffect(() => {
@@ -81,13 +67,6 @@ function Navegacao() {
   );
 }
 
-/**
- * A PRANCHA — o shell de uma rota.
- *
- * `superficie` é o que dá o ritmo entre ROTAS (em vez de alternar fundo dentro
- * de uma página): index em papel, work em branco, about em papel, lab em tinta.
- * O contraste do revelatio, distribuído no lugar onde ele não vira zebra.
- */
 export function Prancha({
   n,
   nome,
@@ -128,7 +107,6 @@ export function Prancha({
      vertical), sobrou uma faixa de papel de ~72px acima da foto: "bugou".
      Um ResizeObserver escreve `--p-menu-h` na `.p-tela`; quem precisa subir
      por baixo do menu lê a variável. */
-  /* ⚠ `tela` já é a prop da Prancha ("rota que cabe na tela") — o ref tem outro nome */
   const raizTela = useRef<HTMLDivElement | null>(null);
   const menu = useRef<HTMLElement | null>(null);
   useLayoutEffect(() => {
@@ -158,9 +136,6 @@ export function Prancha({
             caía a ~30px da coluna onde começa a ficha, e ele marcou o
             desalinhamento com uma linha vertical na tela. Numa prancha, uma
             coluna que não fecha do topo à base entrega a página inteira. */}
-        {/* ⚠ `relative z-10`: quando uma rota abre com hero em FULL VIEWPORT, ela
-            sobe por baixo do cabeçalho (margem negativa) e o engoliria — a
-            navegação tem de continuar por cima, como na referência dele. */}
         {/* ⭐ O MENU GERAL, no estilo do node 630:1721 (12/09): quatro campos de
             duas linhas em Geist Medium 15px — a barra do topo da home original
             dele. Primeira linha acesa, segunda a 50%. Adaptado ao lugar: a
@@ -205,8 +180,6 @@ export function Prancha({
             empurrou a página inteira e o gesto virou scroll de documento. */}
         <main className="flex min-h-0 flex-1 flex-col">{children}</main>
 
-        {/* rodapé da prancha: os três metadados que o corentin ancora na base —
-            onde ele está, que horas são lá, e o ano do arquivo */}
         {/* ── O RODAPÉ ─────────────────────────────────────────────────
             `regua`   os três metadados na base — onde ele está, que horas são
                       lá, e o número da folha. É o que cabe numa rota de tela.
@@ -298,9 +271,7 @@ export function Prancha({
 
 /**
  * Bloco de ficha: rótulo mono minúsculo em cima, conteúdo embaixo.
- * É a unidade de composição da direção — BIOGRAPHY, DISTINCTIONS, CONTACT no
- * corentin são todos o mesmo bloco, e é a repetição dele que faz a coluna ler
- * como documento em vez de lista solta.
+ * É a unidade de composição: a repetição dele faz a coluna ler como documento.
  */
 export function Bloco({
   rotulo,

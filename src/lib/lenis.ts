@@ -1,16 +1,3 @@
-/**
- * Sistema de scroll — o Lenis é o dono único do scroll da página.
- *
- * Regra que não se quebra: **não existem dois loops de rAF**. O Lenis anda no
- * ticker do GSAP, não num `requestAnimationFrame` próprio, e o ScrollTrigger se
- * atualiza pelo evento do Lenis. Dois relógios independentes produzem exatamente
- * o defeito que parece "travamento aleatório" — dois frames disputando o mesmo
- * transform em instantes diferentes.
- *
- * A referência do ticker fica guardada em `lenisTicker` porque
- * `gsap.ticker.remove()` exige **a mesma função** que foi passada no `add`;
- * callback inline entra e nunca sai, e vaza a cada remount.
- */
 import Lenis from "lenis";
 import { gsap, ScrollTrigger, prefersReducedMotion } from "./gsap";
 
@@ -25,8 +12,6 @@ export function initLenis(): Lenis | null {
   if (prefersReducedMotion()) return null;
 
   lenis = new Lenis({
-    /* Valores de assinatura: 1.2 / lerp 0.1 no desktop, mais curto no toque.
-       O easing é o expo-out — chega rápido e assenta, em vez de deslizar. */
     duration: window.innerWidth >= 1000 ? 1.2 : 0.8,
     lerp: window.innerWidth >= 1000 ? 0.1 : 0.075,
     easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),

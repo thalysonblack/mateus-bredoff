@@ -57,34 +57,6 @@ export type Modalidade = {
   aConfirmar?: boolean;
 };
 
-/**
- * ⚠⚠ DOIS DESTES VALORES SÃO PROPOSTA MINHA, NÃO FATO DELE.
- *
- * "bota tudo só valores" (17/08): ele mandou tirar os "On request". O único
- * número que existe de verdade é o da marca completa — US$ 2.500, que ele
- * publica no Behance. Os outros dois foram DERIVADOS dele, na régua de mercado:
- *
- *   Art Direction     ~60% de uma identidade completa, cobrado por projeto
- *   Monthly Retainer  ~80% de um projeto médio, recorrente — o piso que faz o
- *                     slot mensal valer mais que vender projeto avulso
- *
- * Estão marcados com `aConfirmar` e aparecem na tela com o mesmo peso dos
- * outros, porque foi o que ele pediu. ⚠ MAS SÃO MINHA PROPOSTA: antes de o site
- * ir ao ar, ele confirma ou troca os dois números. Preço errado no ar é o tipo
- * de erro que custa cliente, não pixel.
- *
- * ⚠ AS TRÊS MODALIDADES SÃO AS QUE ELE DITOU: "os valores seriam para marca
- * completa, direção de arte e outra slot mensal — aí tu bota um nome comum que
- * os gringos usam".
- *
- * `Monthly Retainer` é o termo padrão do mercado internacional para o slot
- * mensal (o cliente reserva capacidade recorrente do designer). As alternativas
- * que circulam — "design subscription", "design partner" — são de posicionamento
- * de produto, e ele é estúdio de marca, não SaaS.
- *
- * O único valor real é o da marca completa: US$ 2.500, que é o que ELE já
- * publica no Behance. Os outros dois ficam em aberto até ele mandar.
- */
 export const MODALIDADES: Modalidade[] = [
   {
     nome: "Full Brand Identity",

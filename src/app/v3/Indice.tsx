@@ -46,11 +46,6 @@ const NUM = (i: number) => String(i + 1).padStart(2, "0");
 /* o projeto de uma publicação, pelo título (o "®" não entra na comparação) */
 const limpa = (t: string) => t.replace("®", "").trim().toLowerCase();
 const projetoDe = (nome: string) => WORK.find((w) => limpa(w.title) === limpa(nome)) ?? null;
-/**
- * `inicio`: a hero é trocável para experimentar as três famílias da pesquisa (10/10,
- * `~/dev/_inbox/ref-bredoff-hero/`). Sem prop, fica o nome do NomeObra. Com prop, o
- * componente entra NO LUGAR do nome; a linha de ofício e a lista seguem iguais.
- */
 export default function Indice({ inicio, semReel }: { inicio?: ReactNode; semReel?: boolean } = {}) {
   useMetaRota();
   const [sob, setSob] = useState<number | null>(null);

@@ -1,61 +1,6 @@
 import { WORK } from "./work";
 
-/**
- * Metadados por rota — a fonte ÚNICA, lida por dois consumidores.
- *
- *   runtime  → `hooks/useMetaRota.ts`, que escreve no documento a cada rota
- *   build    → `scripts/prerender.mjs`, que gera um HTML por rota no `dist/`
- *
- * Os dois PRECISAM concordar, e por isso nenhum dos dois tem a lista. Antes as
- * descrições viviam soltas nas páginas: funcionava enquanto só o React lia, e
- * teria virado duas verdades no instante em que o build passou a escrever
- * `<head>` também — a aba mostrando uma coisa e o compartilhamento outra.
- *
- * Este módulo é PURO: sem React, sem DOM, sem `window`. É o que permite o
- * script de build carregá-lo direto (via `ssrLoadModule` do Vite, que resolve
- * o import de `work.ts` e das imagens sem eu precisar duplicar nada).
- *
- * ## O padrão do título é do original, medido rota a rota
- *
- * `curl` nas nove rotas do publicado (Framer é SSR, o `<title>` vem no HTML):
- * `/`, `/about` e `/work` são só `Mateus Bredoff`; case é
- * `<título do CMS> - Mateus Bredoff`, com hífen simples e o `®` do Alex Archer
- * intacto. O nome do case sai de `work.ts` — lista paralela de títulos
- * divergiria da coleção no primeiro case novo.
- *
- * ## ⚠ A description DIVERGE do original, de propósito
- *
- * As nove rotas do publicado servem `content="Mateus Bredoff"` — o nome do site
- * repetido. É o *fallback* do Framer para "nunca preenchida", não uma
- * description escrita, e replicar trocaria texto real por placeholder de
- * builder. Mesma família do lorem e do slot de vídeo sem fonte: defeito não se
- * replica. Se a decisão virar fidelidade literal, é trocar `DESCRICAO_PADRAO`
- * por `"Mateus Bredoff"` e apagar os casos especiais — nada mais muda.
- */
 
-/**
- * ⚠ FORMA CANÔNICA DA URL: **sem barra final** (`/work/stag`).
- *
- * Não é preferência, é a forma que o site já produz em todo lugar: é o que o
- * `<Link to={`/work/${slug}`}>` gera, o que aparece na barra de endereço e o
- * que as pessoas copiam. O `canonical` é emitido nessa forma em TODAS as
- * variantes, inclusive no HTML servido em `/work/stag/` — duas URLs com o mesmo
- * conteúdo e canonical divergente é conteúdo duplicado.
- *
- * O pré-render grava as duas formas de arquivo (`<rota>.html` e
- * `<rota>/index.html`) para que o `<head>` certo chegue nas duas URLs em
- * qualquer servidor. Isso é COBERTURA, não indecisão: a forma preferida
- * continua sendo uma só, declarada no canonical.
- *
- * O original serve os cases COM barra (`/work/stag/`). Link antigo indexado
- * continua chegando: a URL responde e aponta o canonical para a forma nova.
- *
- * ⚠ NÃO foi adotado `"trailingSlash": false` no `vercel.json`, que faria o
- * servidor redirecionar a forma com barra para a sem. Seria a versão mais forte
- * da mesma decisão, e é impossível verificar fora do deploy — configuração de
- * roteamento que não se testa e pode derrubar o site inteiro não entra às
- * cegas. Fica como opção, junto da conferência do `rewrites`.
- */
 export const NOME_DO_SITE = "Mateus Bredoff";
 
 /** ` - `, medido no original. Não é travessão. */

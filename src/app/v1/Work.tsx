@@ -8,39 +8,6 @@ import { gsap, prefersReducedMotion } from "../../lib/gsap";
 import { criarArquivoWebGL, type ArquivoWebGL } from "../../lib/arquivoWebGL";
 import { Prancha } from "../compartilhado/sistema";
 
-/**
- * FOLHA 02 — WORK. O índice UTILITÁRIO.
- *
- * ⭐ A decisão vem de um achado do artemshcherban: ele mantém **dois índices
- * para o mesmo acervo** — `/selected`, que é espetáculo (carrossel 3D, uma tela,
- * não rola), e `/portfolio`, que é lista tipográfica chapada, sem uma imagem
- * sequer. Um para encantar, outro para achar.
- *
- * Aqui a divisão é a mesma: a home é a folha de espécimes (o nome de cada marca
- * em corpo de cartaz) e esta rota é a TABELA — todos os nove projetos, com
- * índice, disciplina e ano, na altura de linha em que se varre uma lista com o
- * olho. Quem chegou para admirar fica na home; quem chegou para procurar vem
- * para cá.
- *
- * A grade da linha (índice · título · disciplina · ano) é a mesma proporção
- * medida no archive do corentin — `.5fr 1.5fr 1fr .5fr` —, que é a distribuição
- * que faz o título mandar sem espremer o metadado.
- *
- * ## O CARROSSEL VERTICAL (17/08)
- *
- * A prévia deixou de ser uma imagem que troca no hover e virou uma COLUNA que
- * rola: o scroll move a pilha de peças na janela à esquerda, e a tabela
- * acompanha — a linha da peça enquadrada acende, as outras apagam. Referência
- * dele: `framer-assets-five.vercel.app/archive`, do próprio acervo dele.
- *
- * ⚠ E aqui vai ALÉM da referência de propósito: lá a coluna é `clamped`
- * (`Math.min(scroll, totalScroll)` no código, e medido no site: trava em 08/08
- * e não volta). Aqui ela é INFINITA, como a trama da home — o mesmo empurrão
- * dobrado pelo comprimento de um ciclo. Duas mecânicas diferentes de rolagem no
- * mesmo site seriam dois sistemas; uma só, repetida em escalas diferentes, é um.
- *
- * A página não rola: o gesto é todo da coluna, como na home.
- */
 /* os filtros são as disciplinas que existem no acervo, por frequência — sem
    categoria inventada */
 const FILTROS = [
@@ -53,10 +20,6 @@ const FILTROS = [
 export default function WorkV2() {
   useMetaRota();
   const [ativo, setAtivo] = useState(0);
-  /* ⭐ DOIS MODOS (16/09): "vamos poder ver em lista ou como esse [/cases do
-     Framer dele], só que scroll lateral" → e depois "nesse efeito
-     [/naughtyduk] no works, e deixar como padrão". CARDS é o padrão; a lista
-     viaja em `?view=list`. */
   const [params, setParams] = useSearchParams();
   const modo: "list" | "cards" = params.get("view") === "list" ? "list" : "cards";
   const setModo = (m: "list" | "cards") => setParams(m === "list" ? { view: "list" } : {}, { replace: true });
@@ -132,9 +95,6 @@ export default function WorkV2() {
 
   return (
     <Prancha n="02" nome="Work" superficie="branco" tela status={`${WORK.length} projects`}>
-      {/* ⚠ A ROTA CABE NA TELA e não rola — igual à referência
-          (`.archive-page` é `fixed inset:0; overflow:hidden`) e igual à home
-          deste site. O gesto é todo da coluna. */}
       {/* a linha de controle NA GRADE DO MENU (17/09, "me incomoda o alinhamento
           no menu"): o modo na coluna do nome (12), os filtros nascendo na coluna
           da hora — a mesma régua do cabeçalho. Em cards ela vive dentro do palco,
@@ -167,10 +127,6 @@ export default function WorkV2() {
           <>
             {controles}
       <section className="p-arquivo">
-        {/* ─ a tabela, À ESQUERDA ────────────────────────────────────────
-            Medido na referência: 48% da largura, com fio vertical separando.
-            (Aqui ela já esteve à direita, com a peça à esquerda — ele apontou
-            a referência e disse "não tá igual".) */}
         <div className="p-arquivo-lista">
           <div
             className="p-rotulo grid pb-3"
@@ -208,11 +164,6 @@ export default function WorkV2() {
 
         </div>
 
-        {/* ─ a coluna, À DIREITA, com a peça ativa CENTRADA ───────────────
-            Medido na referência: escala 1,00 no centro caindo para 0,95, e
-            opacidade 1,00 caindo para 0,35 — a queda de opacidade é o que faz
-            uma peça mandar e as outras assistirem. Espaçamento quase zero
-            (card 1,80, passo 1,81), então as peças quase se encostam. */}
         <div ref={janela} className="p-arquivo-visor">
           {/* ⚠ sem WebGL a coluna não some: a peça enquadrada entra como imagem
               simples. Sem curva, com a peça. */}

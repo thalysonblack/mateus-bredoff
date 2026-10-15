@@ -39,7 +39,6 @@
   background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0));
 }
 
-/* menu no formato padrão; o GSAP (Reels.tsx) só o desce ao meio do reel e o devolve ao topo, como no TWKS */
 
 /* indicador de scroll: fio de 1px que escorre para baixo, centrado no rodapé */
 .rx-scroll {

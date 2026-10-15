@@ -1,32 +1,3 @@
-/**
- * OS CARDS DA /work, em WebGL — porte do `/naughtyduk` do repo dele
- * (`thalysonblack/framer-assets`, `src/app/naughtyduk/page.tsx`).
- *
- * 16/09: "nesse efeito no works, e deixar como padrão". O que o efeito é, lido
- * do original e mantido aqui com os MESMOS números:
- *
- *   · fita horizontal infinita de cards 16:9, gap 30, o do centro em escala 1
- *     e os outros caindo até 0,85 (`highlightScale` 0,15) — e o espaçamento é
- *     borda a borda, então o gap continua 30 mesmo com escalas diferentes;
- *   · BARRIL enquanto se move: os cards afundam em Z por uma parábola da
- *     posição (força 120), subindo em 0,3–0,4 s e voltando ao plano em 1,0 s;
- *   · TIGELA pela velocidade: um empurrão em Z no centro da tela, com sinal da
- *     direção, que some quando a velocidade cai (pico rastreado em 5 frames);
- *   · onda seno em Y proporcional à velocidade — a fita ondula ao acelerar;
- *   · aberração cromática (0,002 parado, +0,004 em movimento, + velocidade) e
- *     grão de filme no fragment; no hover, um círculo de ruído desloca o UV;
- *   · snap para o card mais próximo (power4.out, 1,2 s) ao soltar o arrasto
- *     ou 200 ms depois da última roda.
- *
- * ⚠ PORTE PARA OGL, não three (o original é three): o projeto já carrega OGL
- * no visor da home e na coluna do arquivo; three custaria ~600 KB para o
- * mesmo resultado. Unidade do mundo = PIXEL: a câmera fica a
- * (altura/2)/tan(fov/2), então os números do original valem sem conversão.
- *
- * ⚠ Diferenças deliberadas do original: a roda do mouse anda a fita SEMPRE
- * (lá é um modo; aqui é o gesto, "scroll lateral"), e o card do centro abre o
- * case no clique — no original não abre nada.
- */
 import { Renderer, Camera, Transform, Program, Mesh, Plane, Texture, Vec2 } from "ogl";
 import { gsap } from "./gsap";
 
@@ -51,8 +22,6 @@ const FOV = 45;
 const CARD_FRAC = 0.44;
 const CARD_MIN = 280;
 const CARD_MAX = 900;
-/* 16/09: "card nessa proporção" — o card do Framer original dele mede
-   1103×728 (≈3:2), não 16:9 */
 const ASPECTO = 3 / 2;
 
 const VERT = /* glsl */ `
@@ -170,12 +139,6 @@ export type OpcoesCartoes = {
 
 export type Carta = { src: string; nome: string; tags: string[] };
 
-/* ⭐ O RÓTULO É ASSADO NA TEXTURA (17/09: "a tag e o nome saem"). O card
-   entorta no shader (barril, tigela, onda) e um rótulo em DOM fica plano —
-   na primeira curva ele escapava do card. Desenhando nome e chips no MESMO
-   bitmap da capa, eles entortam junto, sempre colados. Medidas do Framer dele
-   (nó 84:73) escaladas do card de 634 px para a textura de 1800: padding 12,
-   nome Geist 500 20px, chip 12px com 5×8 de padding e raio 3, gap 8. */
 const TEX_W = 1800;
 const TEX_H = TEX_W / ASPECTO;
 const K = TEX_W / 634;

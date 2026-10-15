@@ -1,4 +1,3 @@
-// Prints de referência das rotas que existem (1440 e 390, topo + 2 rolagens), com reduced-motion e vídeo oculto.
 // uso: node scripts/prints-rotas.mjs <origem, ex. http://localhost:4173> <pasta de saída>
 import puppeteer from 'puppeteer-core';
 const [base, out] = process.argv.slice(2);

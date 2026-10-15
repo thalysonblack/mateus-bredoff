@@ -1,38 +1,3 @@
-/**
- * A COLUNA DO ARQUIVO, em WebGL — porte do `/archive` do repo dele.
- *
- * Ele apontou `framer-assets-five.vercel.app/archive`, eu entreguei uma
- * aproximação em DOM e o veredito foi: *"a work não ficou igual cara"*, *"vc vê
- * que tem uma distorção sabe"*, **"é só vc clonar de fato"**. Então isto é o
- * clone: mesma arquitetura de duas passadas e as MESMAS constantes lidas de
- * `src/components/archive/{WebGLPreview.tsx,shaders.ts}` do repo dele.
- *
- * ## A arquitetura, e por que ela é assim
- *
- *   1. os cards são desenhados CHAPADOS num FBO (render target 1024×1440),
- *      com câmera ortográfica — nenhuma perspectiva, nenhuma curva;
- *   2. o FBO vira textura de UM plano curvo, com câmera em perspectiva.
- *
- * A distorção que ele viu mora inteira no passo 2 e é isso que a aproximação em
- * DOM não podia ter: curvar cada card separadamente daria oito curvas; curvar a
- * TELA que os contém dá uma superfície só, e é ela que se dobra.
- *
- * ## O que reage à VELOCIDADE do scroll (não à posição)
- *
- *   uBend    0 parado → 0,9 rolando   — o cilindro que envolve a tela
- *   uDistort 0 → 0,6                  — a lente barril por cima
- *
- * Parado, a tela é plana e limpa. O gesto é que entorta a superfície, e é o que
- * faz a coluna parecer matéria física em vez de lista deslizando.
- *
- * ⚠ PORTE PARA OGL, não three: o projeto já usa OGL no visor da home
- * ([[reference-transicao-fluida-em-webgl]]), e three custaria ~600KB para
- * refazer o que estas 200 linhas fazem. As constantes, a matemática do bend e a
- * ordem das passadas são as do original.
- *
- * ⚠ E aqui a coluna é INFINITA, ao contrário da referência (lá o scroll é
- * clamped e trava no último). A distância vira circular antes de virar posição.
- */
 import { Renderer, Camera, Transform, Program, Mesh, Plane, Texture, RenderTarget } from "ogl";
 
 /* ── constantes, lidas do original ─────────────────────────────────────── */

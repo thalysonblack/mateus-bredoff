@@ -6,11 +6,11 @@ import { INSTAGRAM } from "../../content/lab";
 import { RECONHECIMENTO, type Reconhecimento } from "../../content/reconhecimento";
 import { ScrollTrigger } from "../../lib/gsap";
 import { scrollToTop } from "../../lib/lenis";
-import retrato from "../../assets/optimized/framer/retrato-mateus-paisagem-1600.webp";
-import retrato2x from "../../assets/optimized/framer/retrato-mateus-paisagem-3200.webp";
+import retrato from "../../assets/optimized/retrato/retrato-mateus-paisagem-1600.webp";
+import retrato2x from "../../assets/optimized/retrato/retrato-mateus-paisagem-3200.webp";
 import neoxRosto from "../../assets/optimized/hover/neox-3.webp";
 import type { WorkItem } from "../../content/work";
-import retratoV from "../../assets/optimized/framer/retrato-mateus-vertical-900.webp";
+import retratoV from "../../assets/optimized/retrato/retrato-mateus-vertical-900.webp";
 import "../../styles/v2-base.css";
 import "../../styles/v2.css";
 
@@ -178,7 +178,6 @@ export function RodapeV2() {
   );
 }
 
-/* crédito do estúdio no pé (15/10): o padrão dos sites de portfólio — "Design & Development" + estúdio linkado */
 export function Credito({ className = "rc-credito" }: { className?: string }) {
   return (
     <p className={className}>

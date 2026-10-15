@@ -1,23 +1,5 @@
-/**
- * V3 — "o portfólio como visor" (rota /v3).
- *
- * Mecânica do noartmusic.com — HUD de câmera em blend, duas vozes tipográficas,
- * telemetria viva, índices em colchetes, módulos de ~1 tela — sobre a MATÉRIA
- * do Mateus: paleta medida da réplica (papel/petróleo/creme), Geist como voz
- * de manifesto e Martian Mono como voz de máquina. As duas fontes já são
- * self-hostadas deste repo; nada da referência entra como matéria.
- *
- * Regras herdadas do projeto que valem aqui:
- * - contraste se MEDE: corpo mono sobre papel usa --fr-quieto (~4,8:1) ou a
- *   tinta cheia; o cinza #868686 só sobre o petróleo.
- * - raio zero é lei (nenhuma pílula arredondada).
- * - blend só na camada que precisa, sem stacking context no caminho.
- */
 
 :root {
-  /* voz de máquina — Martian Mono, caixa alta. A Martian é LARGA: 12px dela
-     ocupa o que 13,3px da mono da referência ocupava. Corpo e rótulo abaixo
-     já compensam isso. */
   --v3-mono-corpo: 12px;
   --v3-mono-corpo-lh: 19px;
   --v3-mono-rotulo: 11px;
@@ -25,30 +7,10 @@
   --v3-mono-micro: 10px;
 
   /* voz de manifesto — Geist bold caps, justificada, tracking apertado */
-  /* ⚠ A escala do display subiu de 3,4vw/54px para 5,2vw/84px em 16/08, e o
-     motivo saiu de uma MEDIÇÃO, não de gosto.
-
-     Minerando o bleibtgleich.dev (referência que ele salvou; scout em
-     `scripts/scout-ref.mjs`) o achado não foi o efeito líquido nem o preto e
-     branco — foi que **ele usa UMA escala de display, não duas**: o nome do
-     hero e os títulos de seção medem os MESMOS 100px. Aqui o hero estava em
-     118px e as seções caíam para 54px, menos da metade. Não era o hero que
-     estava grande: eram as seções que estavam pequenas, e é daí que vinha a
-     sensação de que o miolo da página desanda depois da primeira tela.
-
-     84px contra 118px do hero mantém a hierarquia (o nome ainda manda) sem o
-     degrau que fazia cada seção pedir desculpa por existir. O tracking fechou
-     junto — −0,027em era frouxo para este corpo; a referência anda em −0,05em
-     e −0,038em é onde a Geist ainda respira.
-
-     ⚠ Escala maior exige LARGURA: as manchetes que viviam em `col-span-6`
-     foram para 7–8 colunas na mesma leva. Subir o corpo sem abrir a coluna
-     transforma manchete em pilha de linhas órfãs. */
   --v3-display: clamp(30px, 5.2vw, 84px);
   --v3-display-lh: 1.0;
   --v3-nome: clamp(44px, 8.6vw, 138px);
 
-  /* margem lateral única da versão (a referência usa ~32px em 1600) */
   --v3-margem: clamp(16px, 2vw, 32px);
 
   /* acento: o par de laranjas da direção autoral — o queimado no papel, o
@@ -122,27 +84,6 @@
   letter-spacing: 0;
 }
 
-/* ⭐ A VOZ DE LEITURA — a correção que o nightjar.co expôs.
-   Medindo a referência (`scout-ref.mjs`), o sistema dela é o MESMO tipo que
-   este: dueto de grotesca + mono (Suisse Intl + Suisse Intl Mono). O que muda é
-   o uso, e é aí que estava o erro:
-
-     nightjar   mono 12px caps ×321 → RÓTULO · sans 14px caixa mista ×189 → LEITURA
-     aqui       mono 12px caps      → rótulo E PARÁGRAFO INTEIRO
-
-   O manifesto, os leads e as descrições de serviço rodavam em Martian Mono
-   CAIXA ALTA. Ler quarenta palavras assim cansa, e é o que fazia a página
-   parecer densa e suja onde ele queria clean. ⚠ E o pior: **este repo já sabia
-   disso** — a direção editorial anotou "parágrafo de corpo é grotesca em caixa
-   mista; caixa alta em 40 palavras não se lê", e a V3 violou a própria regra da
-   casa.
-
-   Peso 400 e não 700 (a referência anda toda em 300/400), altura de linha
-   generosa e nenhuma justificação: texto justificado em coluna estreita abre
-   rios, e o `.v3-justif` continua valendo só para a voz de MANIFESTO.
-
-   A mono não sai de cena — continua sendo rótulo, legenda, metadado, índice.
-   Cada voz volta para a função dela. */
 .v3-leitura {
   font-family: 'Geist', ui-sans-serif, sans-serif;
   font-weight: 400;
@@ -198,19 +139,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ⭐ VIRADA DE 16/08 — "https://nightjar.co MAIS ASSIM".
-   Eu tinha medido a referência e NÃO aplicado o principal, justificando que
-   peso e caixa alta eram a assinatura do partido aprovado. Ele respondeu pedindo
-   o movimento. Argumento de coerência não vence pedido dele — e ele estava
-   certo: o que fazia o nightjar respirar não era o espaço, era o PESO.
-
-   Medido lá: display 64px, weight **400**, caixa MISTA, `line-height` 1.0,
-   tracking −0,01em. Aqui era 84px em 700, caixa alta, −0,038em — quatro
-   decisões somando peso na mesma palavra.
-
-   O corpo continua grande (a lição do bleibtgleich sobre uma escala de display
-   segue de pé); o que sai é o peso do traço e o berro da caixa alta. Grande e
-   leve é o que dá presença sem gritar. */
 .v3-display {
   font-family: 'Geist', ui-sans-serif, sans-serif;
   font-weight: 400;
@@ -220,8 +148,6 @@
   text-transform: none;
 }
 
-/* justificação total — o gesto mais reconhecível da referência. Vale para as
-   DUAS vozes. A última linha fica natural (inter-word padrão). */
 .v3-justif {
   text-align: justify;
   text-justify: inter-word;
@@ -312,14 +238,6 @@
   .v3-visor { opacity: 1; }
 }
 
-/* ── rodapé: o wordmark que sangra e é cortado ────────────────────────────
-   O fecho do nightjar.co, medido: o nome do estúdio ocupa a largura inteira,
-   sem margem, e a linha de base sai da tela. Aqui o corpo é dado em `vw` (não
-   em `calc` com a razão do glifo — a régua do repo: métrica de fallback estoura
-   a linha no dia em que a webfont falhar) e o corte vem do `margin-bottom`
-   negativo somado ao `overflow-clip` do rodapé.
-
-   O vazio acima é parte da peça, não sobra: lá são ~590px numa tela de 1000. */
 .v3-marca {
   margin-top: clamp(120px, 42vh, 460px);
   margin-bottom: -0.155em;
@@ -368,12 +286,6 @@
   scroll-margin-inline-start: var(--v3-margem);
 }
 
-/* ── telemetria do hero: a cor depende do RECORTE do retrato ──────────────
-   Desktop (viewport paisagem): o cover mostra a foto inteira e a base chega
-   ao claro #eceded → tinta petróleo (11,9:1, medido na réplica).
-   Mobile (viewport retrato): o cover corta para o centro e a base vira barba
-   e camiseta escuras → creme, senão o texto some. Mesma regra do projeto:
-   o fundo do texto aqui não é constante — se mudar o enquadramento, remeça. */
 .v3-telem { color: var(--fr-petroleo); }
 .v3-telem .v3-card {
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -401,10 +313,6 @@
   .v3-pino { animation: none; }
 }
 
-/* ── hero: movimento ambiente no retrato ─────────────────────────────────
-   A referência abre em VÍDEO. Sem material de vídeo do cliente, o retrato
-   ganha um zoom lentíssimo de vaivém — presença de imagem viva, sem inventar
-   footage. ⚠ transform na IMG, nunca num ancestral do nome em blend. */
 .v3-heroimg {
   animation: v3-zoom 26s ease-in-out infinite alternate;
   will-change: transform;
@@ -417,10 +325,6 @@
   .v3-heroimg { animation: none; }
 }
 
-/* ── micro-interações (10/08): o hover fala a língua do visor ─────────────
-   Princípios: 150–250ms, ease-out, só transform/opacity (compositor).
-   A assinatura é o FOCO: colchetes de canto que travam no alvo hovered,
-   como ponto de AF de câmera — em card, packshot e thumb. */
 
 /* foco de visor: 4 cantos que aparecem e assentam (escala 1.08 → 1) */
 .v3-foco {
@@ -626,11 +530,6 @@ button:hover .v3-prox { transform: translateX(3px); }
   .v3-obturador { display: none; }
 }
 
-/* O retrato do hero, respirando. Faz o papel que o vídeo faz na referência: a
-   primeira tela tem vida sem pedir nada de quem chega.
-   ⚠ 24s e 1.06 de escala — devagar e curto de propósito. Zoom que se percebe
-   como animação vira inquietação na dobra mais importante do site; este só é
-   notado quando a pessoa para para olhar. `transform` puro, na GPU. */
 @keyframes v3-respira {
   0%   { transform: scale(1); }
   100% { transform: scale(1.06); }

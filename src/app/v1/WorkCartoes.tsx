@@ -4,19 +4,6 @@ import type { WorkItem } from "../../content/work";
 import { criarCartoesWebGL, type CartoesWebGL, type Ponteiro } from "../../lib/cartoesWebGL";
 import { prefersReducedMotion } from "../../lib/gsap";
 
-/**
- * O modo CARDS da /work: a fita WebGL do `/naughtyduk` dele (ver
- * `lib/cartoesWebGL.ts`), com o RÓTULO DENTRO do card como no Framer original
- * (16/09, "título e tag dentro"): nome embaixo à esquerda, disciplinas em
- * chips embaixo à direita, e o cursor "View Case" sobre o card do centro.
- *
- * ⚠ O rótulo é ASSADO NA TEXTURA, não DOM (17/09, "a tag e o nome saem"): o
- * card entorta no shader e um rótulo plano por cima escapava dele. O único
- * DOM que sobra é o cursor "View Case", que segue o ponteiro e não o card.
- *
- * ⚠ sem WebGL (ou com movimento reduzido) a fita vira uma fileira simples de
- * capas com scroll nativo — a peça continua acessível.
- */
 export function WorkCartoes({
   itens,
   controles,

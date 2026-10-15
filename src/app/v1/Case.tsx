@@ -7,32 +7,6 @@ import { corDe } from "../../content/cores";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { Prancha, Bloco } from "../compartilhado/sistema";
 
-/**
- * O CASE — `/work/:slug`. Um componente para os nove.
- *
- * A anatomia veio medida do revelatio (`/tmp/ref-revelatio.md`), e o número que
- * decide tudo é a divisão da coluna: **galeria 1119px à esquerda (~73%) e ficha
- * técnica de 400px PINADA à direita (~27%)**, com `position: sticky` puro —
- * `top: 7rem` exatos, sem uma linha de JS. A galeria rola, a ficha fica.
- *
- * Por que isso vale mais do que a pilha de imagens da direção anterior: num
- * case de identidade, a pergunta que a pessoa faz enquanto olha a décima peça é
- * *"de quem é isso mesmo, e o que ele fez aqui?"*. Com a ficha pinada, a
- * resposta nunca sai da tela. Com a ficha no topo, ela sai na primeira rolagem.
- *
- * ⚠ Imagem **1 por linha, largura cheia da coluna** — lá são 8 tiles idênticos
- * de 16:9 com 22px de respiro entre eles, e 667px quando entra texto. Aqui o
- * acervo tem proporções variadas, então a caixa usa `object-fit: cover` e não
- * `fill`: `fill` só não distorce quando TODO asset tem a proporção da caixa, o
- * que é verdade lá e não é verdade aqui.
- *
- * ⭐ E o CASE SEM TEXTO não vira "em preparação". O revelatio resolve o mesmo
- * problema com um dispositivo melhor: seis dos vinte e dois projetos dele são
- * **Confidential** — a marca aparece, o clique é negado, e o "não" ganha a
- * única cor cromática do sistema. Aqui a variante honesta é a mesma ideia
- * aplicada ao nosso caso real: o trabalho existe e está publicado, o TEXTO é
- * que não foi escrito ainda. Então a ficha diz isso no lugar de fingir corpo.
- */
 export default function CaseV2() {
   const { slug } = useParams();
   const item = findWork(slug);

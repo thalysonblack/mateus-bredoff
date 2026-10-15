@@ -1,19 +1,3 @@
-/**
- * Tokens da RÉPLICA — todos medidos em `mateusbredoff.framer.website`,
- * nenhum estimado. Fonte: `scripts/audit-framer.mjs` (@1600px e @390px).
- *
- * Arquivo NOVO de propósito: `system.css` guarda a direção editorial autoral,
- * que deixou de ser o alvo mas ainda serve de consulta. Misturar os dois faria
- * um dialeto que não é nem a réplica nem o sistema antigo.
- *
- * Duas regras que a medição impôs, e que contrariam o instinto:
- *
- * 1. UMA família só. O original é Geist 400 e 500, do hero ao rodapé. Não há
- *    dueto, não há mono. A hierarquia inteira se faz com corpo, tracking e cor.
- * 2. O CORPO NÃO ESCALA. 18px/26,1px é idêntico em 1600px e em 390px — só o
- *    display encolhe. Tornar o corpo fluido "porque é boa prática" já seria
- *    deixar de ser réplica.
- */
 
 :root {
   /* --- paleta medida ------------------------------------------------------
@@ -24,11 +8,6 @@
   --fr-petroleo: #142126;
   --fr-marrom: #260f0a;
   --fr-creme: #ede6e1;
-  /* ⚠ O original usa #808080, que mede 4,17:1 sobre o petróleo e REPROVA em
-     AA (mínimo 4,5 para corpo). Subimos para #868686 → 4,52:1. A diferença é
-     imperceptível a olho e mantém o papel da cor; a dívida de acessibilidade
-     do original é a única coisa que esta réplica se recusa a copiar.
-     Não "restaure a fidelidade" aqui. */
   --fr-cinza: #868686;
 
   /* Texto quieto: preto a 50% sobre o papel. É o valor do original — mede
@@ -73,21 +52,11 @@
   --fr-micro-lh: 12.5px;
   --fr-micro-ls: -0.4px;
 
-  /* --- papéis das rotas internas -----------------------------------------
-     Medidos em /about, /work e no template de case. Entram aqui, e não num
-     segundo arquivo, porque escala tipográfica dividida em dois lugares vira
-     dois sistemas: o segundo é sempre o que ninguém lê antes de inventar um
-     valor novo. */
 
   --fr-manchete: 48px;          /* manchete de seção */
   --fr-manchete-lh: 52.8px;
   --fr-manchete-ls: -1.44px;
 
-  /* A manchete tem DUAS entrelinhas no mesmo corpo de 48px, como o display tem
-     duas no de 64: 52.8 na /about e 52.32 no "Other Projects" do case. São
-     0,48px por linha — invisível numa linha, mas o "Other Projects" quebra em
-     várias e o desvio acumula, que é o tipo de deriva que denuncia réplica.
-     Medido nas duas rotas; não unifique por parecer erro de arredondamento. */
   --fr-manchete-lh-case: 52.32px;
 
   /* O único peso 300 do site. Já declarado em fonts.css. */
@@ -151,9 +120,6 @@
   --fr-margem-cabecalho: 32px;  /* cabeçalho do case */
   --fr-margem-pilha: 8px;       /* pilha de imagens do case */
 
-  /* A coluna do rótulo é FIXA, não fracionária: o conteúdo começa em x=424
-     tanto em 1600px quanto em 1200px. Como `25%` ela andaria — e deriva de
-     coluna é o que mais denuncia uma réplica. Espinha da /about e do rodapé. */
   --fr-rotulo-col: 400px;
 
   /* ⚠ 16px também são DOIS estilos, como os 12px. Este é o índice da nav do

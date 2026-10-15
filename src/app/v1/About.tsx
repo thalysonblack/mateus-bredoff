@@ -6,36 +6,6 @@ import metodo03 from "../../assets/optimized/metodo-03-1440.webp";
 import metodo04 from "../../assets/optimized/metodo-04-1440.webp";
 import metodo05 from "../../assets/optimized/metodo-05-1440.webp";
 
-/* ⭐ AS CENAS DO MÉTODO — ILUSTRAÇÃO ABSTRATA (16/09: "preciso que gere outra,
-   como ilustra abstrata"). A cena fotográfica (mão, mesa, monitor) saiu; entrou
-   uma série de esculturas de gesso fosco, uma FORMA-EVENTO por etapa:
-   o mergulho (esfera afundando) · a que se aparta (grade de cubos e um só
-   fora) · o leque (lâminas abrindo de um pivô, uma em pé) · o corte (bloco
-   com círculo vazado e o disco ao lado) · a pilha (folhas esquadrejadas).
-   Mesma bíblia de luz da hero (fonte grande alta à esquerda FORA do quadro,
-   sweep petróleo → cinza), 85 mm, assunto cortado pela borda; Seedream 5 Pro
-   2k, 2 por cena, escolha em `_refs/metodo-cenas/abstrata/sheet.png`. O
-   pipeline de dither abaixo continua igual — é ele que casa a série com a
-   hero. Histórico da versão fotográfica (12/09), que segue valendo como
-   método:
-   "refazer a foto de acordo com o que ele faz que é marcas, uso de ia.. e
-   fotografia de acordo com a hero" · "veja que ele é negro" · "botar efeitos
-   de dither". O que cada uma mudou:
-   · ASSUNTO: o trabalho dele, não "um designer num laptop" — grid de marcas,
-     mapa de posicionamento, moodboard com a interface de geração atrás,
-     wordmark em construção com o mockup gerado ao lado, brand book aberto.
-   · LUZ E PALETA: as da HERO (estúdio, fonte grande fora do quadro, fundo em
-     gradiente petróleo #1e3a42 → cinza #c2c8c6, papel creme), não o âmbar
-     noturno da referência de filme que valia antes.
-   · ELENCO: a mão é dele — pele escura, escrita na PRIMEIRA linha do prompt.
-     A leva sem isso veio inteira com mão clara e foi descartada.
-   · DITHER em pós, não em runtime: bayer (scale 1) para cinco tons amostrados
-     da hero (tinta · petróleo · cinza · claro · papel), via ffmpeg
-     `paletteuse`. Cinco tons comprimem quase de graça — WebP LOSSLESS de
-     48–72 KB por cena (o lossy borra o padrão, e a 100 pesava 500 KB).
-   · UM arquivo por cena, 1440×810: em retina cai 1:1 sobre os 720px do slot
-     e o dither fica nítido; em tela 1x vira textura fina. Sem srcSet.
-   Originais e folhas de contato em `_refs/metodo-cenas/` (PNGs fora do git). */
 const CENAS_METODO = [
   { src: metodo01, alt: "A plaster sphere sinking into a still surface, one frozen ripple around it" },
   { src: metodo02, alt: "A grid of identical plaster cubes, and one cube set apart on its own" },
@@ -84,23 +54,6 @@ import { Prancha } from "../compartilhado/sistema";
 import { LEAD, PROCESSO_MANCHETE, PROCESSO, FERRAMENTAS, NUMEROS } from "../../content/about";
 import { RECONHECIMENTO } from "../../content/reconhecimento";
 
-/**
- * PRANCHA 03 — ABOUT.
- *
- * ⚠ A primeira montagem tinha o numeral "62+" gigante em laranja sangrando pela
- * esquerda e uma cruz de registro no centro — os dois copiados do
- * `corentinbernadou.com/about` (lá o numeral é "95", o ano de nascimento dele).
- * Ele cortou: **"vc ta copiando, nao, apenas conceito"**.
- *
- * O CONCEITO que sobrevive é outro, e é o que valia desde o começo: **os números
- * da trajetória dele estavam escritos em 12px, como rodapé**, quando são o
- * argumento mais forte que um portfólio tem. Aqui eles sobem para a escala de
- * ESPÉCIME — a mesma da folha de trabalhos, o sistema da casa — em vez de virar
- * um monograma emprestado. Mesma promoção do dado, forma própria.
- *
- * Todo texto aqui vem do /about publicado dele (medido do Framer), sem uma
- * palavra inventada. As cinco etapas do processo são as dele, na ordem dele.
- */
 
 export default function AboutV2() {
   useMetaRota();
@@ -176,9 +129,6 @@ export default function AboutV2() {
     return () => trs.forEach((s) => s.kill());
   }, []);
 
-  /* ⭐ O MARQUEE anda no ticker do GSAP (um relógio só) e acelera com a
-     velocidade do Lenis; a faixa tem o conteúdo duas vezes e volta ao zero na
-     metade — o loop não tem emenda. A referência do ticker é guardada. */
   useEffect(() => {
     const el = marquee.current;
     if (!el) return;
@@ -237,26 +187,6 @@ export default function AboutV2() {
      palco no fim. As folhas de papel (método) pintam a própria cor. */
   return (
     <Prancha n="03" nome="About" superficie="tinta" status="Available for projects" rodape="completo">
-      {/* ⭐⭐ AS SEÇÕES SÃO FOLHAS QUE SE SOBREPÕEM.
-          Veio dos salvos dele: o post do Obys sobre o Laxer descreve a mecânica
-          inteira — *"sheets of paper. The entire website is a collection of
-          interconnected sheets. Every new section becomes another layer,
-          overlapping, moving, and flipping over the previous one. This logic
-          shaped not only the layouts, but the motion and the way the whole
-          experience flows."*
-
-          Não é coincidência ele ter salvo isso: a direção daqui se chama A
-          PRANCHA e já era folha — só que as folhas estavam EMPILHADAS em fila,
-          sem gesto. Agora cada seção fica `sticky` e a seguinte SOBE POR CIMA
-          dela, com o fio do sistema na aresta de ataque. A página deixa de ser
-          uma lista de blocos e passa a ser um maço sendo virado.
-
-          ⚠ Da referência vem o PRINCÍPIO (camada que cobre camada), não a
-          assinatura: lá as folhas giram em 3D e têm textura de papel; aqui elas
-          deslizam retas, porque este sistema é de fio de 1px e raio zero.
-          E o outro salvo dele — seb astian, sobre um slider feito para a Blink,
-          o estúdio do Mateus — dá a régua da escala: *"Make it big. Make it
-          bold."* */}
       {/* ─ 1. A CAPA ────────────────────────────────────────────────────
           ⚠ A montagem anterior punha o retrato num bloco de 4 colunas e a
           ficha empilhada ao lado: sobravam ~450px de vazio MORTO embaixo da
@@ -447,10 +377,6 @@ export default function AboutV2() {
               <h2 className="p-servico-nome pn-bloco-titulo">Recognition</h2>
             </header>
 
-            {/* "assim" (17/09, ref: features + awards de um portfólio): dois sub-blocos
-                com rótulo miúdo. 1) BEHANCE FEATURES — a fita como o Behance a mostra
-                no perfil, com a contagem embaixo (só o que está em reconhecimento.ts:
-                hoje uma curadoria, uma fita, "1"). */}
             <FitasBehance className="pn-sub" classeRotulo="p-marca pn-sub-rotulo" classeN="p-marca pn-fita-n" />
 
             {/* 2) PUBLISHED IN — uma linha por projeto, o nome em escala de página à

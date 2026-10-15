@@ -1,98 +1,7 @@
-/**
- * V2 — "A PRANCHA".
- *
- * Direção nova, pedida em 17/08/2026 ("não estou satisfeito, bora uma v2
- * seguindo esse estilo, subpáginas, vasculha tudo") com três referências:
- * corentinbernadou.com/about, artemshcherban.com e revelatio.studio.
- *
- * ## O que as três têm em comum, medido
- *
- *   corentin   régua de artboard nas bordas com números, "1600px × 1000px" no
- *              canto, UM numeral gigante laranja sangrando, colunas de texto de
- *              14px com rótulos mono minúsculos, base com local · hora · ano
- *   artem      branco absoluto e UM gesto gráfico único (uma curva ligando
- *              ideas → concept → design → result), serifada + mono
- *   revelatio  alternância dura de superfície (preto ↔ branco), imagem tratada
- *              em dither, nuvem de cidades onde uma acende por vez
- *
- * Três decisões e uma só regra: **uma ideia gráfica por página, texto pequeno e
- * denso em coluna, e o resto vazio.**
- *
- * ## ⚠️ A CORREÇÃO QUE DEFINE ESTA DIREÇÃO
- *
- * A primeira montagem trouxe das referências a régua de artboard com a dimensão
- * da viewport no canto, um cubo 3D de miniaturas girando, a sigla monograma
- * sangrando pela base e a ficha "Coll. 2026 / Ref. MB-2026 / Plate 01". Ele
- * respondeu: **"vc ta copiando, nao, apenas conceito"**. Estava certo — cada um
- * desses quatro é ASSINATURA do corentin, e medir bem não autoriza colar.
- *
- * O que se leva de uma referência (CONCEITO):
- *   · densidade tipográfica — texto pequeno e rigoroso, nada de manchete
- *   · contraste de SUPERFÍCIE entre páginas, não dentro de uma página
- *   · muito vazio, e uma ideia gráfica por página
- *   · metadado vivo como matéria
- *   · o trabalho apresentado como OBJETO, não como grade de cards
- *
- * O que fica com o dono (ASSINATURA): régua de artboard, dimensão no canto,
- * sólido 3D de miniaturas, monograma sangrando, numeração de edição, cruz de
- * registro, dither, nuvem de cidades.
- *
- * ## O partido próprio: O ESPÉCIME
- *
- * Ele é brand designer, e o material mais forte deste projeto são **as marcas
- * que ele desenhou** — as capas do acervo são, na maioria, wordmark e lettering
- * (ginga, BUREAU, FORTIS, HŌKI, ALEX ARCHER). Nenhum objeto emprestado compete
- * com isso.
- *
- * Então o site se apresenta como uma **folha de espécimes**, que é o documento
- * que uma fundição publica para mostrar seus tipos: cada projeto é um espécime —
- * o nome em escala grande porque o nome É a peça, a disciplina e o ano em corpo
- * de ficha, e a arte ao lado. A escala varia de linha para linha, como numa
- * folha de espécime de verdade, e é essa variação que dá o ritmo sem precisar
- * de card, sombra ou moldura.
- *
- * A matéria é toda do Mateus: Geist + Martian Mono self-hosted, papel/petróleo
- * medidos da réplica, e — desde 17/08 — o AZUL e o MARROM dele nos destaques.
- *
- * ⚠ O laranja queimado saiu ("não vamos usar o laranja, use o azul dele"). O
- * par novo não foi escolhido: foi DERIVADO do que já é dele. O site publicado
- * usa `--fr-petroleo: #142126` e `--fr-marrom: #260f0a`, medidos da réplica —
- * os dois são cores de FUNDO, escuras demais para destacar (o petróleo é quase
- * a tinta desta direção). Então mantém-se o MATIZ exato de cada um (h197 e h11)
- * e sobe-se a luminância até passar contraste no papel:
- *
- *   azul    #142126 → #277796  (4,58:1 no papel · #34a1cb na tinta, 5,66:1)
- *   marrom  #260f0a → #9f5d4e  (4,60:1 no papel · #b57769 na tinta, 4,62:1)
- *
- * ⚠ A saturação do marrom NÃO se infla: dobrá-la levava a #d32f0b, que é
- * vermelho, não marrom. Matiz preservado, saturação preservada, só o valor
- * muda — [[craft-paleta-se-amostra-da-peca-nao-se-deriva]].
- */
 
 :root {
-  /* ⭐ A UNIDADE FLUIDA — o achado que reorganiza o resto.
-     Medido no corentin: `--fs-laptop: calc(100vw / 1512 * 10)`. O rem dele é
-     FLUIDO, e a consequência é que a margem mede **3,307% da viewport em
-     qualquer largura** — 52,91px em 1600, 39,68px em 1200. Não existe
-     breakpoint de layout entre 1024 e 1920: o layout inteiro é uma figura só,
-     escalada. É por isso que o site parece o mesmo desenho em qualquer tela.
-
-     Aqui `--p-u` faz esse papel. Tudo o que é medida de PÁGINA (margem,
-     coluna, deslocamento) sai dela; o que é medida de LEITURA (corpo de texto)
-     continua em px, porque texto que escala com a janela quebra a leitura. */
   --p-u: calc(100vw / 1512 * 10);
-  /* ⚠️ A TRAVA. O vw puro tem um defeito medido: no corentin a nav cai para
-     8,7px em 1200 — o texto pequeno ENCOLHE junto com a janela e some. O
-     artefakt.mov resolve com duas bases de desenho: `1rem = 10px` em 1440 E em
-     1024, trocando de regime em 1280. Abaixo do breakpoint a régua rebaixa a
-     base, e o texto pequeno fica MAIOR, não menor.
-     Mesma ideia fluida, com piso. Sem isto, tudo o que a direção tem de rótulo
-     de 8,5px vira 6,3px num notebook de 1200. */
 
-  /* Margem da prancha. Nasceu em 5u = os 3,307% medidos na referência, e caiu
-     para 3,6u em 17/08 a pedido dele ("diminua os paddings globais"): com a
-     trama em corpo de cartaz sangrando de borda a borda, a calha da referência
-     — feita para colunas de texto de 13px — sobrava. */
   --p-margem: calc(var(--p-u) * 3.6);
   /* ⚠ O VERTICAL É MENOR QUE O LATERAL, e não é assimetria por descuido: "diminuir
      o padding global … cima e embaixo" (17/08). A calha lateral protege a leitura
@@ -110,23 +19,11 @@
   --p-col-4: calc(var(--p-u) * 46.4);
   --p-col-5: calc(var(--p-u) * 58.2);
 
-  /* ⚠ ESCALA MINÚSCULA, e isto é o achado mais duro do levantamento:
-     **no corentin não existe título em texto**. Todo tamanho legível do site
-     cabe entre 7,4px e 14,8px — uma razão de 2,0× do menor ao maior. O único
-     corpo grande é um GLIFO DESENHADO (SVG de 428 a 525px de altura), um por
-     rota. Entre 16,9px e 529px não há nada.
-
-     A primeira versão desta direção tinha manchete de 74px, e era ela que
-     fazia a página parecer "mais um site" em vez da prancha: manchete grande
-     divide a atenção com o glifo, e aí nenhum dos dois manda.
-
-     Os valores abaixo são os dele + o ajuste da fonte: a Geist tem altura-x
-     maior que a Helvetica Now, então 13px aqui lê como os 12,7px de lá. */
   --p-corpo: 13px;
   --p-corpo-lh: 1.42;
   --p-item: 14.5px;   /* item de lista de obra — o maior texto do site */
   --p-rotulo: 8.5px;  /* rótulo de ficha, caixa alta */
-  --p-rotulo-ls: 0.06em; /* medido: tracking ZERO no rótulo da ref; 0,06 compensa a caixa alta da Geist */
+  --p-rotulo-ls: 0.06em;
   --p-marca: 9.5px;   /* metadado, tick de régua, legenda */
 
   /* a escala do ESPÉCIME. Numa folha de espécime de fundição a palavra PREENCHE
@@ -141,10 +38,6 @@
   --p-especime-teto: clamp(58px, 11.4vw, 176px);
   --p-especime-med: 46vw;
 
-  /* ⭐ O AR É VERTICAL. Medido no artemshcherban: `column-gap 2em` contra
-     `row-gap 8em` — QUATRO VEZES mais respiro entre linhas do que entre
-     colunas. É o que faz uma página densa não parecer apertada sem precisar
-     aumentar margem: o espaço vai para onde a leitura anda. */
   --p-gap-x: calc(var(--p-u) * 2);
   --p-gap-y: calc(var(--p-u) * 8);
 }
@@ -217,15 +110,6 @@
   line-height: var(--p-corpo-lh);
   letter-spacing: -0.004em;
 }
-/* ⚠ O RÓTULO NÃO É MONO — correção que veio da medição, não do gosto.
-   Eu tinha posto Martian Mono aqui achando que o ar técnico dos rótulos da
-   referência vinha de uma segunda família. Não vem: o site inteiro dele usa UMA
-   fonte, e o rótulo é a mesma família em `wght 700` + `opsz 20` + caixa alta +
-   **tracking 0**. O que dá cara de ficha técnica é a combinação, não a mono.
-
-   Aqui isso vira Geist 700 em caixa alta. E o ganho é de sistema: a V2 passa a
-   ter UMA voz tipográfica, contra o dueto da V3 — direção diferente, economia
-   diferente. */
 /* ⭐ 18/08 — A VOZ MIÚDA VOLTA A SER MONO, agora com a DEPARTURE MONO, a
    pedido dele ("bora usar essa font nos textinhos pequenos", SIL OFL).
 
@@ -291,16 +175,6 @@
   .p-link::after { transition: none; }
 }
 
-/* ── A ATENUAÇÃO ───────────────────────────────────────────────────────────
-   Medido no corentin: **passar o mouse num item da lista derruba a página
-   inteira para 10%** — o glifo gigante, o menu, o seletor, tudo. Só o item sob
-   o cursor fica de pé.
-
-   É o gesto mais barato e mais forte do site: em vez de destacar o alvo (que é
-   o que todo mundo faz), ele APAGA o resto. A hierarquia aparece por ausência.
-
-   `:has()` faz isso sem uma linha de JS. O escopo é a prancha inteira, que é
-   justamente o ponto — atenuar só a lista não seria o mesmo gesto. */
 /* ⚠⚠ ATENUAR NÃO É APAGAR. Isto já esteve em 0,1 — os irmãos ficavam
    praticamente invisíveis, e ele cortou: *"gostei do efeito mas não pode ficar
    invisível"*. O DESTAQUE vem da COR (o alvo acende no acento ou na cor do
@@ -349,11 +223,6 @@
      conjunto dos nove nomes do acervo */
   font-size: min(calc(var(--p-especime-med) / (var(--n, 8) * 0.52)), var(--p-especime-teto));
   line-height: 0.94;
-  /* ⭐ TRACKING EM MEDIDA FIXA, não em `em` — medido no artefakt: −2px
-     constante do corpo 36 ao 84, o que dá −0,056em no menor e −0,024em no
-     maior. Quanto MAIOR o corpo, MENOS aperto relativo, e é isso que impede o
-     display gigante de fechar demais. Com `-0.03em` fixo (o caminho óbvio, e o
-     que o revelatio faz) o nome curto em 176px vinha estrangulado. */
   letter-spacing: calc(var(--p-u) * -0.2);
   transition: color 0.3s ease-out;
 }
@@ -377,24 +246,6 @@
   .p-especime-arte { transition: none; }
 }
 
-/* ── A TRAMA VIVA ──────────────────────────────────────────────────────────
-   O gesto da primeira tela. Ele pediu "mais viva, tipo revelatio ou aquela
-   primeira" — no revelatio a home é uma TV em WebGL que converte o vídeo da
-   equipe em ASCII colorido; no corentin é um sólido 3D girando com as capas
-   como textura. O que os dois têm em comum não é a técnica: é a **matéria do
-   estúdio sendo processada em tempo real** em vez de exibida parada.
-
-   Aqui a matéria é a marca, então o processo é tipográfico: os nomes atravessam
-   a tela em corpo de cartaz e **cada nome é recortado na própria arte** —
-   `background-clip: text` com a capa do projeto dentro das letras. A marca é
-   literalmente feita do trabalho que ela nomeia, e isso se move.
-
-   Custo: zero JS, zero WebGL, zero dependência. Duas propriedades e um
-   keyframe. O dither de lá custa um shader e um mp4 de 15 pessoas.
-
-   ⚠ `background-clip: text` exige `color: transparent`, e com isso o texto
-   some para quem tiver a imagem bloqueada — por isso o nome real vai num
-   `sr-only` fora da trama, e a faixa inteira é `aria-hidden`. */
 .p-trama {
   overflow: hidden;
   mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
@@ -411,13 +262,6 @@
 @keyframes p-desfila {
   to { transform: translateX(-50%); }
 }
-/* ⭐ A SEGUNDA FITA, em sentido contrário e mais devagar.
-   Uma fita só lê como banner de promoção — o olho acompanha e o gesto acaba.
-   Duas em sentidos opostos criam um plano: nenhuma das duas pode ser
-   "acompanhada", e a tela vira campo em vez de faixa. O revelatio faz a mesma
-   coisa com dois traços que desenham em direções opostas ao mesmo tempo; aqui
-   a ideia é a mesma, a matéria é outra.
-   Velocidades primas entre si (64s e 83s) para o par não repetir cadência. */
 .p-trama-fita--volta {
   animation-name: p-desfila-volta;
   animation-duration: 83s;
@@ -559,24 +403,6 @@
   --p-trama-cor: var(--cor, var(--p-acento));
 }
 
-/* ── A PILHA ───────────────────────────────────────────────────────────────
-   "quero profundidade", 17/08 — depois de dois partidos chapados reprovados
-   ("horrivel os dois"). Chapado era o diagnóstico certo: mosaico, tela cheia,
-   letras em grade e fita são todos DESENHOS EM UM PLANO SÓ. Nenhum tem espaço.
-
-   ⚠ E profundidade aqui não é parallax. O levantamento do corentin mediu a taxa
-   Δtop/Δscroll de cada nó do site dele: **todas deram 0,000 ou −1,000**, nenhum
-   valor intermediário. Zero parallax no DOM. A profundidade de lá inteira está
-   num shader dirigido pela velocidade do scroll. Ou seja: o recurso óbvio (mover
-   camadas em velocidades diferentes) é justamente o que os sites bons NÃO usam.
-
-   O que este partido usa é espaço de verdade: `perspective` no palco e as peças
-   em `translateZ` escalonado — a da frente nítida e grande, as de trás menores,
-   mais escuras e desfocadas, como uma pilha de pranchas sobre a mesa. O scroll
-   ATRAVESSA a pilha em vez de deslizar sobre ela.
-
-   É também o gesto mais honesto para um portfólio: é o que a pessoa faz quando
-   recebe uma pasta de trabalhos na mão. */
 .p-mesa {
   perspective: 1600px;
   perspective-origin: 50% 46%;
@@ -824,18 +650,6 @@
    ao scroll". */
 .p-trama-scroll { will-change: transform; }
 
-/* ── O ARQUIVO (rota Work) ────────────────────────────────────────────────
-   Anatomia medida no repo dele (`framer-assets`, rota /archive):
-     · a página é `fixed inset:0; overflow:hidden` — cabe na tela e não rola;
-     · lista à ESQUERDA em 48%, com fio vertical separando;
-     · coluna à direita com a peça ativa CENTRADA (`align-items: center`);
-     · passo entre cards quase igual à altura do card (1,81 contra 1,80), então
-       eles quase se encostam;
-     · escala 1,00 → 0,95 e opacidade 1,00 → 0,35 conforme a distância do
-       centro (a conta vive no ticker, em `Work.tsx`).
-
-   ⚠ Da referência veio a ANATOMIA. O percurso continua INFINITO, ao contrário
-   dela — lá é clamped e trava no último item. */
 /* a linha de controle da /work (16/09): modo à esquerda, filtros ao centro */
 .p-work-modo { position: relative; display: grid; grid-template-columns: var(--p-grade-col1) minmax(0, 1fr); column-gap: var(--p-grade-vao); align-items: center; padding-bottom: 20px; }
 .p-work-modo-grupo { display: flex; align-items: center; gap: 20px; }
@@ -850,8 +664,6 @@
 .p-work-chip { display: inline-flex; align-items: center; gap: 8px; padding: 0; border: 0; background: transparent; cursor: pointer; color: var(--p-quieto); transition: color 0.25s ease; white-space: nowrap; }
 .p-work-chip.on, .p-work-chip:hover { color: var(--p-ink); }
 .p-work-quad { width: 6px; height: 6px; background: currentColor; display: inline-block; }
-/* pílulas do filtro — medidas do Framer dele: Geist Medium 14, −0,03em, 8×10, raio 2,
-   ativa em tinta cheia (#19272d no original; aqui o --p-ink da superfície) */
 .p-work-filtros { gap: 6px; }
 .p-work-pilula { font-family: 'Geist', ui-sans-serif, sans-serif; font-weight: 500; font-size: 14px; letter-spacing: -0.03em; line-height: 1; padding: 8px 10px; border: 0; border-radius: 2px; background: transparent; color: var(--p-quieto); cursor: pointer; white-space: nowrap; transition: color 0.2s ease, background-color 0.2s ease; }
 .p-work-pilula:hover { color: var(--p-ink); }
@@ -1063,21 +875,6 @@
   letter-spacing: -0.03em;
 }
 
-/* ── O RETRATO ─────────────────────────────────────────────────────────────
-   ⚠ Sangra pela ESQUERDA até a borda da tela (margem negativa da prancha): num
-   estúdio de uma pessoa só o rosto é o que separa "designer" de ESTE designer,
-   e enquadrado numa caixinha ele vira avatar de perfil. A foto tem fundo
-   petróleo, que é a tinta do sistema — ela combina com a página por
-   construção, não por tratamento. */
-/* ── AS FOLHAS QUE SE SOBREPÕEM ──────────────────────────────────────────
-   Mecânica dos salvos dele (Obys / Laxer): cada seção é uma camada que sobe
-   por cima da anterior. Aqui, `sticky` + fundo próprio + o fio do sistema na
-   aresta de ataque — a folha que chega tapa a que estava, e o fio marca a
-   emenda.
-
-   ⚠ SANGRIA TOTAL e padding de volta: a folha precisa cobrir de borda a borda
-   (senão as bordas mostram a folha de baixo e a leitura de camada se perde),
-   mas o conteúdo continua na coluna da prancha. */
 .p-folha-sec {
   /* ⚠ 12/09: "vamos remover a section subindo a outra e fazer outra forma de
      scroll" → a folha NÃO gruda mais. A coreografia agora é PROFUNDIDADE (ele
@@ -1188,9 +985,6 @@
   padding-block: 96px 104px;
 }
 
-/* ⭐ O ÍNDICE DE SEÇÃO, no vernáculo do Obys: o numeral grande ao lado do
-   rótulo miúdo. É o que dá ESCALA ao começo de cada folha — "make it big, make
-   it bold" (o outro salvo dele, sobre o slider da Blink). */
 .p-secao-indice {
   display: flex;
   align-items: baseline;
@@ -1453,13 +1247,6 @@
   .p-precos-escopo { display: none; }
 }
 
-/* ── ABOUT C: "O CATÁLOGO" ───────────────────────────────────────────────
-   Espírito da original do Framer, medida em `/arquivo/framer/about`: a página
-   inteira em superfície ESCURA, o rótulo da seção na lateral esquerda, o
-   conteúdo numa coluna larga à direita, números gigantes.
-   O que a original não tinha e ele pediu: os SERVIÇOS COM FOTO.
-
-   Mesma grade de 12 do resto do site — a lateral ocupa 1–3, o conteúdo 5–12. */
 /* ── A HERO: UM ELEMENTO SÓ ───────────────────────────────────────────────
    "a hero tá muito cheia, precisa de elemento UAU e depois os textos".
    Sangria total, altura de tela, e o nome NA FAIXA LIVRE da foto — o retrato
@@ -1611,8 +1398,6 @@
 }
 .p-catalogo-lateral { grid-column: 1 / span 3; display: grid; gap: 26px; align-content: start; }
 .p-catalogo-intro > div:not(.p-catalogo-lateral) { grid-column: 5 / span 8; display: grid; gap: 22px; }
-/* a ficha lateral: metadado em pares, o que dá DENSIDADE à coluna que estava
-   vazia — e é o vocabulário das referências dele */
 .p-ficha-lateral { display: grid; gap: 16px; }
 .p-ficha-lateral dt { color: var(--p-quieto); padding-bottom: 3px; }
 .p-ficha-lateral dd { margin: 0; }
@@ -2121,18 +1906,6 @@
 /* ⓘ o visor não leva legenda — ver o comentário do gesto em `HomeD.tsx` */
 
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   TRÊS ABOUTS, TRÊS APOSTAS  —  colhidas do Savee dele em 18/08.
-
-   As três anteriores caíram no mesmo defeito: abriam explicando, em corpo
-   pequeno, com grade de doze. Variavam a montagem e repetiam a temperatura.
-   Estas discordam entre si de propósito — a escolha dele é entre POSTURAS,
-   não entre arranjos:
-
-     D · O RETRATO — a cara dele em tela cheia; o texto é legenda
-     E · A FICHA   — nenhuma imagem grande; a página é um instrumento
-     F · A PALAVRA — a tipografia é a arquitetura; o resto se aninha
-   ═════════════════════════════════════════════════════════════════════════ */
 
 /* ── D · O RETRATO ──────────────────────────────────────────────────────── */
 /* ⚠ `clip` e não `hidden`: recorta a sangria sem criar contexto de scroll — o
@@ -2673,15 +2446,6 @@ a.pz-materia:hover { color: var(--p-acento); }
   .pz-metodo li p { grid-column: 2; }
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   G · A CARTELA  —  lida dos 63 salvos dele no Savee (19/08).
-
-   As propostas anteriores eram todas papel, fio de 1px e coluna de texto. O que
-   ele SALVA é outra coisa: tipografia dentro de retângulo de cor chapada,
-   notação de ficha técnica (SP–307, ©, setas, cantos numerados) e cartela de
-   cor como conteúdo. Aqui o papel dá lugar ao BLOCO — a about vira a ficha
-   técnica dele.
-   ═════════════════════════════════════════════════════════════════════════ */
 .ab-h { padding-bottom: 40px; --ab-h-gap: clamp(10px, 0.9vw, 16px); }
 
 /* mono de notação: número de série, ©, seta, canto numerado */
@@ -3377,12 +3141,6 @@ a.pz-materia:hover { color: var(--p-acento); }
 }
 
 
-/* ══ "ajustar tbm o padding/margin global para 12px" (12/09/2026) ══════════
-   A margem de página do sistema era fluida (`--p-u × 3,6` ≈ 34px em 1440,
-   `--p-u × 2,1` ≈ 20px na vertical). Passa a 12px fixos nos dois eixos — o
-   valor da referência que ele apontou, e o mesmo que a V4 já usava. Vale para
-   toda Prancha: nav, folhas, sangrias (`calc(var(--p-margem) * -1)`) e rodapé
-   leem o token. */
 :root {
   --p-margem: 12px;
   --p-margem-y: 12px;
@@ -3730,16 +3488,10 @@ a.pz-materia:hover { color: var(--p-acento); }
 .pn-recibo-linha .pn-recibo-preco { grid-column: 4; grid-row: 1; justify-self: end; align-self: baseline; }
 .pn-tabela .p-prova-titulo a { color: inherit; }
 
-/* ── RECOGNITION (17/09, "assim" — ref: features + awards de portfólio) ────
-   Dois sub-blocos com rótulo miúdo em versalete mono (o `.p-marca` da casa),
-   separados por vão, não por fio. */
 .pn-sub { display: grid; row-gap: 20px; }
 .pn-sub + .pn-sub { margin-top: 64px; }
 .pn-sub-rotulo { text-transform: uppercase; }
 
-/* 1) as fitas do Behance: a mesma fita do perfil (entalhe em V, sigla em peso
-   alto), na escala da referência (34×58), com a contagem em mono embaixo.
-   Desenhada em CSS — sem raster, sem webfont de terceiro. */
 .pn-fita-n { font-size: 12px; }
 
 /* 2) published in: uma linha por projeto — nome em escala de página (o degrau
@@ -4165,8 +3917,6 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
    do canto recua — o projeto é o assunto, e ela brigava com a peça */
 .p-tela:has(.p-fundo--diagrama) .p-fundo-rotulo { opacity: 0; }
 
-/* a frase da home em corpo de declaração (29/09, "aumenta"): 13 → ~2vw, a
-   medida da frase do frame de referência (40px @1920) */
 .p-fundo-frase-nova {
   font-family: 'Geist', ui-sans-serif, sans-serif;
   font-weight: 400;

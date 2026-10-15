@@ -7,12 +7,6 @@ import { useCena } from "./Heroes";
 import Indice from "./Indice";
 import "../../styles/v3.css";
 
-/**
- * HERO = SÓ O SHOWREEL (13/10, "apenas showreel em full na hero… ou showreel centralizado").
- *   FULL    o vídeo cobre a tela, com overlay preto; no scroll sobe com a página e cresce por dentro (mecânica TWKS); clique abre o reel com som
- *   CENTRO  o vídeo abre centrado no papel; o scroll cresce até a tela cheia
- * O reel sai da seção 4 do Índice (semReel): ele já está na hero.
- */
 function Video({ ritmo = 1 }: { ritmo?: number }) {
   return (
     <video
@@ -40,7 +34,6 @@ export function HeroReel() {
   const selo = useRef<HTMLDivElement | null>(null);
   const tela = useRef<HTMLVideoElement | null>(null);
 
-  /* TWKS: sem pin — a seção sobe com a página e o vídeo, por dentro, cresce e escurece ao sair */
   const ref = useCena((el) => {
     gsap.timeline({ scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } })
       .to(".rx-quadro .rx-video", { scale: 1.35, yPercent: 18, ease: "none", duration: 1 }, 0)
@@ -48,7 +41,6 @@ export function HeroReel() {
       .to(".rx-legenda", { autoAlpha: 0, duration: 0.25 }, 0);
     /* menu branco chapado só enquanto ele está sobre o reel; no papel volta ao difference */
     ScrollTrigger.create({ trigger: el, start: "top bottom", end: "bottom top+=90", toggleClass: { targets: document.documentElement, className: "rx-sobre" } });
-    /* TWKS: o menu nasce no meio da tela e sobe 1:1 com a página até atracar no topo */
     const menu = document.querySelector<HTMLElement>(".p-menu");
     if (menu) {
       const desce = () => window.innerHeight / 2 - menu.getBoundingClientRect().height / 2 - menu.offsetTop;

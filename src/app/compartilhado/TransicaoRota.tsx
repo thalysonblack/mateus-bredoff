@@ -4,45 +4,9 @@ import { gsap } from "../../lib/gsap";
 import { WORK } from "../../content/work";
 import { scrollToTop } from "../../lib/lenis";
 
-/**
- * A transição entre páginas — A CORTINA DE GRADE.
- *
- * ⭐ Mecânica dos salvos dele no LinkedIn — Nischint Singh (Creative Developer,
- * GSAP, Awwwards Young Jury '26), Project 08:
- *
- *   "This experiment explores a LAYERED GRID SYSTEM where ALTERNATING ROWS
- *    REVEAL FROM OPPOSING DIRECTIONS, creating a dynamic curtain effect that
- *    transforms navigation into a more cinematic experience."
- *
- * É o que ele pediu por "quero algo fino fino, gsap, awwwards, veja minhas refs
- * do LinkedIn" — e explica a pergunta anterior dele, "tá usando barba?": o post
- * é feito com Barba.js + GSAP. ⚠ Barba NÃO entra aqui: ele é um sistema de
- * navegação, e este projeto já tem o do `react-router` com o ciclo de vida em
- * `App.tsx`. O que se leva do post é a COREOGRAFIA, não a dependência.
- *
- * ## A coreografia
- *
- *   FECHA  seis faixas horizontais entram alternando o lado — ímpares pela
- *          esquerda, pares pela direita — com stagger. O quadro fecha como uma
- *          cortina tecida, não como uma cortina lisa.
- *   TROCA  a rota muda com a tela coberta (é o que esconde o salto de scroll).
- *   ABRE   cada faixa continua o percurso e sai pelo lado OPOSTO ao que entrou.
- *          Recuar desfaria o gesto; atravessar completa.
- *
- * As faixas chegam na SUPERFÍCIE DA ROTA DE DESTINO, então a transição anuncia
- * para onde se vai. E o nome do destino sobe no meio do quadro fechado, que é o
- * único instante em que o site tem a tela inteira.
- *
- * ⚠ Mecânica preservada das versões anteriores, porque é mecânica e não estilo:
- * a interceptação de clique em fase de captura, com modificador de teclado
- * passando direto (Cmd/Ctrl/Shift-clique e botão do meio abrem em nova aba, e
- * sequestrar isso quebra expectativa do navegador), alvo externo e download
- * seguindo o caminho normal, e a troca de rota com a tela coberta.
- */
 
 /* nome legível da rota, para o rótulo do obturador. Sai do próprio pathname —
    não há uma segunda lista de rotas para divergir da primeira. */
-/* o site V2 (V2) mora em /v2, /v2/about, /v2/work[/slug] — os outros /v2/* são estúdio antigo */
 const ehV2 = (p: string) => p === "/v2" || /^\/v2\/(about|work)(\/|$)/.test(p);
 
 function nomeDaRota(p: string) {
@@ -200,9 +164,6 @@ export default function TransicaoRota() {
       if (titulo) titulo.textContent = nomeDaRota(url.pathname);
       if (indice) indice.textContent = indiceDaRota(url.pathname);
 
-      /* ⭐ ALTERNANDO O LADO: pares entram pela esquerda, ímpares pela direita.
-         É isso que faz a cortina parecer TECIDA em vez de lisa — e é a
-         mecânica do post do Nischint Singh, dos salvos dele. */
       /* ⚠⚠ `x: 0` JUNTO com o xPercent — e eu já sabia disso. O CSS declara o
          repouso como `translateX(±101%)` (senão as faixas nascem cobrindo a
          página), o GSAP LÊ esse transform e guarda os ±1697px como `x`, e o
