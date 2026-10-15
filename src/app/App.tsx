@@ -15,12 +15,12 @@ import PranchaWork from "./v2/Work";
 import PranchaCase from "./v2/Case";
 import HomeFundo from "./v2/HomeFundo";
 import { ReelFull } from "./v2/Reels";
-import Rolin from "./v2/Rolin";
 import RolinB from "./v2/RolinB";
 import RolinC from "./v2/RolinC";
+import RolinCAbout from "./v2/RolinCAbout";
+import { RolinCWork, RolinCCase } from "./v2/RolinCWork";
 import Nova from "./v2/Nova";
-import HomeOrchard from "./orchard/HomeOrchard";
-import SeletorVersao from "./orchard/SeletorVersao";
+import SeletorVersao from "./SeletorVersao";
 /* o conceito 3D traz o Three.js: carrega só quando a rota abre */
 import HomeV4 from "./v4/Home";
 import WorkV4 from "./v4/Work";
@@ -186,12 +186,14 @@ export default function App() {
               `/`, `/about`, `/work`, `/work/:slug`, `/lab` são as do CMS dele e
               do original, muda só quem as monta. Por isso `content/meta.ts` e o
               pré-render seguem valendo sem uma linha alterada. */}
-          <Route path="/" element={<HomeOrchard />} />
+          <Route path="/" element={<HomeFundo />} />
           <Route path="/v2/fundo" element={<HomeFundo />} />
           <Route path="/v2/reel-full" element={<ReelFull />} />
-          <Route path="/v2/rolin" element={<Rolin />} />
           <Route path="/v2/rolin-b" element={<RolinB />} />
           <Route path="/v2/rolin-c" element={<RolinC />} />
+          <Route path="/v2/rolin-c/about" element={<RolinCAbout />} />
+          <Route path="/v2/rolin-c/work" element={<RolinCWork />} />
+          <Route path="/v2/rolin-c/work/:slug" element={<RolinCCase />} />
           <Route path="/v2/nova" element={<Nova />} />
           <Route path="/about" element={<PranchaAbout />} />
           <Route path="/work" element={<PranchaWork />} />

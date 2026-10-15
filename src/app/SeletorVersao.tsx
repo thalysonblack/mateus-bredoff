@@ -2,9 +2,7 @@ import { Link, useLocation } from "react-router";
 
 /** Seletor de TODAS as versões de home do site. Só em dev (App monta atrás de import.meta.env.DEV). */
 const ROTAS = [
-  ["No ar", "/v2/fundo"],
-  ["Orchard", "/"],
-  ["Rolin", "/v2/rolin"],
+  ["No ar", "/"],
   ["Rolin B", "/v2/rolin-b"],
   ["Rolin C", "/v2/rolin-c"],
   ["Reel", "/v2/reel-full"],

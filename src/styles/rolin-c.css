@@ -185,3 +185,107 @@
 /* CAPAS PADRONIZADAS (15/10): todas no mesmo retângulo 4:3, a arte preenche por cover */
 .rc-quadro { aspect-ratio: 4 / 3; }
 .rc-quadro img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ═══ SITE ROLIN C (15/10): menu comum, About, Work, Case ═══ */
+.rc-fixo .rc-nav a.is-atual { color: var(--rc-tinta); }
+.rc-fixo.is-info .rc-nav a.is-atual { color: #fff; }
+@media (max-width: 899px) {
+  /* celular: nome | WORK ABOUT — a disciplina sai para o menu caber; alvo de toque de 44px */
+  .rc-fixo { grid-template-columns: 1fr auto; }
+  .rc-fixo .rc-disc { display: none; }
+  .rc-fixo .rc-nav { display: flex; grid-column: 2; gap: 20px; }
+  .rc-fixo .rc-nav a, .rc-fixo > a { padding-block: 16px; margin-block: -16px; }
+}
+
+/* conteúdo da ficha começa no CENTRO da tela (o eixo das tags da home); rótulo na coluna 1 */
+.rca-ficha, .rcw-cab, .rcw-grade, .rcc-ficha, .rcc-pecas, .rcc-prox, .rca-contato {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--rc-vao); padding-inline: var(--rc-m);
+}
+.rca-rot { grid-column: 1 / 4; }
+.rca-miolo { grid-column: 7 / 12; min-width: 0; }
+
+/* ABOUT — hero no enquadramento final da transição da home */
+.rca-hero { position: relative; z-index: 1; height: 100vh; background: #0b0b0b; }
+.rca-retrato, .rca-retrato img { display: block; width: 100%; height: 100%; }
+.rca-retrato img { object-fit: cover; object-position: 50% 22%; }
+.rca-ficha { padding-block: 128px 160px; row-gap: 96px; }
+.rca-linha { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; }
+.rca-texto { display: flex; flex-direction: column; gap: 1.18em; max-width: 62ch; }
+.rca-texto p, p.rca-texto { line-height: 1.32; }
+.rca-tabela li { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); column-gap: var(--rc-vao); padding-block: 2px; }
+.rca-corpo { text-transform: none; font-weight: 500; font-size: 12px; line-height: 1.35; letter-spacing: 0; max-width: 52ch; }
+.rca-etapas { margin-top: 48px !important; display: flex; flex-direction: column; gap: 24px; }
+.rca-etapas li { display: grid; grid-template-columns: 32px minmax(0, 1fr); row-gap: 8px; }
+.rca-etapas .rca-corpo { grid-column: 2; }
+.rca-pubs { display: flex; flex-direction: column; gap: 6px; }
+.rca-pubs .rl-apagado { color: var(--rc-quieto); }
+.rca-pubs .rl-logo { background-color: var(--rc-tinta); }
+.rca-contato { min-height: 70svh; background: #000; color: #fff; padding-block: 15px 24px; align-content: space-between; row-gap: 96px; }
+.rca-contato .rca-rot { padding-top: 43px; }
+.rca-apagado { color: #8a8a8a; }
+.rca-contato .rca-miolo { display: flex; flex-direction: column; gap: 24px; }
+.rca-email { font-size: clamp(22px, 2.6vw, 40px); line-height: 1; letter-spacing: -0.02em; text-transform: none; }
+.rca-contato a { transition: color 150ms ease; }
+@media (hover: hover) and (pointer: fine) { .rca-contato a:hover { color: #8a8a8a; } }
+
+/* WORK — folha de contato, 3 por linha (4 colunas de 12 cada) */
+.rcw-cab { padding-top: 160px; padding-bottom: 48px; }
+.rcw-cab > :first-child { grid-column: 1 / 4; }
+.rcw-cab > :nth-child(2) { grid-column: 4 / 7; }
+.rcw-conta { grid-column: 10 / -1; justify-self: end; }
+.rcw-grade { row-gap: 64px; padding-bottom: 160px; }
+.rcw-grade li { grid-column: span 4; }
+.rcw-grade a { display: block; }
+.rcw-leg { display: grid; grid-template-columns: 32px 1fr auto; column-gap: 12px; row-gap: 3px; padding-top: 12px; }
+.rcw-tag { grid-column: 2 / -1; }
+.rcw-grade img, .rcc-quadro img { transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+
+/* CASE — ficha: título à esquerda, metadados e texto do centro em diante; peças na mesma régua */
+.rcc-ficha { padding-top: 160px; padding-bottom: 64px; row-gap: 48px; align-items: start; }
+.rcc-titulo { grid-column: 1 / 7; display: grid; grid-template-columns: 32px 1fr; column-gap: 12px; }
+.rcc-titulo h1 { font: inherit; margin: 0; }
+.rcc-meta { grid-column: 7 / 12; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.rcc-meta > div { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); column-gap: var(--rc-vao); }
+.rcc-meta dd { margin: 0; }
+.rcc-texto { grid-column: 7 / 12; display: flex; flex-direction: column; gap: 1.18em; line-height: 1.32; max-width: 62ch; }
+.rcc-pecas { row-gap: var(--rc-vao); padding-bottom: 96px; }
+.rcc-pecas li { grid-column: 1 / -1; }
+.rcc-pecas li.is-meia { grid-column: span 6; }
+.rcc-pecas img { display: block; width: 100%; height: auto; border-radius: 4px; }
+.rcc-pecas .rcc-quadro img { height: 100%; }
+.rcc-prox { padding-bottom: 160px; }
+.rcc-prox > :first-child { grid-column: 1 / 4; }
+.rcc-prox > :last-child { grid-column: 7 / -1; }
+.rcc-prox a, .rcc-meta a { transition: color 150ms ease; }
+@media (hover: hover) and (pointer: fine) and (min-width: 64rem) {
+  .rcw-grade a:hover img { transform: scale(1.03); }
+  .rcw-grade a:hover .rc-quieto { color: var(--rc-tinta); }
+  .rcc-prox a:hover, .rcc-meta a:hover { color: var(--rc-quieto); }
+  .rcc-prox a.rc-quieto:hover { color: var(--rc-tinta); }
+}
+
+@media (max-width: 899px) {
+  .rca-ficha, .rcw-cab, .rcw-grade, .rcc-ficha, .rcc-pecas, .rcc-prox, .rca-contato { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .rca-rot, .rca-miolo, .rcc-titulo, .rcc-meta, .rcc-texto { grid-column: 1 / -1; }
+  .rca-linha { row-gap: 16px; }
+  .rca-ficha { padding-block: 72px 96px; row-gap: 64px; }
+  .rca-contato { min-height: 60svh; }
+  .rcw-cab { padding-top: 96px; padding-bottom: 24px; }
+  .rcw-cab > :first-child { grid-column: 1 / 3; }
+  .rcw-cab > :nth-child(2) { display: none; }
+  .rcw-conta { grid-column: 3 / -1; }
+  .rcw-grade { row-gap: 48px; padding-bottom: 96px; }
+  .rcw-grade li { grid-column: 1 / -1; }
+  .rcc-ficha { padding-top: 96px; padding-bottom: 40px; row-gap: 32px; }
+  .rcc-pecas li.is-meia { grid-column: 1 / -1; }
+  .rcc-prox { padding-bottom: 96px; }
+  .rcc-prox > :first-child { grid-column: 1 / 3; }
+  .rcc-prox > :last-child { grid-column: 3 / -1; justify-self: end; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rcw-grade img, .rcc-quadro img, .rca-contato a, .rcc-prox a { transition: none; }
+}
+/* fora da home o conteúdo passa sob o menu: faixa de papel atrás dele (some no preto) */
+:is(.rca, .rcw, .rcc) .rc-fixo { padding-bottom: 12px; background: var(--rc-papel); transition: background-color 0.3s ease; }
+:is(.rca, .rcw, .rcc) .rc-fixo.is-info { background: transparent; }

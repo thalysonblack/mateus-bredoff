@@ -44,6 +44,8 @@ import { scrollToTop } from "../lib/lenis";
    não há uma segunda lista de rotas para divergir da primeira. */
 function nomeDaRota(p: string) {
   if (p === "/") return "Index";
+  /* site Rolin C: /v2/rolin-c[/work[/slug]|/about] */
+  if (p.startsWith("/v2/rolin-c")) return nomeDaRota(p.slice("/v2/rolin-c".length) || "/");
   if (p.startsWith("/work/")) {
     const slug = p.split("/")[2] || "";
     const item = WORK.find((w) => w.slug === slug);
@@ -72,6 +74,8 @@ function superficieDaRota(p: string) {
      nenhum daquela direção — a transição entregava uma superfície mentirosa,
      que é exatamente o que o comentário acima manda evitar. */
   if (p === "/v4" || p.startsWith("/v4/")) return "branco";
+  /* o site Rolin C é papel branco puro em todas as rotas */
+  if (p.startsWith("/v2/rolin-c")) return "branco";
   if (SUPERFICIE[p]) return SUPERFICIE[p];
   if (p.startsWith("/work/")) return "branco";
   return "papel";
@@ -79,7 +83,8 @@ function superficieDaRota(p: string) {
 
 /* o índice da rota dentro do site, no vernáculo de [01] que o resto usa */
 const ORDEM = ["/", "/work", "/about"];
-function indiceDaRota(p: string) {
+function indiceDaRota(p: string): string {
+  if (p.startsWith("/v2/rolin-c")) return indiceDaRota(p.slice("/v2/rolin-c".length) || "/");
   const i = ORDEM.indexOf(p);
   if (i >= 0) return `[${String(i + 1).padStart(2, "0")}]`;
   if (p.startsWith("/work/")) {
