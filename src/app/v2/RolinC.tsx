@@ -39,7 +39,7 @@ export default function RolinC() {
     const medir = () => {
       /* tags da legenda começam no CENTRO da tela: distância da borda da legenda até o meio */
       const leg = el.querySelector<HTMLElement>(".rc-legenda");
-      if (leg) el.style.setProperty("--rc-centro", `${window.innerWidth / 2 - leg.getBoundingClientRect().left}px`);
+      if (leg) el.style.setProperty("--rc-centro", `${document.documentElement.clientWidth / 2 - leg.getBoundingClientRect().left}px`);
     };
     medir();
     const ro = new ResizeObserver(medir);
