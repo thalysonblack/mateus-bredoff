@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type MouseEvent } from "react";
+import { useEffect, useLayoutEffect, useState, type CSSProperties, type MouseEvent } from "react";
 import { Link } from "react-router";
 import { LEAD } from "../../content/about";
 import { SERVICOS } from "../../content/servicos";
@@ -11,7 +11,6 @@ import retrato2x from "../../assets/optimized/framer/retrato-mateus-paisagem-320
 import neoxRosto from "../../assets/optimized/hover/neox-3.webp";
 import type { WorkItem } from "../../content/work";
 import retratoV from "../../assets/optimized/framer/retrato-mateus-vertical-900.webp";
-import { montarDither } from "./ditherRetrato";
 import "../../styles/rolin.css";
 import "../../styles/rolin-c.css";
 
@@ -30,14 +29,9 @@ export const capa = (w: WorkItem) => w.slug === "neox"
 export const publicados = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano);
 
 /** o retrato do rodapé e da hero da About: o MESMO <picture>, para a troca não aparecer */
-export function Retrato({ className, eager, dither }: { className: string; eager?: boolean; dither?: boolean }) {
-  const ref = useRef<HTMLPictureElement>(null);
-  useEffect(() => {
-    const p = ref.current, img = p?.querySelector("img");
-    return dither && p && img ? montarDither(p, img) ?? undefined : undefined;
-  }, [dither]);
+export function Retrato({ className, eager }: { className: string; eager?: boolean }) {
   return (
-    <picture ref={ref} className={className}>
+    <picture className={className}>
       <source media="(max-width: 899px)" srcSet={retratoV} />
       <img src={retrato} srcSet={`${retrato} 1x, ${retrato2x} 2x`} alt="Mateus Bredoff"
         loading={eager ? "eager" : "lazy"} decoding="async" />
@@ -157,7 +151,7 @@ export function RcRodape() {
   return (
     <div id="rc-info" className="rl rc-pe" data-rc-escuro>
       <section className="rl-info">
-        <Retrato className="rc-retrato" dither />
+        <Retrato className="rc-retrato" />
         <div className="rl-info-ficha">
           <div className="rl-info-cab">
             <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
