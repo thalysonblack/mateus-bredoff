@@ -3,20 +3,13 @@ import { Link, useLocation } from "react-router";
 /** Seletor de TODAS as versões de home do site. Só em dev (App monta atrás de import.meta.env.DEV). */
 const ROTAS = [
   ["No ar", "/v2/fundo"],
-  ["Orchard A", "/"],
-  ["Orchard B", "/b"],
-  ["Orchard C", "/c"],
-  ["Nova", "/v2/nova"],
+  ["Orchard", "/"],
   ["Rolin", "/v2/rolin"],
   ["Rolin B", "/v2/rolin-b"],
   ["Reel", "/v2/reel-full"],
-  ["Prancha", "/v2"],
   ["V4", "/v4"],
-  ["V5", "/v5"],
   ["Visor", "/arquivo/visor"],
-  ["Enxame", "/arquivo/enxame"],
   ["Autoral", "/arquivo/autoral"],
-  ["Framer", "/arquivo/framer"],
 ] as const;
 
 export default function SeletorVersao() {

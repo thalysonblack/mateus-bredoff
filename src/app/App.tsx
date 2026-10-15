@@ -19,8 +19,6 @@ import Rolin from "./v2/Rolin";
 import RolinB from "./v2/RolinB";
 import Nova from "./v2/Nova";
 import HomeOrchard from "./orchard/HomeOrchard";
-import HomeOrchardB from "./orchard/HomeOrchardB";
-import HomeOrchardC from "./orchard/HomeOrchardC";
 import SeletorVersao from "./orchard/SeletorVersao";
 /* o conceito 3D traz o Three.js: carrega só quando a rota abre */
 import HomeV4 from "./v4/Home";
@@ -188,8 +186,6 @@ export default function App() {
               do original, muda só quem as monta. Por isso `content/meta.ts` e o
               pré-render seguem valendo sem uma linha alterada. */}
           <Route path="/" element={<HomeOrchard />} />
-          <Route path="/b" element={<HomeOrchardB />} />
-          <Route path="/c" element={<HomeOrchardC />} />
           <Route path="/v2/fundo" element={<HomeFundo />} />
           <Route path="/v2/reel-full" element={<ReelFull />} />
           <Route path="/v2/rolin" element={<Rolin />} />
