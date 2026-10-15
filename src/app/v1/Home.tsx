@@ -10,34 +10,6 @@ import { HoverFluido } from "../compartilhado/HoverFluido";
 import { HoverColuna } from "./HoverColuna";
 import { WorkCartoes } from "./WorkCartoes";
 
-/**
- * HOME — O REEL DE FUNDO (28/09).
- *
- * Direção do Thalyson, apontando o frame "BNB - Home" do arquivo GOODTASTE
- * BRAND WEB (node 141:86): "reel de fundo". Responde ao áudio do Mateus
- * ("o site abriria melhor com o showreel") sem virar documento: a home segue
- * UMA TELA, o reel é o chão dela, e o trabalho entra como uma FAIXA de peças
- * nomeadas no canto inferior direito — cada projeto com rótulo e borda
- * própria, que era o que faltava na trama ("onde termina um, começa outro?").
- *
- * Anatomia medida no frame (1920): frase em duas linhas no canto inferior
- * esquerdo; faixa de cartões 200×155 com vão 12 e o nome 12px acima; o último
- * cartão é um "+" que leva ao índice inteiro. O menu dele fica por cima em
- * branco `difference` — o mesmo modo que já vale sobre a capa da about.
- *
- * ⭐ 28/09 (tarde) — "algo mais dentro da IDV": a faixa de miniaturas era a
- * gramática do Goodtaste, não a deste site. Ficou o CONCEITO (reel atrás,
- * hover mostra o projeto) e a matéria voltou a ser a da casa: a TABELA da
- * /work (nº · projeto · disciplina · ano, fio de 1px, mono nos metadados) na
- * grade do menu — rótulo na coluna do nome, tabela nascendo na coluna da hora.
- * Imagem enorme, tipo pequeno: o registro editorial que o site já tem.
- *
- * DOIS ESTADOS DO FUNDO, e a diferença entre eles é o gesto:
- *   REEL     — o filme (ou, sem arquivo, as capas rodando em P&B e apagadas)
- *   PROJETO  — o hover numa linha acende a capa DAQUELE projeto, em cor cheia
- * Sem essa diferença de valor, "mostrar o projeto" num fundo que já mostra
- * capas não se veria.
- */
 export default function HomeFundo() {
   useMetaRota();
   const [k, setK] = useState(0);

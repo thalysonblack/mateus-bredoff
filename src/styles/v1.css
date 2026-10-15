@@ -1258,18 +1258,6 @@
    e do cabeçalho, e "tela cheia" ficava sendo 88% dela.
    O cabeçalho continua legível porque o alto da foto é o trecho escuro do
    gradiente dela. */
-/* ⭐ A HERO É DIRIGIDA PELO SCROLL — "mais scroll based".
-   Três movimentos, todos amarrados ao percurso e nenhum a um timer:
-     1. a hero FICA (sticky) e o conteúdo sobe por cima dela — é a mecânica das
-        folhas do Laxer, dos salvos dele, aplicada à capa;
-     2. a foto recua (`scale` 1 → 1,08 com o quadro descendo), então o rosto
-        parece afundar enquanto a página avança;
-     3. o nome e o ofício se AFASTAM para os lados opostos, cada um saindo pela
-        sua borda — o gesto que os cantos já sugerem, completado pelo gesto.
-
-   ⚠ CSS puro (`animation-timeline: view()`), não JS: roda no compositor e não
-   sabe que o Lenis existe. Sem suporte, a hero simplesmente fica parada — o
-   conteúdo continua legível e nada quebra. */
 .p-hero {
   /* ⚠ 12/09: a hero NÃO gruda mais — com as folhas em Profundidade ela desce
      e escurece como as outras. Grudada, ela reaparecia por trás do rodapé
@@ -1402,16 +1390,6 @@
 .p-ficha-lateral dt { color: var(--p-quieto); padding-bottom: 3px; }
 .p-ficha-lateral dd { margin: 0; }
 
-/* ── serviços: FOLHAS QUE SE EMPILHAM ────────────────────────────────────
-   "card lado a lado é muito clássico". Grade de quatro mostra tudo de uma vez e
-   não tem percurso; aqui cada serviço gruda e o próximo sobe por cima, com a
-   peça em tamanho grande — a mecânica das folhas do Laxer (salvos dele),
-   aplicada a esta seção.
-
-   ⚠ A folha COBERTA recua (escala e opacidade), senão quatro camadas paradas
-   leem como borrão. E cada `li` precisa de fundo OPACO: sem ele, todas as
-   folhas aparecem ao mesmo tempo — é o mesmo defeito que a capa sticky já
-   causou nesta página. */
 .p-servicos-pilha { grid-column: 1 / -1; display: grid; }
 .p-servico-folha {
   position: sticky;
@@ -1751,14 +1729,6 @@
   .p-rodape-indice { grid-column: 1 / -1; }
 }
 
-/* ── A CORTINA DE GRADE (transição de rota) ───────────────────────────────
-   Mecânica dos salvos dele: Nischint Singh, Project 08 — "layered grid system
-   where alternating rows reveal from opposing directions, creating a dynamic
-   curtain effect". Ver o cabeçalho de `app/TransicaoRota.tsx`.
-
-   ⚠ SEIS FAIXAS de 1/6 da altura cada, com 0,5% de sobreposição: sem a sobra,
-   o antialias deixa um fio do fundo aparecendo entre elas quando o quadro está
-   fechado. */
 .p-cortina { position: fixed; inset: 0; z-index: 90; }
 /* ⚠⚠⚠ ESTADO DE REPOUSO NO CSS — QUARTA VEZ que este projeto cobre a própria
    página por esquecer isto. As faixas são `absolute` dentro de uma raiz
@@ -3519,10 +3489,6 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
   .pn-logo--publicado { height: auto; max-height: 26px; }
 }
 
-/* ── HOME: O REEL DE FUNDO (28/09) ─────────────────────────────────────────
-   Ver `v2/HomeFundo.tsx`. Medidas do frame "BNB - Home" (1920): cartão
-   200×155 = 10,42vw × 8,07vw, vão 12, nome 12px acima, respiro de 12 nas
-   bordas. A frase e a faixa dividem a mesma base. */
 .p-fundo {
   position: absolute;
   inset: 0;
@@ -4169,9 +4135,6 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
   .p-uma-pub-ficha, .p-uma-pub-peca { grid-column: 2; }
 }
 
-/* ── HOME · O ESPAÇO (03/10) — o conceito do Florén com a matéria do Bredoff ─
-   Palco alto com a cena em sticky; fundo em degradê papel → tinta, como o
-   palco do Florén, para as pranchas pegarem luz em cima e afundarem embaixo. */
 .p-esp-palco {
   position: relative;
   height: 640vh;
@@ -4208,10 +4171,6 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
   font-size: clamp(48px, 7vw, 132px); line-height: 0.9; letter-spacing: -0.05em;
 }
 
-/* ── O ESPAÇO · A HOME INTEIRA NA LINGUAGEM DO FLORÉN (03/10) ────────────────
-   Toda seção: alta, quadro em sticky, `--p` (0→1) escrito pelo ScrollTrigger.
-   O movimento é CSS em cima de `--p` — sem re-render. `--e` = progresso com
-   folga no fim (a transformação termina antes da seção, e o estado assenta). */
 .p-flo { position: relative; margin-inline: calc(var(--p-margem) * -1); --e: min(1, calc(var(--p, 0) * 1.35)); }
 .p-flo-quadro { position: sticky; top: 0; height: 100svh; overflow: hidden; }
 .p-flo-cap { position: absolute; z-index: 3; top: calc(var(--p-margem-y) + var(--p-menu-h, 77px) + 32px); font-size: 11px; letter-spacing: 0.06em; color: rgba(233, 227, 225, 0.62); }
