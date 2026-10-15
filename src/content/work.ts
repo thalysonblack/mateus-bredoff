@@ -50,6 +50,8 @@ export type WorkItem = {
   /** "About": parágrafos do corpo. Vazio = texto ainda não escrito (ver `contentPending`). */
   about: string[];
   cover: WorkImage;
+  /** a capa é um recorte de uma peça da galeria: o case não a repete no topo (15/10) */
+  capaNaGaleria?: boolean;
   images: WorkImage[];
   behanceUrl?: string;
   /**
@@ -545,6 +547,7 @@ export const WORK: WorkItem[] = [
       "The realistic AI-generated imagery conveys a sober, cold, and professional aesthetic, reinforcing the company’s positioning as an industry leader.",
     ],
     cover: img(f_art_junghirsch_1400, 1400, 1050, "Junghirsch — capa", f_art_junghirsch_1440),
+    capaNaGaleria: true,
     images: [
       img(f_case_junghirsch_01_1400, 1400, 788, "Junghirsch — marca Junghirsch com o cervo sobre branco", f_case_junghirsch_01_1920),
       img(f_case_junghirsch_02_1400, 1400, 788, "Junghirsch — peças impressas e tela do app com a frase 'Wir liefern Neukunden'", f_case_junghirsch_02_1920),
@@ -617,6 +620,7 @@ export const WORK: WorkItem[] = [
       "It's still a work in progress, but I already have some solid art direction to share.",
     ],
     cover: img(f_art_mecanica_sanctas_1400, 1400, 1050, "Mecanica Sanctas — capa", f_art_mecanica_sanctas_1800),
+    capaNaGaleria: true,
     images: [
       { ...img(f_case_mecanica_sanctas_01_1400, 1400, 1750, "Mecanica Sanctas — marca em cruz sobre preto", f_case_mecanica_sanctas_01_2160), meia: true },
       img(f_case_mecanica_sanctas_02_1400, 1400, 1400, "Mecanica Sanctas — cartaz 'Born in flesh, reborn in steel'", f_case_mecanica_sanctas_02_2700),
@@ -645,6 +649,7 @@ export const WORK: WorkItem[] = [
       "Project developed by me at Design With blink* (my current job).",
     ],
     cover: img(f_art_hoki_1400, 1280, 960, "Hōki — capa"),
+    capaNaGaleria: true,
     images: [
       img(f_case_hoki_01_1400, 1400, 788, "Hōki — marca HŌKI sobre branco", f_case_hoki_01_1920),
       img(f_case_hoki_02_1400, 1400, 788, "Hōki — nome HŌKI desenhado com corrente dourada", f_case_hoki_02_1920),
@@ -695,6 +700,7 @@ export const WORK: WorkItem[] = [
       "For this project, I created a simple yet scalable visual identity. The visuals feel friendly while still conveying solidity and trust. There’s also a sense of dynamism throughout the system, designed to evoke movement and inspire travel.",
     ],
     cover: img(f_art_magic_flight_1400, 1400, 1050, "Magic Flight — capa", f_art_magic_flight_1440),
+    capaNaGaleria: true,
     images: [
       img(f_case_magic_flight_01_1400, 1400, 788, "Magic Flight — marca MagicFlight sobre branco", f_case_magic_flight_01_1920),
       img(f_case_magic_flight_02_1400, 1400, 788, "Magic Flight — painel de marca com tipografia, cores e ícones", f_case_magic_flight_02_1920),
@@ -714,6 +720,7 @@ export const WORK: WorkItem[] = [
       "Project developed by me at Design With blink* (my current job).",
     ],
     cover: img(f_art_proxima_1400, 1400, 1050, "Próxima — capa", f_art_proxima_2160),
+    capaNaGaleria: true,
     images: [
       { ...img(f_case_proxima_01_1400, 1400, 1750, "Próxima — cartaz com a marca diante de planeta azul", f_case_proxima_01_2160), meia: true },
       { ...img(f_case_proxima_02_1400, 1400, 1750, "Próxima — casal passando diante de painel iluminado", f_case_proxima_02_2160), meia: true },
@@ -736,6 +743,7 @@ export const WORK: WorkItem[] = [
       "I set out to create a visual study of a brand I have always followed and that has a strong impact on the world of fashion and culture, Nike. The idea was to imagine how the brand’s symbol could exist in different periods of history, moving across eras, contexts, and aesthetics while maintaining a recognizable identity over time.  The entire project was built using AI generated images, aiming for a very specific visual consistency. I worked with a more documentary approach, simulating photos taken with direct flash from an iPhone 11, with hard light, strong contrast, and a more raw and immediate feel.  Attention to detail was essential throughout the process. Material textures, signs of use, imperfections, dirt, wear, and different qualities of light helped create a sense of time and context in each scene. The goal was for the symbol to feel like part of that moment in history, rather than something added afterward.  This was an exercise mainly focused on art direction, aesthetic consistency, and building context through imagery.",
     ],
     cover: img(f_art_nike_through_the_ages_1400, 1400, 1050, "Nike Through the Ages — capa", f_art_nike_through_the_ages_1856),
+    capaNaGaleria: true,
     images: [
       { ...img(f_case_nike_through_the_ages_01_1400, 1400, 1738, "Nike Through the Ages — capa 'Just did it' com fivela Nike no cinto", f_case_nike_through_the_ages_01_1856), meia: true },
       { ...img(f_case_nike_through_the_ages_02_1400, 1400, 1737, "Nike Through the Ages — cavaleiro medieval com espada em forma de swoosh", f_case_nike_through_the_ages_02_1857), meia: true },
@@ -763,6 +771,7 @@ export const WORK: WorkItem[] = [
       "For each character, I chose a different material as a reference: rustic ceramics, luxury finishes, and the wear of time. My intention was to create objects that the viewer could almost feel through the screen.",
     ],
     cover: img(f_art_adventure_time_1400, 1400, 1050, "Adventure Time — capa", f_art_adventure_time_2175),
+    capaNaGaleria: true,
     images: [
       { ...img(f_case_adventure_time_01_1400, 1400, 1738, "Adventure Time — escultura preta de monstro com vários olhos", f_case_adventure_time_01_2175), meia: true },
       { ...img(f_case_adventure_time_02_1400, 1400, 1737, "Adventure Time — Finn em cerâmica dentro de cubo de metal", f_case_adventure_time_02_2176), meia: true },
@@ -812,6 +821,7 @@ export const WORK: WorkItem[] = [
       "I developed a universe where the brand’s 3D icon appears interacting with real-world elements, as well as with different brand applications.",
     ],
     cover: img(f_art_lama_10_1400, 1400, 1050, "Lama 10 — capa", f_art_lama_10_2475),
+    capaNaGaleria: true,
     images: [
       { ...img(f_case_lama_10_01_1400, 1400, 1738, "Lama 10 — lhama de acrílico cheia de fichas roxas", f_case_lama_10_01_1856), meia: true },
       { ...img(f_case_lama_10_02_1400, 1400, 1738, "Lama 10 — mulher com ícone de lhama em cenário roxo e laranja", f_case_lama_10_02_1856), meia: true },
@@ -872,6 +882,7 @@ export const WORK: WorkItem[] = [
       "In the end, I created a solid and clean visual identity that helps communicate the company’s commitment, professionalism, and dedication to its clients.",
     ],
     cover: img(f_art_infinos_1400, 1400, 1050, "Infinos — topo do site em janela de navegador", f_art_infinos_2800),
+    capaNaGaleria: true,
     images: [
       img(f_case_infinos_01_1400, 1400, 1117, "Infinos — página do site em janela de navegador, trecho 1 de 9", f_case_infinos_01_2800),
       img(f_case_infinos_02_1400, 1400, 1117, "Infinos — página do site em janela de navegador, trecho 2 de 9", f_case_infinos_02_2800),
@@ -894,6 +905,7 @@ export const WORK: WorkItem[] = [
       "In my proposal, I built something clean, functional, and different from the usual, while still maintaining a striking and impactful visual presence.",
     ],
     cover: img(f_art_resieben_1400, 1400, 1050, "Resieben — topo do site em janela de navegador", f_art_resieben_2800),
+    capaNaGaleria: true,
     images: [
       img(f_case_resieben_01_1400, 1400, 1117, "Resieben — página do site em janela de navegador, trecho 1 de 10", f_case_resieben_01_2800),
       img(f_case_resieben_02_1400, 1400, 1117, "Resieben — página do site em janela de navegador, trecho 2 de 10", f_case_resieben_02_2800),
@@ -917,6 +929,7 @@ export const WORK: WorkItem[] = [
       "The visual direction is clean and functional, with a strong emphasis on content.",
     ],
     cover: img(f_art_muhlwald_1400, 1400, 1050, "Mühlwald — topo do site em janela de navegador", f_art_muhlwald_2800),
+    capaNaGaleria: true,
     images: [
       img(f_case_muhlwald_01_1400, 1400, 1117, "Mühlwald — página do site em janela de navegador, trecho 1 de 8", f_case_muhlwald_01_2800),
       img(f_case_muhlwald_02_1400, 1400, 1117, "Mühlwald — página do site em janela de navegador, trecho 2 de 8", f_case_muhlwald_02_2800),

@@ -76,7 +76,9 @@ export function RolinCCase() {
         {w.about.length > 0 && <div className="rcc-texto">{w.about.map((p) => <p key={p.slice(0, 24)}>{p}</p>)}</div>}
       </header>
       <ol className="rcc-pecas">
-        <li><span className="rc-quadro rcc-quadro"><img src={c.src} srcSet={c.srcSet} width={w.cover.w} height={w.cover.h} alt={c.alt} decoding="async" /></span></li>
+        {/* 15/10: a capa abre o case na proporção dela (não no corte 4:3 da home); se ela é recorte de uma peça
+            da galeria, não entra — senão a mesma imagem aparece duas vezes */}
+        {!w.capaNaGaleria && <li><img src={c.src} srcSet={c.srcSet} width={w.cover.w} height={w.cover.h} alt={c.alt} decoding="async" /></li>}
         {w.images.map((m) => (
           <li key={m.src} className={m.meia ? "is-meia" : undefined}>
             <img src={m.src} srcSet={m.src2x ? `${m.src} 1x, ${m.src2x} 2x` : undefined} width={m.w} height={m.h} alt={m.alt} loading="lazy" decoding="async" />
