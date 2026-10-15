@@ -111,3 +111,13 @@
   .rc-lado { padding-top: 60px; }
   .rc-lado-abre { margin-top: 72px; }
 }
+
+/* RODAPÉ sem vermelho (15/10): retrato no lugar da hora; ficha em branco/cinza no preto */
+.rc-pe .rc-retrato { display: block; overflow: hidden; background: #0b0b0b; }
+.rc-pe .rc-retrato img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+.rc-pe .rl-info-ficha, .rc-pe .rl-info-ficha a { color: #fff; }
+.rc-pe .rl-apagado, .rc-pe .rl-pub .rl-apagado { color: #8a8a8a; }
+.rc-pe .rl-ponto::before { background: #fff; }
+.rc-pe .rl-logo { background-color: #fff; }
+@media (max-width: 899px) { .rc-pe .rc-retrato { height: 80svh; } }
+.rc-fixo.is-info, .rc-fixo.is-info a { color: #fff; }

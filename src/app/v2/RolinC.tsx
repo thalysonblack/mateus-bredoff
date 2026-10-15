@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { Link } from "react-router";
 import { WORK } from "../../content/work";
 import { LEAD } from "../../content/about";
@@ -7,6 +7,9 @@ import { INSTAGRAM } from "../../content/lab";
 import { RECONHECIMENTO } from "../../content/reconhecimento";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { gsap, ScrollTrigger, prefersReducedMotion } from "../../lib/gsap";
+import retrato from "../../assets/optimized/framer/retrato-mateus-paisagem-1600.webp";
+import retrato2x from "../../assets/optimized/framer/retrato-mateus-paisagem-3200.webp";
+import retratoV from "../../assets/optimized/framer/retrato-mateus-vertical-900.webp";
 import "../../styles/rolin.css";
 import "../../styles/rolin-c.css";
 
@@ -19,18 +22,11 @@ import "../../styles/rolin-c.css";
 const nome = (t: string) => t.replace("®", "").trim();
 const ANOS = `’${String(Math.min(...WORK.map((w) => w.year))).slice(2)} — ’${String(Math.max(...WORK.map((w) => w.year))).slice(2)}`;
 
-const horaBR = () => new Date().toLocaleTimeString("pt-BR", { timeZone: "America/Sao_Paulo", hour: "2-digit", minute: "2-digit" }).split(":");
-
 export default function RolinC() {
   useMetaRota();
   const raiz = useRef<HTMLDivElement | null>(null);
-  const [hora, setHora] = useState(horaBR);
   const [noPe, setNoPe] = useState(false);
   const publicados = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano);
-  useEffect(() => {
-    const t = setInterval(() => setHora(horaBR()), 10_000);
-    return () => clearInterval(t);
-  }, []);
 
   useLayoutEffect(() => {
     const el = raiz.current;
@@ -101,12 +97,13 @@ export default function RolinC() {
         </aside>
       </div>
 
-      {/* RODAPÉ da Rolin, igual: hora gigante no vermelho + ficha no preto */}
+      {/* RODAPÉ: retrato dele + ficha no preto, sem vermelho */}
       <div id="rc-info" className="rl rc-pe">
         <section className="rl-info">
-          <div className="rl-info-hora" aria-label={`${hora.join(":")} BRT`}>
-            <p className="rl-hora"><span>{hora[0]}</span> <span>{hora[1]}</span><br /><span>BRT</span></p>
-          </div>
+          <picture className="rc-retrato">
+            <source media="(max-width: 899px)" srcSet={retratoV} />
+            <img src={retrato} srcSet={`${retrato} 1x, ${retrato2x} 2x`} alt="Mateus Bredoff" loading="lazy" decoding="async" />
+          </picture>
           <div className="rl-info-ficha">
             <div className="rl-info-cab">
               <a href="mailto:hello@mateusbredoff.com" className="rl-ponto">hello@mateusbredoff.com</a>
