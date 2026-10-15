@@ -141,7 +141,7 @@
 .rc-legenda .rc-ano { justify-self: end; }
 @media (min-width: 900px) {
   /* foto até a vertical das tags; o texto da ficha começa exatamente nela */
-  .rc-pe .rl-info { grid-template-columns: calc(50% - var(--rc-m)) 1fr; }
+  .rc-pe .rl-info { grid-template-columns: 50% 1fr; } /* a borda da FOTO cai na vertical das tags */
   .rc-legenda { grid-template-columns: 32px calc(var(--rc-centro, 50%) - 32px - 24px) 1fr 3em; }
   .rc-pe .rl-info-ficha { padding-left: var(--rc-m); }
 }
