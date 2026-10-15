@@ -602,3 +602,10 @@ html[data-rc-medidas] .rc-grade-guia i::before { counter-increment: col; content
 .rca-fitas .fitas-behance { --fita: 26px; }
 .rca-fitas + ol { grid-row: 2; }
 @media (max-width: 899px) { .rca-fitas, .rca-fitas + ol { grid-column: 1 / -1; grid-row: auto; } }
+
+/* área de toque ≥ 44px no celular, sem mexer no desenho: padding + margem negativa iguais */
+@media (max-width: 899px) {
+  .rc-fixo .rc-nav a { padding-inline: 4px; margin-inline: -4px; }
+  .rl-info-cab > a { padding-block: 9px; margin-block: -9px; }
+  .rc-credito a { padding-block: 16px; }
+}

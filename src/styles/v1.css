@@ -4424,3 +4424,10 @@ a.pn-publicado-logo:hover { color: var(--p-ink); }
   .p-est-servicos li .p-est-quieto { grid-column: 2; }
   .p-est-sec { padding-block: 88px; }
 }
+
+/* área de toque dos filtros Cards/List no celular: ::before invisível, sem invadir as pílulas abaixo (12px) */
+@media (max-width: 899px) {
+  .p-work-chip { position: relative; }
+  .p-work-chip::before { content: ""; position: absolute; top: -13px; bottom: -6px; left: -10px; right: -10px; }
+  .p-work-chip:last-of-type::before { right: -24px; }
+}
