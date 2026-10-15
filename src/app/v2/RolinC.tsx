@@ -25,6 +25,7 @@ export default function RolinC() {
   useMetaRota();
   const raiz = useRef<HTMLDivElement | null>(null);
   const [hora, setHora] = useState(horaBR);
+  const [noPe, setNoPe] = useState(false);
   const publicados = [...RECONHECIMENTO].sort((a, b) => b.ano - a.ano);
   useEffect(() => {
     const t = setInterval(() => setHora(horaBR()), 10_000);
@@ -33,13 +34,16 @@ export default function RolinC() {
 
   useLayoutEffect(() => {
     const el = raiz.current;
-    if (!el || prefersReducedMotion()) return;
+    if (!el) return;
     let ctx: gsap.Context | null = null;
     let vivo = true;
+    const reduz = prefersReducedMotion();
     /* o App mata os ScrollTriggers no effect da rota: nascer dois frames depois das fontes */
     document.fonts.ready.then(() => requestAnimationFrame(() => requestAnimationFrame(() => {
       if (!vivo) return;
       ctx = gsap.context(() => {
+        ScrollTrigger.create({ trigger: "#rc-info", start: "top 40px", onToggle: (t) => setNoPe(t.isActive) });
+        if (reduz) return;
         gsap.utils.toArray<HTMLElement>(".rc-quadro").forEach((q) => {
           gsap.fromTo(q, { clipPath: "inset(14% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.1, ease: "power3.out",
             scrollTrigger: { trigger: q, start: "top 88%", once: true } });
@@ -54,12 +58,18 @@ export default function RolinC() {
 
   return (
     <div ref={raiz} className="rc">
+      {/* MENU FIXO: nome | disciplina | WORK INFO, sempre na tela */}
+      <header className={`rc-fixo${noPe ? " is-info" : ""}`}>
+        <Link to="/v2/rolin-c">Mateus Bredoff</Link>
+        <span>Brand design /<br />art direction</span>
+        <nav className="rc-nav" aria-label="Seções">
+          <a href="#rc-work">Work</a>
+          <a href="#rc-info">Info</a>
+        </nav>
+      </header>
+
       <div className="rc-palco">
         <aside className="rc-lado">
-          <div className="rc-lado-topo">
-            <Link to="/v2/rolin-c">Mateus Bredoff</Link>
-            <span>Brand design /<br />art direction</span>
-          </div>
           <div id="rc-work" className="rc-lado-topo rc-lado-abre">
             <p>Selected work</p>
             <p className="rc-quieto">{ANOS}</p>
@@ -87,10 +97,6 @@ export default function RolinC() {
         </ol>
 
         <aside className="rc-dir">
-          <nav className="rc-nav" aria-label="Seções">
-            <a href="#rc-work">Work</a>
-            <a href="#rc-info">Info</a>
-          </nav>
           <p className="rc-quieto rc-conta">{String(WORK.length).padStart(2, "0")} projects</p>
         </aside>
       </div>

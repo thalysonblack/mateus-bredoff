@@ -90,3 +90,24 @@
 
 /* rodapé herdado da Rolin: o .rl aqui é só escopo de estilo */
 .rc-pe.rl { min-height: 0; }
+
+/* MENU FIXO (15/10): fica na tela até o rodapé; no rodapé o WORK/INFO vira branco sobre o preto */
+.rc-fixo {
+  position: fixed; z-index: 40; inset: 0 0 auto 0; pointer-events: none;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--rc-vao);
+  padding: 15px var(--rc-m) 0; align-items: start;
+}
+.rc-fixo > * { pointer-events: auto; }
+.rc-fixo .rc-nav { grid-column: 4; justify-self: end; display: flex; gap: 16px; }
+.rc-fixo.is-info .rc-nav a { color: rgb(255 255 255 / 0.7); }
+.rc-lado { padding-top: 58px; }
+.rc-lado-abre { margin-top: 124px; }
+.rc-dir { padding-top: 0; }
+.rc-dir .rc-conta { margin-top: 182px; }
+@media (max-width: 899px) {
+  .rc-fixo { grid-template-columns: 1fr 1fr; padding-top: 12px; padding-bottom: 10px; background: var(--rc-papel); transition: background 0.3s; }
+  .rc-fixo.is-info { background: transparent; }
+  .rc-fixo .rc-nav { display: none; }
+  .rc-lado { padding-top: 60px; }
+  .rc-lado-abre { margin-top: 72px; }
+}
