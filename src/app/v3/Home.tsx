@@ -35,14 +35,16 @@ export function HeroReel() {
   const tela = useRef<HTMLVideoElement | null>(null);
 
   const ref = useCena((el) => {
-    gsap.timeline({ scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } })
+    /* no celular o reel fica parado em 16:9 sob o topo: sem zoom nem menu descendo */
+    const celular = matchMedia("(max-width: 860px)").matches;
+    if (!celular) gsap.timeline({ scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } })
       .to(".rx-quadro .rx-video", { scale: 1.35, yPercent: 18, ease: "none", duration: 1 }, 0)
       .to(".rx-sombra", { opacity: 0.8, ease: "none", duration: 1 }, 0)
       .to(".rx-legenda", { autoAlpha: 0, duration: 0.25 }, 0);
     /* menu branco chapado só enquanto ele está sobre o reel; no papel volta ao difference */
     ScrollTrigger.create({ trigger: el, start: "top bottom", end: "bottom top+=90", toggleClass: { targets: document.documentElement, className: "rx-sobre" } });
     const menu = document.querySelector<HTMLElement>(".p-menu");
-    if (menu) {
+    if (menu && !celular) {
       const desce = () => window.innerHeight / 2 - menu.getBoundingClientRect().height / 2 - menu.offsetTop;
       gsap.fromTo(menu, { y: desce }, { y: 0, ease: "none", immediateRender: true,
         scrollTrigger: { start: 0, end: desce, scrub: true, invalidateOnRefresh: true } });

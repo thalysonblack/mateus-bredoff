@@ -52,3 +52,17 @@
 }
 @keyframes rx-escorre { 0% { transform: translateY(-100%); } 55% { transform: translateY(0); } 100% { transform: translateY(100%); } }
 @media (prefers-reduced-motion: reduce) { .rx-scroll i::after { animation: none; transform: none; } }
+
+/* ── V3 NO CELULAR (15/10): topo enxuto sobre o escuro, reel inteiro em 16:9, "Play reel" embaixo ── */
+@media (max-width: 860px) {
+  .hx-cena.rx-full {
+    height: auto; overflow: visible; background: #0b0d0d;
+    padding-top: calc(var(--p-margem-y) * 2 + var(--p-menu-h, 24px) + 24px);
+    margin-bottom: 64px;
+  }
+  .rx-full .rx-quadro { position: relative; inset: auto; aspect-ratio: 16 / 9; }
+  .rx-full .rx-sombra, .rx-full .rx-quadro::after { display: none; }
+  .rx-full .rx-legenda { position: static; padding: 16px var(--p-margem) 24px; }
+  .rx-full .rx-play { padding-block: 14px; margin-block: -14px; }
+  .rx-full .rx-scroll { display: none; }
+}
