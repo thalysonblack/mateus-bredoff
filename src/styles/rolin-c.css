@@ -578,3 +578,9 @@ html[data-rc-sem-grade] .rc-grade-guia { opacity: 0; }
 .rcc-pecas li.is-solta.is-centro { grid-column: 4 / span 6; }
 .rcc-pecas li.is-solta.is-dir { grid-column: 7 / span 6; }
 @media (max-width: 899px) { .rcc-pecas li.is-solta, .rcc-pecas li.is-solta.is-esq, .rcc-pecas li.is-solta.is-centro, .rcc-pecas li.is-solta.is-dir { grid-column: 1 / -1; } }
+
+/* EASTER EGG — Konami: a grade aparece com a numeração de cada coluna, como no Figma (15/10) */
+html[data-rc-medidas] .rc-grade-guia i { position: relative; border-color: rgb(255 26 13 / 0.35); background: rgb(255 26 13 / 0.03); }
+html[data-rc-medidas] .rc-grade-guia { counter-reset: col; }
+html[data-rc-medidas] .rc-grade-guia i::before { counter-increment: col; content: counter(col, decimal-leading-zero);
+  position: absolute; bottom: 64px; left: 4px; font: 500 9px/1 ui-monospace, monospace; color: rgb(255 26 13 / 0.8); }

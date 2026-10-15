@@ -79,6 +79,28 @@ const guias = (className: string) => (
 export function RcMoldura({ atual, onAbout }: { atual?: "work" | "about"; onAbout?: (e: MouseEvent) => void }) {
   const [escuro, setEscuro] = useState(false);
   const [grade, setGrade] = useState(lerGrade);
+
+  /* EASTER EGGS (15/10, escolha nossa): recado no console, título da aba quando a pessoa sai,
+     e o código Konami liga a grade com as medidas — o "por trás" de um site de designer */
+  useEffect(() => {
+    if (!(window as unknown as { __rcOla?: boolean }).__rcOla) {
+      (window as unknown as { __rcOla?: boolean }).__rcOla = true;
+      console.log("%cMateus Bredoff", "font: 600 32px/1 'Helvetica Neue', Arial, sans-serif; letter-spacing: -0.03em;");
+      console.log("%cYou opened the inspector. Good taste.\nBrand design & art direction — hello@mateusbredoff.com\n(try ↑ ↑ ↓ ↓ ← → ← → B A)", "font: 12px/1.5 ui-monospace, monospace; color: #767676;");
+    }
+    const original = document.title;
+    const aba = () => { document.title = document.hidden ? "Come back ✦ Mateus Bredoff" : original; };
+    document.addEventListener("visibilitychange", aba);
+    const SEQ = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+    let pos = 0;
+    const konami = (e: KeyboardEvent) => {
+      const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      pos = k === SEQ[pos] ? pos + 1 : k === SEQ[0] ? 1 : 0;
+      if (pos === SEQ.length) { pos = 0; setGrade(true); document.documentElement.toggleAttribute("data-rc-medidas", true); }
+    };
+    window.addEventListener("keydown", konami);
+    return () => { document.removeEventListener("visibilitychange", aba); document.title = original; window.removeEventListener("keydown", konami); };
+  }, []);
   useEffect(() => {
     document.documentElement.toggleAttribute("data-rc-sem-grade", !grade);
     try { localStorage.setItem(GRADE, grade ? "on" : "off"); } catch { /* sem storage: vale só nesta visita */ }
