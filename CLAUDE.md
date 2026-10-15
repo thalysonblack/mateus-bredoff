@@ -1,204 +1,79 @@
 # Mateus Bredoff — site portfólio
 
-Site de **Mateus Bredoff, brand designer**. Origem: export do **Figma Make**, recriando
-o site publicado em Framer (`mateusbredoff.framer.website`). O artboard escalado original
-do Figma (`src/imports/Home.tsx`) foi **aposentado e removido** — cada seção hoje é um
-componente React responsivo de verdade.
+Site de **Mateus Bredoff, brand designer**. Vite + React. Hoje o ramo tem só as
+três versões em aprovação e a página que as compara.
 
-## ⭐ Leia primeiro: qual é o site, hoje (20/08/2026)
+## Estado atual (15/10/2026)
 
-O site é a **home D "A TRAMA"** com o visor fluido no modo Arco — a direção da
-V2 "A PRANCHA", promovida à raiz em 17/08. A direção anterior, "o portfólio
-como visor" (a V3), foi inteira para `/arquivo/visor/*` e não é mais o alvo.
+O histórico inteiro (direções antigas, `/arquivo/*`, `/v4`, `/v5`, abouts B–H,
+lab, réplica do Framer, `_refs/`) saiu deste ramo. Está guardado no ramo
+**`arquivo/versoes-antigas`** e na tag **`arquivo-2026-10-15`**. Para consultar:
+`git show arquivo-2026-10-15:<caminho>`.
 
-```
-/                  HomeD (fluidoModo 4)   a trama: nomes acendendo na cor do projeto
-/about             PranchaAbout           camadas — folhas sobrepostas
-/work              PranchaWork
-/work/:slug        PranchaCase            um componente para TODOS os cases
-/lab               —                      REMOVIDO do site em 12/09/2026 (ordem dele); /v2/lab e /v4/lab ficam como estúdio
-/v2/*              —                      partidos de home (a…i) e as 8 abouts
-/arquivo/*         —                      direções descartadas, montáveis para comparar
-```
-
-**As rotas canônicas nunca mudaram de nome** — são as mesmas do CMS dele e do
-Framer original. O que muda a cada direção é qual componente as monta, e é por
-isso que `content/meta.ts` e o pré-render seguem valendo sem uma linha de
-mudança.
-
-🚩 **A about ainda não foi fechada.** Oito versões vivas e comparáveis, à espera
-do veredito: `/about` camadas · `/v2/about-b` dossiê · `/v2/about-c` catálogo ·
-`/v2/about-d` o retrato (escolhida, com a hero da original) · `/v2/about-e` a
-ficha · `/v2/about-f` a palavra · `/v2/about-g` o pôster (a última) ·
-`/v2/about-h` a cartela (reprovada, preservada como repertório).
-
-**`/v2/*` e `/arquivo/*` são material de estúdio, não site.** Ficam fora do
-pré-render de propósito: sem HTML próprio, não aparecem em busca nem em unfurl.
-`/arquivo/framer` é a réplica fiel do publicado — foi a FONTE do conteúdo,
-medida rota a rota, e continua sendo a régua contra a qual se confere um fato.
-
-⚠ **Este arquivo tem seções escritas quando o alvo era outro.** O que fala de
-`v3-system.tsx` / `v3.css` descreve o sistema de `/arquivo/visor`, e a seção
-"Direção de design (branch `estilo-editorial`)" descreve a direção autoral, hoje
-em `/arquivo/autoral`. Valem como histórico. O sistema vivo é
-`src/app/v2/` + `src/styles/v2.css`.
-
-## Arquitetura de motion e scroll
-
-Dois sistemas, responsabilidade única, boot em ordem fixa — **scroll antes de
-motion**. Não existe sistema de navegação (Barba e afins): o roteamento é do
-`react-router`, e o ciclo de vida de rota vive em `App.tsx` (leia o comentário
-do `RouteLifecycle` antes de mexer — são três coisas obrigatórias por
-navegação, e esquecer qualquer uma dá bug fantasma).
+## Rotas
 
 ```
-src/lib/lenis.ts          dono ÚNICO do scroll
-src/lib/gsap.ts           registro de plugins + defaults do projeto
-src/animations/reveal.ts  o gesto, sem saber que React existe
-src/hooks/useReveal.ts    ciclo de vida React → animação
+/  e  /v1          V1 — o site no ar (home com visor fluido)
+/about             V1 — about
+/work              V1 — índice de trabalhos
+/work/:slug        V1 — case (um componente para todos os slugs)
+/v2                V2 — home
+/v2/about          V2 — about
+/v2/work           V2 — índice
+/v2/work/:slug     V2 — case
+/v3                V3 — home aberta pelo reel
+/versoes           as três versões lado a lado, para aprovação
+*                  cai no case da V1, que trata o 404
 ```
 
-Regras que este projeto já pagou para aprender:
+O pré-render (`scripts/prerender.mjs`) gera o `<head>` de `/`, `/about`,
+`/work` e de cada `/work/:slug`, a partir de `src/content/meta.ts`.
 
-- **Um relógio só.** O Lenis anda no ticker do GSAP, nunca num `rAF` próprio, e
-  quem precisa da posição de scroll ouve o evento do Lenis — não
-  `window.scrollY`. O marquee nasceu com rAF próprio + `window.scrollY` e virou
-  defeito no instante em que o Lenis entrou.
-- **Guarde a referência do ticker.** `gsap.ticker.remove()` só funciona com a
-  mesma função que entrou no `add`; callback inline entra e nunca sai.
-- **Nunca `window.scrollTo`.** Use `scrollToTop()` de `lib/lenis.ts`.
-- **`document.fonts.ready` antes de qualquer SplitText.** As fontes são
-  self-hosted; se a webfont chega depois, as linhas foram medidas com a métrica
-  do fallback e a máscara corta no meio da altura-x.
-- **Texto splitado precisa de `aria-label` no pai + `aria-hidden` nas linhas**, e
-  de `revert()` no cleanup — sem isso o leitor de tela recita fragmentos e cada
-  remount empilha divs, matando a seleção de texto.
-- **O que é revelado começa oculto por `.js [data-reveal]`**, nunca por CSS puro:
-  se o bundle falhar, o texto tem que continuar legível.
-- `data-*` para hook de animação; classe é só estilo.
+## Pastas
 
-### ⚠ `window.scrollTo` não dispara ScrollTrigger com Lenis no comando
+```
+src/app/App.tsx              rotas + RouteLifecycle (leia o comentário antes de mexer)
+src/app/v1/                  Home, About, Work, Case, HoverColuna, WorkCartoes, useRevelar
+src/app/v2/                  Home, About, Work (índice + case), Moldura, FechamentoAbout, Letreiro, gl.ts
+src/app/v3/                  Home (reel), Indice, Heroes, NomeObra
+src/app/compartilhado/       sistema (Prancha, usado por V1 e V3), HoverFluido, useRevelacaoPalavra,
+                             TransicaoRota, SeletorVersao, Versoes (/versoes)
+src/content/                 work, pecas, about, servicos, reconhecimento, reel, lab, cores, meta, contato, precos
+src/lib/                     lenis, gsap, visorFluido (+ .glsl), arquivoWebGL, cartoesWebGL
+src/hooks/useMetaRota.ts     título/description por rota
+src/styles/                  index.css (fonts, system, framer, tailwind, theme) · base.css + v1.css (V1/V3)
+                             · v2-base.css + v2.css (V2) · v3.css, v3-indice.css, v3-heroes.css (V3)
+src/assets/                  fonts, logos, optimized (WebP), reel-*.mp4, versoes (capas do /versoes)
+scripts/                     prerender, verify-meta, verify-prod, shoot-page, prints-rotas
+```
 
-Vale para QUALQUER verificação deste repo. Com o scroll interpolado,
-`window.scrollTo` não move o Lenis, o ScrollTrigger não recebe update e o reveal
-fica congelado no estado inicial — o teste acusa "animação parada" num site que
-funciona. Role com `page.mouse.wheel`. Foi assim que o primeiro passe de
-verificação se enganou; `scripts/verify-motion.mjs` já tem o jeito certo.
+As classes CSS da V2 ainda usam os prefixos `rc-`, `rl-` e `rcf-`. São só nomes.
 
-**Motion se prova medindo.** Leia a propriedade animada em vários instantes e
-mostre a série. Prova aceita para o reveal do título (scroll real, desktop):
-`136.2 → 91 → 59.2 → 35.3 → 16.3 → 8.2 → 3.3 → 0.8 → 0.1 → 0` — dez valores
-distintos, a desaceleração do `power3.out`. Dois valores só provariam um salto.
+## Motion e scroll
+
+- **Lenis é o dono único do scroll** e anda no ticker do GSAP. Quem precisa da
+  posição ouve o evento do Lenis, nunca `window.scrollY`.
+- **Nunca `window.scrollTo`.** Use `scrollToTop()` de `lib/lenis.ts`. Em teste,
+  role com `page.mouse.wheel`: `scrollTo` não move o Lenis e o ScrollTrigger fica parado.
+- `gsap.ticker.remove()` só funciona com a mesma função do `add`.
+- `document.fonts.ready` antes de qualquer SplitText.
+- Texto splitado: `aria-label` no pai, `aria-hidden` nas linhas, `revert()` no cleanup.
 
 ## Stack e comandos
 
-- Vite 6 + TypeScript + React 18 + Tailwind v4 (`@tailwindcss/vite`)
-- **GSAP 3.15** (ScrollTrigger + SplitText, ambos no pacote público desde a
-  3.13) + **Lenis** para scroll. `motion` (Framer Motion) ainda opera reveals
-  antigos em algumas seções — a migração para o reveal por máscara é gradual, e
-  seção nova já nasce no `useReveal`.
-- **pnpm** (`pnpm dev` → :5173, `pnpm build` → `dist/`)
-- Mora em `~/dev/mateus-bredoff` — **fora de `~/Documents`** de propósito: o iCloud
-  despeja os arquivos e o dev server passa a dar ETIMEDOUT.
+- Vite 6 + React 18 + Tailwind v4 + GSAP 3.15 + Lenis + ogl (WebGL). pnpm.
+- `pnpm dev` (:5173) · `pnpm build` (vite build + pré-render) · `pnpm install --frozen-lockfile`.
 
-## Estrutura
-
-```
-src/app/App.tsx            → Hero · About · Work · Capabilities · AI Lab · Pricing · Footer
-src/app/system.tsx         → primitivas do sistema (Rule, Mono, Bracket, SectionHead…)
-src/styles/system.css      → tokens, blocos .on-ink / .on-paper, escalas de tipo
-src/app/sections/          → uma seção por arquivo (+ Menu = barra de metadados)
-src/assets/optimized/      → imagens WebP servidas em produção
-src/assets/fonts/          → Geist + Inter Tight + Martian Mono self-hosted (woff2)
-scripts/                   → harness de verificação (puppeteer)
-```
-
-## Direção de design (branch `estilo-editorial`)
-
-A página se apresenta como **documento técnico**, não como layout — direção
-tirada das referências TITARVL / WIDE ANGLE® / All In®. As regras do sistema:
-
-- **Dueto de fontes.** Inter Tight (display) em CAIXA ALTA, tracking -0.04em,
-  para título e frase-manifesto. **Martian Mono** 11–12px para *todo* o resto:
-  nav, rótulo, legenda, índice, metadado. Parágrafo de corpo é `.t-body`
-  (grotesca 16px, caixa mista) — caixa alta em 40 palavras não se lê.
-- **Monocromático.** Só preto, branco e um cinza. Sem acento, sem matiz. Os
-  blocos alternam `.on-ink` e `.on-paper` de sangria a sangria; o contraste é o
-  ritmo da página.
-- **Raio zero, fio de 1px, sangria.** Sem canto arredondado, sem sombra, sem
-  pílula. Lista é tabela de registros: índice no topo-esquerdo, fio separando.
-- **Vernáculo:** índice de 3 dígitos (`001`), ação entre colchetes com letras
-  abertas (`[ S C R O L L ]`), legenda técnica sob cada mídia (índice à
-  esquerda, nome à direita, na largura da imagem), relógio ao vivo com GMT.
-
-**Seção nova usa as primitivas de `src/app/system.tsx`** — não recria a
-aparência delas na mão, senão o sistema vira dialeto.
-
-O trabalho é um **índice escalonado** (`Work.tsx`), não um carrossel.
-
-**Cada seção usa uma estrutura diferente, de propósito.** Quatro seções são
-listas, e se todas fossem a mesma pilha de linhas a página leria como o mesmo
-bloco repetido quatro vezes. A regra: ao criar seção nova, escolha uma estrutura
-que ainda não está em uso.
-- `About` → bloco pareado em duas colunas (as duas metades de uma ideia)
-- `Work` → índice escalonado com legenda de contact sheet
-- `Capabilities` → pilha de linhas, nome em display, índice à esquerda
-- `AILab` → tabela com **cabeçalho de coluna** (nº / brand / discipline / medium)
-- `Pricing` → linha de recibo: nome e preço nos cantos opostos, letra miúda embaixo
-
-**A About já foi tabela de registros e foi reprovada.** Cada parágrafo era uma
-linha (índice + título + corpo em 54ch + `1fr` vazio) separada por fio. Dois
-problemas: sobrava ~40% de largura morta à direita, e o fio no meio lia os dois
-parágrafos como itens sem relação, quando são as duas metades da mesma ideia.
-Não volte para aquele formato.
-
-**Órfãos nesta branch:** `Cases.tsx` (motor de carrossel) e `ConnectButton.tsx`
-(pílula "Menu" que abria o painel de contato) continuam no disco mas ninguém os
-importa — não entram no bundle. Ficaram para consulta; o contato agora vive na
-barra de metadados e no rodapé. A versão fiel ao Framer está inteira na `main`.
-
-## Verificação (use antes de dizer que está pronto)
-
-Não confie em olhar o código — este projeto já escondeu três bugs que só aparecem
-renderizando. Suba o build e rode o harness:
+## Verificação
 
 ```bash
-pnpm build
-cd dist && python3 -m http.server 4599 &
-node scripts/shoot-desktop.mjs   # 5 seções + fontes carregadas + erros de console
-node scripts/shoot-mobile.mjs    # 390×844 + varredura de overflow horizontal
-node scripts/probe-cases.mjs     # navega até o card claro (pior caso de contraste)
-node scripts/audit-contrast.mjs  # contraste de TODO texto, medido no pixel
+pnpm build && npx vite preview --port 4173 &
+node scripts/prints-rotas.mjs http://localhost:4173 /caminho/prints   # 11 rotas × 1440/390 × 3 + erros de console
+node scripts/verify-meta.mjs --servido http://localhost:4173            # head por rota
 ```
 
-Os scripts precisam de `puppeteer-core` (devDep) e do Chrome em `/Applications`.
-Rodam da raiz do repo — `puppeteer-core` não resolve de `/tmp`.
-
-### `audit-contrast.mjs` — leia antes de confiar no número
-
-Mede o contraste de cada nó de texto recortando a caixa da linha renderizada e
-lendo os pixels (PNG → RGB cru via `ffmpeg`). Passa `--` uma URL como argumento
-para auditar outra origem. Três erros de método que ele já cometeu e agora
-evita — se você mexer nele, não os reintroduza:
-
-1. **Não infle o recorte.** Um padding de 1px vaza o fundo de fora do elemento
-   e o medidor devolve 21:1 para tudo.
-2. **Recorte a caixa do texto (`Range.getClientRects`), não a bbox do
-   elemento.** A bbox inclui padding e encosta na borda do bloco.
-3. **Não faça trim simétrico de percentil.** Glifo de mono fino ocupa bem menos
-   de 1% da área do recorte; um trim de 1,5% descarta o texto e mede o
-   antialiasing — foi assim que branco-sobre-preto "mediu" 2:1. O método atual é
-   moda = fundo, extremo oposto = texto, trim de 0,2%.
-4. **Espere o reveal do Motion.** `animation:none` não segura Framer Motion (ele
-   anima por WAAPI/rAF). Medir logo após o scroll pega o texto em opacity 0 —
-   na primeira rodada 46 de 67 nós saíram como falso "invisível". Hoje espera
-   900ms e **re-lê a caixa** depois (o reveal desloca em Y).
-
-O campo `inkPixels` é a válvula de segurança: `0` significa que nada de texto
-pintou no recorte, então a medida vai para `unmeasured` — nunca conta como
-aprovação. **Calibre depois de qualquer mudança:** há uma página de aferição com
-pares de contraste conhecidos (21,00 / 6,44 / 4,54 / 2,30) descrita no histórico
-do repo; o medidor tem de reproduzir esses valores antes de você acreditar nele.
+Para provar que uma mudança não alterou nada visível: gere os prints antes e
+depois e compare pixel a pixel (diferença média ≤ 1/255 por print).
 
 ## Armadilhas deste repo (todas custaram caro)
 

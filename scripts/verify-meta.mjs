@@ -44,8 +44,6 @@ const ESPERADO = {
   '/work/votare': 'Votare - Mateus Bredoff',
   '/work/alex-archer': 'Alex Archer ® - Mateus Bredoff',
   '/work/trivo': 'Trivo - Mateus Bredoff',
-  '/work/ferraci': 'Ferraci - Mateus Bredoff',
-  '/work/bureau': 'Bureau - Mateus Bredoff',
   '/work/neox': 'Neox - Mateus Bredoff',
 };
 
