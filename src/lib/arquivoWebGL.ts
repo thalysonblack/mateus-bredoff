@@ -58,9 +58,9 @@ const FBO_W = 1024;
 const FBO_H = 1440;
 const SCREEN_W = 4.5;
 const SCREEN_H = 6.0;
-const BEND_MIN = 0.0;        /* plano parado */
-const BEND_MAX = 0.9;        /* envolve só enquanto rola */
-const BEND_LERP = 0.045;
+export const BEND_MIN = 0.0;        /* plano parado */
+export const BEND_MAX = 0.9;        /* envolve só enquanto rola */
+export const BEND_LERP = 0.045;
 const FRUSTUM_H = 6;
 
 const VERT_CARD = /* glsl */ `
@@ -90,7 +90,7 @@ void main() {
   gl_FragColor = color;
 }`;
 
-const VERT_TELA = /* glsl */ `
+export const VERT_TELA = /* glsl */ `
 attribute vec2 uv;
 attribute vec3 position;
 uniform mat4 modelViewMatrix;

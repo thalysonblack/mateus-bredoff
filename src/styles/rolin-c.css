@@ -120,3 +120,56 @@
 .rc-pe .rl-logo { background-color: #fff; }
 @media (max-width: 899px) { .rc-pe .rc-retrato { height: 80svh; } }
 .rc-fixo.is-info, .rc-fixo.is-info a { color: #fff; }
+
+/* WEBGL (15/10): com o canvas rodando, a capa é pintada pelo plano; a <img> fica no DOM, invisível */
+.rc.is-gl .rc-quadro img { opacity: 0; }
+.rc.is-gl .rc-quadro { background: transparent; }
+
+/* HOVER DOS LINKS (15/10, v2): o fio foi reprovado — só a cor sobe de quieto a tinta; no rodapé, cinza a branco */
+.rc-fixo .rc-nav a, .rc-indice a, .rc-todos, .rc-pe .rl-info-ficha a { transition: color 150ms ease; }
+.rc-pe .rl-info-cab a { color: #8a8a8a; }
+@media (hover: hover) and (pointer: fine) {
+  .rc-fixo .rc-nav a:hover, .rc-indice a:hover, .rc-todos:hover { color: var(--rc-tinta); }
+  .rc-fixo.is-info .rc-nav a:hover, .rc-pe .rl-info-cab a:hover { color: #fff; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rc-fixo .rc-nav a, .rc-indice a, .rc-todos, .rc-pe .rl-info-ficha a { transition: none; }
+}
+
+/* RODAPÉ NA COLUNA DAS CAPAS (15/10): a foto ocupa a faixa lateral; a ficha começa na borda das capas
+   e a cabeça usa a MESMA grade da legenda (nº | nome | disciplinas | ano): e-mail no nº, redes nas disciplinas */
+.rc-legenda { grid-template-columns: 32px 1fr 1fr 3em; }
+.rc-legenda .rc-ano { justify-self: end; }
+@media (min-width: 900px) {
+  .rc-pe .rl-info { --rc-util: calc(100% - 2 * var(--rc-m)); grid-template-columns: calc(var(--rc-m) + 0.32 * var(--rc-util)) 1fr; }
+  .rc-pe .rl-info-ficha { padding-left: var(--rc-vao); /* % do padding mede a COLUNA da ficha (m + 0,68·c), não a página: c = (100% − m) / 0,68 */
+    padding-right: calc(var(--rc-m) + var(--rc-vao) + 0.07 * (100% - var(--rc-m)) / 0.68); }
+  .rc-pe .rl-info-cab { grid-template-columns: 32px 1fr 1fr 3em; column-gap: 12px; padding-right: 0; }
+  .rc-pe .rl-info-cab > :first-child { grid-column: 1 / 3; }
+  .rc-pe .rl-info-cab > :nth-child(2) { grid-column: 3; }
+  .rc-pe .rl-info-pe { grid-template-columns: 32px 1fr 1fr 3em; column-gap: 12px; }
+  .rc-pe .rl-info-pe > :first-child { grid-column: 1 / 3; }
+  .rc-pe .rl-info-pe > :nth-child(2) { grid-column: 3 / 5; }
+}
+
+/* LATERAIS NO MEIO DA TELA (15/10): o bloco inteiro (rótulo + lista + all projects) e o "08 projects" centrados */
+@media (min-width: 900px) {
+  .rc-lado, .rc-dir { padding-top: 0; justify-content: center; }
+  .rc-lado-abre, .rc-dir .rc-conta { margin-top: 0; }
+}
+.rc-indice { margin-top: 24px !important; display: flex; flex-direction: column; gap: 3px; }
+.rc-indice a { color: var(--rc-quieto); position: relative; }
+.rc-indice a.is-ativo { color: var(--rc-tinta); }
+.rc-indice a.is-ativo::before { content: "•"; position: absolute; left: -10px; }
+.rc-todos { display: inline-block; margin-top: 24px; color: var(--rc-quieto); }
+@media (max-width: 899px) { .rc-indice, .rc-todos { display: none !important; } }
+
+/* SELO VIEW PROJECT (15/10): a família do .rl-view, seguindo o cursor por cima do canvas */
+.rc-view {
+  position: fixed; left: 0; top: 0; z-index: 45; pointer-events: none; visibility: hidden;
+  margin: 14px 0 0 14px; padding: 6px 9px 5px 22px; border-radius: 4px; white-space: nowrap;
+  background: rgb(0 0 0 / 0.35); backdrop-filter: blur(8px); color: #fff;
+}
+.rc-view::before { content: ""; position: absolute; left: 9px; top: 50%; width: 6px; height: 6px; margin-top: -3.5px; background: currentColor; border-radius: 1px; }
+@media (hover: hover) and (pointer: fine) and (min-width: 64rem) { .rc-quadro { cursor: none; } }
+@media not ((hover: hover) and (pointer: fine) and (min-width: 64rem)) { .rc-view { display: none; } }
