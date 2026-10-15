@@ -9,7 +9,8 @@ import photoshop from "../../assets/logos/ferramentas/adobephotoshop.svg";
 import illustrator from "../../assets/logos/ferramentas/adobeillustrator.svg";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { gsap, ScrollTrigger, prefersReducedMotion } from "../../lib/gsap";
-import { RcMoldura, RcFechamento, Retrato, Publicacao, publicados } from "./RolinCMoldura";
+import { RcMoldura, Retrato, Publicacao, publicados } from "./RolinCMoldura";
+import { RcFechamentoAbout } from "./RolinCFechamentoAbout";
 
 /**
  * ABOUT DA ROLIN C (15/10). Abre no retrato em tela cheia, no MESMO enquadramento em que a
@@ -124,7 +125,7 @@ export default function RolinCAbout() {
         </section>
       </div>
 
-      <RcFechamento rotulo="07" />
+      <RcFechamentoAbout rotulo="07" />
     </div>
   );
 }
