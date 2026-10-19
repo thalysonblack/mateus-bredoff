@@ -5,9 +5,10 @@ import { PECAS } from "../../content/pecas";
 import { findWork, WORK, type WorkItem } from "../../content/work";
 import { corDe } from "../../content/cores";
 import { useMetaRota } from "../../hooks/useMetaRota";
-import { Prancha, Bloco } from "../compartilhado/sistema";
+import { Prancha, Bloco, useRota } from "../compartilhado/sistema";
 
 export default function CaseV2() {
+  const rota = useRota();
   const { slug } = useParams();
   const item = findWork(slug);
   useMetaRota();
@@ -20,7 +21,7 @@ export default function CaseV2() {
             404
           </p>
           <p className="p-item pt-4">This project is not in the index.</p>
-          <Link to="/work" className="p-corpo p-link pt-8">
+          <Link to={rota("/work")} className="p-corpo p-link pt-8">
             Back to the index →
           </Link>
         </div>
@@ -172,6 +173,7 @@ export default function CaseV2() {
  * o enter/leave assenta no nome parado.
  */
 function ProximoProjeto({ item, i }: { item: WorkItem; i: number }) {
+  const rota = useRota();
   const [sob, setSob] = useState<WorkItem | null>(null);
   const thumb = useRef<HTMLDivElement | null>(null);
 
@@ -206,7 +208,7 @@ function ProximoProjeto({ item, i }: { item: WorkItem; i: number }) {
                   {[...linha, ...linha].map((w, k) => (
                     <span key={`${w.slug}-${k}`} className="p-segue-item">
                       <Link
-                        to={`/work/${w.slug}`}
+                        to={rota(`/work/${w.slug}`)}
                         className="p-segue-nome"
                         onMouseEnter={() => setSob(w)}
                         onMouseLeave={() => setSob(null)}

@@ -142,6 +142,11 @@ export default function App() {
           <Route path="/v2/work/:slug" element={<CaseV2 />} />
           {/* V3 — home aberta pelo reel */}
           <Route path="/v3" element={<HomeV3 />} />
+          {/* V4 — unificada (18/10, feedback do Mateus): home da V3 + about e case da V1 */}
+          <Route path="/v4" element={<HomeV3 />} />
+          <Route path="/v4/about" element={<AboutV1 />} />
+          <Route path="/v4/work" element={<WorkV1 />} />
+          <Route path="/v4/work/:slug" element={<CaseV1 />} />
           {/* as três lado a lado, para aprovação */}
           <Route path="/versoes" element={<Versoes />} />
           {/* slug inexistente cai no case da V1, que trata o 404 */}

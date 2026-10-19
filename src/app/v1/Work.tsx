@@ -6,7 +6,7 @@ import { corDe } from "../../content/cores";
 import { useMetaRota } from "../../hooks/useMetaRota";
 import { gsap, prefersReducedMotion } from "../../lib/gsap";
 import { criarArquivoWebGL, type ArquivoWebGL } from "../../lib/arquivoWebGL";
-import { Prancha } from "../compartilhado/sistema";
+import { Prancha, useRota } from "../compartilhado/sistema";
 
 /* os filtros são as disciplinas que existem no acervo, por frequência — sem
    categoria inventada */
@@ -18,6 +18,7 @@ const FILTROS = [
 ];
 
 export default function WorkV2() {
+  const rota = useRota();
   useMetaRota();
   const [ativo, setAtivo] = useState(0);
   const [params, setParams] = useSearchParams();
@@ -142,7 +143,7 @@ export default function WorkV2() {
             {WORK.map((w, i) => (
               <li key={w.slug} className="p-fio">
                 <Link
-                  to={`/work/${w.slug}`}
+                  to={rota(`/work/${w.slug}`)}
                   onMouseEnter={() => irPara(i)}
                   onFocus={() => irPara(i)}
                   aria-current={ativo === i ? "true" : undefined}

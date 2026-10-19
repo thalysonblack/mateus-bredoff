@@ -9,14 +9,15 @@ const ROTAS = [
   ["V1", "/v1"],
   ["V2", "/v2"],
   ["V3", "/v3"],
+  ["V4", "/v4"],
 ] as const;
 
 export default function SeletorVersao() {
   const { pathname } = useLocation();
   const oculto = useOcultoAoDescer(pathname);
-  const naVersao = /^\/(v1|v3|versoes)$/.test(pathname) || pathname === "/v2" || /^\/v2\/(about|work)(\/|$)/.test(pathname);
+  const naVersao = /^\/(v1|v3|versoes)$/.test(pathname) || /^\/v4(\/|$)/.test(pathname) || pathname === "/v2" || /^\/v2\/(about|work)(\/|$)/.test(pathname);
   if (!naVersao && !import.meta.env.DEV) return null;
-  const ativa = (r: string) => (r === "/v2" ? pathname === "/v2" || /^\/v2\/(about|work)(\/|$)/.test(pathname) : pathname === r);
+  const ativa = (r: string) => (r === "/v2" ? pathname === "/v2" || /^\/v2\/(about|work)(\/|$)/.test(pathname) : r === "/v4" ? /^\/v4(\/|$)/.test(pathname) : pathname === r);
   return (
     <nav aria-label="Versões" className={`seletor-versao${oculto ? " is-oculto" : ""}`} style={{ position: "fixed", left: 12, right: 12, bottom: 12, zIndex: 9999, display: "flex",
       gap: 2, padding: 4, margin: "0 auto", width: "fit-content", maxWidth: "calc(100vw - 24px)",

@@ -8,7 +8,7 @@ import { SERVICOS } from "../../content/servicos";
 import { RECONHECIMENTO } from "../../content/reconhecimento";
 import retrato from "../../assets/optimized/hero-portrait-1600.webp";
 import { useMetaRota } from "../../hooks/useMetaRota";
-import { Prancha } from "../compartilhado/sistema";
+import { Prancha, useRota } from "../compartilhado/sistema";
 import { FitasBehance } from "../compartilhado/FitasBehance";
 import { HoverFluido } from "../compartilhado/HoverFluido";
 import { useRevelacaoPalavra } from "../compartilhado/useRevelacaoPalavra";
@@ -47,6 +47,7 @@ const NUM = (i: number) => String(i + 1).padStart(2, "0");
 const limpa = (t: string) => t.replace("®", "").trim().toLowerCase();
 const projetoDe = (nome: string) => WORK.find((w) => limpa(w.title) === limpa(nome)) ?? null;
 export default function Indice({ inicio, semReel }: { inicio?: ReactNode; semReel?: boolean } = {}) {
+  const rota = useRota();
   useMetaRota();
   const [sob, setSob] = useState<number | null>(null);
   /* a lente é UMA só (um contexto WebGL): serve à lista e às publicações */
@@ -178,7 +179,7 @@ export default function Indice({ inicio, semReel }: { inicio?: ReactNode; semRee
         <ol className={`ix-lista${sob != null ? " ix-lista--sob" : ""}`} onPointerLeave={() => setSob(null)}>
           {WORK.map((w, i) => (
             <li key={w.slug} className={sob === i ? "is-sob" : undefined}>
-              <Link to={`/work/${w.slug}`} className="ix-linha" onPointerEnter={() => setSob(i)} onFocus={() => setSob(i)} onBlur={() => setSob(null)}>
+              <Link to={rota(`/work/${w.slug}`)} className="ix-linha" onPointerEnter={() => setSob(i)} onFocus={() => setSob(i)} onBlur={() => setSob(null)}>
                 <span className="p-marca ix-n">
                   <span>{NUM(i)}</span>
                   <span aria-hidden="true">→ View</span>

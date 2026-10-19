@@ -17,6 +17,15 @@ export const PRANCHAS = [
   { n: "03", nome: "About", to: "/about" },
 ] as const;
 
+/* V4 (18/10): a versão unificada vive sob /v4 — os links internos herdam o prefixo
+   para a navegação não sair dela; fora de /v4 nada muda. */
+const V4 = /^\/v4(?=\/|$)/;
+export const semV4 = (p: string) => p.replace(V4, "") || "/";
+export function useRota() {
+  const naV4 = V4.test(useLocation().pathname);
+  return (to: string) => (naV4 ? (to === "/" ? "/v4" : "/v4" + to) : to);
+}
+
 export function useHora(tz = "America/Sao_Paulo") {
   const [hora, setHora] = useState("--:--");
   useEffect(() => {
@@ -33,7 +42,8 @@ export function useHora(tz = "America/Sao_Paulo") {
 
 /** navegação: as pranchas separadas por vírgula, a atual em tinta cheia */
 function Navegacao() {
-  const { pathname } = useLocation();
+  const pathname = semV4(useLocation().pathname);
+  const rota = useRota();
   /* ⭐ o print dele (12/09): WORK · ABOUT · CONTACT empilhados à direita, em
      caixa alta, com um ■ ao lado do item ativo. Contact entra como item da
      lista — é um link, não um campo. "No menu adicionar Index" (12/09): a home
@@ -59,7 +69,7 @@ function Navegacao() {
             {miolo}
           </a>
         ) : (
-          <Link key={p.nome} to={p.to} className="p-link" aria-current={atual ? "page" : undefined}>
+          <Link key={p.nome} to={rota(p.to)} className="p-link" aria-current={atual ? "page" : undefined}>
             {miolo}
           </Link>
         );
@@ -71,7 +81,8 @@ function Navegacao() {
 /** o menu aberto no celular: nav grande, depois ofício, hora e status */
 function MenuPainel({ hora, status, fechar }: { hora: string; status?: string; fechar: () => void }) {
   const painel = useRef<HTMLDivElement | null>(null);
-  const { pathname } = useLocation();
+  const pathname = semV4(useLocation().pathname);
+  const rota = useRota();
   useEffect(() => {
     const lenis = getLenis();
     lenis?.stop();
@@ -100,7 +111,7 @@ function MenuPainel({ hora, status, fechar }: { hora: string; status?: string; f
   return (
     <div ref={painel} id="p-menu-painel" className="p-menu-painel" role="dialog" aria-modal="true" aria-label="Menu">
       <div className="p-menu-painel-topo">
-        <Link to="/" onClick={fechar}>Mateus Bredoff</Link>
+        <Link to={rota("/")} onClick={fechar}>Mateus Bredoff</Link>
         <button type="button" className="p-menu-botao" onClick={fechar}>Close</button>
       </div>
       <nav className="p-menu-painel-nav" aria-label="Site">
@@ -110,7 +121,7 @@ function MenuPainel({ hora, status, fechar }: { hora: string; status?: string; f
           return p.href ? (
             <a key={p.nome} href={p.href}>{miolo}</a>
           ) : (
-            <Link key={p.nome} to={p.to} onClick={fechar} aria-current={atual ? "page" : undefined}>{miolo}</Link>
+            <Link key={p.nome} to={rota(p.to)} onClick={fechar} aria-current={atual ? "page" : undefined}>{miolo}</Link>
           );
         })}
       </nav>
@@ -160,7 +171,8 @@ export function Prancha({
   /* menu do celular: topo com nome + "Menu"; a nav, a hora e o status abrem em tela cheia */
   const [aberto, setAberto] = useState(false);
   const botaoMenu = useRef<HTMLButtonElement | null>(null);
-  const { pathname } = useLocation();
+  const pathname = semV4(useLocation().pathname);
+  const rota = useRota();
   useEffect(() => setAberto(false), [pathname]);
   const fecharMenu = useCallback(() => setAberto(false), []);
   const primeiraVez = useRef(true);
@@ -220,7 +232,7 @@ export function Prancha({
               leva pra home. Medium em tudo, só a
               primeira letra maiúscula. */}
           {/* o nome é o caminho de volta pra home (16/09) */}
-          <Link to="/" className="p-menu-campo">
+          <Link to={rota("/")} className="p-menu-campo">
             <span>Mateus Bredoff</span>
             <span>Brand Designer</span>
           </Link>
@@ -301,7 +313,7 @@ export function Prancha({
                   <ul>
                     {PRANCHAS.map((p) => (
                       <li key={p.to}>
-                        <Link to={p.to} className="p-corpo p-link">
+                        <Link to={rota(p.to)} className="p-corpo p-link">
                           <span className="p-marca">{p.n}</span> {p.nome}
                         </Link>
                       </li>

@@ -4,11 +4,12 @@ import v1 from "../../assets/versoes/v1.webp";
 import v2 from "../../assets/versoes/v2.webp";
 import v3 from "../../assets/versoes/v3.webp";
 
-/** /versoes — a página para o cliente aprovar: as três versões lado a lado, cada uma com o link para abrir. */
+/** /versoes — a página para o cliente aprovar: as versões lado a lado, cada uma com o link para abrir. */
 const VERSOES = [
   { n: "V1", nome: "Current site", nota: "The site that is live today.", rota: "/v1", img: v1 },
   { n: "V2", nome: "Full site", nota: "Home, work, case pages and about.", rota: "/v2", img: v2 },
   { n: "V3", nome: "Showreel home", nota: "Home opened by the showreel.", rota: "/v3", img: v3 },
+  { n: "V4", nome: "Unified", nota: "Showreel home, project index, about and case pages.", rota: "/v4", img: v3 },
 ];
 
 const tipo = { font: "600 11px/1.18 'Alte Haas Grotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif", textTransform: "uppercase", letterSpacing: "0.01em" } as const;
