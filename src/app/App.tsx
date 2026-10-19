@@ -7,7 +7,7 @@ import AboutV1 from "./v1/About";
 import WorkV1 from "./v1/Work";
 import CaseV1 from "./v1/Case";
 import HomeV1 from "./v1/Home";
-import { HomeV3 } from "./v3/Home";
+import { HomeV3, HomeV4 } from "./v3/Home";
 import HomeV2 from "./v2/Home";
 import AboutV2 from "./v2/About";
 import { WorkV2, CaseV2 } from "./v2/Work";
@@ -143,7 +143,7 @@ export default function App() {
           {/* V3 — home aberta pelo reel */}
           <Route path="/v3" element={<HomeV3 />} />
           {/* V4 — unificada (18/10, feedback do Mateus): home da V3 + about e case da V1 */}
-          <Route path="/v4" element={<HomeV3 />} />
+          <Route path="/v4" element={<HomeV4 />} />
           <Route path="/v4/about" element={<AboutV1 />} />
           <Route path="/v4/work" element={<WorkV1 />} />
           <Route path="/v4/work/:slug" element={<CaseV1 />} />

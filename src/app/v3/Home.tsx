@@ -29,7 +29,7 @@ function Video({ ritmo = 1 }: { ritmo?: number }) {
   );
 }
 
-export function HeroReel() {
+export function HeroReel({ menuNoTopo = false }: { menuNoTopo?: boolean } = {}) {
   const [aberto, setAberto] = useState(false);
   const selo = useRef<HTMLDivElement | null>(null);
   const tela = useRef<HTMLVideoElement | null>(null);
@@ -44,7 +44,7 @@ export function HeroReel() {
     /* menu branco chapado só enquanto ele está sobre o reel; no papel volta ao difference */
     ScrollTrigger.create({ trigger: el, start: "top bottom", end: "bottom top+=90", toggleClass: { targets: document.documentElement, className: "rx-sobre" } });
     const menu = document.querySelector<HTMLElement>(".p-menu");
-    if (menu && !celular) {
+    if (menu && !celular && !menuNoTopo) {
       const desce = () => window.innerHeight / 2 - menu.getBoundingClientRect().height / 2 - menu.offsetTop;
       gsap.fromTo(menu, { y: desce }, { y: 0, ease: "none", immediateRender: true,
         scrollTrigger: { start: 0, end: desce, scrub: true, invalidateOnRefresh: true } });
@@ -103,3 +103,5 @@ export function HeroReel() {
 }
 
 export const HomeV3 = () => <Indice inicio={<HeroReel />} semReel />;
+/* V4: o menu fica sempre no topo (19/10) — sem a descida até o meio do reel */
+export const HomeV4 = () => <Indice inicio={<HeroReel menuNoTopo />} semReel />;
