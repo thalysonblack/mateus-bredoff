@@ -6,13 +6,7 @@ import TransicaoRota from "./compartilhado/TransicaoRota";
 import AboutV1 from "./v1/About";
 import WorkV1 from "./v1/Work";
 import CaseV1 from "./v1/Case";
-import HomeV1 from "./v1/Home";
-import { HomeV3, HomeV4 } from "./v3/Home";
-import HomeV2 from "./v2/Home";
-import AboutV2 from "./v2/About";
-import { WorkV2, CaseV2 } from "./v2/Work";
-import Versoes from "./compartilhado/Versoes";
-import SeletorVersao from "./compartilhado/SeletorVersao";
+import { HomeV4 } from "./v3/Home";
 
 /**
  * Mateus Bredoff — direção editorial, agora multi-página.
@@ -129,30 +123,14 @@ export default function App() {
     <BrowserRouter>
       <Layout>
         <Routes>
-          {/* V1 — o site no ar: home + as internas canônicas */}
-          <Route path="/" element={<HomeV1 />} />
-          <Route path="/v1" element={<HomeV1 />} />
+          {/* V4 é o site (20/10). As outras versões moram no repo mateus-bredoff-lab. */}
+          <Route path="/" element={<HomeV4 />} />
           <Route path="/about" element={<AboutV1 />} />
           <Route path="/work" element={<WorkV1 />} />
           <Route path="/work/:slug" element={<CaseV1 />} />
-          {/* V2 — site inteiro */}
-          <Route path="/v2" element={<HomeV2 />} />
-          <Route path="/v2/about" element={<AboutV2 />} />
-          <Route path="/v2/work" element={<WorkV2 />} />
-          <Route path="/v2/work/:slug" element={<CaseV2 />} />
-          {/* V3 — home aberta pelo reel */}
-          <Route path="/v3" element={<HomeV3 />} />
-          {/* V4 — unificada (18/10, feedback do Mateus): home da V3 + about e case da V1 */}
-          <Route path="/v4" element={<HomeV4 />} />
-          <Route path="/v4/about" element={<AboutV1 />} />
-          <Route path="/v4/work" element={<WorkV1 />} />
-          <Route path="/v4/work/:slug" element={<CaseV1 />} />
-          {/* as três lado a lado, para aprovação */}
-          <Route path="/versoes" element={<Versoes />} />
-          {/* slug inexistente cai no case da V1, que trata o 404 */}
+          {/* slug inexistente cai no case, que trata o 404 */}
           <Route path="*" element={<CaseV1 />} />
         </Routes>
-        <SeletorVersao />
       </Layout>
     </BrowserRouter>
   );

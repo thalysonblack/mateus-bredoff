@@ -1,3 +1,7 @@
 {
+  "redirects": [
+    { "source": "/v4", "destination": "/", "permanent": false },
+    { "source": "/v4/:path*", "destination": "/:path*", "permanent": false }
+  ],
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

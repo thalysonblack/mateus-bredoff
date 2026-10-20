@@ -30,22 +30,9 @@ function nomeDaRota(p: string) {
    nas pranchas. ⚠ Não usar as CLASSES aqui: elas trazem `background`. */
 const COR_SUPERFICIE = { papel: "#f4f4f2", branco: "#ffffff", tinta: "#14201f" } as const;
 
-const SUPERFICIE: Record<string, "papel" | "branco" | "tinta"> = {
-  "/": "papel",
-  "/work": "branco",
-  "/about": "papel",
-};
-function superficieDaRota(p: string) {
-  /* ⚠ A V4 é BRANCO ABSOLUTO em todas as rotas. Sem esta linha ela caía no
-     `papel` do fallback e a lâmina chegava num creme que não existe em lugar
-     nenhum daquela direção — a transição entregava uma superfície mentirosa,
-     que é exatamente o que o comentário acima manda evitar. */
-  if (p === "/v4" || p.startsWith("/v4/")) return "branco";
-  /* o site V2 é papel branco puro em todas as rotas */
-  if (ehV2(p)) return "branco";
-  if (SUPERFICIE[p]) return SUPERFICIE[p];
-  if (p.startsWith("/work/")) return "branco";
-  return "papel";
+/* A V4 é BRANCO ABSOLUTO em todas as rotas: a lâmina chega na mesma superfície. */
+function superficieDaRota(_p: string) {
+  return "branco" as const;
 }
 
 /* o índice da rota dentro do site, no vernáculo de [01] que o resto usa */

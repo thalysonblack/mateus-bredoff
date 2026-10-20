@@ -22,8 +22,7 @@ export const PRANCHAS = [
 const V4 = /^\/v4(?=\/|$)/;
 export const semV4 = (p: string) => p.replace(V4, "") || "/";
 export function useRota() {
-  const naV4 = V4.test(useLocation().pathname);
-  return (to: string) => (naV4 ? (to === "/" ? "/v4" : "/v4" + to) : to);
+  return (to: string) => to;
 }
 
 export function useHora(tz = "America/Sao_Paulo") {
